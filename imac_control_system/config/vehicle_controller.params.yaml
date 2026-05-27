@@ -1,0 +1,13 @@
+vehicle_controller_node:
+  ros__parameters:
+    # ── 스티어링(축 1개) ──
+    manual_axis_steer: 0       # 사용할 조이스틱 축 인덱스
+    manual_steer_offset: 0.85  # (axis + offset) * scale → 듀티
+    manual_steer_scale: 0.5
+    manual_steer_min: 0.0      # 듀티 하한
+    manual_steer_max: 0.9      # 듀티 상한
+
+    # ── 페달(버튼 ON/OFF 토글) ──
+    manual_toggle_button: 0    # 사용할 버튼 인덱스
+    manual_pedal_on: 1.0       # 토글 ON일 때 듀티
+    manual_pedal_off: 0.5      # 토글 OFF일 때 듀티

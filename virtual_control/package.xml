@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd"
+            schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>virtual_control</name>
+  <version>0.0.0</version>
+  <description>
+    Stanley 기반 경로 추종 Ackermann 컨트롤러와
+    Ackermann 명령을 저수준 VirtualControlCommand로 변환하는 노드 패키지
+  </description>
+
+  <maintainer email="fairytail0508@naver.com">eunhu</maintainer>
+  <license>TODO: License declaration</license>
+
+  <!-- Build tool -->
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <!-- Build & run dependencies -->
+  <depend>rclcpp</depend>
+  <depend>nav_msgs</depend>
+  <depend>ackermann_msgs</depend>
+  <depend>imac_interfaces</depend>
+  <depend>geometry_msgs</depend>
+  <depend>tf2</depend>
+  <depend>ament_index_cpp</depend>
+  <depend>sensor_msgs</depend>   <!-- ★ 추가된 부분 -->
+  <depend>std_msgs</depend>
+  <depend>std_srvs</depend>
+  <depend>mavlink</depend>
+  <depend>mpclib_vendor</depend>
+
+  <exec_depend>ament_index_python</exec_depend>
+  <exec_depend>launch</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
+
+  <!-- Eigen (CMake 모듈) -->
+  <build_depend>eigen3_cmake_module</build_depend>
+  <exec_depend>eigen3_cmake_module</exec_depend>
+
+  <!-- 테스트 의존성 -->
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

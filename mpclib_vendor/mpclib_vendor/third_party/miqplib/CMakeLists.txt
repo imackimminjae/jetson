@@ -1,0 +1,57 @@
+project(MPCLib CXX)
+cmake_minimum_required(VERSION 3.0)
+cmake_policy(SET CMP0079 NEW)
+
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
+set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} /opt/local/lib)
+set(CMAKE_INCLUDE_PATH  ${CMAKE_INCLUDE_PATH} /opt/local/include)
+link_directories(/opt/local/lib)
+
+file(GLOB MIQPLIB_SRC
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cc"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
+)
+
+add_library(MIQPLib STATIC ${MIQPLIB_SRC})
+
+target_link_libraries(MIQPLib PUBLIC daqp)
+
+if (NOT CMAKE_BUILD_TYPE)
+	set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Set build type: Release or Debug" FORCE)
+endif(NOT CMAKE_BUILD_TYPE)
+
+if (${CMAKE_BUILD_TYPE} MATCHES "Debug")
+    message(STATUS "Configuring project in debug mode. Set -DCMAKE_BUILD_TYPE=Release for release mode")
+elseif(${CMAKE_BUILD_TYPE} MATCHES "Release")
+    message(STATUS "Configuring project in release mode. Set -DCMAKE_BUILD_TYPE=Debug for debug mode")
+else(${CMAKE_BUILD_TYPE} MATCHES "Release")
+    message(STATUS "Configuring project in " ${CMAKE_BUILD_TYPE} " mode")
+endif()
+
+option(ENABLE_PROFILING "Enable execution timers to monitor the performance" OFF)
+
+if (ENABLE_PROFILING)
+    message(STATUS "Enabling application profiling")
+    add_definitions(-DENABLE_PROFILING)
+    set(ENABLE_PROFILING OFF CACHE BOOL "" FORCE)
+else()
+    message(STATUS "Profiling disabled. Use -DENABLE_PROFILING=ON to enable")
+endif()
+
+FIND_PACKAGE(GSL)
+FIND_PACKAGE(Matheval)
+FIND_PACKAGE(Config)
+
+if (GSL_FOUND)
+    message(STATUS "Found GSL: enabling discretization support")
+    set(ENABLE_DISCRETIZATION TRUE)
+    add_definitions(-DENABLE_DISCRETIZATION)
+    if (LIBCONFIGPP_FOUND AND MATHEVAL_FOUND)
+        set(ENABLE_CONFIG_FILE TRUE)
+        add_definitions(-DENABLE_CONFIG_FILE)
+    endif()
+else()
+    message(STATUS "GSL not found: discretization support not available")
+endif()
+
+add_subdirectory(src)
