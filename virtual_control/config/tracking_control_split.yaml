@@ -1,0 +1,70 @@
+tracking_control_node:
+  ros__parameters:
+    loop_rate_hz_ctrl: 20.0
+    state_input_type: "odom"
+    pose_stamped_topic: "/motive/vehicle/pose"
+    grid_map_topic: "/bev/occupancy_grid"
+    require_grid_map: true
+    input_timeout_sec: 0.60
+    use_upper_guides: true
+    upper_guides_timeout_sec: 0.80
+
+    max_steer_left: 0.35
+    max_steer_right: -0.35
+    v_max: 1.0
+    a_max_mps2: 1.0
+    wheelbase: 0.3
+    lane_width: 0.5
+    lane_offsets_m: [0.0]
+
+lower_duty_node:
+  ros__parameters:
+    solver_cmd_topic: "/control/solver_cmd"
+    applied_cmd_topic: "/control/applied_cmd"
+    duty_topic: "/control/duty_cmd"
+    pwm_topic: "/cmd_pwm"
+    virtual_cmd_topic: "/cmd_control"
+    loop_rate_hz: 20.0
+    input_timeout_sec: 0.30
+    hold_last_valid_sec: 0.30
+    send_neutral_on_invalid: true
+    publish_applied_cmd_when_invalid: true
+
+    enable_output_filter: true
+    steer_norm_max: 1.0
+    steer_norm_rate_max: 2.0
+    steer_norm_lpf_alpha: 0.2
+
+    target_speed_mps: 1.0
+    target_accel_mps2: 0.0
+    speed_kp: 0.45
+    speed_ki: 0.05
+    throttle_ff: 0.08
+    max_virtual_throttle: 0.35
+    max_virtual_brake: 0.70
+    speed_deadband_mps: 0.03
+    speed_integral_limit: 2.0
+
+    throttle_max_norm: 0.17
+    steer_sign: 1.0
+
+    publish_pwm: true
+    pwm_min: 1000
+    pwm_center: 1500
+    pwm_max: 2000
+    throttle_pwm_min: 1500
+    throttle_pwm_max: 2000
+    steering_pwm_min: 1000
+    steering_pwm_max: 2000
+
+    mavlink_enable: true
+    mavlink_bind_ip: "0.0.0.0"
+    mavlink_bind_port: 14540
+    mavlink_source_system: 245
+    mavlink_source_component: 190
+    mavlink_target_system: 1
+    mavlink_target_component: 1
+    mavlink_auto_manual_mode: true
+    mavlink_auto_arm: false
+    mavlink_force_arm: false
+    mavlink_disarm_on_shutdown: true
