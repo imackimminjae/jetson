@@ -135,9 +135,8 @@ ament_target_dependencies(tracking_control_node
   rclcpp
   nav_msgs
   geometry_msgs
-  imac_interfaces
   tf2
-  mavlink
+  std_msgs
   mpclib_vendor
 )
 target_include_directories(tracking_control_node PUBLIC
@@ -151,6 +150,23 @@ elseif(TARGET MIQPLib)
   target_link_libraries(tracking_control_node MIQPLib)
 endif()
 target_link_libraries(tracking_control_node Threads::Threads)
+
+# 6-1) Lower duty / MAVLink output node
+add_executable(lower_duty_node
+  src/lower_duty_node.cpp
+)
+ament_target_dependencies(lower_duty_node
+  rclcpp
+  geometry_msgs
+  imac_interfaces
+  std_msgs
+  mavlink
+)
+target_include_directories(lower_duty_node PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+)
+target_link_libraries(lower_duty_node Threads::Threads)
 
 # 7) Mocap straight PWM MAVLink test node
 add_executable(straight_mocap_pwm_node
@@ -198,6 +214,7 @@ install(
     upper_planner_node
     tracking_controller_node
     tracking_control_node
+    lower_duty_node
     straight_mocap_pwm_node
     mc_test_node
   DESTINATION lib/${PROJECT_NAME}
