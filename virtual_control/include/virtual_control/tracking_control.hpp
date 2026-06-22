@@ -3,25 +3,18 @@
 #include <rclcpp/rclcpp.hpp>
 #include <geometry_msgs/msg/pose_stamped.hpp>
 #include <geometry_msgs/msg/twist.hpp>
-#include <imac_interfaces/msg/virtual_control_command.hpp>
 #include <nav_msgs/msg/path.hpp>
 #include <nav_msgs/msg/odometry.hpp>
 #include <nav_msgs/msg/occupancy_grid.hpp>
+#include <std_msgs/msg/float64_multi_array.hpp>
 
 #include <Eigen/Dense>
 #include <array>
 #include <cstddef>
 #include <cstdint>
 #include <mutex>
-#include <netinet/in.h>
 #include <string>
 #include <vector>
-
-extern "C" {
-#include <mavlink/v2.0/common/mavlink.h>
-// If this include layout is not available in your ROS MAVLink package, use:
-// #include <mavlink/common/mavlink.h>
-}
 
 namespace imac_ctrl
 {
@@ -30,7 +23,6 @@ class TrackingControllerNode : public rclcpp::Node
 {
 public:
   TrackingControllerNode();
-  ~TrackingControllerNode() override;
 
 private:
   struct GridMapSnapshot
@@ -66,35 +58,18 @@ private:
     double steer_norm{0.0};
   };
 
-  struct VirtualDriveCmd
+  struct PreviewFallbackDirection
   {
-    double steer{0.0};
-    double throttle{0.0};
-    double brake{0.0};
+    Eigen::Vector2d dir_before_clamp;
+    double yaw_before_clamp{0.0};
+    double yaw_after_clamp{0.0};
+    bool wp0_usable{false};
   };
 
   void publishcontrolCmd(double dv_mps, double dpsi_rad, double steer_norm, bool valid_cmd);
   void publishZeroDebugCmd(const std::string & reason);
   bool publishPreviousSolverCmd(const std::string & reason);
   void publishGoalStopCmd(const std::string & reason);
-
-  void updateTargetSpeedProfile(double dt);
-  VirtualDriveCmd computeVirtualDriveCmd(double steer_norm, bool valid_cmd, double dt);
-  void publishVirtualControlCommand(double steer_norm, bool valid_cmd);
-  void publishVirtualStopCommand();
-
-  void mavlinkInitUdp();
-  void mavlinkClose();
-  void mavlinkPoll();
-  bool mavlinkSendMessage(const mavlink_message_t & msg);
-  void mavlinkSendManualNeutral();
-  void mavlinkSendSetManualMode();
-  void mavlinkSendArmCommand(bool arm, bool force);
-  void mavlinkManageModeAndArm();
-  void mavlinkSendActuator(double throttle_norm, double steering_norm);
-  void mavlinkSendHeldActuator();
-  double computeThrottleNorm(double dv_mps, bool valid_cmd) const;
-  void publishMavlinkCmd(double dv_mps, double steer_norm, bool valid_cmd);
 
   void odomCallback(const nav_msgs::msg::Odometry::SharedPtr msg);
   void poseStampedCallback(const geometry_msgs::msg::PoseStamped::SharedPtr msg);
@@ -120,6 +95,10 @@ private:
     const Eigen::Vector2d& position,
     const Eigen::Vector2d& velocity,
     double eps) const;
+
+  PreviewFallbackDirection computePreviewFallbackDirection(
+    const Eigen::Vector2d& wp0_body,
+    const Eigen::Vector2d& wp1_body) const;
 
   void buildPreviewFromPredictionSeed(
     const Eigen::Vector2d& wp0_body,
@@ -158,7 +137,15 @@ private:
   bool use_upper_guides_{true};
   double upper_guides_timeout_sec_{0.80};
   double upper_guides_change_reset_tol_m_{0.25};
-  double goal_stop_distance_m_{0.30};
+  double goal_stop_distance_m_{0.50};
+  bool preview_use_path_tangent_when_seed_empty_{true};
+  double preview_max_yaw_rad_{0.35};
+  double preview_min_forward_x_m_{0.20};
+  double preview_max_lateral_y_m_{0.30};
+  double preview_min_wp_norm_m_{0.10};
+  bool preview_reset_on_bad_seed_{true};
+  double preview_seed_max_lateral_y_m_{0.50};
+  double preview_seed_min_forward_x_m_{-0.10};
   std::string state_input_type_{"odom"};
   std::string pose_stamped_topic_{"/motive/vehicle/pose"};
   double pose_x_offset_{0.0};
@@ -171,51 +158,6 @@ private:
   bool pose_invert_y_{false};
   double pose_speed_lpf_alpha_{0.4};
   double pose_max_dt_for_speed_{0.5};
-
-  std::string virtual_cmd_topic_{"/cmd_control"};
-  double target_speed_mps_{1.0};
-  double target_accel_mps2_{0.0};
-  double speed_kp_{0.45};
-  double speed_ki_{0.05};
-  double throttle_ff_{0.08};
-  double max_virtual_throttle_{0.35};
-  double max_virtual_brake_{0.70};
-  double speed_deadband_mps_{0.03};
-  double speed_integral_limit_{2.0};
-  double target_speed_profile_mps_{0.0};
-  double speed_integral_{0.0};
-  bool target_speed_profile_initialized_{false};
-
-  bool mavlink_enable_{false};
-  std::string mavlink_bind_ip_{"0.0.0.0"};
-  int mavlink_bind_port_{14540};
-  int mavlink_source_system_{245};
-  int mavlink_source_component_{190};
-  int mavlink_target_system_{1};
-  int mavlink_target_component_{1};
-  bool mavlink_send_neutral_on_invalid_{true};
-  bool mavlink_auto_manual_mode_{true};
-  bool mavlink_auto_arm_{false};
-  bool mavlink_force_arm_{false};
-  bool mavlink_disarm_on_shutdown_{true};
-  double mavlink_throttle_max_norm_{0.2};
-  double mavlink_steer_sign_{1.0};
-  double last_valid_mavlink_steer_norm_{0.0};
-  rclcpp::Time last_valid_mavlink_cmd_time_;
-  double mavlink_hold_last_valid_sec_{0.30};
-  int mavlink_socket_{-1};
-  bool mavlink_peer_known_{false};
-  sockaddr_in mavlink_peer_addr_{};
-  mavlink_status_t mavlink_rx_status_{};
-  bool mavlink_px4_manual_{false};
-  bool mavlink_px4_armed_{false};
-  rclcpp::Time mavlink_last_mode_request_time_;
-  rclcpp::Time mavlink_last_arm_request_time_;
-  std::mutex mavlink_mtx_;
-  double mavlink_last_throttle_norm_{0.0};
-  double mavlink_last_steering_norm_{0.0};
-  bool mavlink_have_actuator_cmd_{false};
-  std::mutex mavlink_cmd_mtx_;
 
   bool have_pose_{false};
   bool have_grid_map_{false};
@@ -260,10 +202,9 @@ private:
   rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr control_debug_pub_;
   rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr applied_cmd_pub_;
   rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr local_curve_pub_;
-  rclcpp::Publisher<imac_interfaces::msg::VirtualControlCommand>::SharedPtr virtual_cmd_pub_;
+  rclcpp::Publisher<std_msgs::msg::Float64MultiArray>::SharedPtr mpc_trace_pub_;
 
   rclcpp::TimerBase::SharedPtr loop_timer_;
-  rclcpp::TimerBase::SharedPtr mavlink_keepalive_timer_;
 };
 
 }  // namespace imac_ctrl
