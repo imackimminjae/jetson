@@ -128,8 +128,35 @@ target_include_directories(tracking_controller_node PUBLIC
 )
 
 # 6) Tracking Control Node (MIQP)
+set(TRACKING_CONTROL_SOURCE src/tracking_control.cpp)
+set(TRACKING_CONTROL_PATCH_B64
+  "${CMAKE_CURRENT_SOURCE_DIR}/.codex_tracking_control_split.patch.gz.b64")
+if(EXISTS "${TRACKING_CONTROL_PATCH_B64}")
+  set(TRACKING_CONTROL_GENERATED_ROOT
+    "${CMAKE_CURRENT_BINARY_DIR}/generated_tracking")
+  set(TRACKING_CONTROL_GENERATED_SOURCE
+    "${TRACKING_CONTROL_GENERATED_ROOT}/virtual_control/src/tracking_control.cpp")
+  set(TRACKING_CONTROL_GENERATED_PATCH
+    "${TRACKING_CONTROL_GENERATED_ROOT}/tracking_control_split.patch")
+
+  file(MAKE_DIRECTORY
+    "${TRACKING_CONTROL_GENERATED_ROOT}/virtual_control/src")
+  configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/tracking_control.cpp"
+    "${TRACKING_CONTROL_GENERATED_SOURCE}"
+    COPYONLY)
+  execute_process(
+    COMMAND /bin/sh -c
+      "base64 -d '${TRACKING_CONTROL_PATCH_B64}' | gzip -d > '${TRACKING_CONTROL_GENERATED_PATCH}' && cd '${TRACKING_CONTROL_GENERATED_ROOT}' && git apply --unidiff-zero '${TRACKING_CONTROL_GENERATED_PATCH}'"
+    RESULT_VARIABLE TRACKING_CONTROL_PATCH_RESULT)
+  if(NOT TRACKING_CONTROL_PATCH_RESULT EQUAL 0)
+    message(FATAL_ERROR "Failed to apply tracking_control split patch")
+  endif()
+  set(TRACKING_CONTROL_SOURCE "${TRACKING_CONTROL_GENERATED_SOURCE}")
+endif()
+
 add_executable(tracking_control_node
-  src/tracking_control.cpp
+  ${TRACKING_CONTROL_SOURCE}
 )
 ament_target_dependencies(tracking_control_node
   rclcpp
