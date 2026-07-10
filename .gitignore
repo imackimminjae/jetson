@@ -1,0 +1,34 @@
+# ROS 2 build outputs
+build/
+install/
+log/
+**/build/
+**/install/
+**/log/
+
+# Python/cache outputs
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Editor and local machine files
+.codex/
+.agents/
+.vscode/
+.idea/
+*.swp
+*~
+
+# Runtime logs and telemetry
+*.log
+*.tlog
+*.tlog.raw
+*.bag
+*.db3
+
+# Vehicle/autopilot local parameter dumps
+*.parm
+
+# OS files
+.DS_Store
+Thumbs.db

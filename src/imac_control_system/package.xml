@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>imac_control_system</name>
+  <version>0.1.0</version>
+  <description>Integrated control and communication system for intelligent mobility using ROS 2.</description>
+
+  <maintainer email="ssle8653@gmail.com">S. Lee</maintainer>
+  <license>MIT</license>
+
+  <!-- build system -->
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <!-- build dependencies -->
+  <build_depend>rclcpp</build_depend>
+  <build_depend>std_msgs</build_depend>
+
+  <build_depend>rosidl_default_generators</build_depend>
+  <build_depend>builtin_interfaces</build_depend>
+  <build_depend>tf2</build_depend>
+  <build_depend>tf2_geometry_msgs</build_depend>
+  <build_depend>nav_msgs</build_depend>
+  <build_depend>visualization_msgs</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>Eigen3</build_depend>
+  <build_depend>ackermann_msgs</build_depend>
+
+  <build_depend>sensor_msgs</build_depend>
+
+
+  <build_depend>imac_interfaces</build_depend>
+
+  <!-- exec/runtime dependencies -->
+  <exec_depend>rclcpp</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+
+  <exec_depend>rosidl_default_runtime</exec_depend>
+  <exec_depend>builtin_interfaces</exec_depend>
+  <exec_depend>tf2</exec_depend>
+  <exec_depend>tf2_geometry_msgs</exec_depend>
+  <exec_depend>nav_msgs</exec_depend>
+  <exec_depend>visualization_msgs</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>Eigen3</exec_depend>
+  <exec_depend>ackermann_msgs</exec_depend>
+
+  <exec_depend>sensor_msgs</exec_depend>
+
+
+  <exec_depend>imac_interfaces</exec_depend>
+
+  <!-- message generation -->
+  <member_of_group>rosidl_interface_packages</member_of_group>
+  <!-- export -->
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

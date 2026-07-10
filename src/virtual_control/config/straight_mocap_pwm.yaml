@@ -1,0 +1,61 @@
+straight_mocap_pwm_node:
+  ros__parameters:
+    pose_topic: "/pose"
+    service_prefix: "/straight_pwm"
+    path_debug_topic: "/straight_pwm/path"
+    frame_id: "map"
+
+    path_start_x: 0.20
+    path_start_y: 1.00
+    path_end_x: 1.80
+    path_end_y: 1.00
+    path_csv_file: ""
+    goal_tolerance_m: 0.08
+    slow_down_distance_m: 0.35
+
+    loop_rate_hz: 20.0
+    pose_timeout_sec: 0.35
+    wheelbase_m: 0.33
+    target_speed_mps: 0.25
+    use_csv_speed_ref: true
+    min_command_speed_mps: 0.05
+    stanley_k: 0.8
+    stanley_softening_mps: 0.10
+    max_steer_left_rad: 0.52
+    max_steer_right_rad: -0.52
+
+    throttle_stop_pwm: 1500
+    throttle_drive_min_pwm: 1550
+    throttle_drive_max_pwm: 1600
+    throttle_speed_at_max_pwm_mps: 0.35
+
+    steering_center_pwm: 1500
+    steering_pwm_span: 400
+    steering_pwm_min: 1000
+    steering_pwm_max: 2000
+    steering_pwm_sign: -1.0
+
+    mavlink_enable: true
+    mavlink_bind_ip: "0.0.0.0"
+    mavlink_bind_port: 14540
+    mavlink_source_system: 245
+    mavlink_source_component: 190
+    mavlink_target_system: 1
+    mavlink_target_component: 1
+    mavlink_output_mode: "do_set_servo"
+    steering_servo_number: 1
+    throttle_servo_number: 2
+    throttle_actuator_index: 1
+    steering_actuator_index: 2
+    actuator_set_index: 0
+    actuator_pwm_min: 1000
+    actuator_pwm_max: 2000
+
+    drive_enabled_on_start: false
+    require_manual_mode: false
+    require_armed: false
+    send_neutral_when_stopped: true
+    auto_manual_mode: false
+    auto_arm: false
+    force_arm: false
+    disarm_on_shutdown: false
