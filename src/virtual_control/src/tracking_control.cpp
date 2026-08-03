@@ -13,6 +13,8 @@
 #include <array>
 #include <cerrno>
 #include <cstring>
+#include <filesystem>
+#include <fstream>
 #include <string>
 
 #include <arpa/inet.h>
@@ -29,6 +31,8 @@
 #include <nav_msgs/msg/path.hpp>
 #include <nav_msgs/msg/odometry.hpp>
 #include <std_msgs/msg/float64_multi_array.hpp>
+
+#include <ament_index_cpp/get_package_share_directory.hpp>
 
 #ifdef solve
 #undef solve
@@ -64,6 +68,65 @@ static inline bool pathsApproximatelyEqual(
 static inline double clampd(double v, double lo, double hi)
 {
   return std::max(lo, std::min(hi, v));
+}
+
+static inline std::string trimCopy(const std::string & s)
+{
+  const auto first = s.find_first_not_of(" \t\r\n");
+  if (first == std::string::npos) {
+    return "";
+  }
+  const auto last = s.find_last_not_of(" \t\r\n");
+  return s.substr(first, last - first + 1);
+}
+
+static std::vector<std::string> splitCsvLine(const std::string & line)
+{
+  std::vector<std::string> out;
+  std::string cell;
+  bool in_quotes = false;
+  for (size_t i = 0; i < line.size(); ++i) {
+    const char c = line[i];
+    if (c == '"') {
+      if (in_quotes && i + 1 < line.size() && line[i + 1] == '"') {
+        cell.push_back('"');
+        ++i;
+      } else {
+        in_quotes = !in_quotes;
+      }
+    } else if (c == ',' && !in_quotes) {
+      out.push_back(trimCopy(cell));
+      cell.clear();
+    } else {
+      cell.push_back(c);
+    }
+  }
+  out.push_back(trimCopy(cell));
+  return out;
+}
+
+static bool parseCsvDouble(const std::string & s, double * out)
+{
+  if (!out) {
+    return false;
+  }
+  try {
+    size_t pos = 0;
+    const double v = std::stod(trimCopy(s), &pos);
+    if (pos == 0 || !std::isfinite(v)) {
+      return false;
+    }
+    *out = v;
+    return true;
+  } catch (...) {
+    return false;
+  }
+}
+
+static bool csvTruthy(const std::string & s)
+{
+  const std::string v = trimCopy(s);
+  return v == "1" || v == "true" || v == "True" || v == "TRUE" || v == "yes" || v == "on";
 }
 
 static double remainingPathLengthFromClosestProjection(
@@ -671,6 +734,8 @@ TrackingControllerNode::TrackingControllerNode()
   this->declare_parameter<double>("input_timeout_sec", 0.60);
   this->declare_parameter<bool>("publish_zero_on_failure", true);
   this->declare_parameter<bool>("use_upper_guides", true);
+  this->declare_parameter<bool>("use_csv_global_path", true);
+  this->declare_parameter<std::string>("csv_global_path_file", "local_map.csv");
   this->declare_parameter<double>("upper_guides_timeout_sec", 0.80);
   this->declare_parameter<double>("upper_guides_change_reset_tol_m", 0.25);
   this->declare_parameter<double>("goal_stop_distance_m", 0.50);
@@ -688,11 +753,14 @@ TrackingControllerNode::TrackingControllerNode()
   //       -p state_input_type:=pose_stamped
   //       -p pose_stamped_topic:=/motive/vehicle/pose
   //   MATLAB/ROS odom:
-  //     ros2 run virtual_control tracking_control --ros-args -p state_input_type:=odom
+  //     ros2 run virtual_control tracking_control_node --ros-args
+  //       -p state_input_type:=odom
+  //       -p odom_topic:=/px4/ekf_odom
   // Motive coordinates must be aligned to /debug/global_path's map frame with
   // the pose_* correction parameters below. If multiple rigid bodies are used,
   // re-enable target_rigid_body_id filtering in motive_pose_publisher.
   this->declare_parameter<std::string>("state_input_type", "odom");
+  this->declare_parameter<std::string>("odom_topic", "/px4/ekf_odom");
   this->declare_parameter<std::string>("pose_stamped_topic", "/motive/vehicle/pose");
   this->declare_parameter<double>("pose_x_offset", 0.0);
   this->declare_parameter<double>("pose_y_offset", 0.0);
@@ -764,6 +832,8 @@ TrackingControllerNode::TrackingControllerNode()
   this->get_parameter("input_timeout_sec", input_timeout_sec_);
   this->get_parameter("publish_zero_on_failure", publish_zero_on_failure_);
   this->get_parameter("use_upper_guides", use_upper_guides_);
+  this->get_parameter("use_csv_global_path", use_csv_global_path_);
+  this->get_parameter("csv_global_path_file", csv_global_path_file_);
   this->get_parameter("upper_guides_timeout_sec", upper_guides_timeout_sec_);
   this->get_parameter("upper_guides_change_reset_tol_m", upper_guides_change_reset_tol_m_);
   this->get_parameter("goal_stop_distance_m", goal_stop_distance_m_);
@@ -777,7 +847,10 @@ TrackingControllerNode::TrackingControllerNode()
   this->get_parameter("preview_seed_max_lateral_y_m", preview_seed_max_lateral_y_m_);
   this->get_parameter("preview_seed_min_forward_x_m", preview_seed_min_forward_x_m_);
   this->get_parameter("state_input_type", state_input_type_);
+  this->get_parameter("odom_topic", odom_topic_);
   this->get_parameter("pose_stamped_topic", pose_stamped_topic_);
+  state_input_type_ = "pose_stamped";
+  pose_stamped_topic_ = "/motive/vehicle/pose";
   this->get_parameter("pose_x_offset", pose_x_offset_);
   this->get_parameter("pose_y_offset", pose_y_offset_);
   this->get_parameter("pose_z_offset", pose_z_offset_);
@@ -851,22 +924,18 @@ TrackingControllerNode::TrackingControllerNode()
   upper_guides_sub_ = this->create_subscription<nav_msgs::msg::Path>(
     "/planner/upper_guides", 10, std::bind(&TrackingControllerNode::upperGuidesCallback, this, _1));
 
-  if (state_input_type_ == "pose_stamped") {
-    pose_stamped_sub_ = this->create_subscription<geometry_msgs::msg::PoseStamped>(
-      pose_stamped_topic_, 10,
-      std::bind(&TrackingControllerNode::poseStampedCallback, this, _1));
-    RCLCPP_INFO(
-      this->get_logger(),
-      "state input: PoseStamped topic=%s. Motive rigid-body ID filtering belongs in motive_pose_publisher if multiple rigid bodies are active.",
-      pose_stamped_topic_.c_str());
-  } else {
-    odom_sub_ = this->create_subscription<nav_msgs::msg::Odometry>(
-      "/debug/ego_odom", 10, std::bind(&TrackingControllerNode::odomCallback, this, _1));
-    RCLCPP_INFO(this->get_logger(), "state input: Odometry topic=/debug/ego_odom");
-  }
+  pose_stamped_sub_ = this->create_subscription<geometry_msgs::msg::PoseStamped>(
+    pose_stamped_topic_, 10,
+    std::bind(&TrackingControllerNode::poseStampedCallback, this, _1));
+  RCLCPP_INFO(
+    this->get_logger(),
+    "state input hardcoded: PoseStamped topic=%s yaw_source=orientation_z",
+    pose_stamped_topic_.c_str());
 
   grid_map_sub_ = this->create_subscription<nav_msgs::msg::OccupancyGrid>(
     grid_map_topic_, 10, std::bind(&TrackingControllerNode::gridMapCallback, this, _1));
+
+  loadReferencePathCsvIfConfigured();
 
   // ---- Publishers ----
   control_debug_pub_ =
@@ -1293,15 +1362,22 @@ void TrackingControllerNode::pathCallback(
       pose_stamped.pose.position.y);
   }
 
+  applyReferencePath(g, "/debug/global_path");
+}
+
+void TrackingControllerNode::applyReferencePath(
+  const std::vector<Eigen::Vector2d> & path,
+  const std::string & source_label)
+{
   {
     std::lock_guard<std::mutex> lk(map_mtx_);
 
-    const bool same_path = !ref_path_.empty() && pathsApproximatelyEqual(ref_path_, g);
+    const bool same_path = !ref_path_.empty() && pathsApproximatelyEqual(ref_path_, path);
     if (same_path && !reset_waypoint_on_path_update_) {
       return;
     }
 
-    ref_path_ = g;
+    ref_path_ = path;
     goal_reached_ = false;
     previous_solver_cmds_.clear();
     previous_solver_cmd_index_ = 0;
@@ -1323,8 +1399,124 @@ void TrackingControllerNode::pathCallback(
 
   RCLCPP_INFO(
     this->get_logger(),
-    "Received debug/global_path: %zu points; goal_reached reset",
-    msg->poses.size());
+    "Loaded reference path from %s: %zu points; goal_reached reset",
+    source_label.c_str(),
+    path.size());
+}
+
+bool TrackingControllerNode::loadReferencePathCsvIfConfigured()
+{
+  if (!use_csv_global_path_) {
+    return false;
+  }
+
+  namespace fs = std::filesystem;
+  std::vector<fs::path> candidates;
+  const fs::path raw(csv_global_path_file_);
+  if (!csv_global_path_file_.empty()) {
+    candidates.push_back(raw);
+    if (!raw.is_absolute()) {
+      candidates.push_back(fs::path("data") / raw);
+      try {
+        const fs::path share = ament_index_cpp::get_package_share_directory("virtual_control");
+        candidates.push_back(share / raw);
+        candidates.push_back(share / "data" / raw);
+      } catch (...) {
+      }
+    }
+  }
+
+  fs::path resolved;
+  for (const auto & candidate : candidates) {
+    std::error_code ec;
+    if (fs::exists(candidate, ec) && fs::is_regular_file(candidate, ec)) {
+      resolved = candidate;
+      break;
+    }
+  }
+  if (resolved.empty()) {
+    RCLCPP_WARN(
+      get_logger(),
+      "CSV global path enabled but file was not found: '%s'",
+      csv_global_path_file_.c_str());
+    return false;
+  }
+
+  std::ifstream file(resolved);
+  if (!file.is_open()) {
+    RCLCPP_ERROR(get_logger(), "failed to open CSV global path: %s", resolved.c_str());
+    return false;
+  }
+
+  std::string header_line;
+  if (!std::getline(file, header_line)) {
+    RCLCPP_ERROR(get_logger(), "CSV global path is empty: %s", resolved.c_str());
+    return false;
+  }
+
+  const std::vector<std::string> header = splitCsvLine(header_line);
+  auto column_index = [&](const std::string & name) -> int {
+    for (size_t i = 0; i < header.size(); ++i) {
+      if (trimCopy(header[i]) == name) {
+        return static_cast<int>(i);
+      }
+    }
+    return -1;
+  };
+  const int record_col = column_index("record_type");
+  const int x_col = column_index("x");
+  const int y_col = column_index("y");
+  const int route_col = column_index("is_route");
+
+  std::vector<Eigen::Vector2d> route_waypoints;
+  std::vector<Eigen::Vector2d> simple_points;
+  std::string line;
+  while (std::getline(file, line)) {
+    if (trimCopy(line).empty()) {
+      continue;
+    }
+    const std::vector<std::string> row = splitCsvLine(line);
+    auto cell = [&](int idx) -> std::string {
+      return (idx >= 0 && idx < static_cast<int>(row.size())) ? row[static_cast<size_t>(idx)] : "";
+    };
+
+    if (record_col >= 0 && trimCopy(cell(record_col)) == "waypoint") {
+      if (route_col >= 0 && !csvTruthy(cell(route_col))) {
+        continue;
+      }
+      double x = 0.0;
+      double y = 0.0;
+      if (parseCsvDouble(cell(x_col), &x) && parseCsvDouble(cell(y_col), &y)) {
+        route_waypoints.emplace_back(x, y);
+      }
+      continue;
+    }
+
+    if (record_col < 0) {
+      double x = 0.0;
+      double y = 0.0;
+      const int sx_col = (x_col >= 0) ? x_col : 0;
+      const int sy_col = (y_col >= 0) ? y_col : 1;
+      if (parseCsvDouble(cell(sx_col), &x) && parseCsvDouble(cell(sy_col), &y)) {
+        simple_points.emplace_back(x, y);
+      }
+    }
+  }
+
+  const std::vector<Eigen::Vector2d> & selected =
+    (route_waypoints.size() >= 2) ? route_waypoints : simple_points;
+  if (selected.size() < 2) {
+    RCLCPP_ERROR(
+      get_logger(),
+      "CSV global path has fewer than 2 valid route points: %s route=%zu simple=%zu",
+      resolved.c_str(),
+      route_waypoints.size(),
+      simple_points.size());
+    return false;
+  }
+
+  applyReferencePath(selected, "csv:" + resolved.string());
+  return true;
 }
 
 void TrackingControllerNode::upperGuidesCallback(

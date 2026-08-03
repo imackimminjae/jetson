@@ -109,6 +109,10 @@ private:
   void odomCallback(const nav_msgs::msg::Odometry::SharedPtr msg);
   void poseStampedCallback(const geometry_msgs::msg::PoseStamped::SharedPtr msg);
   void pathCallback(const nav_msgs::msg::Path::SharedPtr msg);
+  bool loadReferencePathCsvIfConfigured();
+  void applyReferencePath(
+    const std::vector<Eigen::Vector2d> & path,
+    const std::string & source_label);
   void upperGuidesCallback(const nav_msgs::msg::Path::SharedPtr msg);
   void gridMapCallback(const nav_msgs::msg::OccupancyGrid::SharedPtr msg);
 
@@ -170,9 +174,11 @@ private:
   double input_timeout_sec_{0.60};
   bool publish_zero_on_failure_{true};
   bool use_upper_guides_{true};
+  bool use_csv_global_path_{true};
   double upper_guides_timeout_sec_{0.80};
   double upper_guides_change_reset_tol_m_{0.25};
   double goal_stop_distance_m_{0.30};
+  std::string csv_global_path_file_{"local_map.csv"};
   bool preview_use_path_tangent_when_seed_empty_{true};
   double preview_max_yaw_rad_{0.35};
   double preview_min_forward_x_m_{0.20};
@@ -182,6 +188,7 @@ private:
   double preview_seed_max_lateral_y_m_{0.50};
   double preview_seed_min_forward_x_m_{-0.10};
   std::string state_input_type_{"odom"};
+  std::string odom_topic_{"/px4/ekf_odom"};
   std::string pose_stamped_topic_{"/motive/vehicle/pose"};
   double pose_x_offset_{0.0};
   double pose_y_offset_{0.0};

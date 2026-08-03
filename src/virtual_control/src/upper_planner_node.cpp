@@ -6,6 +6,7 @@
 #include <Eigen/Dense>
 
 #include <geometry_msgs/msg/pose_stamped.hpp>
+#include <nav_msgs/msg/odometry.hpp>
 #include <nav_msgs/msg/path.hpp>
 #include <std_msgs/msg/int32.hpp>
 #include <std_msgs/msg/int32_multi_array.hpp>
@@ -1775,6 +1776,8 @@ struct UpperPlannerNode::Impl
     node_.declare_parameter<std::string>("path_frame_id", "map");
     node_.declare_parameter<std::string>("publish_topic", "/planner/upper_guides");
     node_.declare_parameter<std::string>("debug_publish_topic", "/planner/upper_dense_path");
+    node_.declare_parameter<std::string>("state_input_type", "pose_stamped");
+    node_.declare_parameter<std::string>("odom_topic", "/px4/ekf_odom");
     node_.declare_parameter<std::string>("pose_stamped_topic", "/motive/vehicle/pose");
     node_.declare_parameter<double>("pose_x_offset", 0.0);
     node_.declare_parameter<double>("pose_y_offset", 0.0);
@@ -1833,7 +1836,11 @@ struct UpperPlannerNode::Impl
     node_.get_parameter("path_frame_id", path_frame_id_);
     node_.get_parameter("publish_topic", publish_topic_);
     node_.get_parameter("debug_publish_topic", debug_publish_topic_);
+    node_.get_parameter("state_input_type", state_input_type_);
+    node_.get_parameter("odom_topic", odom_topic_);
     node_.get_parameter("pose_stamped_topic", pose_stamped_topic_);
+    state_input_type_ = "pose_stamped";
+    pose_stamped_topic_ = "/motive/vehicle/pose";
     node_.get_parameter("pose_x_offset", pose_x_offset_);
     node_.get_parameter("pose_y_offset", pose_y_offset_);
     node_.get_parameter("pose_z_offset", pose_z_offset_);
@@ -1882,7 +1889,7 @@ struct UpperPlannerNode::Impl
       std::bind(&Impl::poseStampedCallback, this, std::placeholders::_1));
     RCLCPP_INFO(
       node_.get_logger(),
-      "UpperPlannerNode state input: PoseStamped topic=%s yaw_source=orientation_z",
+      "UpperPlannerNode state input hardcoded: PoseStamped topic=%s yaw_source=orientation_z",
       pose_stamped_topic_.c_str());
 
     rclcpp::QoS qos_sdmap(10);
@@ -1915,9 +1922,10 @@ struct UpperPlannerNode::Impl
 
     RCLCPP_INFO(
       node_.get_logger(),
-      "UpperPlannerNode ready: planner_ready=%d csv_loaded=%d csv_file=%s state_input=PoseStamped pose_topic=%s yaw_source=%s publish_topic=%s update_period_steps=%d timer_hz=%.1f v_ref=%.2f lookahead=[%.2f,%.2f] ds=%.2f lane_width_default=%.2f sdmap_topics=(%s,%s,%s)",
+      "UpperPlannerNode ready: planner_ready=%d csv_loaded=%d csv_file=%s state_input=%s pose_topic=%s odom_topic=%s publish_topic=%s update_period_steps=%d timer_hz=%.1f v_ref=%.2f lookahead=[%.2f,%.2f] ds=%.2f lane_width_default=%.2f sdmap_topics=(%s,%s,%s)",
       planner_ready_ ? 1 : 0, csv_sdmap_loaded_ ? 1 : 0, csv_sdmap_file_.c_str(),
-      pose_stamped_topic_.c_str(), "orientation_z", publish_topic_.c_str(),
+      state_input_type_.c_str(), pose_stamped_topic_.c_str(), odom_topic_.c_str(),
+      publish_topic_.c_str(),
       upper_update_period_steps_, timer_hz_,
       vr_mps_, planner_.config().lookahead_min, planner_.config().lookahead_max,
       planner_.config().ds_nominal, planner_.config().lane_width_default,
@@ -2206,6 +2214,36 @@ struct UpperPlannerNode::Impl
       "orientation_z");
   }
 
+  void odomCallback(const nav_msgs::msg::Odometry::SharedPtr msg)
+  {
+    ego_pos_world_.x() = msg->pose.pose.position.x;
+    ego_pos_world_.y() = msg->pose.pose.position.y;
+
+    tf2::Quaternion q(
+      msg->pose.pose.orientation.x,
+      msg->pose.pose.orientation.y,
+      msg->pose.pose.orientation.z,
+      msg->pose.pose.orientation.w);
+    double roll = 0.0;
+    double pitch = 0.0;
+    double yaw = 0.0;
+    tf2::Matrix3x3(q).getRPY(roll, pitch, yaw);
+    (void)roll;
+    (void)pitch;
+
+    ego_yaw_rad_ = normalizeAngle(yaw);
+    have_pose_ = true;
+    last_pose_rx_time_ = node_.now();
+
+    RCLCPP_DEBUG_THROTTLE(
+      node_.get_logger(), *node_.get_clock(), 500,
+      "Upper Odometry state: frame=%s x=%.3f y=%.3f yaw=%.3f",
+      msg->header.frame_id.c_str(),
+      ego_pos_world_.x(),
+      ego_pos_world_.y(),
+      ego_yaw_rad_);
+  }
+
   bool maybeReplan()
   {
     const auto & cfg = planner_.config();
@@ -2313,6 +2351,7 @@ struct UpperPlannerNode::Impl
   UpperPlannerNode & node_;
 
   rclcpp::Subscription<geometry_msgs::msg::PoseStamped>::SharedPtr pose_stamped_sub_;
+  rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
   rclcpp::Subscription<std_msgs::msg::Float64MultiArray>::SharedPtr sdmap_edges_sub_;
   rclcpp::Subscription<std_msgs::msg::Int32MultiArray>::SharedPtr sdmap_meta_ids_sub_;
   rclcpp::Subscription<std_msgs::msg::Float64MultiArray>::SharedPtr sdmap_meta_vals_sub_;
@@ -2357,6 +2396,8 @@ struct UpperPlannerNode::Impl
   std::string path_frame_id_{"map"};
   std::string publish_topic_{"/planner/upper_guides"};
   std::string debug_publish_topic_{"/planner/upper_dense_path"};
+  std::string state_input_type_{"pose_stamped"};
+  std::string odom_topic_{"/px4/ekf_odom"};
   std::string pose_stamped_topic_{"/motive/vehicle/pose"};
   std::string sdmap_edges_topic_{"/planner/sdmap_edges_xy"};
   std::string sdmap_meta_ids_topic_{"/planner/sdmap_meta_ids"};
