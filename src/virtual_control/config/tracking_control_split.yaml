@@ -1,39 +1,240 @@
-tracking_control_node:
+px4_ekf_bridge:
   ros__parameters:
-    loop_rate_hz_ctrl: 20.0
-    state_input_type: "pose_stamped"
-    pose_stamped_topic: "/motive/vehicle/pose"
-    grid_map_topic: "/bev/occupancy_grid"
-    require_grid_map: true
-    input_timeout_sec: 0.60
-    use_upper_guides: true
-    upper_guides_timeout_sec: 0.80
+    # Motive/ROS input. This project currently stores planar yaw directly in
+    # PoseStamped.pose.orientation.z, so yaw_scalar_z is the default.
+    motive_pose_topic: /motive/vehicle/pose
+    output_odom_topic: /px4/ekf_odom
+    # Fused PX4 pose in map ENU. orientation.z is yaw scalar in [-pi, pi].
+    output_pose_topic: /px4/sih/odom
+    publish_yaw_scalar_pose: true
+    output_frame_id: map
+    output_child_frame_id: base_link
+    pose_orientation_mode: yaw_scalar_z
+    pose_yaw_offset_rad: 0.0
+    pose_x_offset_m: 0.0
+    pose_y_offset_m: 0.0
+    pose_z_offset_m: 0.0
+    pose_position_scale: 1.0
+    pose_timeout_sec: 0.20
+    zero_origin_on_first_pose: false
 
-    max_steer_left: 0.35
-    max_steer_right: -0.35
-    v_max: 1.0
+    # USB serial. Only one process can own /dev/ttyACM0 directly. Stop QGC,
+    # MAVProxy and MAVROS, or route the link through mavlink-router.
+    connection_url: /dev/ttyACM0
+    baud: 921600
+    source_system: 245
+    source_component: 191
+    target_system: 1
+    target_component: 1
+    reconnect_period_sec: 2.0
+    heartbeat_rate_hz: 1.0
+    timesync_rate_hz: 5.0
+
+    # External pose to PX4 EKF2. PX4 documentation recommends 30-50 Hz.
+    external_vision_rate_hz: 50.0
+    external_message_type: vision_position_estimate
+    external_vision_quality: 100
+    external_estimator_type: vision
+    external_position_stddev_m: 0.03
+    external_z_stddev_m: 0.10
+    external_yaw_stddev_rad: 0.05
+    use_pose_header_stamp: false
+
+    # PX4 EKF fused state returned to ROS.
+    request_output_streams: true
+    output_stream_rate_hz: 30.0
+    output_attitude_timeout_sec: 0.25
+    align_output_to_motive_on_first_sample: false
+
+    # Automatic PX4 parameter setup. PARAM_SET ACKs are verified. These PX4
+    # parameters require a Pixhawk reboot before final testing.
+    configure_px4_parameters: false
+    parameter_apply_delay_sec: 1.0
+    parameter_ack_timeout_sec: 0.8
+    parameter_max_attempts: 5
+
+    # EKF2_EV_CTRL=9: horizontal position + yaw.
+    # EKF2_MAG_TYPE=5 disables magnetometer fusion so the local Motive map yaw
+    # does not conflict with magnetic north. Set 6 instead for magnetometer init-only.
+    # EKF2_HGT_REF is intentionally not changed because vertical EV fusion is off.
+    px4_parameter_names:
+      - EKF2_EV_CTRL
+      - EKF2_EV_DELAY
+      - EKF2_EV_POS_X
+      - EKF2_EV_POS_Y
+      - EKF2_EV_POS_Z
+      - EKF2_MAG_TYPE
+      - EKF2_EV_NOISE_MD
+      - EKF2_EVP_NOISE
+      - EKF2_EVA_NOISE
+    px4_parameter_values: [9.0, 0.0, 0.0, 0.0, 0.0, 5.0, 0.0, 0.03, 0.05]
+    px4_parameter_types:
+      - int32
+      - float
+      - float
+      - float
+      - float
+      - int32
+      - int32
+      - float
+      - float
+
+px4_odom_map_bridge:
+  ros__parameters:
+    # /px4/sih/odom stores a wrapped yaw scalar directly in orientation.z.
+    input_topic: "/px4/sih/odom"
+    output_topic: "/px4/sih/odom_map"
+    route_name: "scenario1"
+    position_scale: 1.0
+    x_offset: 0.0
+    y_offset: 0.0
+    z_offset: 0.0
+    yaw_offset_rad: 0.0
+    swap_xy: false
+    invert_x: false
+    invert_y: false
+    velocity_lpf_alpha: 0.4
+    max_velocity_dt_sec: 0.5
+    input_timeout_sec: 0.6
+
+upper_planner_node:
+  ros__parameters:
+    # model: 0.30/0.42/1.5/0.45/0.15 m
+    # fullscale: 2.80/4.70/15.0/4.50/1.50 m
+    # Order: wheelbase, vehicle length, BEV forward, nominal width, boundary margin.
+    scale_mode: "model"
+    # Optional per-value overrides (uncomment only the values to override):
+    # wheelbase: 0.30
+    # vehicle_length_m: 0.42
+    # bev_forward_m: 1.50
+    # preview_interval_nominal_road_width_m: 0.45
+    # preview_interval_boundary_margin_m: 0.15
+
+    upper_planner_rate_hz: 2.0
+    upper_prediction_dt_sec: 1.0
+    upper_preview_steps: 5
+    preview_limit_to_grid_extent: true
+    lower_prediction_dt_sec: 0.05
+    lower_min_path_spacing_m: 0.05
+    target_speed_mps: 1.0
+    max_steering_angle_rad: 0.35
     a_max_mps2: 1.0
-    wheelbase: 0.3
-    lane_width: 0.5
-    lane_offsets_m: [0.0]
 
-lower_duty_node:
+    miqp_big_m: 100.0
+    position_scale_m: 10.0
+    relative_turn_scale_rad: 0.3490658504
+    lambda_position: 1.0
+    lambda_relative_turn: 1.0
+    terminal_buffer_max_turn_rad: 0.3490658504
+    terminal_position_weight_multiplier: 5.0
+    upper_r_dv: 1.0
+    upper_r_dpsi: 1.0
+    turn_preview_steps: 2
+    turn_weight_growth: 2.0
+    miqp_diagonal_regularization: 0.0000000001
+
+    wp_switch_eps: 0.5
+    goal_stop_distance_m: 0.5
+    enable_waypoint_bias: false
+    waypoint_x_bias_m: 0.0
+    waypoint_y_bias_m: 0.0
+    waypoint_yaw_bias_rad: -0.1745329252
+    state_input_type: "odom"
+    odom_topic: "/px4/sih/odom_map"
+    pose_stamped_topic: "/px4/sih/odom"
+    pose_stamped_yaw_is_orientation_z: true
+    pose_x_offset: 0.0
+    pose_y_offset: 0.0
+    pose_z_offset: 0.0
+    pose_yaw_offset_rad: 0.0
+    pose_position_scale: 1.0
+    pose_swap_xy: false
+    pose_invert_x: false
+    pose_invert_y: false
+    pose_speed_lpf_alpha: 0.4
+    pose_max_dt_for_speed: 0.5
+
+    input_timeout_sec: 0.60
+    require_grid_map: true
+
+    global_path_topic: "/debug/global_path"
+    grid_map_topic: "/grid_map"
+    upper_sparse_path_topic: "/planner/upper_path_sparse"
+    lower_reference_path_topic: "/planner/lower_reference_path"
+    goal_reached_topic: "/planner/goal_reached"
+    path_frame_id: "map"
+
+    # The MATLAB bridge is the route owner; CSV remains an optional offline fallback.
+    use_csv_global_path: false
+    csv_global_path_file: "local_map.csv"
+    allow_topic_path_override_when_csv_loaded: false
+    reset_waypoint_on_path_update: false
+
+    grid_value_threshold: 0
+    # MATLAB bridge contract: 100=drivable, 0=known non-drivable, -1=unknown.
+    grid_positive_is_drivable: true
+    expected_grid_frame_id: "base_link"
+    require_grid_frame_match: true
+
+    preview_min_target_distance_m: 0.10
+    preview_line_sample_m: 0.03
+    preview_min_segment_samples: 2
+    preview_interval_soft_ratio: 0.60
+    preview_interval_max_centering_length_factor: 1.50
+    preview_interval_debug: false
+
+lower_tracking_mpc_node:
   ros__parameters:
-    solver_cmd_topic: "/control/solver_cmd"
-    applied_cmd_topic: "/control/applied_cmd"
+    # Use the same profile as upper_planner_node. Individual geometry
+    # parameters can be overridden independently with the names shown above.
+    scale_mode: "model"
+
+    lower_controller_rate_hz: 20.0
+    lower_prediction_dt_sec: 0.05
+    lower_prediction_steps: 15
+    lower_q_lateral: 1.0
+    lower_q_heading: 0.5
+    lower_r_steering: 0.30
+    lower_rd_steering_rate: 8.0
+    lower_max_steering_angle_rad: 0.35
+    lower_max_steering_rate_radps: 2.09439510239
+    lower_min_path_spacing_m: 0.05
+    lower_min_effective_speed_mps: 0.10
+    input_timeout_sec: 0.60
+    lower_path_timeout_sec: 1.50
+    solver_hold_last_valid_sec: 0.30
+    path_change_reset_threshold_m: 0.75
+    pose_jump_reset_threshold_m: 1.0
+    publish_zero_on_failure: true
+    publish_applied_cmd_when_invalid: true
+
+    state_input_type: "odom"
+    odom_topic: "/px4/sih/odom_map"
+    pose_stamped_topic: "/px4/sih/odom"
+    pose_stamped_yaw_is_orientation_z: true
+    pose_x_offset: 0.0
+    pose_y_offset: 0.0
+    pose_z_offset: 0.0
+    pose_yaw_offset_rad: 0.0
+    pose_position_scale: 1.0
+    pose_swap_xy: false
+    pose_invert_x: false
+    pose_invert_y: false
+    pose_speed_lpf_alpha: 0.4
+    pose_max_dt_for_speed: 0.5
+    lower_reference_path_topic: "/planner/lower_reference_path"
+    goal_reached_topic: "/planner/goal_reached"
+    reset_topic: "/controller/reset"
+
     duty_topic: "/control/duty_cmd"
     pwm_topic: "/cmd_pwm"
     virtual_cmd_topic: "/cmd_control"
-    loop_rate_hz: 20.0
-    input_timeout_sec: 0.30
-    hold_last_valid_sec: 0.30
-    send_neutral_on_invalid: true
-    publish_applied_cmd_when_invalid: true
 
     enable_output_filter: true
     steer_norm_max: 1.0
     steer_norm_rate_max: 2.0
-    steer_norm_lpf_alpha: 0.8
+    steer_norm_lpf_alpha: 0.5
+    steer_sign: 1.0
 
     target_speed_mps: 1.0
     target_accel_mps2: 0.0
@@ -45,9 +246,6 @@ lower_duty_node:
     speed_deadband_mps: 0.03
     speed_integral_limit: 2.0
 
-    throttle_max_norm: 0.17
-    steer_sign: 1.0
-
     publish_pwm: true
     pwm_min: 1000
     pwm_center: 1500
@@ -57,14 +255,21 @@ lower_duty_node:
     steering_pwm_min: 1000
     steering_pwm_max: 2000
 
-    mavlink_enable: true
+    # Safe default: enable hardware output only with explicit launch overrides.
+    pixhawk_output_backend: "disabled"
+    mavlink_enable: false
     mavlink_bind_ip: "0.0.0.0"
     mavlink_bind_port: 14540
     mavlink_source_system: 245
     mavlink_source_component: 190
     mavlink_target_system: 1
     mavlink_target_component: 1
-    mavlink_auto_manual_mode: true
-    mavlink_auto_arm: true
-    mavlink_force_arm: true
+    mavlink_send_neutral_on_invalid: true
+    mavlink_hold_last_valid_sec: 0.30
+    mavlink_auto_manual_mode: false
+    mavlink_auto_arm: false
+    mavlink_force_arm: false
     mavlink_disarm_on_shutdown: true
+    mavlink_throttle_max_norm: 0.17
+    mavlink_steer_sign: 1.0
+    mavlink_keepalive_rate_hz: 20.0

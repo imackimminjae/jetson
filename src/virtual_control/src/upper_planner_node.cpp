@@ -1839,8 +1839,6 @@ struct UpperPlannerNode::Impl
     node_.get_parameter("state_input_type", state_input_type_);
     node_.get_parameter("odom_topic", odom_topic_);
     node_.get_parameter("pose_stamped_topic", pose_stamped_topic_);
-    state_input_type_ = "pose_stamped";
-    pose_stamped_topic_ = "/motive/vehicle/pose";
     node_.get_parameter("pose_x_offset", pose_x_offset_);
     node_.get_parameter("pose_y_offset", pose_y_offset_);
     node_.get_parameter("pose_z_offset", pose_z_offset_);
@@ -1884,13 +1882,25 @@ struct UpperPlannerNode::Impl
     node_.get_parameter("upper_binary_regularization", cfg.binary_regularization);
     planner_.setConfig(cfg);
 
-    pose_stamped_sub_ = node_.create_subscription<geometry_msgs::msg::PoseStamped>(
-      pose_stamped_topic_, 10,
-      std::bind(&Impl::poseStampedCallback, this, std::placeholders::_1));
-    RCLCPP_INFO(
-      node_.get_logger(),
-      "UpperPlannerNode state input hardcoded: PoseStamped topic=%s yaw_source=orientation_z",
-      pose_stamped_topic_.c_str());
+    if (state_input_type_ == "odom") {
+      odom_sub_ = node_.create_subscription<nav_msgs::msg::Odometry>(
+        odom_topic_, 10,
+        std::bind(&Impl::odomCallback, this, std::placeholders::_1));
+      RCLCPP_INFO(
+        node_.get_logger(), "UpperPlannerNode state input: Odometry topic=%s",
+        odom_topic_.c_str());
+    } else if (state_input_type_ == "pose_stamped") {
+      pose_stamped_sub_ = node_.create_subscription<geometry_msgs::msg::PoseStamped>(
+        pose_stamped_topic_, 10,
+        std::bind(&Impl::poseStampedCallback, this, std::placeholders::_1));
+      RCLCPP_INFO(
+        node_.get_logger(),
+        "UpperPlannerNode state input: PoseStamped topic=%s yaw_source=orientation_z",
+        pose_stamped_topic_.c_str());
+    } else {
+      throw std::invalid_argument(
+              "UpperPlannerNode state_input_type must be 'odom' or 'pose_stamped'");
+    }
 
     rclcpp::QoS qos_sdmap(10);
     sdmap_edges_sub_ = node_.create_subscription<std_msgs::msg::Float64MultiArray>(

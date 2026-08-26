@@ -1,2788 +1,2287 @@
 #include "virtual_control/tracking_control.hpp"
+
 #include "QuadraticProblem.h"
 #include "matrix_utils.h"
 
-#include <algorithm>
-#include <cmath>
-#include <chrono>
-#include <limits>
-#include <mutex>
-#include <utility>
-#include <vector>
-#include <sstream>
-#include <array>
-#include <cerrno>
-#include <cstring>
-#include <filesystem>
-#include <fstream>
-#include <string>
-
-#include <arpa/inet.h>
-#include <fcntl.h>
-#include <netinet/in.h>
-#include <sys/socket.h>
-#include <unistd.h>
-
-#include <tf2/LinearMath/Quaternion.h>
-#include <tf2/LinearMath/Matrix3x3.h>
-
-#include <geometry_msgs/msg/pose_stamped.hpp>
-#include <geometry_msgs/msg/twist.hpp>
-#include <nav_msgs/msg/path.hpp>
-#include <nav_msgs/msg/odometry.hpp>
-#include <std_msgs/msg/float64_multi_array.hpp>
-
 #include <ament_index_cpp/get_package_share_directory.hpp>
+#include <geometry_msgs/msg/pose_stamped.hpp>
+#include <tf2/LinearMath/Matrix3x3.h>
+#include <tf2/LinearMath/Quaternion.h>
 
-#ifdef solve
-#undef solve
-#endif
+#include <algorithm>
+#include <chrono>
+#include <cmath>
+#include <filesystem>
+#include <functional>
+#include <fstream>
+#include <limits>
+#include <memory>
+#include <numeric>
+#include <sstream>
+#include <stdexcept>
+#include <utility>
 
 using std::placeholders::_1;
-using Eigen::Vector2d;
 
-namespace imac_ctrl
+namespace
 {
 
-static inline int clampi(int v, int lo, int hi)
+constexpr double kPi = 3.141592653589793238462643383279502884;
+
+double clampd(double value, double lower, double upper)
 {
-  return std::max(lo, std::min(hi, v));
+  return std::max(lower, std::min(value, upper));
 }
 
-static inline bool pathsApproximatelyEqual(
-  const std::vector<Eigen::Vector2d>& a,
-  const std::vector<Eigen::Vector2d>& b,
-  double tol = 5e-2)
+int clampi(int value, int lower, int upper)
 {
-  if (a.size() != b.size()) {
-    return false;
-  }
-  for (size_t i = 0; i < a.size(); ++i) {
-    if ((a[i] - b[i]).norm() > tol) {
-      return false;
-    }
-  }
-  return true;
+  return std::max(lower, std::min(value, upper));
 }
 
-static inline double clampd(double v, double lo, double hi)
+double wrapToPi(double angle)
 {
-  return std::max(lo, std::min(hi, v));
+  return std::atan2(std::sin(angle), std::cos(angle));
 }
 
-static inline std::string trimCopy(const std::string & s)
+double radToDeg(double angle_rad)
 {
-  const auto first = s.find_first_not_of(" \t\r\n");
-  if (first == std::string::npos) {
-    return "";
-  }
-  const auto last = s.find_last_not_of(" \t\r\n");
-  return s.substr(first, last - first + 1);
+  return angle_rad * 180.0 / kPi;
 }
 
-static std::vector<std::string> splitCsvLine(const std::string & line)
+bool finitePoint(const Eigen::Vector2d & point)
 {
-  std::vector<std::string> out;
-  std::string cell;
-  bool in_quotes = false;
-  for (size_t i = 0; i < line.size(); ++i) {
-    const char c = line[i];
-    if (c == '"') {
-      if (in_quotes && i + 1 < line.size() && line[i + 1] == '"') {
-        cell.push_back('"');
-        ++i;
-      } else {
-        in_quotes = !in_quotes;
-      }
-    } else if (c == ',' && !in_quotes) {
-      out.push_back(trimCopy(cell));
-      cell.clear();
-    } else {
-      cell.push_back(c);
-    }
-  }
-  out.push_back(trimCopy(cell));
-  return out;
+  return std::isfinite(point.x()) && std::isfinite(point.y());
 }
 
-static bool parseCsvDouble(const std::string & s, double * out)
+std::string trimCopy(const std::string & value)
 {
-  if (!out) {
-    return false;
+  const auto begin = value.find_first_not_of(" \t\r\n");
+  if (begin == std::string::npos) {
+    return {};
   }
+  const auto end = value.find_last_not_of(" \t\r\n");
+  return value.substr(begin, end - begin + 1);
+}
+
+std::string normalizedFrameId(const std::string & frame_id)
+{
+  std::string normalized = trimCopy(frame_id);
+  while (!normalized.empty() && normalized.front() == '/') {
+    normalized.erase(normalized.begin());
+  }
+  return normalized;
+}
+
+bool frameIdsEquivalent(const std::string & lhs, const std::string & rhs)
+{
+  return normalizedFrameId(lhs) == normalizedFrameId(rhs);
+}
+
+std::vector<std::string> splitCsvLine(const std::string & line)
+{
+  std::vector<std::string> fields;
+  std::stringstream stream(line);
+  std::string field;
+  while (std::getline(stream, field, ',')) {
+    fields.push_back(trimCopy(field));
+  }
+  return fields;
+}
+
+bool parseDouble(const std::string & text, double & value)
+{
   try {
-    size_t pos = 0;
-    const double v = std::stod(trimCopy(s), &pos);
-    if (pos == 0 || !std::isfinite(v)) {
-      return false;
-    }
-    *out = v;
-    return true;
+    std::size_t consumed = 0;
+    value = std::stod(trimCopy(text), &consumed);
+    return consumed > 0 && std::isfinite(value);
   } catch (...) {
     return false;
   }
 }
 
-static bool csvTruthy(const std::string & s)
+bool csvTruthy(const std::string & text)
 {
-  const std::string v = trimCopy(s);
-  return v == "1" || v == "true" || v == "True" || v == "TRUE" || v == "yes" || v == "on";
+  const std::string value = trimCopy(text);
+  return value == "1" || value == "true" || value == "TRUE" || value == "yes";
 }
 
-static double remainingPathLengthFromClosestProjection(
-  const std::vector<Eigen::Vector2d>& path,
-  const Eigen::Vector2d& position)
+bool pathsExactlyEqual(
+  const std::vector<Eigen::Vector2d> & lhs,
+  const std::vector<Eigen::Vector2d> & rhs)
 {
-  if (path.size() < 2) {
-    return 0.0;
+  if (lhs.size() != rhs.size()) {
+    return false;
   }
-
-  double total_length = 0.0;
-  for (size_t i = 0; i + 1 < path.size(); ++i) {
-    total_length += (path[i + 1] - path[i]).norm();
+  for (std::size_t i = 0; i < lhs.size(); ++i) {
+    if (lhs[i].x() != rhs[i].x() || lhs[i].y() != rhs[i].y()) {
+      return false;
+    }
   }
+  return true;
+}
 
-  double best_dist_sq = std::numeric_limits<double>::infinity();
-  double best_remaining = total_length;
-  double accumulated = 0.0;
-
-  for (size_t i = 0; i + 1 < path.size(); ++i) {
-    const Eigen::Vector2d seg = path[i + 1] - path[i];
-    const double seg_len = seg.norm();
-    if (seg_len < 1e-9) {
+int closestSegmentIndex(
+  const std::vector<Eigen::Vector2d> & path,
+  const Eigen::Vector2d & point)
+{
+  if (path.size() < 2 || !finitePoint(point)) {
+    return 0;
+  }
+  int best_index = 0;
+  double best_distance_squared = std::numeric_limits<double>::infinity();
+  for (std::size_t i = 0; i + 1 < path.size(); ++i) {
+    const Eigen::Vector2d segment = path[i + 1] - path[i];
+    const double length_squared = segment.squaredNorm();
+    if (length_squared <= 1e-12) {
       continue;
     }
-
-    const double t = clampd(
-      (position - path[i]).dot(seg) / (seg_len * seg_len),
-      0.0,
-      1.0);
-    const Eigen::Vector2d projection = path[i] + t * seg;
-    const double dist_sq = (position - projection).squaredNorm();
-    const double remaining = std::max(0.0, total_length - (accumulated + t * seg_len));
-
-    if (dist_sq < best_dist_sq ||
-      (std::abs(dist_sq - best_dist_sq) < 1e-9 && remaining < best_remaining))
-    {
-      best_dist_sq = dist_sq;
-      best_remaining = remaining;
+    const double ratio = clampd(
+      (point - path[i]).dot(segment) / length_squared, 0.0, 1.0);
+    const double distance_squared =
+      (point - (path[i] + ratio * segment)).squaredNorm();
+    if (distance_squared < best_distance_squared) {
+      best_distance_squared = distance_squared;
+      best_index = static_cast<int>(i);
     }
-
-    accumulated += seg_len;
   }
-
-  return best_remaining;
+  return best_index;
 }
 
-#ifndef MAV_CMD_DO_SET_ACTUATOR
-#define MAV_CMD_DO_SET_ACTUATOR 187
-#endif
-
-#ifndef MAV_CMD_COMPONENT_ARM_DISARM
-#define MAV_CMD_COMPONENT_ARM_DISARM 400
-#endif
-
-static constexpr uint8_t PX4_CUSTOM_MAIN_MODE_MANUAL = 1;
-
-static inline uint32_t px4CustomMode(uint8_t main_mode, uint8_t sub_mode = 0)
+double quaternionYaw(const geometry_msgs::msg::Quaternion & orientation)
 {
-  return (static_cast<uint32_t>(sub_mode) << 24) |
-         (static_cast<uint32_t>(main_mode) << 16);
+  tf2::Quaternion quaternion(
+    orientation.x, orientation.y, orientation.z, orientation.w);
+  double roll = 0.0;
+  double pitch = 0.0;
+  double yaw = 0.0;
+  tf2::Matrix3x3(quaternion).getRPY(roll, pitch, yaw);
+  return yaw;
 }
 
-TrackingControllerNode::~TrackingControllerNode()
+geometry_msgs::msg::Quaternion yawQuaternion(double yaw)
 {
-  mavlink_keepalive_timer_.reset();
-
-  if (mavlink_enable_ && mavlink_disarm_on_shutdown_) {
-    mavlinkSendActuator(0.0, 0.0);
-    mavlinkSendArmCommand(false, false);
-  }
-  mavlinkClose();
+  geometry_msgs::msg::Quaternion orientation;
+  orientation.z = std::sin(0.5 * yaw);
+  orientation.w = std::cos(0.5 * yaw);
+  return orientation;
 }
 
-void TrackingControllerNode::mavlinkInitUdp()
+}  // namespace
+
+namespace imac_ctrl
 {
-  std::lock_guard<std::mutex> lk(mavlink_mtx_);
 
-  if (!mavlink_enable_) {
-    return;
-  }
-  if (mavlink_socket_ >= 0) {
-    return;
-  }
+SdMapUpperPlannerNode::SdMapUpperPlannerNode(const rclcpp::NodeOptions & options)
+: Node("upper_planner_node", options)
+{
+  declareAndLoadParameters();
+  validateParameters();
+  createInterfaces();
+  csv_path_loaded_ = loadReferencePathCsvIfConfigured();
 
-  mavlink_socket_ = ::socket(AF_INET, SOCK_DGRAM, 0);
-  if (mavlink_socket_ < 0) {
-    RCLCPP_ERROR(get_logger(), "MAVLink UDP socket creation failed: %s", std::strerror(errno));
-    return;
-  }
-
-  int reuse = 1;
-  ::setsockopt(mavlink_socket_, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse));
-
-  sockaddr_in local_addr{};
-  local_addr.sin_family = AF_INET;
-  local_addr.sin_port = htons(static_cast<uint16_t>(mavlink_bind_port_));
-
-  if (mavlink_bind_ip_ == "0.0.0.0") {
-    local_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-  } else if (::inet_pton(AF_INET, mavlink_bind_ip_.c_str(), &local_addr.sin_addr) != 1) {
-    RCLCPP_ERROR(get_logger(), "Invalid mavlink_bind_ip: %s", mavlink_bind_ip_.c_str());
-    ::close(mavlink_socket_);
-    mavlink_socket_ = -1;
-    return;
-  }
-
-  if (::bind(mavlink_socket_, reinterpret_cast<sockaddr*>(&local_addr), sizeof(local_addr)) < 0) {
-    RCLCPP_ERROR(
-      get_logger(),
-      "MAVLink UDP bind failed on %s:%d: %s",
-      mavlink_bind_ip_.c_str(), mavlink_bind_port_, std::strerror(errno));
-    ::close(mavlink_socket_);
-    mavlink_socket_ = -1;
-    return;
-  }
-
-  const int flags = ::fcntl(mavlink_socket_, F_GETFL, 0);
-  if (flags >= 0) {
-    ::fcntl(mavlink_socket_, F_SETFL, flags | O_NONBLOCK);
-  }
-
-  mavlink_peer_known_ = false;
-  std::memset(&mavlink_peer_addr_, 0, sizeof(mavlink_peer_addr_));
-  std::memset(&mavlink_rx_status_, 0, sizeof(mavlink_rx_status_));
-  mavlink_px4_manual_ = false;
-  mavlink_px4_armed_ = false;
-  mavlink_last_mode_request_time_ = this->now();
-  mavlink_last_arm_request_time_ = this->now();
+  const auto period = std::chrono::duration<double>(1.0 / upper_planner_rate_hz_);
+  planner_timer_ = create_wall_timer(period, std::bind(&SdMapUpperPlannerNode::plannerLoop, this));
 
   RCLCPP_INFO(
     get_logger(),
-    "MAVLink UDP bound at %s:%d. Waiting for MAVProxy peer. Use MAVProxy --out=127.0.0.1:%d",
-    mavlink_bind_ip_.c_str(), mavlink_bind_port_, mavlink_bind_port_);
+    "Egocentric MIQP planner ready: rate=%.2fHz pred_dt=%.3fs Nmax=%d "
+    "lower_dt=%.3fs target_v=%.3fm/s scale=%s wheelbase=%.2fm length=%.2fm "
+    "bev=%.2fm width=%.2fm margin=%.2fm state=%s grid=%s sparse=%s dense=%s",
+    upper_planner_rate_hz_, upper_prediction_dt_sec_, upper_preview_steps_,
+    lower_prediction_dt_sec_, target_speed_mps_, scale_mode_.c_str(), wheelbase_,
+    vehicle_length_m_, bev_forward_m_, preview_interval_nominal_road_width_m_,
+    preview_interval_boundary_margin_m_, state_input_type_.c_str(),
+    grid_map_topic_.c_str(), sparse_path_topic_.c_str(), dense_path_topic_.c_str());
 }
 
-void TrackingControllerNode::mavlinkClose()
+void SdMapUpperPlannerNode::declareAndLoadParameters()
 {
-  std::lock_guard<std::mutex> lk(mavlink_mtx_);
-  if (mavlink_socket_ >= 0) {
-    ::close(mavlink_socket_);
-    mavlink_socket_ = -1;
+  declare_parameter<std::string>("scale_mode", scale_mode_);
+  get_parameter("scale_mode", scale_mode_);
+  if (scale_mode_ == "fullscale") {
+    wheelbase_ = 2.80;
+    vehicle_length_m_ = 4.70;
+    bev_forward_m_ = 20.0;
+    preview_interval_nominal_road_width_m_ = 4.50;
+    preview_interval_boundary_margin_m_ = 2.00;
+  } else {
+    // The model profile is also used temporarily for validation diagnostics
+    // when an unsupported scale_mode is supplied.
+    wheelbase_ = 0.30;
+    vehicle_length_m_ = 0.42;
+    bev_forward_m_ = 1.50;
+    preview_interval_nominal_road_width_m_ = 0.45;
+    preview_interval_boundary_margin_m_ = 0.15;
   }
-  mavlink_peer_known_ = false;
+
+  declare_parameter<double>("upper_planner_rate_hz", upper_planner_rate_hz_);
+  declare_parameter<double>("upper_prediction_dt_sec", upper_prediction_dt_sec_);
+  declare_parameter<int>("upper_preview_steps", upper_preview_steps_);
+  declare_parameter<bool>("preview_limit_to_grid_extent", preview_limit_to_grid_extent_);
+  declare_parameter<double>("lower_prediction_dt_sec", lower_prediction_dt_sec_);
+  declare_parameter<double>("lower_min_path_spacing_m", lower_min_path_spacing_m_);
+  declare_parameter<double>("target_speed_mps", target_speed_mps_);
+  declare_parameter<double>("wheelbase", wheelbase_);
+  declare_parameter<double>("vehicle_length_m", vehicle_length_m_);
+  declare_parameter<double>("bev_forward_m", bev_forward_m_);
+  declare_parameter<double>("max_steering_angle_rad", max_steering_angle_rad_);
+  declare_parameter<double>("a_max_mps2", a_max_mps2_);
+
+  declare_parameter<double>("miqp_big_m", miqp_big_m_);
+  declare_parameter<double>("position_scale_m", position_scale_m_);
+  declare_parameter<double>("relative_turn_scale_rad", relative_turn_scale_rad_);
+  declare_parameter<double>("lambda_position", lambda_position_);
+  declare_parameter<double>("lambda_relative_turn", lambda_relative_turn_);
+  declare_parameter<double>(
+    "terminal_buffer_max_turn_rad", terminal_buffer_max_turn_rad_);
+  declare_parameter<double>(
+    "terminal_position_weight_multiplier", terminal_position_weight_multiplier_);
+  declare_parameter<double>("upper_r_dv", upper_r_dv_);
+  declare_parameter<double>("upper_r_dpsi", upper_r_dpsi_);
+  declare_parameter<int>("turn_preview_steps", turn_preview_steps_);
+  declare_parameter<double>("turn_weight_growth", turn_weight_growth_);
+  declare_parameter<double>("miqp_diagonal_regularization", miqp_diagonal_regularization_);
+
+  declare_parameter<double>("wp_switch_eps", waypoint_switch_eps_m_);
+  declare_parameter<double>("goal_stop_distance_m", goal_stop_distance_m_);
+  declare_parameter<bool>("enable_waypoint_bias", enable_waypoint_bias_);
+  declare_parameter<double>("waypoint_x_bias_m", waypoint_x_bias_m_);
+  declare_parameter<double>("waypoint_y_bias_m", waypoint_y_bias_m_);
+  declare_parameter<double>("waypoint_yaw_bias_rad", waypoint_yaw_bias_rad_);
+  declare_parameter<double>("input_timeout_sec", input_timeout_sec_);
+  declare_parameter<bool>("require_grid_map", require_grid_map_);
+
+  declare_parameter<bool>("use_csv_global_path", use_csv_global_path_);
+  declare_parameter<std::string>("csv_global_path_file", csv_global_path_file_);
+  declare_parameter<bool>(
+    "allow_topic_path_override_when_csv_loaded",
+    allow_topic_path_override_when_csv_loaded_);
+  declare_parameter<bool>("reset_waypoint_on_path_update", reset_waypoint_on_path_update_);
+
+  declare_parameter<double>(
+    "preview_min_target_distance_m", preview_min_target_distance_m_);
+  declare_parameter<double>("preview_line_sample_m", preview_line_sample_m_);
+  declare_parameter<int>("preview_min_segment_samples", preview_min_segment_samples_);
+  declare_parameter<double>("preview_interval_soft_ratio", preview_interval_soft_ratio_);
+  declare_parameter<double>(
+    "preview_interval_nominal_road_width_m", preview_interval_nominal_road_width_m_);
+  declare_parameter<double>(
+    "preview_interval_max_centering_length_factor",
+    preview_interval_max_centering_length_factor_);
+  declare_parameter<double>(
+    "preview_interval_boundary_margin_m", preview_interval_boundary_margin_m_);
+  declare_parameter<bool>("preview_interval_debug", preview_interval_debug_);
+
+  declare_parameter<int>("grid_value_threshold", grid_value_threshold_);
+  declare_parameter<bool>("grid_positive_is_drivable", grid_positive_is_drivable_);
+  declare_parameter<std::string>("expected_grid_frame_id", expected_grid_frame_id_);
+  declare_parameter<bool>("require_grid_frame_match", require_grid_frame_match_);
+
+  declare_parameter<std::string>("state_input_type", state_input_type_);
+  declare_parameter<std::string>("odom_topic", odom_topic_);
+  declare_parameter<std::string>("pose_stamped_topic", pose_stamped_topic_);
+  declare_parameter<bool>(
+    "pose_stamped_yaw_is_orientation_z", pose_stamped_yaw_is_orientation_z_);
+  declare_parameter<double>("pose_x_offset", pose_x_offset_);
+  declare_parameter<double>("pose_y_offset", pose_y_offset_);
+  declare_parameter<double>("pose_z_offset", pose_z_offset_);
+  declare_parameter<double>("pose_yaw_offset_rad", pose_yaw_offset_rad_);
+  declare_parameter<double>("pose_position_scale", pose_position_scale_);
+  declare_parameter<bool>("pose_swap_xy", pose_swap_xy_);
+  declare_parameter<bool>("pose_invert_x", pose_invert_x_);
+  declare_parameter<bool>("pose_invert_y", pose_invert_y_);
+  declare_parameter<double>("pose_speed_lpf_alpha", pose_speed_lpf_alpha_);
+  declare_parameter<double>("pose_max_dt_for_speed", pose_max_dt_for_speed_);
+
+  declare_parameter<std::string>("global_path_topic", global_path_topic_);
+  declare_parameter<std::string>("grid_map_topic", grid_map_topic_);
+  declare_parameter<std::string>("upper_sparse_path_topic", sparse_path_topic_);
+  declare_parameter<std::string>("lower_reference_path_topic", dense_path_topic_);
+  declare_parameter<std::string>("goal_reached_topic", goal_reached_topic_);
+  declare_parameter<std::string>("path_frame_id", path_frame_id_);
+
+  get_parameter("upper_planner_rate_hz", upper_planner_rate_hz_);
+  get_parameter("upper_prediction_dt_sec", upper_prediction_dt_sec_);
+  get_parameter("upper_preview_steps", upper_preview_steps_);
+  get_parameter("preview_limit_to_grid_extent", preview_limit_to_grid_extent_);
+  get_parameter("lower_prediction_dt_sec", lower_prediction_dt_sec_);
+  get_parameter("lower_min_path_spacing_m", lower_min_path_spacing_m_);
+  get_parameter("target_speed_mps", target_speed_mps_);
+  get_parameter("wheelbase", wheelbase_);
+  get_parameter("vehicle_length_m", vehicle_length_m_);
+  get_parameter("bev_forward_m", bev_forward_m_);
+  get_parameter("max_steering_angle_rad", max_steering_angle_rad_);
+  get_parameter("a_max_mps2", a_max_mps2_);
+
+  get_parameter("miqp_big_m", miqp_big_m_);
+  get_parameter("position_scale_m", position_scale_m_);
+  get_parameter("relative_turn_scale_rad", relative_turn_scale_rad_);
+  get_parameter("lambda_position", lambda_position_);
+  get_parameter("lambda_relative_turn", lambda_relative_turn_);
+  get_parameter("terminal_buffer_max_turn_rad", terminal_buffer_max_turn_rad_);
+  get_parameter(
+    "terminal_position_weight_multiplier", terminal_position_weight_multiplier_);
+  get_parameter("upper_r_dv", upper_r_dv_);
+  get_parameter("upper_r_dpsi", upper_r_dpsi_);
+  get_parameter("turn_preview_steps", turn_preview_steps_);
+  get_parameter("turn_weight_growth", turn_weight_growth_);
+  get_parameter("miqp_diagonal_regularization", miqp_diagonal_regularization_);
+
+  get_parameter("wp_switch_eps", waypoint_switch_eps_m_);
+  get_parameter("goal_stop_distance_m", goal_stop_distance_m_);
+  get_parameter("enable_waypoint_bias", enable_waypoint_bias_);
+  get_parameter("waypoint_x_bias_m", waypoint_x_bias_m_);
+  get_parameter("waypoint_y_bias_m", waypoint_y_bias_m_);
+  get_parameter("waypoint_yaw_bias_rad", waypoint_yaw_bias_rad_);
+  get_parameter("input_timeout_sec", input_timeout_sec_);
+  get_parameter("require_grid_map", require_grid_map_);
+
+  get_parameter("use_csv_global_path", use_csv_global_path_);
+  get_parameter("csv_global_path_file", csv_global_path_file_);
+  get_parameter(
+    "allow_topic_path_override_when_csv_loaded",
+    allow_topic_path_override_when_csv_loaded_);
+  get_parameter("reset_waypoint_on_path_update", reset_waypoint_on_path_update_);
+
+  get_parameter("preview_min_target_distance_m", preview_min_target_distance_m_);
+  get_parameter("preview_line_sample_m", preview_line_sample_m_);
+  get_parameter("preview_min_segment_samples", preview_min_segment_samples_);
+  get_parameter("preview_interval_soft_ratio", preview_interval_soft_ratio_);
+  get_parameter(
+    "preview_interval_nominal_road_width_m", preview_interval_nominal_road_width_m_);
+  get_parameter(
+    "preview_interval_max_centering_length_factor",
+    preview_interval_max_centering_length_factor_);
+  get_parameter("preview_interval_boundary_margin_m", preview_interval_boundary_margin_m_);
+  get_parameter("preview_interval_debug", preview_interval_debug_);
+
+  get_parameter("grid_value_threshold", grid_value_threshold_);
+  get_parameter("grid_positive_is_drivable", grid_positive_is_drivable_);
+  get_parameter("expected_grid_frame_id", expected_grid_frame_id_);
+  get_parameter("require_grid_frame_match", require_grid_frame_match_);
+
+  get_parameter("state_input_type", state_input_type_);
+  get_parameter("odom_topic", odom_topic_);
+  get_parameter("pose_stamped_topic", pose_stamped_topic_);
+  get_parameter("pose_stamped_yaw_is_orientation_z", pose_stamped_yaw_is_orientation_z_);
+  get_parameter("pose_x_offset", pose_x_offset_);
+  get_parameter("pose_y_offset", pose_y_offset_);
+  get_parameter("pose_z_offset", pose_z_offset_);
+  get_parameter("pose_yaw_offset_rad", pose_yaw_offset_rad_);
+  get_parameter("pose_position_scale", pose_position_scale_);
+  get_parameter("pose_swap_xy", pose_swap_xy_);
+  get_parameter("pose_invert_x", pose_invert_x_);
+  get_parameter("pose_invert_y", pose_invert_y_);
+  get_parameter("pose_speed_lpf_alpha", pose_speed_lpf_alpha_);
+  get_parameter("pose_max_dt_for_speed", pose_max_dt_for_speed_);
+
+  get_parameter("global_path_topic", global_path_topic_);
+  get_parameter("grid_map_topic", grid_map_topic_);
+  get_parameter("upper_sparse_path_topic", sparse_path_topic_);
+  get_parameter("lower_reference_path_topic", dense_path_topic_);
+  get_parameter("goal_reached_topic", goal_reached_topic_);
+  get_parameter("path_frame_id", path_frame_id_);
 }
 
-void TrackingControllerNode::mavlinkPoll()
+void SdMapUpperPlannerNode::validateParameters() const
 {
-  std::lock_guard<std::mutex> lk(mavlink_mtx_);
-
-  if (!mavlink_enable_ || mavlink_socket_ < 0) {
-    return;
-  }
-
-  std::array<uint8_t, 2048> buffer{};
-
-  while (true) {
-    sockaddr_in src_addr{};
-    socklen_t src_len = sizeof(src_addr);
-
-    const ssize_t n = ::recvfrom(
-      mavlink_socket_,
-      buffer.data(),
-      buffer.size(),
-      0,
-      reinterpret_cast<sockaddr*>(&src_addr),
-      &src_len);
-
-    if (n < 0) {
-      if (errno == EWOULDBLOCK || errno == EAGAIN) {
-        break;
-      }
-      RCLCPP_WARN_THROTTLE(
-        get_logger(), *get_clock(), 2000,
-        "MAVLink recvfrom failed: %s", std::strerror(errno));
-      break;
-    }
-
-    for (ssize_t i = 0; i < n; ++i) {
-      mavlink_message_t msg{};
-
-      if (mavlink_parse_char(
-          MAVLINK_COMM_0,
-          buffer[static_cast<size_t>(i)],
-          &msg,
-          &mavlink_rx_status_))
-      {
-        if (msg.msgid == MAVLINK_MSG_ID_HEARTBEAT) {
-          if (!mavlink_peer_known_) {
-            mavlink_peer_addr_ = src_addr;
-            mavlink_peer_known_ = true;
-
-            char ip_str[INET_ADDRSTRLEN] = {};
-            ::inet_ntop(AF_INET, &src_addr.sin_addr, ip_str, sizeof(ip_str));
-
-            RCLCPP_INFO(
-              get_logger(),
-              "MAVLink peer detected from HEARTBEAT: %s:%d",
-              ip_str,
-              ntohs(src_addr.sin_port));
-          }
-
-          mavlink_heartbeat_t hb{};
-          mavlink_msg_heartbeat_decode(&msg, &hb);
-
-          mavlink_target_system_ = msg.sysid;
-          mavlink_target_component_ = 1;
-
-          const uint8_t px4_main_mode =
-            static_cast<uint8_t>((hb.custom_mode >> 16) & 0xFF);
-
-          mavlink_px4_manual_ = px4_main_mode == PX4_CUSTOM_MAIN_MODE_MANUAL;
-          mavlink_px4_armed_ = (hb.base_mode & MAV_MODE_FLAG_SAFETY_ARMED) != 0;
-        } else if (msg.msgid == MAVLINK_MSG_ID_COMMAND_ACK) {
-          mavlink_command_ack_t ack{};
-          mavlink_msg_command_ack_decode(&msg, &ack);
-
-          RCLCPP_INFO_THROTTLE(
-            get_logger(), *get_clock(), 1000,
-            "MAVLink COMMAND_ACK: command=%u result=%u",
-            static_cast<unsigned>(ack.command),
-            static_cast<unsigned>(ack.result));
-        } else if (msg.msgid == MAVLINK_MSG_ID_STATUSTEXT) {
-          mavlink_statustext_t st{};
-          mavlink_msg_statustext_decode(&msg, &st);
-
-          char text[51] = {};
-          std::memcpy(text, st.text, 50);
-
-          RCLCPP_WARN_THROTTLE(
-            get_logger(), *get_clock(), 1000,
-            "PX4 STATUSTEXT: severity=%u text=%s",
-            static_cast<unsigned>(st.severity),
-            text);
-        }
-      }
-    }
-  }
-}
-
-bool TrackingControllerNode::mavlinkSendMessage(const mavlink_message_t & msg)
-{
-  std::lock_guard<std::mutex> lk(mavlink_mtx_);
-
-  if (!mavlink_enable_ || mavlink_socket_ < 0) {
-    return false;
-  }
-
-  if (!mavlink_peer_known_) {
-    RCLCPP_WARN_THROTTLE(
-      get_logger(), *get_clock(), 2000,
-      "MAVLink peer is not known yet. Check MAVProxy --out=127.0.0.1:%d",
-      mavlink_bind_port_);
-    return false;
-  }
-
-  std::array<uint8_t, MAVLINK_MAX_PACKET_LEN> txbuf{};
-  const uint16_t len = mavlink_msg_to_send_buffer(txbuf.data(), &msg);
-
-  const ssize_t sent = ::sendto(
-    mavlink_socket_,
-    txbuf.data(),
-    len,
-    0,
-    reinterpret_cast<sockaddr*>(&mavlink_peer_addr_),
-    sizeof(mavlink_peer_addr_));
-
-  if (sent != static_cast<ssize_t>(len)) {
-    RCLCPP_WARN_THROTTLE(
-      get_logger(), *get_clock(), 2000,
-      "MAVLink sendto failed: sent=%zd expected=%u errno=%s",
-      sent, static_cast<unsigned>(len), std::strerror(errno));
-    return false;
-  }
-
-  return true;
-}
-
-void TrackingControllerNode::mavlinkSendManualNeutral()
-{
-  if (!mavlink_enable_) {
-    return;
-  }
-
-  mavlink_message_t msg{};
-  mavlink_msg_manual_control_pack(
-    static_cast<uint8_t>(mavlink_source_system_),
-    static_cast<uint8_t>(mavlink_source_component_),
-    &msg,
-    static_cast<uint8_t>(mavlink_target_system_),
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0);
-
-  mavlinkSendMessage(msg);
-}
-
-void TrackingControllerNode::mavlinkSendSetManualMode()
-{
-  if (!mavlink_enable_) {
-    return;
-  }
-
-  const uint32_t custom_mode = px4CustomMode(PX4_CUSTOM_MAIN_MODE_MANUAL);
-
-  mavlink_message_t msg{};
-  mavlink_msg_set_mode_pack(
-    static_cast<uint8_t>(mavlink_source_system_),
-    static_cast<uint8_t>(mavlink_source_component_),
-    &msg,
-    static_cast<uint8_t>(mavlink_target_system_),
-    MAV_MODE_FLAG_CUSTOM_MODE_ENABLED,
-    custom_mode);
-
-  const bool ok = mavlinkSendMessage(msg);
-
-  RCLCPP_INFO_THROTTLE(
-    get_logger(), *get_clock(), 1000,
-    "MAVLink SET_MODE MANUAL sent: custom_mode=%u ok=%d",
-    custom_mode, ok ? 1 : 0);
-}
-
-void TrackingControllerNode::mavlinkSendArmCommand(bool arm, bool force)
-{
-  if (!mavlink_enable_) {
-    return;
-  }
-
-  const float force_code = force ? 21196.0f : 0.0f;
-
-  mavlink_message_t msg{};
-  mavlink_msg_command_long_pack(
-    static_cast<uint8_t>(mavlink_source_system_),
-    static_cast<uint8_t>(mavlink_source_component_),
-    &msg,
-    static_cast<uint8_t>(mavlink_target_system_),
-    static_cast<uint8_t>(mavlink_target_component_),
-    MAV_CMD_COMPONENT_ARM_DISARM,
-    0,
-    arm ? 1.0f : 0.0f,
-    force_code,
-    0.0f,
-    0.0f,
-    0.0f,
-    0.0f,
-    0.0f);
-
-  const bool ok = mavlinkSendMessage(msg);
-
-  RCLCPP_WARN_THROTTLE(
-    get_logger(), *get_clock(), 1000,
-    "MAVLink %s sent: force=%d ok=%d",
-    arm ? "ARM" : "DISARM",
-    force ? 1 : 0,
-    ok ? 1 : 0);
-}
-
-void TrackingControllerNode::mavlinkManageModeAndArm()
-{
-  if (!mavlink_enable_) {
-    return;
-  }
-
-  const rclcpp::Time now = this->now();
-  bool send_manual = false;
-  bool send_arm = false;
-
-  {
-    std::lock_guard<std::mutex> lk(mavlink_mtx_);
-    if (!mavlink_peer_known_) {
-      return;
-    }
-
-    if (mavlink_auto_manual_mode_ && !mavlink_px4_manual_) {
-      if (mavlink_last_mode_request_time_.nanoseconds() == 0 ||
-        (now - mavlink_last_mode_request_time_).seconds() > 1.0)
-      {
-        send_manual = true;
-        mavlink_last_mode_request_time_ = now;
-      }
-    }
-
-    if (mavlink_auto_arm_ && mavlink_px4_manual_ && !mavlink_px4_armed_) {
-      if (mavlink_last_arm_request_time_.nanoseconds() == 0 ||
-        (now - mavlink_last_arm_request_time_).seconds() > 1.0)
-      {
-        send_arm = true;
-        mavlink_last_arm_request_time_ = now;
-      }
-    }
-  }
-
-  if (send_manual) {
-    mavlinkSendSetManualMode();
-  }
-  if (send_arm) {
-    mavlinkSendArmCommand(true, mavlink_force_arm_);
-  }
-}
-
-void TrackingControllerNode::mavlinkSendActuator(double throttle_norm, double steering_norm)
-{
-  if (!mavlink_enable_) {
-    return;
-  }
-
-  mavlinkPoll();
-
-  throttle_norm = clampd(throttle_norm, -1.0, 1.0);
-  steering_norm = clampd(steering_norm, -1.0, 1.0);
-
-  const float nan_f = std::numeric_limits<float>::quiet_NaN();
-
-  mavlink_message_t msg{};
-  mavlink_msg_command_long_pack(
-    static_cast<uint8_t>(mavlink_source_system_),
-    static_cast<uint8_t>(mavlink_source_component_),
-    &msg,
-    static_cast<uint8_t>(mavlink_target_system_),
-    static_cast<uint8_t>(mavlink_target_component_),
-    MAV_CMD_DO_SET_ACTUATOR,
-    0,
-    static_cast<float>(throttle_norm),
-    static_cast<float>(steering_norm),
-    nan_f,
-    nan_f,
-    nan_f,
-    nan_f,
-    0.0f);
-
-  const bool ok = mavlinkSendMessage(msg);
-
-  RCLCPP_DEBUG_THROTTLE(
-    get_logger(), *get_clock(), 500,
-    "MAVLink actuator tx: throttle=%.3f steering=%.3f ok=%d manual=%d armed=%d",
-    throttle_norm,
-    steering_norm,
-    ok ? 1 : 0,
-    mavlink_px4_manual_ ? 1 : 0,
-    mavlink_px4_armed_ ? 1 : 0);
-}
-
-void TrackingControllerNode::mavlinkSendHeldActuator()
-{
-  if (!mavlink_enable_) {
-    return;
-  }
-
-  double throttle_norm = 0.0;
-  double steering_norm = 0.0;
-  bool have_cmd = false;
-  {
-    std::lock_guard<std::mutex> lk(mavlink_cmd_mtx_);
-    throttle_norm = mavlink_last_throttle_norm_;
-    steering_norm = mavlink_last_steering_norm_;
-    have_cmd = mavlink_have_actuator_cmd_;
-  }
-
-  if (!have_cmd) {
-    throttle_norm = 0.0;
-    steering_norm = 0.0;
-  }
-
-  mavlinkSendActuator(throttle_norm, steering_norm);
-}
-
-double TrackingControllerNode::computeThrottleNorm(double dv_mps, bool valid_cmd) const
-{
-  (void)dv_mps;
-
-  if (!valid_cmd) {
-    return 0.0;
-  }
-
-  // PX4 normalized actuator output: 0.0 -> 1500 us, 0.17 -> about 1585 us.
-  // For the current safety test, every valid control command gets the fixed
-  // forward throttle. Invalid commands still send neutral.
-  const double throttle_max_norm =
-    (mavlink_throttle_max_norm_ > 0.0) ? mavlink_throttle_max_norm_ : 0.17;
-  return clampd(throttle_max_norm, 0.0, 1.0);
-}
-
-void TrackingControllerNode::publishMavlinkCmd(
-  double dv_mps,
-  double steer_norm,
-  bool valid_cmd)
-{
-  if (!mavlink_enable_) {
-    return;
-  }
-
-  const rclcpp::Time now = this->now();
-
-  const auto remember_mavlink_actuator =
-    [this](double throttle_norm, double steering_norm) {
-      std::lock_guard<std::mutex> lk(mavlink_cmd_mtx_);
-      mavlink_last_throttle_norm_ = throttle_norm;
-      mavlink_last_steering_norm_ = steering_norm;
-      mavlink_have_actuator_cmd_ = true;
+  auto fail = [this](const std::string & message) {
+      RCLCPP_FATAL(get_logger(), "invalid egocentric planner parameter: %s", message.c_str());
+      throw std::invalid_argument(message);
     };
 
-  if (valid_cmd) {
-    const double throttle_norm = computeThrottleNorm(dv_mps, true);
-    const double steering_norm = -clampd(
-      mavlink_steer_sign_ * steer_norm,
-      -1.0,
-      1.0);
-
-    last_valid_mavlink_steer_norm_ = steering_norm;
-    last_valid_mavlink_cmd_time_ = now;
-
-    remember_mavlink_actuator(throttle_norm, steering_norm);
-    mavlinkSendActuator(throttle_norm, steering_norm);
-    return;
+  if (upper_planner_rate_hz_ <= 0.0) {fail("upper_planner_rate_hz must be > 0");}
+  if (upper_prediction_dt_sec_ <= 0.0) {fail("upper_prediction_dt_sec must be > 0");}
+  if (upper_preview_steps_ <= 0) {fail("upper_preview_steps must be > 0");}
+  if (lower_prediction_dt_sec_ <= 0.0) {fail("lower_prediction_dt_sec must be > 0");}
+  if (lower_min_path_spacing_m_ <= 0.0) {fail("lower_min_path_spacing_m must be > 0");}
+  if (target_speed_mps_ <= 0.0) {fail("target_speed_mps must be > 0");}
+  if (scale_mode_ != "model" && scale_mode_ != "fullscale") {
+    fail("scale_mode must be 'model' or 'fullscale'");
   }
-
-  const bool have_recent_valid =
-    last_valid_mavlink_cmd_time_.nanoseconds() > 0 &&
-    (now - last_valid_mavlink_cmd_time_).seconds() < mavlink_hold_last_valid_sec_;
-
-  if (have_recent_valid) {
-    // Safety policy:
-    // On invalid command, throttle must always go neutral.
-    // Steering is held briefly to avoid 1500us chatter due to one-frame solver/input failures.
-    remember_mavlink_actuator(0.0, last_valid_mavlink_steer_norm_);
-    mavlinkSendActuator(0.0, last_valid_mavlink_steer_norm_);
-
-    RCLCPP_WARN_THROTTLE(
-      this->get_logger(), *this->get_clock(), 1000,
-      "MAVLink invalid cmd: holding last steering %.3f for %.2f sec",
-      last_valid_mavlink_steer_norm_,
-      mavlink_hold_last_valid_sec_);
-
-    return;
+  if (wheelbase_ <= 0.0) {fail("wheelbase must be > 0");}
+  if (vehicle_length_m_ <= 0.0) {fail("vehicle_length_m must be > 0");}
+  if (bev_forward_m_ <= 0.0) {fail("bev_forward_m must be > 0");}
+  if (max_steering_angle_rad_ <= 0.0 || max_steering_angle_rad_ >= 0.5 * kPi) {
+    fail("max_steering_angle_rad must be in (0, pi/2)");
   }
-
+  if (a_max_mps2_ <= 0.0) {fail("a_max_mps2 must be > 0");}
+  if (miqp_big_m_ <= 0.0) {fail("miqp_big_m must be > 0");}
+  if (position_scale_m_ <= 0.0) {fail("position_scale_m must be > 0");}
+  if (relative_turn_scale_rad_ <= 0.0) {fail("relative_turn_scale_rad must be > 0");}
+  if (lambda_position_ < 0.0 || lambda_relative_turn_ < 0.0) {
+    fail("normalized objective weights must be >= 0");
+  }
+  if (!std::isfinite(terminal_buffer_max_turn_rad_) ||
+    terminal_buffer_max_turn_rad_ <= 0.0 ||
+    terminal_buffer_max_turn_rad_ > 0.5 * kPi)
   {
-    std::lock_guard<std::mutex> lk(mavlink_cmd_mtx_);
-    mavlink_last_throttle_norm_ = 0.0;
-    mavlink_last_steering_norm_ = 0.0;
-    mavlink_have_actuator_cmd_ = true;
+    fail("terminal_buffer_max_turn_rad must be in (0, pi/2]");
   }
-
-  if (mavlink_send_neutral_on_invalid_) {
-    mavlinkSendActuator(0.0, 0.0);
-
-    RCLCPP_WARN_THROTTLE(
-      this->get_logger(), *this->get_clock(), 1000,
-      "MAVLink invalid cmd: sending neutral throttle/steering");
+  if (!std::isfinite(terminal_position_weight_multiplier_) ||
+    terminal_position_weight_multiplier_ < 1.0)
+  {
+    fail("terminal_position_weight_multiplier must be >= 1");
   }
+  if (upper_r_dv_ < 0.0 || upper_r_dpsi_ < 0.0) {
+    fail("input regularization weights must be >= 0");
+  }
+  if (turn_preview_steps_ < 0) {fail("turn_preview_steps must be >= 0");}
+  if (turn_weight_growth_ <= 0.0) {fail("turn_weight_growth must be > 0");}
+  if (miqp_diagonal_regularization_ < 0.0) {
+    fail("miqp_diagonal_regularization must be >= 0");
+  }
+  if (waypoint_switch_eps_m_ < 0.0) {fail("wp_switch_eps must be >= 0");}
+  if (!std::isfinite(waypoint_x_bias_m_) || !std::isfinite(waypoint_y_bias_m_) ||
+    !std::isfinite(waypoint_yaw_bias_rad_))
+  {
+    fail("waypoint bias parameters must be finite");
+  }
+  if (input_timeout_sec_ < 0.0) {fail("input_timeout_sec must be >= 0");}
+  if (preview_min_target_distance_m_ <= 0.0) {
+    fail("preview_min_target_distance_m must be > 0");
+  }
+  if (preview_line_sample_m_ <= 0.0) {fail("preview_line_sample_m must be > 0");}
+  if (preview_min_segment_samples_ < 2) {
+    fail("preview_min_segment_samples must be >= 2");
+  }
+  if (preview_interval_soft_ratio_ < 0.5 || preview_interval_soft_ratio_ > 1.0) {
+    fail("preview_interval_soft_ratio must be in [0.5, 1.0]");
+  }
+  if (preview_interval_nominal_road_width_m_ <= 0.0) {
+    fail("preview_interval_nominal_road_width_m must be > 0");
+  }
+  if (preview_interval_max_centering_length_factor_ <= 0.0) {
+    fail("preview_interval_max_centering_length_factor must be > 0");
+  }
+  if (preview_interval_boundary_margin_m_ < 0.0) {
+    fail("preview_interval_boundary_margin_m must be >= 0");
+  }
+  if (grid_value_threshold_ < 0 || grid_value_threshold_ > 100) {
+    fail("grid_value_threshold must be in [0, 100]");
+  }
+  if (require_grid_frame_match_ && normalizedFrameId(expected_grid_frame_id_).empty()) {
+    fail("expected_grid_frame_id must be nonempty when require_grid_frame_match is true");
+  }
+  if (state_input_type_ != "pose_stamped" && state_input_type_ != "odom") {
+    fail("state_input_type must be 'pose_stamped' or 'odom'");
+  }
+  if (!std::isfinite(pose_position_scale_) || std::abs(pose_position_scale_) < 1e-12) {
+    fail("pose_position_scale must be finite and nonzero");
+  }
+  if (pose_speed_lpf_alpha_ < 0.0 || pose_speed_lpf_alpha_ > 1.0) {
+    fail("pose_speed_lpf_alpha must be in [0, 1]");
+  }
+  if (pose_max_dt_for_speed_ <= 0.0) {fail("pose_max_dt_for_speed must be > 0");}
 }
 
-TrackingControllerNode::TrackingControllerNode()
-: Node("tracking_controller_node")
+void SdMapUpperPlannerNode::createInterfaces()
 {
-  // ---- Declare parameters ----
-  this->declare_parameter<double>("loop_rate_hz_ctrl", 20.0);
-  this->declare_parameter<double>("max_steer_left", 0.35);
-  this->declare_parameter<double>("max_steer_right", -0.35);
-  this->declare_parameter<double>("v_max", 1.0);
-  this->declare_parameter<double>("a_max_mps2", 1.0);
-  this->declare_parameter<double>("wheelbase", 0.3);                 // [m]
-  this->declare_parameter<double>("lane_width", 0.5);
-  this->declare_parameter<std::vector<double>>("lane_offsets_m", {0.0});
-  this->declare_parameter<double>("miqp_big_m", 100.0);
-  this->declare_parameter<double>("w_segment_preference", 1e-3);
-  this->declare_parameter<double>("dpsi_delta_max_rad", 0.05);
-  this->declare_parameter<double>("wp_switch_eps", 0.5);
-  // Body-grid OccupancyGrid input from rgb_to_occupancy:
-  //   rgb_to_occupancy:
-  //     -p publish_occupancy_grid:=true
-  //     -p bev_occupancy_grid_topic:=/bev/occupancy_grid
-  //     -p occupancy_grid_rviz_standard_values:=true
-  //     -p occupancy_rotate_cw_90:=false
-  //     -p occupancy_use_crop:=true
-  //     -p occupancy_grid_width:=64
-  //     -p occupancy_grid_height:=64
-  //   tracking_controller_node:
-  //     -p grid_map_topic:=/bev/occupancy_grid
-  //     -p grid_positive_is_drivable:=false
-  //     -p grid_value_threshold:=0
-  //     -p require_grid_map:=true
-  //
-  // occupancy_rotate_cw_90 must stay false for control: it rotates only the
-  // data array, not the physical origin/orientation used for lookup.
-  this->declare_parameter<std::string>("grid_map_topic", "/bev/occupancy_grid");
-  this->declare_parameter<int>("grid_value_threshold", 0);
-  this->declare_parameter<bool>("grid_positive_is_drivable", false);
-  this->declare_parameter<double>("preview_line_sample_m", 0.03);
-  this->declare_parameter<int>("preview_min_segment_samples", 1);
-  this->declare_parameter<bool>("require_grid_map", true);
-  this->declare_parameter<bool>("reset_waypoint_on_path_update", false);
-  this->declare_parameter<double>("input_timeout_sec", 0.60);
-  this->declare_parameter<bool>("publish_zero_on_failure", true);
-  this->declare_parameter<bool>("use_upper_guides", true);
-  this->declare_parameter<bool>("use_csv_global_path", true);
-  this->declare_parameter<std::string>("csv_global_path_file", "local_map.csv");
-  this->declare_parameter<double>("upper_guides_timeout_sec", 0.80);
-  this->declare_parameter<double>("upper_guides_change_reset_tol_m", 0.25);
-  this->declare_parameter<double>("goal_stop_distance_m", 0.50);
-  this->declare_parameter<bool>("preview_use_path_tangent_when_seed_empty", true);
-  this->declare_parameter<double>("preview_max_yaw_rad", 0.35);
-  this->declare_parameter<double>("preview_min_forward_x_m", 0.20);
-  this->declare_parameter<double>("preview_max_lateral_y_m", 0.30);
-  this->declare_parameter<double>("preview_min_wp_norm_m", 0.10);
-  this->declare_parameter<bool>("preview_reset_on_bad_seed", true);
-  this->declare_parameter<double>("preview_seed_max_lateral_y_m", 0.50);
-  this->declare_parameter<double>("preview_seed_min_forward_x_m", -0.10);
-  // State input examples:
-  //   Motive PoseStamped:
-  //     ros2 run virtual_control tracking_control --ros-args
-  //       -p state_input_type:=pose_stamped
-  //       -p pose_stamped_topic:=/motive/vehicle/pose
-  //   MATLAB/ROS odom:
-  //     ros2 run virtual_control tracking_control_node --ros-args
-  //       -p state_input_type:=odom
-  //       -p odom_topic:=/px4/ekf_odom
-  // Motive coordinates must be aligned to /debug/global_path's map frame with
-  // the pose_* correction parameters below. If multiple rigid bodies are used,
-  // re-enable target_rigid_body_id filtering in motive_pose_publisher.
-  this->declare_parameter<std::string>("state_input_type", "odom");
-  this->declare_parameter<std::string>("odom_topic", "/px4/ekf_odom");
-  this->declare_parameter<std::string>("pose_stamped_topic", "/motive/vehicle/pose");
-  this->declare_parameter<double>("pose_x_offset", 0.0);
-  this->declare_parameter<double>("pose_y_offset", 0.0);
-  this->declare_parameter<double>("pose_z_offset", 0.0);
-  this->declare_parameter<double>("pose_yaw_offset_rad", 0.0);
-  this->declare_parameter<double>("pose_position_scale", 1.0);
-  this->declare_parameter<bool>("pose_swap_xy", false);
-  this->declare_parameter<bool>("pose_invert_x", false);
-  this->declare_parameter<bool>("pose_invert_y", false);
-  this->declare_parameter<double>("pose_speed_lpf_alpha", 0.4);
-  this->declare_parameter<double>("pose_max_dt_for_speed", 0.5);
+  global_path_sub_ = create_subscription<nav_msgs::msg::Path>(
+    global_path_topic_, 10, std::bind(&SdMapUpperPlannerNode::globalPathCallback, this, _1));
+  grid_sub_ = create_subscription<nav_msgs::msg::OccupancyGrid>(
+    grid_map_topic_, 10, std::bind(&SdMapUpperPlannerNode::gridMapCallback, this, _1));
 
-  // ---- Output steering filter parameters ----
-  this->declare_parameter<bool>("enable_output_filter", true);
-  this->declare_parameter<double>("steer_norm_max", 1.0);
-  this->declare_parameter<double>("steer_norm_rate_max", 2.0);
-  this->declare_parameter<double>("steer_norm_lpf_alpha", 0.5);
-  this->declare_parameter<bool>("publish_applied_cmd_when_invalid", true);
-
-  // ---- Isaac Sim virtual vehicle command parameters ----
-  this->declare_parameter<std::string>("virtual_cmd_topic", "/cmd_control");
-  this->declare_parameter<double>("target_speed_mps", 1.0);
-  this->declare_parameter<double>("target_accel_mps2", 0.0);
-  this->declare_parameter<double>("speed_kp", 0.45);
-  this->declare_parameter<double>("speed_ki", 0.05);
-  this->declare_parameter<double>("throttle_ff", 0.08);
-  this->declare_parameter<double>("max_virtual_throttle", 0.35);
-  this->declare_parameter<double>("max_virtual_brake", 0.70);
-  this->declare_parameter<double>("speed_deadband_mps", 0.03);
-  this->declare_parameter<double>("speed_integral_limit", 2.0);
-
-  // ---- MAVLink bridge parameters ----
-  this->declare_parameter<bool>("mavlink_enable", false);
-  this->declare_parameter<std::string>("mavlink_bind_ip", "0.0.0.0");
-  this->declare_parameter<int>("mavlink_bind_port", 14540);
-  this->declare_parameter<int>("mavlink_source_system", 245);
-  this->declare_parameter<int>("mavlink_source_component", 190);
-  this->declare_parameter<int>("mavlink_target_system", 1);
-  this->declare_parameter<int>("mavlink_target_component", 1);
-  this->declare_parameter<bool>("mavlink_send_neutral_on_invalid", true);
-  this->declare_parameter<double>("mavlink_hold_last_valid_sec", 0.30);
-  this->declare_parameter<bool>("mavlink_auto_manual_mode", true);
-  this->declare_parameter<bool>("mavlink_auto_arm", false);
-  this->declare_parameter<bool>("mavlink_force_arm", false);
-  this->declare_parameter<bool>("mavlink_disarm_on_shutdown", true);
-  this->declare_parameter<double>("mavlink_throttle_max_norm", 0.17);
-  this->declare_parameter<double>("mavlink_steer_sign", 1.0);
-
-  // ---- Get parameters ----
-  this->get_parameter("loop_rate_hz_ctrl", loop_rate_hz_ctrl_);
-  this->get_parameter("max_steer_left", max_steer_left_);
-  this->get_parameter("max_steer_right", max_steer_right_);
-  this->get_parameter("v_max", v_max_);
-  this->get_parameter("a_max_mps2", a_max_);
-  this->get_parameter("wheelbase", wheelbase_);
-  this->get_parameter("lane_width", lane_width_);
-  lane_offsets_ = this->get_parameter("lane_offsets_m").as_double_array();
-  this->get_parameter("miqp_big_m", miqp_big_m_);
-  this->get_parameter("w_segment_preference", w_segment_preference_);
-  this->get_parameter("dpsi_delta_max_rad", dpsi_delta_max_rad_);
-  this->get_parameter("wp_switch_eps", wp_switch_eps_);
-  this->get_parameter("grid_map_topic", grid_map_topic_);
-  this->get_parameter("grid_value_threshold", grid_value_threshold_);
-  this->get_parameter("grid_positive_is_drivable", grid_positive_is_drivable_);
-  this->get_parameter("preview_line_sample_m", preview_line_sample_m_);
-  this->get_parameter("preview_min_segment_samples", preview_min_segment_samples_);
-  this->get_parameter("require_grid_map", require_grid_map_);
-  this->get_parameter("reset_waypoint_on_path_update", reset_waypoint_on_path_update_);
-  this->get_parameter("input_timeout_sec", input_timeout_sec_);
-  this->get_parameter("publish_zero_on_failure", publish_zero_on_failure_);
-  this->get_parameter("use_upper_guides", use_upper_guides_);
-  this->get_parameter("use_csv_global_path", use_csv_global_path_);
-  this->get_parameter("csv_global_path_file", csv_global_path_file_);
-  this->get_parameter("upper_guides_timeout_sec", upper_guides_timeout_sec_);
-  this->get_parameter("upper_guides_change_reset_tol_m", upper_guides_change_reset_tol_m_);
-  this->get_parameter("goal_stop_distance_m", goal_stop_distance_m_);
-  this->get_parameter(
-    "preview_use_path_tangent_when_seed_empty", preview_use_path_tangent_when_seed_empty_);
-  this->get_parameter("preview_max_yaw_rad", preview_max_yaw_rad_);
-  this->get_parameter("preview_min_forward_x_m", preview_min_forward_x_m_);
-  this->get_parameter("preview_max_lateral_y_m", preview_max_lateral_y_m_);
-  this->get_parameter("preview_min_wp_norm_m", preview_min_wp_norm_m_);
-  this->get_parameter("preview_reset_on_bad_seed", preview_reset_on_bad_seed_);
-  this->get_parameter("preview_seed_max_lateral_y_m", preview_seed_max_lateral_y_m_);
-  this->get_parameter("preview_seed_min_forward_x_m", preview_seed_min_forward_x_m_);
-  this->get_parameter("state_input_type", state_input_type_);
-  this->get_parameter("odom_topic", odom_topic_);
-  this->get_parameter("pose_stamped_topic", pose_stamped_topic_);
-  state_input_type_ = "pose_stamped";
-  pose_stamped_topic_ = "/motive/vehicle/pose";
-  this->get_parameter("pose_x_offset", pose_x_offset_);
-  this->get_parameter("pose_y_offset", pose_y_offset_);
-  this->get_parameter("pose_z_offset", pose_z_offset_);
-  this->get_parameter("pose_yaw_offset_rad", pose_yaw_offset_rad_);
-  this->get_parameter("pose_position_scale", pose_position_scale_);
-  this->get_parameter("pose_swap_xy", pose_swap_xy_);
-  this->get_parameter("pose_invert_x", pose_invert_x_);
-  this->get_parameter("pose_invert_y", pose_invert_y_);
-  this->get_parameter("pose_speed_lpf_alpha", pose_speed_lpf_alpha_);
-  this->get_parameter("pose_max_dt_for_speed", pose_max_dt_for_speed_);
-
-  this->get_parameter("enable_output_filter", enable_output_filter_);
-  this->get_parameter("steer_norm_max", steer_norm_max_);
-  this->get_parameter("steer_norm_rate_max", steer_norm_rate_max_);
-  this->get_parameter("steer_norm_lpf_alpha", steer_norm_lpf_alpha_);
-  this->get_parameter("publish_applied_cmd_when_invalid", publish_applied_cmd_when_invalid_);
-
-  this->get_parameter("virtual_cmd_topic", virtual_cmd_topic_);
-  this->get_parameter("target_speed_mps", target_speed_mps_);
-  this->get_parameter("target_accel_mps2", target_accel_mps2_);
-  this->get_parameter("speed_kp", speed_kp_);
-  this->get_parameter("speed_ki", speed_ki_);
-  this->get_parameter("throttle_ff", throttle_ff_);
-  this->get_parameter("max_virtual_throttle", max_virtual_throttle_);
-  this->get_parameter("max_virtual_brake", max_virtual_brake_);
-  this->get_parameter("speed_deadband_mps", speed_deadband_mps_);
-  this->get_parameter("speed_integral_limit", speed_integral_limit_);
-  target_speed_profile_mps_ = clampd(target_speed_mps_, 0.0, v_max_);
-  target_speed_profile_initialized_ = true;
-
-  this->get_parameter("mavlink_enable", mavlink_enable_);
-  this->get_parameter("mavlink_bind_ip", mavlink_bind_ip_);
-  this->get_parameter("mavlink_bind_port", mavlink_bind_port_);
-  this->get_parameter("mavlink_source_system", mavlink_source_system_);
-  this->get_parameter("mavlink_source_component", mavlink_source_component_);
-  this->get_parameter("mavlink_target_system", mavlink_target_system_);
-  this->get_parameter("mavlink_target_component", mavlink_target_component_);
-  this->get_parameter("mavlink_send_neutral_on_invalid", mavlink_send_neutral_on_invalid_);
-  this->get_parameter("mavlink_hold_last_valid_sec", mavlink_hold_last_valid_sec_);
-  this->get_parameter("mavlink_auto_manual_mode", mavlink_auto_manual_mode_);
-  this->get_parameter("mavlink_auto_arm", mavlink_auto_arm_);
-  this->get_parameter("mavlink_force_arm", mavlink_force_arm_);
-  this->get_parameter("mavlink_disarm_on_shutdown", mavlink_disarm_on_shutdown_);
-  this->get_parameter("mavlink_throttle_max_norm", mavlink_throttle_max_norm_);
-  this->get_parameter("mavlink_steer_sign", mavlink_steer_sign_);
-
-  RCLCPP_INFO(
-    get_logger(),
-    "TrackingControllerNode @ ctrl=%.1f Hz, v_max=%.2f",
-    loop_rate_hz_ctrl_, v_max_);
-
-  RCLCPP_INFO(
-    get_logger(),
-    "TrackingControllerNode stabilization: preview_tangent=%d preview_max_yaw=%.3f min_forward=%.3f max_lateral=%.3f min_wp_norm=%.3f reset_bad_seed=%d output_filter=%d steer_max=%.3f steer_rate=%.3f steer_lpf_alpha=%.3f goal_stop=%.3f",
-    preview_use_path_tangent_when_seed_empty_ ? 1 : 0,
-    preview_max_yaw_rad_,
-    preview_min_forward_x_m_,
-    preview_max_lateral_y_m_,
-    preview_min_wp_norm_m_,
-    preview_reset_on_bad_seed_ ? 1 : 0,
-    enable_output_filter_ ? 1 : 0,
-    steer_norm_max_,
-    steer_norm_rate_max_,
-    steer_norm_lpf_alpha_,
-    goal_stop_distance_m_);
-
-  // ---- Subscribers ----
-  path_nav_sub_ = this->create_subscription<nav_msgs::msg::Path>(
-    "/debug/global_path", 10, std::bind(&TrackingControllerNode::pathCallback, this, _1));
-
-  upper_guides_sub_ = this->create_subscription<nav_msgs::msg::Path>(
-    "/planner/upper_guides", 10, std::bind(&TrackingControllerNode::upperGuidesCallback, this, _1));
-
-  pose_stamped_sub_ = this->create_subscription<geometry_msgs::msg::PoseStamped>(
-    pose_stamped_topic_, 10,
-    std::bind(&TrackingControllerNode::poseStampedCallback, this, _1));
-  RCLCPP_INFO(
-    this->get_logger(),
-    "state input hardcoded: PoseStamped topic=%s yaw_source=orientation_z",
-    pose_stamped_topic_.c_str());
-
-  grid_map_sub_ = this->create_subscription<nav_msgs::msg::OccupancyGrid>(
-    grid_map_topic_, 10, std::bind(&TrackingControllerNode::gridMapCallback, this, _1));
-
-  loadReferencePathCsvIfConfigured();
-
-  // ---- Publishers ----
-  control_debug_pub_ =
-    this->create_publisher<geometry_msgs::msg::Twist>("/debug/control_cmd", 10);
-
-  applied_cmd_pub_ =
-    this->create_publisher<geometry_msgs::msg::Twist>("/control/applied_cmd", 10);
-
-  local_curve_pub_ =
-    this->create_publisher<nav_msgs::msg::Path>("/controller/local_curve", 10);
-
-  mpc_trace_pub_ =
-    this->create_publisher<std_msgs::msg::Float64MultiArray>("/debug/mpc_trace", 10);
-
-  virtual_cmd_pub_ =
-    this->create_publisher<imac_interfaces::msg::VirtualControlCommand>(
-      virtual_cmd_topic_, 10);
-
-  // ---- Control loop timer ----
-  auto period = std::chrono::duration<double>(1.0 / loop_rate_hz_ctrl_);
-  loop_timer_ = this->create_wall_timer(
-    period, std::bind(&TrackingControllerNode::controlLoop, this));
-
-  RCLCPP_INFO(this->get_logger(), "TrackingControllerNode controlLoop at %.1f Hz (/debug/control_cmd uses dv,dpsi semantics; linear.z is valid flag)", loop_rate_hz_ctrl_);
-
-  if (mavlink_enable_) {
-    mavlinkInitUdp();
-
-    const double keepalive_hz = 20.0;
-    auto mavlink_period = std::chrono::duration<double>(1.0 / keepalive_hz);
-
-    mavlink_keepalive_timer_ = this->create_wall_timer(
-      mavlink_period,
-      [this]() {
-        mavlinkPoll();
-        mavlinkSendManualNeutral();
-        mavlinkManageModeAndArm();
-        mavlinkSendHeldActuator();
-      });
-
+  if (state_input_type_ == "odom") {
+    odom_sub_ = create_subscription<nav_msgs::msg::Odometry>(
+      odom_topic_, 10, std::bind(&SdMapUpperPlannerNode::odomCallback, this, _1));
+    RCLCPP_INFO(get_logger(), "planner state input: Odometry topic=%s", odom_topic_.c_str());
+  } else {
+    pose_sub_ = create_subscription<geometry_msgs::msg::PoseStamped>(
+      pose_stamped_topic_, 10,
+      std::bind(&SdMapUpperPlannerNode::poseStampedCallback, this, _1));
     RCLCPP_INFO(
-      this->get_logger(),
-      "MAVLink bridge enabled: bind=%s:%d, source=%d:%d, target=%d:%d, auto_manual=%d, auto_arm=%d, force_arm=%d, throttle_max_norm=%.3f",
-      mavlink_bind_ip_.c_str(),
-      mavlink_bind_port_,
-      mavlink_source_system_,
-      mavlink_source_component_,
-      mavlink_target_system_,
-      mavlink_target_component_,
-      mavlink_auto_manual_mode_ ? 1 : 0,
-      mavlink_auto_arm_ ? 1 : 0,
-      mavlink_force_arm_ ? 1 : 0,
-      mavlink_throttle_max_norm_);
+      get_logger(), "planner state input: PoseStamped topic=%s yaw=%s",
+      pose_stamped_topic_.c_str(),
+      pose_stamped_yaw_is_orientation_z_ ? "orientation.z scalar" : "quaternion");
   }
+
+  auto path_qos = rclcpp::QoS(rclcpp::KeepLast(1)).reliable().transient_local();
+  sparse_path_pub_ = create_publisher<nav_msgs::msg::Path>(sparse_path_topic_, path_qos);
+  dense_path_pub_ = create_publisher<nav_msgs::msg::Path>(dense_path_topic_, path_qos);
+  preview_debug_pub_ = create_publisher<nav_msgs::msg::Path>(
+    "/debug/upper_preview_reference", 10);
+  goal_reached_pub_ = create_publisher<std_msgs::msg::Bool>(
+    goal_reached_topic_, rclcpp::QoS(1).reliable().transient_local());
+  interval_debug_pub_ = create_publisher<std_msgs::msg::Float64MultiArray>(
+    "/debug/upper_constraint_intervals", 10);
+  upper_trace_pub_ = create_publisher<std_msgs::msg::Float64MultiArray>(
+    "/debug/upper_miqp_trace", 10);
 }
 
-void TrackingControllerNode::updateTargetSpeedProfile(double dt)
+void SdMapUpperPlannerNode::odomCallback(const nav_msgs::msg::Odometry::SharedPtr msg)
 {
-  if (!target_speed_profile_initialized_) {
-    target_speed_profile_mps_ = clampd(target_speed_mps_, 0.0, v_max_);
-    target_speed_profile_initialized_ = true;
-  }
-
-  if (std::abs(target_accel_mps2_) > 1e-9) {
-    target_speed_profile_mps_ += target_accel_mps2_ * dt;
-  } else {
-    target_speed_profile_mps_ = target_speed_mps_;
-  }
-
-  target_speed_profile_mps_ = clampd(target_speed_profile_mps_, 0.0, v_max_);
+  PoseSnapshot next;
+  next.position = Eigen::Vector2d(msg->pose.pose.position.x, msg->pose.pose.position.y);
+  next.yaw_rad = quaternionYaw(msg->pose.pose.orientation);
+  next.speed_mps = std::hypot(msg->twist.twist.linear.x, msg->twist.twist.linear.y);
+  next.frame_id = msg->header.frame_id;
+  next.received = now();
+  next.speed_valid = std::isfinite(next.speed_mps);
+  next.valid = finitePoint(next.position) && std::isfinite(next.yaw_rad) && next.speed_valid;
+  std::lock_guard<std::mutex> lock(pose_mtx_);
+  pose_ = next;
 }
 
-double TrackingControllerNode::computeFilteredSteerNorm(
-  double steer_norm,
-  const rclcpp::Time & now) const
-{
-  const double steer_max = std::max(0.0, std::abs(steer_norm_max_));
-  const double raw_steer = clampd(steer_norm, -steer_max, steer_max);
-
-  if (!enable_output_filter_) {
-    return raw_steer;
-  }
-
-  double dt = 1.0 / std::max(1e-6, loop_rate_hz_ctrl_);
-  if (have_prev_applied_cmd_ && last_applied_cmd_time_.nanoseconds() > 0) {
-    const double measured_dt = (now - last_applied_cmd_time_).seconds();
-    if (measured_dt > 1e-4 && measured_dt < 1.0) {
-      dt = measured_dt;
-    }
-  }
-
-  const double prev = have_prev_applied_cmd_ ? prev_applied_steer_norm_ : raw_steer;
-  const double max_step = std::max(0.0, steer_norm_rate_max_) * dt;
-  const double rate_limited = clampd(raw_steer, prev - max_step, prev + max_step);
-  const double alpha = clampd(steer_norm_lpf_alpha_, 0.0, 1.0);
-  return clampd(alpha * rate_limited + (1.0 - alpha) * prev, -steer_max, steer_max);
-}
-
-TrackingControllerNode::VirtualDriveCmd TrackingControllerNode::computeVirtualDriveCmd(
-  double steer_norm,
-  bool valid_cmd,
-  double dt)
-{
-  VirtualDriveCmd out;
-
-  if (!valid_cmd) {
-    speed_integral_ = 0.0;
-    out.steer = 0.0;
-    out.throttle = 0.0;
-    out.brake = 0.0;
-    return out;
-  }
-
-  out.steer = clampd(steer_norm, -1.0, 1.0);
-
-  const double v_target = clampd(target_speed_profile_mps_, 0.0, v_max_);
-  const double v_now = std::max(0.0, cur_speed_);
-  const double speed_error = v_target - v_now;
-
-  if (std::abs(speed_error) <= speed_deadband_mps_) {
-    out.throttle = clampd(throttle_ff_, 0.0, max_virtual_throttle_);
-    out.brake = 0.0;
-    return out;
-  }
-
-  speed_integral_ += speed_error * dt;
-  speed_integral_ = clampd(
-    speed_integral_,
-    -std::abs(speed_integral_limit_),
-    std::abs(speed_integral_limit_));
-
-  const double u = speed_kp_ * speed_error + speed_ki_ * speed_integral_;
-
-  if (u >= 0.0) {
-    out.throttle = clampd(throttle_ff_ + u, 0.0, max_virtual_throttle_);
-    out.brake = 0.0;
-  } else {
-    out.throttle = 0.0;
-    out.brake = clampd(-u, 0.0, max_virtual_brake_);
-  }
-
-  return out;
-}
-
-void TrackingControllerNode::publishVirtualControlCommand(
-  double steer_norm,
-  bool valid_cmd)
-{
-  if (!virtual_cmd_pub_) {
-    return;
-  }
-
-  const double dt = 1.0 / std::max(1e-6, loop_rate_hz_ctrl_);
-  if (valid_cmd) {
-    updateTargetSpeedProfile(dt);
-  }
-  const VirtualDriveCmd cmd = computeVirtualDriveCmd(steer_norm, valid_cmd, dt);
-
-  imac_interfaces::msg::VirtualControlCommand msg;
-  msg.steer = static_cast<float>(cmd.steer);
-  msg.throttle = static_cast<float>(cmd.throttle);
-  msg.brake = static_cast<float>(cmd.brake);
-  virtual_cmd_pub_->publish(msg);
-
-  RCLCPP_INFO_THROTTLE(
-    this->get_logger(), *this->get_clock(), 500,
-    "VirtualControlCommand: topic=%s v_ref=%.3f v_now=%.3f steer=%.3f throttle=%.3f brake=%.3f valid=%d",
-    virtual_cmd_topic_.c_str(),
-    target_speed_profile_mps_,
-    cur_speed_,
-    cmd.steer,
-    cmd.throttle,
-    cmd.brake,
-    valid_cmd ? 1 : 0);
-}
-
-void TrackingControllerNode::publishVirtualStopCommand()
-{
-  if (!virtual_cmd_pub_) {
-    return;
-  }
-
-  speed_integral_ = 0.0;
-  target_speed_profile_mps_ = 0.0;
-
-  imac_interfaces::msg::VirtualControlCommand msg;
-  msg.steer = 0.0f;
-  msg.throttle = 0.0f;
-  msg.brake = static_cast<float>(clampd(max_virtual_brake_, 0.0, 1.0));
-  virtual_cmd_pub_->publish(msg);
-
-  RCLCPP_INFO_THROTTLE(
-    this->get_logger(), *this->get_clock(), 500,
-    "VirtualControlCommand STOP: topic=%s v_now=%.3f steer=0.000 throttle=0.000 brake=%.3f",
-    virtual_cmd_topic_.c_str(),
-    cur_speed_,
-    static_cast<double>(msg.brake));
-}
-
-void TrackingControllerNode::publishcontrolCmd(
-  double dv_mps,
-  double dpsi_rad,
-  double steer_norm,
-  bool valid_cmd)
-{
-  geometry_msgs::msg::Twist msg;
-  msg.linear.x = dv_mps;
-  msg.linear.y = steer_norm;
-  msg.linear.z = valid_cmd ? 1.0 : 0.0;  // raw debug validity flag
-  msg.angular.z = dpsi_rad;
-  if (control_debug_pub_) {
-    control_debug_pub_->publish(msg);
-  }
-
-  const rclcpp::Time now = this->now();
-  double applied_dv = dv_mps;
-  double applied_dpsi = dpsi_rad;
-  double applied_steer = 0.0;
-
-  if (valid_cmd) {
-    applied_steer = computeFilteredSteerNorm(steer_norm, now);
-  } else {
-    applied_dv = 0.0;
-    applied_dpsi = 0.0;
-    applied_steer = 0.0;
-  }
-
-  prev_applied_steer_norm_ = applied_steer;
-  last_applied_cmd_time_ = now;
-  have_prev_applied_cmd_ = true;
-
-  geometry_msgs::msg::Twist applied_msg;
-  applied_msg.linear.x = applied_dv;
-  applied_msg.linear.y = applied_steer;
-  applied_msg.linear.z = valid_cmd ? 1.0 : 0.0;
-  applied_msg.angular.z = applied_dpsi;
-
-  if (applied_cmd_pub_ && (valid_cmd || publish_applied_cmd_when_invalid_)) {
-    applied_cmd_pub_->publish(applied_msg);
-  }
-
-  publishVirtualControlCommand(applied_steer, valid_cmd);
-
-  publishMavlinkCmd(applied_dv, applied_steer, valid_cmd);
-}
-
-void TrackingControllerNode::publishZeroDebugCmd(const std::string & reason)
-{
-  if (publishPreviousSolverCmd(reason)) {
-    return;
-  }
-
-  if (publish_zero_on_failure_) {
-    publishcontrolCmd(0.0, 0.0, 0.0, false);
-  }
-  RCLCPP_WARN_THROTTLE(
-    this->get_logger(), *this->get_clock(), 1000,
-    "%s", reason.c_str());
-}
-
-bool TrackingControllerNode::publishPreviousSolverCmd(const std::string & reason)
-{
-  if (previous_solver_cmds_.empty()) {
-    return false;
-  }
-
-  const std::size_t idx = std::min(
-    previous_solver_cmd_index_,
-    previous_solver_cmds_.size() - 1);
-  const SolverControlStep cmd = previous_solver_cmds_[idx];
-  if (previous_solver_cmd_index_ + 1 < previous_solver_cmds_.size()) {
-    ++previous_solver_cmd_index_;
-  }
-
-  publishcontrolCmd(cmd.dv_mps, cmd.dpsi_rad, cmd.steer_norm, true);
-  prev_first_dpsi_ = cmd.dpsi_rad;
-  have_prev_first_dpsi_ = true;
-
-  RCLCPP_WARN_THROTTLE(
-    this->get_logger(), *this->get_clock(), 1000,
-    "%s; using previous solver command step %zu/%zu: dv=%.3f dpsi=%.3f steer=%.3f",
-    reason.c_str(),
-    idx + 1,
-    previous_solver_cmds_.size(),
-    cmd.dv_mps,
-    cmd.dpsi_rad,
-    cmd.steer_norm);
-
-  return true;
-}
-
-void TrackingControllerNode::publishGoalStopCmd(const std::string & reason)
-{
-  previous_solver_cmds_.clear();
-  previous_solver_cmd_index_ = 0;
-  preview_seed_body_.clear();
-  have_prev_first_dpsi_ = false;
-  prev_first_dpsi_ = 0.0;
-  geometry_msgs::msg::Twist msg;
-  msg.linear.x = -std::max(0.0, cur_speed_);
-  msg.linear.y = 0.0;
-  msg.linear.z = 1.0;
-  msg.angular.z = 0.0;
-
-  if (control_debug_pub_) {
-    control_debug_pub_->publish(msg);
-  }
-  if (applied_cmd_pub_) {
-    applied_cmd_pub_->publish(msg);
-  }
-
-  publishVirtualStopCommand();
-
-  {
-    std::lock_guard<std::mutex> lk(mavlink_cmd_mtx_);
-    mavlink_last_throttle_norm_ = 0.0;
-    mavlink_last_steering_norm_ = 0.0;
-    mavlink_have_actuator_cmd_ = true;
-  }
-  mavlinkSendActuator(0.0, 0.0);
-
-  RCLCPP_INFO_THROTTLE(
-    this->get_logger(), *this->get_clock(), 1000,
-    "%s cur_speed=%.3f goal stop command: dv=%.3f dpsi=0.000",
-    reason.c_str(),
-    cur_speed_,
-    msg.linear.x);
-}
-
-void TrackingControllerNode::odomCallback(
-  const nav_msgs::msg::Odometry::SharedPtr msg)
-{
-  cur_x_ = msg->pose.pose.position.x;
-  cur_y_ = msg->pose.pose.position.y;
-
-  tf2::Quaternion q(
-    msg->pose.pose.orientation.x,
-    msg->pose.pose.orientation.y,
-    msg->pose.pose.orientation.z,
-    msg->pose.pose.orientation.w);
-  double roll = 0.0, pitch = 0.0, yaw = 0.0;
-  tf2::Matrix3x3(q).getRPY(roll, pitch, yaw);
-  (void)roll;
-  (void)pitch;
-
-  cur_yaw_ = yaw;
-  cur_speed_ = std::hypot(msg->twist.twist.linear.x, msg->twist.twist.linear.y);
-  have_pose_ = true;
-  last_pose_rx_time_ = this->now();
-}
-
-void TrackingControllerNode::poseStampedCallback(
+void SdMapUpperPlannerNode::poseStampedCallback(
   const geometry_msgs::msg::PoseStamped::SharedPtr msg)
 {
   double x = msg->pose.position.x;
   double y = msg->pose.position.y;
-  const double raw_x = x;
-  const double raw_y = y;
-
-  if (pose_swap_xy_) {
-    std::swap(x, y);
-  }
-  if (pose_invert_x_) {
-    x = -x;
-  }
-  if (pose_invert_y_) {
-    y = -y;
-  }
-
+  if (pose_swap_xy_) {std::swap(x, y);}
+  if (pose_invert_x_) {x = -x;}
+  if (pose_invert_y_) {y = -y;}
   x = pose_position_scale_ * x + pose_x_offset_;
   y = pose_position_scale_ * y + pose_y_offset_;
-  const double z = pose_position_scale_ * msg->pose.position.z + pose_z_offset_;
+  const double transformed_z =
+    pose_position_scale_ * msg->pose.position.z + pose_z_offset_;
+  (void)transformed_z;
 
-  double yaw = msg->pose.orientation.z + pose_yaw_offset_rad_;
-  yaw = std::atan2(std::sin(yaw), std::cos(yaw));
+  PoseSnapshot next;
+  next.position = Eigen::Vector2d(x, y);
+  const double raw_yaw = pose_stamped_yaw_is_orientation_z_ ?
+    msg->pose.orientation.z : quaternionYaw(msg->pose.orientation);
+  next.yaw_rad = wrapToPi(raw_yaw + pose_yaw_offset_rad_);
+  next.frame_id = msg->header.frame_id;
+  next.received = now();
+  next.valid = finitePoint(next.position) && std::isfinite(next.yaw_rad);
 
-  const rclcpp::Time now = this->now();
-  const Eigen::Vector2d xy(x, y);
-
-  if (have_prev_pose_stamped_) {
-    const double dt = (now - prev_pose_stamped_time_).seconds();
-    if (dt > 1e-4 && dt <= pose_max_dt_for_speed_) {
-      const double v_meas = (xy - prev_pose_stamped_xy_).norm() / dt;
-      const double alpha = std::clamp(pose_speed_lpf_alpha_, 0.0, 1.0);
-      cur_speed_ = alpha * v_meas + (1.0 - alpha) * cur_speed_;
-      cur_speed_ = clampd(cur_speed_, 0.0, 2.0);
+  {
+    std::lock_guard<std::mutex> lock(pose_mtx_);
+    if (!next.valid) {
+      next.speed_mps = 0.0;
+      next.speed_valid = false;
+      have_previous_pose_measurement_ = false;
+    } else if (have_previous_pose_measurement_) {
+      const double dt = (next.received - previous_pose_time_).seconds();
+      if (dt > 1e-4 && dt <= pose_max_dt_for_speed_) {
+        const double measured_speed =
+          (next.position - previous_pose_measurement_).norm() / dt;
+        if (std::isfinite(measured_speed)) {
+          const double alpha = clampd(pose_speed_lpf_alpha_, 0.0, 1.0);
+          const double previous_speed = pose_.speed_valid && std::isfinite(pose_.speed_mps) ?
+            pose_.speed_mps : measured_speed;
+          next.speed_mps = alpha * measured_speed + (1.0 - alpha) * previous_speed;
+          next.speed_valid = std::isfinite(next.speed_mps);
+        }
+      } else {
+        // Do not keep an old finite-difference estimate across a long or
+        // non-monotonic sample interval. The next valid interval re-seeds it.
+        next.speed_mps = 0.0;
+        next.speed_valid = false;
+      }
+    } else {
+      next.speed_mps = 0.0;
+      next.speed_valid = false;
     }
-  } else {
-    cur_speed_ = 0.0;
-    have_prev_pose_stamped_ = true;
+    if (next.valid) {
+      previous_pose_measurement_ = next.position;
+      previous_pose_time_ = next.received;
+      have_previous_pose_measurement_ = true;
+    }
+    pose_ = next;
   }
-
-  prev_pose_stamped_xy_ = xy;
-  prev_pose_stamped_time_ = now;
-
-  cur_x_ = x;
-  cur_y_ = y;
-  cur_yaw_ = yaw;
-  have_pose_ = true;
-  last_pose_rx_time_ = now;
-
-  RCLCPP_DEBUG_THROTTLE(
-    this->get_logger(), *this->get_clock(), 500,
-    "PoseStamped state: frame=%s raw=(%.3f, %.3f, %.3f) map=(%.3f, %.3f, %.3f) yaw=%.3f speed=%.3f",
-    msg->header.frame_id.c_str(),
-    raw_x,
-    raw_y,
-    msg->pose.position.z,
-    cur_x_,
-    cur_y_,
-    z,
-    cur_yaw_,
-    cur_speed_);
 }
 
-void TrackingControllerNode::pathCallback(
-  const nav_msgs::msg::Path::SharedPtr msg)
+void SdMapUpperPlannerNode::globalPathCallback(const nav_msgs::msg::Path::SharedPtr msg)
 {
-  std::vector<Eigen::Vector2d> g;
-  g.reserve(msg->poses.size());
-  for (const auto & pose_stamped : msg->poses) {
-    g.emplace_back(
-      pose_stamped.pose.position.x,
-      pose_stamped.pose.position.y);
+  if (csv_path_loaded_ && !allow_topic_path_override_when_csv_loaded_) {
+    RCLCPP_WARN_THROTTLE(
+      get_logger(), *get_clock(), 5000,
+      "ignoring global path topic because the configured CSV path is active");
+    return;
   }
 
-  applyReferencePath(g, "/debug/global_path");
+  std::vector<Eigen::Vector2d> path;
+  path.reserve(msg->poses.size());
+  for (const auto & pose : msg->poses) {
+    const Eigen::Vector2d point(pose.pose.position.x, pose.pose.position.y);
+    if (finitePoint(point)) {
+      path.push_back(point);
+    }
+  }
+  applyReferencePath(
+    path, msg->header.frame_id.empty() ? path_frame_id_ : msg->header.frame_id,
+    global_path_topic_);
 }
 
-void TrackingControllerNode::applyReferencePath(
+std::vector<Eigen::Vector2d> SdMapUpperPlannerNode::applyConfiguredWaypointBias(
+  const std::vector<Eigen::Vector2d> & path) const
+{
+  if (!enable_waypoint_bias_ || path.empty()) {
+    return path;
+  }
+
+  const Eigen::Vector2d anchor = path.front();
+  const double cosine = std::cos(waypoint_yaw_bias_rad_);
+  const double sine = std::sin(waypoint_yaw_bias_rad_);
+  Eigen::Matrix2d rotation;
+  rotation << cosine, -sine, sine, cosine;
+  const Eigen::Vector2d translation(waypoint_x_bias_m_, waypoint_y_bias_m_);
+
+  std::vector<Eigen::Vector2d> biased;
+  biased.reserve(path.size());
+  for (const auto & point : path) {
+    biased.push_back(anchor + rotation * (point - anchor) + translation);
+  }
+  return biased;
+}
+
+void SdMapUpperPlannerNode::applyReferencePath(
   const std::vector<Eigen::Vector2d> & path,
+  const std::string & frame_id,
   const std::string & source_label)
 {
-  {
-    std::lock_guard<std::mutex> lk(map_mtx_);
+  if (path.size() < 2) {
+    RCLCPP_WARN(get_logger(), "ignored invalid path from %s", source_label.c_str());
+    return;
+  }
 
-    const bool same_path = !ref_path_.empty() && pathsApproximatelyEqual(ref_path_, path);
-    if (same_path && !reset_waypoint_on_path_update_) {
+  const auto configured_path = applyConfiguredWaypointBias(path);
+  const std::string resolved_frame = frame_id.empty() ? path_frame_id_ : frame_id;
+  {
+    std::lock_guard<std::mutex> lock(path_mtx_);
+    const bool same_frame = frameIdsEquivalent(global_path_frame_id_, resolved_frame);
+    if (same_frame && pathsExactlyEqual(global_path_, configured_path)) {
+      // The MATLAB bridge republishes the route as a heartbeat. An identical
+      // path is not a new mission and must never reset waypoint progress.
       return;
     }
 
-    ref_path_ = path;
-    goal_reached_ = false;
-    previous_solver_cmds_.clear();
-    previous_solver_cmd_index_ = 0;
-    have_prev_first_dpsi_ = false;
-    prev_first_dpsi_ = 0.0;
+    const bool first_path = global_path_.size() < 2;
+    bool preserve_seed = false;
+    int preserved_wp0 = 0;
+    if (!first_path && !reset_waypoint_on_path_update_) {
+      const int old_anchor_index = clampi(
+        wp0_index_, 0, static_cast<int>(global_path_.size()) - 1);
+      preserved_wp0 = closestSegmentIndex(
+        configured_path, global_path_[static_cast<std::size_t>(old_anchor_index)]);
+      preserve_seed = true;
+    }
 
-    if (ref_path_.size() >= 2) {
-      wp0_index_ = 0;
-      wp1_index_ = 1;
-      waypoint_seeded_ = true;
-      preview_seed_body_.clear();
+    global_path_ = configured_path;
+    global_path_frame_id_ = resolved_frame;
+    if (preserve_seed) {
+      wp0_index_ = clampi(
+        preserved_wp0, 0, static_cast<int>(configured_path.size()) - 2);
+      wp1_index_ = wp0_index_ + 1;
     } else {
       wp0_index_ = 0;
-      wp1_index_ = 0;
-      waypoint_seeded_ = false;
-      preview_seed_body_.clear();
+      wp1_index_ = 1;
     }
+    goal_reached_ = false;
+    ++planning_revision_;
   }
-
+  {
+    // Do not nest path_mtx_ and previous_solution_mtx_. A changed path must
+    // invalidate the locally re-anchored reference before another cycle can
+    // consider it, while identical heartbeat paths return above unchanged.
+    std::lock_guard<std::mutex> lock(previous_solution_mtx_);
+    previous_reference_body_.clear();
+    previous_reference_heading_rad_.clear();
+    previous_solution_valid_ = false;
+  }
+  publishGoalReached(false);
   RCLCPP_INFO(
-    this->get_logger(),
-    "Loaded reference path from %s: %zu points; goal_reached reset",
-    source_label.c_str(),
-    path.size());
+    get_logger(),
+    "reference path loaded from %s: %zu points frame=%s waypoint_bias=%s",
+    source_label.c_str(), configured_path.size(), resolved_frame.c_str(),
+    enable_waypoint_bias_ ? "enabled" : "disabled");
 }
 
-bool TrackingControllerNode::loadReferencePathCsvIfConfigured()
+void SdMapUpperPlannerNode::gridMapCallback(
+  const nav_msgs::msg::OccupancyGrid::SharedPtr msg)
 {
-  if (!use_csv_global_path_) {
-    return false;
-  }
-
-  namespace fs = std::filesystem;
-  std::vector<fs::path> candidates;
-  const fs::path raw(csv_global_path_file_);
-  if (!csv_global_path_file_.empty()) {
-    candidates.push_back(raw);
-    if (!raw.is_absolute()) {
-      candidates.push_back(fs::path("data") / raw);
-      try {
-        const fs::path share = ament_index_cpp::get_package_share_directory("virtual_control");
-        candidates.push_back(share / raw);
-        candidates.push_back(share / "data" / raw);
-      } catch (...) {
-      }
+  GridMapSnapshot next;
+  next.resolution = msg->info.resolution;
+  next.width = static_cast<int>(msg->info.width);
+  next.height = static_cast<int>(msg->info.height);
+  next.origin_body = Eigen::Vector2d(
+    msg->info.origin.position.x, msg->info.origin.position.y);
+  next.origin_yaw_rad = quaternionYaw(msg->info.origin.orientation);
+  next.frame_id = msg->header.frame_id;
+  next.data.assign(msg->data.begin(), msg->data.end());
+  next.received = now();
+  next.valid = next.resolution > 0.0 && next.width > 0 && next.height > 0 &&
+    static_cast<std::size_t>(next.width * next.height) == next.data.size() &&
+    finitePoint(next.origin_body) && std::isfinite(next.origin_yaw_rad);
+  const bool grid_frame_matches = normalizedFrameId(expected_grid_frame_id_).empty() ||
+    (!normalizedFrameId(next.frame_id).empty() &&
+    frameIdsEquivalent(next.frame_id, expected_grid_frame_id_));
+  if (!grid_frame_matches) {
+    RCLCPP_WARN_THROTTLE(
+      get_logger(), *get_clock(), 2000,
+      "OccupancyGrid frame '%s' differs from expected ego frame '%s'",
+      next.frame_id.c_str(), expected_grid_frame_id_.c_str());
+    if (require_grid_frame_match_) {
+      next.valid = false;
     }
   }
+  {
+    std::lock_guard<std::mutex> lock(grid_mtx_);
+    grid_ = next;
+  }
+  if (!next.valid) {
+    RCLCPP_WARN_THROTTLE(
+      get_logger(), *get_clock(), 1000,
+      "invalid OccupancyGrid: resolution=%.4f size=%dx%d data=%zu",
+      next.resolution, next.width, next.height, next.data.size());
+  }
+}
 
+bool SdMapUpperPlannerNode::loadReferencePathCsvIfConfigured()
+{
+  if (!use_csv_global_path_ || csv_global_path_file_.empty()) {
+    return false;
+  }
+  namespace fs = std::filesystem;
+  const fs::path configured(csv_global_path_file_);
+  std::vector<fs::path> candidates{configured};
+  if (!configured.is_absolute()) {
+    candidates.emplace_back(fs::path("data") / configured);
+    try {
+      const fs::path share = ament_index_cpp::get_package_share_directory("virtual_control");
+      candidates.emplace_back(share / configured);
+      candidates.emplace_back(share / "data" / configured);
+    } catch (...) {
+    }
+  }
   fs::path resolved;
   for (const auto & candidate : candidates) {
-    std::error_code ec;
-    if (fs::exists(candidate, ec) && fs::is_regular_file(candidate, ec)) {
+    std::error_code error;
+    if (fs::is_regular_file(candidate, error)) {
       resolved = candidate;
       break;
     }
   }
   if (resolved.empty()) {
     RCLCPP_WARN(
-      get_logger(),
-      "CSV global path enabled but file was not found: '%s'",
-      csv_global_path_file_.c_str());
+      get_logger(), "CSV global path not found: %s", csv_global_path_file_.c_str());
     return false;
   }
 
   std::ifstream file(resolved);
-  if (!file.is_open()) {
-    RCLCPP_ERROR(get_logger(), "failed to open CSV global path: %s", resolved.c_str());
-    return false;
-  }
-
   std::string header_line;
-  if (!std::getline(file, header_line)) {
-    RCLCPP_ERROR(get_logger(), "CSV global path is empty: %s", resolved.c_str());
+  if (!file.is_open() || !std::getline(file, header_line)) {
+    RCLCPP_ERROR(get_logger(), "cannot read CSV global path: %s", resolved.c_str());
     return false;
   }
-
-  const std::vector<std::string> header = splitCsvLine(header_line);
-  auto column_index = [&](const std::string & name) -> int {
-    for (size_t i = 0; i < header.size(); ++i) {
-      if (trimCopy(header[i]) == name) {
-        return static_cast<int>(i);
+  const auto header = splitCsvLine(header_line);
+  auto column = [&header](const std::string & name) {
+      for (std::size_t i = 0; i < header.size(); ++i) {
+        if (trimCopy(header[i]) == name) {return static_cast<int>(i);}
       }
-    }
-    return -1;
-  };
-  const int record_col = column_index("record_type");
-  const int x_col = column_index("x");
-  const int y_col = column_index("y");
-  const int route_col = column_index("is_route");
-
-  std::vector<Eigen::Vector2d> route_waypoints;
-  std::vector<Eigen::Vector2d> simple_points;
+      return -1;
+    };
+  const int record_col = column("record_type");
+  const int x_col = column("x");
+  const int y_col = column("y");
+  const int route_col = column("is_route");
+  std::vector<Eigen::Vector2d> route_points;
+  std::vector<Eigen::Vector2d> plain_points;
   std::string line;
   while (std::getline(file, line)) {
-    if (trimCopy(line).empty()) {
-      continue;
-    }
-    const std::vector<std::string> row = splitCsvLine(line);
-    auto cell = [&](int idx) -> std::string {
-      return (idx >= 0 && idx < static_cast<int>(row.size())) ? row[static_cast<size_t>(idx)] : "";
-    };
-
-    if (record_col >= 0 && trimCopy(cell(record_col)) == "waypoint") {
-      if (route_col >= 0 && !csvTruthy(cell(route_col))) {
+    const auto row = splitCsvLine(line);
+    auto cell = [&row](int index) -> std::string {
+        return index >= 0 && index < static_cast<int>(row.size()) ?
+               row[static_cast<std::size_t>(index)] : std::string();
+      };
+    double x = 0.0;
+    double y = 0.0;
+    if (record_col >= 0) {
+      if (cell(record_col) != "waypoint" ||
+        (route_col >= 0 && !csvTruthy(cell(route_col))))
+      {
         continue;
       }
-      double x = 0.0;
-      double y = 0.0;
-      if (parseCsvDouble(cell(x_col), &x) && parseCsvDouble(cell(y_col), &y)) {
-        route_waypoints.emplace_back(x, y);
+      if (parseDouble(cell(x_col), x) && parseDouble(cell(y_col), y)) {
+        route_points.emplace_back(x, y);
       }
-      continue;
-    }
-
-    if (record_col < 0) {
-      double x = 0.0;
-      double y = 0.0;
-      const int sx_col = (x_col >= 0) ? x_col : 0;
-      const int sy_col = (y_col >= 0) ? y_col : 1;
-      if (parseCsvDouble(cell(sx_col), &x) && parseCsvDouble(cell(sy_col), &y)) {
-        simple_points.emplace_back(x, y);
+    } else {
+      if (parseDouble(cell(x_col >= 0 ? x_col : 0), x) &&
+        parseDouble(cell(y_col >= 0 ? y_col : 1), y))
+      {
+        plain_points.emplace_back(x, y);
       }
     }
   }
-
-  const std::vector<Eigen::Vector2d> & selected =
-    (route_waypoints.size() >= 2) ? route_waypoints : simple_points;
+  const auto & selected = route_points.size() >= 2 ? route_points : plain_points;
   if (selected.size() < 2) {
-    RCLCPP_ERROR(
-      get_logger(),
-      "CSV global path has fewer than 2 valid route points: %s route=%zu simple=%zu",
-      resolved.c_str(),
-      route_waypoints.size(),
-      simple_points.size());
+    RCLCPP_ERROR(get_logger(), "CSV path contains fewer than two points: %s", resolved.c_str());
     return false;
   }
-
-  applyReferencePath(selected, "csv:" + resolved.string());
+  applyReferencePath(selected, path_frame_id_, "csv:" + resolved.string());
   return true;
 }
 
-void TrackingControllerNode::upperGuidesCallback(
-  const nav_msgs::msg::Path::SharedPtr msg)
+std::array<int, 2> SdMapUpperPlannerNode::findWaypointPair(
+  const std::vector<Eigen::Vector2d> & waypoints,
+  int wp0_idx,
+  const Eigen::Vector2d & position,
+  const Eigen::Vector2d & velocity,
+  double eps) const
 {
-  if (!msg || msg->poses.size() < 2) {
-    RCLCPP_WARN_THROTTLE(
-      this->get_logger(), *this->get_clock(), 1000,
-      "upper guides path is invalid or has fewer than 2 poses");
-    return;
+  if (waypoints.size() < 2) {
+    return {0, 0};
   }
-
-  const Eigen::Vector2d wp0_world(
-    msg->poses[0].pose.position.x,
-    msg->poses[0].pose.position.y);
-  const Eigen::Vector2d wp1_world(
-    msg->poses[1].pose.position.x,
-    msg->poses[1].pose.position.y);
-
-  {
-    std::lock_guard<std::mutex> lk(upper_guides_mtx_);
-    const bool changed = !have_upper_guides_ ||
-      upper_guides_world_.size() != 2 ||
-      (upper_guides_world_[0] - wp0_world).norm() > upper_guides_change_reset_tol_m_ ||
-      (upper_guides_world_[1] - wp1_world).norm() > upper_guides_change_reset_tol_m_;
-    upper_guides_world_.clear();
-    upper_guides_world_.push_back(wp0_world);
-    upper_guides_world_.push_back(wp1_world);
-    have_upper_guides_ = true;
-    last_upper_guides_rx_time_ = this->now();
-    if (changed) {
-      preview_seed_body_.clear();
-    }
-  }
-}
-
-
-void TrackingControllerNode::gridMapCallback(
-  const nav_msgs::msg::OccupancyGrid::SharedPtr msg)
-{
-  GridMapSnapshot snapshot;
-  snapshot.resolution = msg->info.resolution;
-  snapshot.width = static_cast<int>(msg->info.width);
-  snapshot.height = static_cast<int>(msg->info.height);
-  snapshot.origin_x = msg->info.origin.position.x;
-  snapshot.origin_y = msg->info.origin.position.y;
-  snapshot.frame_id = msg->header.frame_id;
-  snapshot.data.assign(msg->data.begin(), msg->data.end());
-
-  tf2::Quaternion q(
-    msg->info.origin.orientation.x,
-    msg->info.origin.orientation.y,
-    msg->info.origin.orientation.z,
-    msg->info.origin.orientation.w);
-  double roll = 0.0, pitch = 0.0, yaw = 0.0;
-  tf2::Matrix3x3(q).getRPY(roll, pitch, yaw);
-  snapshot.origin_yaw = yaw;
-  (void)roll;
-  (void)pitch;
-
-  const bool dims_ok = snapshot.width > 0 && snapshot.height > 0 && snapshot.resolution > 0.0;
-  const bool data_ok =
-    static_cast<int>(snapshot.data.size()) == snapshot.width * snapshot.height;
-  snapshot.valid = dims_ok && data_ok;
-
-  {
-    std::lock_guard<std::mutex> lk(grid_mtx_);
-    grid_map_ = snapshot;
-    have_grid_map_ = snapshot.valid;
-    if (snapshot.valid) {
-      last_grid_rx_time_ = this->now();
-    }
-  }
-
-  RCLCPP_INFO_THROTTLE(
-    this->get_logger(), *this->get_clock(), 2000,
-    "Local body-grid accepted: topic=%s frame='%s' size=%dx%d res=%.4f origin=(%.3f, %.3f, yaw=%.3f) value_rule=%s threshold=%d valid=%d",
-    grid_map_topic_.c_str(),
-    snapshot.frame_id.c_str(),
-    snapshot.width,
-    snapshot.height,
-    snapshot.resolution,
-    snapshot.origin_x,
-    snapshot.origin_y,
-    snapshot.origin_yaw,
-    grid_positive_is_drivable_ ? "high_value_is_drivable" : "low_value_is_drivable",
-    grid_value_threshold_,
-    snapshot.valid ? 1 : 0);
-}
-
-
-TrackingControllerNode::PreviewConstraintData TrackingControllerNode::makePreviewConstraints2(
-  const std::vector<Eigen::Vector2d>& preview_pts_body,
-  const std::vector<double>& preview_psi_rad,
-  int N_pred,
-  const Eigen::Vector2d& body_origin_world,
-  const Eigen::Matrix2d& R_wb,
-  const std::vector<double>& lane_offsets,
-  double lane_width,
-  const GridMapSnapshot* grid_map)
-{
-  (void)body_origin_world;
-  (void)R_wb;
-
-  PreviewConstraintData out;
-  if (preview_pts_body.size() < 2 || N_pred <= 0) {
-    return out;
-  }
-
-  const int n_pred = std::min(N_pred, static_cast<int>(preview_pts_body.size()) - 1);
-  if (n_pred <= 0) {
-    return out;
-  }
-  out.N_pred = n_pred;
-
-  std::vector<double> lanes = lane_offsets;
-  if (lanes.empty()) {
-    lanes.push_back(0.0);
-  }
-  const int L = static_cast<int>(lanes.size());
-  const double half_w = 0.5 * lane_width;
-  const bool use_grid_map = (grid_map != nullptr) && grid_map->valid;
-  const double sample_ds = std::max(0.02, preview_line_sample_m_);
-  const int min_segment_samples = std::max(1, preview_min_segment_samples_);
-  const double soft_ratio = 0.8;
-
-  out.pmk.assign(n_pred + 1, std::vector<Eigen::Vector2d>());
-  out.pMk.assign(n_pred + 1, std::vector<Eigen::Vector2d>());
-  out.Nck.assign(n_pred + 1, 0);
-  out.mk.assign(n_pred + 1, 0.0);
-  out.nk.assign(n_pred + 1, 0.0);
-  out.ck.assign(n_pred + 1, 0.0);
-  out.prk.assign(n_pred + 1, Eigen::Vector2d::Zero());
-  out.psirk.assign(n_pred + 1, 0.0);
-
-  auto body_to_grid = [&](const Eigen::Vector2d& p_body, int& gx, int& gy) -> bool {
-    if (!use_grid_map) {
-      return false;
-    }
-    const double dx = p_body.x() - grid_map->origin_x;
-    const double dy = p_body.y() - grid_map->origin_y;
-    const double c = std::cos(grid_map->origin_yaw);
-    const double s = std::sin(grid_map->origin_yaw);
-    const double lx = c * dx + s * dy;
-    const double ly = -s * dx + c * dy;
-    gx = static_cast<int>(std::floor(lx / grid_map->resolution));
-    gy = static_cast<int>(std::floor(ly / grid_map->resolution));
-    return gx >= 0 && gx < grid_map->width && gy >= 0 && gy < grid_map->height;
-  };
-
-  auto is_drivable = [&](int8_t val) -> bool {
-    if (val < 0) {
-      return false;
-    }
-    if (grid_positive_is_drivable_) {
-      return static_cast<int>(val) >= grid_value_threshold_;
-    }
-    return static_cast<int>(val) <= grid_value_threshold_;
-  };
-
-  const double map_span = use_grid_map ?
-    0.5 * std::sqrt(
-      std::pow(grid_map->width * grid_map->resolution, 2.0) +
-      std::pow(grid_map->height * grid_map->resolution, 2.0)) : 0.0;
-
-  for (int k = 0; k <= n_pred; ++k) {
-    const int p_idx = std::min(k, static_cast<int>(preview_pts_body.size()) - 1);
-    const int psi_idx = preview_psi_rad.empty() ? 0 :
-      std::min(k, static_cast<int>(preview_psi_rad.size()) - 1);
-    const double psi_k = preview_psi_rad.empty() ? 0.0 : preview_psi_rad[psi_idx];
-
-    out.prk[k] = preview_pts_body[p_idx];
-    out.psirk[k] = psi_k;
-    out.mk[k] = std::cos(psi_k);
-    out.nk[k] = std::sin(psi_k);
-    out.ck[k] = -(out.mk[k] * out.prk[k].x() + out.nk[k] * out.prk[k].y());
-
-    const Eigen::Vector2d n_vec(-std::sin(psi_k), std::cos(psi_k));
-    auto add_lane_fallback_corridor = [&]() {
-      out.Nck[k] = L;
-      out.pmk[k].reserve(L);
-      out.pMk[k].reserve(L);
-      for (int l = 0; l < L; ++l) {
-        out.pmk[k].push_back(out.prk[k] + (lanes[l] - half_w) * n_vec);
-        out.pMk[k].push_back(out.prk[k] + (lanes[l] + half_w) * n_vec);
-      }
-    };
-
-    if (!use_grid_map) {
-      add_lane_fallback_corridor();
-      continue;
-    }
-
-    const double visible_x_min = grid_map->origin_x + 0.5 * grid_map->resolution;
-    if (out.prk[k].x() < visible_x_min) {
-      add_lane_fallback_corridor();
-
-      RCLCPP_WARN_THROTTLE(
-        this->get_logger(), *this->get_clock(), 1000,
-        "preview k=%d is before visible grid x range: prk_x=%.3f visible_x_min=%.3f; using lane fallback corridor",
-        k, out.prk[k].x(), visible_x_min);
-
-      continue;
-    }
-
-    const Eigen::Vector2d line_dir(-out.nk[k], out.mk[k]);
-    bool in_run = false;
-    std::vector<Eigen::Vector2d> run_points;
-    run_points.reserve(64);
-    int sample_count = 0;
-    int in_bounds_count = 0;
-    int drivable_count = 0;
-    Eigen::Vector2d first_body_sample = Eigen::Vector2d::Zero();
-    bool first_body_sample_set = false;
-    Eigen::Vector2d prk_body = out.prk[k];
-    int prk_gx = -1;
-    int prk_gy = -1;
-    bool prk_in_bounds = false;
-    int prk_grid_value = -999;
-    if (use_grid_map) {
-      prk_in_bounds = body_to_grid(prk_body, prk_gx, prk_gy);
-      if (prk_in_bounds) {
-        const int prk_idx = prk_gy * grid_map->width + prk_gx;
-        if (prk_idx >= 0 && prk_idx < static_cast<int>(grid_map->data.size())) {
-          prk_grid_value = static_cast<int>(grid_map->data[prk_idx]);
-        }
-      }
-    }
-
-    auto flush_run = [&]() {
-      if (static_cast<int>(run_points.size()) < min_segment_samples) {
-        run_points.clear();
-        return;
-      }
-      const Eigen::Vector2d pmin = run_points.front();
-      const Eigen::Vector2d pmax = run_points.back();
-      out.pmk[k].push_back(soft_ratio * pmin + (1.0 - soft_ratio) * pmax);
-      out.pMk[k].push_back(soft_ratio * pmax + (1.0 - soft_ratio) * pmin);
-      run_points.clear();
-    };
-
-    for (double s = -map_span; s <= map_span + 1e-9; s += sample_ds) {
-      const Eigen::Vector2d ptest_body = out.prk[k] + s * line_dir;
-      if (!first_body_sample_set) {
-        first_body_sample = ptest_body;
-        first_body_sample_set = true;
-      }
-      ++sample_count;
-      int gx = -1;
-      int gy = -1;
-      bool drivable = false;
-      if (body_to_grid(ptest_body, gx, gy)) {
-        ++in_bounds_count;
-        const int idx = gy * grid_map->width + gx;
-        if (idx >= 0 && idx < static_cast<int>(grid_map->data.size())) {
-          drivable = is_drivable(grid_map->data[idx]);
-        }
-      }
-      if (drivable) {
-        ++drivable_count;
-      }
-
-      if (drivable) {
-        if (!in_run) {
-          in_run = true;
-          run_points.clear();
-        }
-        run_points.push_back(ptest_body);
-      } else if (in_run) {
-        flush_run();
-        in_run = false;
-      }
-    }
-    if (in_run) {
-      flush_run();
-    }
-
-    out.Nck[k] = static_cast<int>(out.pmk[k].size());
-    if (out.Nck[k] == 0) {
-      std::ostringstream lane_offsets_stream;
-      lane_offsets_stream << "[";
-      for (size_t i = 0; i < lane_offsets.size(); ++i) {
-        if (i > 0) {
-          lane_offsets_stream << ", ";
-        }
-        lane_offsets_stream << lane_offsets[i];
-      }
-      lane_offsets_stream << "]";
-
-      RCLCPP_WARN(
-        this->get_logger(),
-        "preview corridor empty at k=%d: requested_N_pred=%d resolved_N_pred=%d psi=%.3f samples=%d in_bounds=%d drivable=%d prk_body=(%.3f,%.3f) prk_grid=(%d,%d) prk_val=%d prk_in_bounds=%d first_body=(%.3f,%.3f) map_span=%.3f lane_width=%.3f lane_offsets=%s",
-        k, N_pred, n_pred, psi_k, sample_count, in_bounds_count, drivable_count,
-        prk_body.x(), prk_body.y(),
-        prk_gx, prk_gy, prk_grid_value, prk_in_bounds ? 1 : 0,
-        first_body_sample.x(), first_body_sample.y(), map_span, lane_width,
-        lane_offsets_stream.str().c_str());
-      out.N_pred = k - 1;
-      out.pmk.resize(out.N_pred + 1);
-      out.pMk.resize(out.N_pred + 1);
-      out.Nck.resize(out.N_pred + 1);
-      out.mk.resize(out.N_pred + 1);
-      out.nk.resize(out.N_pred + 1);
-      out.ck.resize(out.N_pred + 1);
-      out.prk.resize(out.N_pred + 1);
-      out.psirk.resize(out.N_pred + 1);
-      return out;
-    }
-  }
-
-  return out;
-}
-
-// control loop
-void TrackingControllerNode::controlLoop()
-{
-  if (!have_pose_) {
-    publishZeroDebugCmd("waiting for pose input");
-    return;
-  }
-
-  const rclcpp::Time now = this->now();
-  if (input_timeout_sec_ > 0.0 && last_pose_rx_time_.nanoseconds() > 0) {
-    const double pose_age = (now - last_pose_rx_time_).seconds();
-    if (pose_age > input_timeout_sec_) {
-      bool goal_reached = false;
-      {
-        std::lock_guard<std::mutex> lk(map_mtx_);
-        goal_reached = goal_reached_;
-      }
-      if (goal_reached) {
-        publishGoalStopCmd("path goal reached; stale pose input -> keep stop command");
-      } else {
-        publishZeroDebugCmd("stale pose input");
-      }
-      return;
-    }
-  }
-
-  std::vector<Eigen::Vector2d> ref;
-  int wp0_idx = 0;
-  int wp1_idx = 1;
-  bool waypoint_seeded = false;
-  bool goal_reached = false;
-  {
-    std::lock_guard<std::mutex> lk(map_mtx_);
-    if (ref_path_.empty()) {
-      publishZeroDebugCmd("waiting for global path input");
-      return;
-    }
-    if (ref_path_.size() < 2) {
-      publishZeroDebugCmd("reference path is invalid");
-      return;
-    }
-    ref  = ref_path_;
-    wp0_idx = wp0_index_;
-    wp1_idx = wp1_index_;
-    waypoint_seeded = waypoint_seeded_;
-    goal_reached = goal_reached_;
-  }
-
-  const Eigen::Vector2d pos_cur(cur_x_, cur_y_);
-  const double goal_remaining_m =
-    remainingPathLengthFromClosestProjection(ref, pos_cur);
-  const double goal_distance_m = (ref.back() - pos_cur).norm();
-  const bool goal_stop_enabled = goal_stop_distance_m_ >= 0.0;
-  const double goal_stop_distance_m = std::max(0.0, goal_stop_distance_m_);
-
-  if (goal_reached ||
-    (goal_stop_enabled &&
-    (goal_remaining_m <= goal_stop_distance_m || goal_distance_m <= goal_stop_distance_m)))
-  {
+  const int last_pair_start = static_cast<int>(waypoints.size()) - 2;
+  int index = clampi(wp0_idx, 0, last_pair_start);
+  const double velocity_norm = velocity.norm();
+  if (velocity_norm > 1e-9) {
+    const Eigen::Vector2d direction = velocity / velocity_norm;
+    // Advance at most one pair per upper cycle. This preserves the ordered
+    // wpPrev -> wp0 -> wp1 relationship at corners instead of skipping
+    // several future waypoints using the current velocity direction.
+    if (index < last_pair_start &&
+      (waypoints[static_cast<std::size_t>(index + 1)] - position).dot(direction) < eps)
     {
-      std::lock_guard<std::mutex> lk(map_mtx_);
-      goal_reached_ = true;
-      wp0_index_ = std::max(0, static_cast<int>(ref.size()) - 2);
-      wp1_index_ = std::max(0, static_cast<int>(ref.size()) - 1);
-      waypoint_seeded_ = true;
-    }
-
-    std::ostringstream reason;
-    reason << "path goal reached"
-           << " remaining=" << goal_remaining_m
-           << " goal_dist=" << goal_distance_m
-           << " stop_dist=" << goal_stop_distance_m;
-    publishGoalStopCmd(reason.str());
-    return;
-  }
-
-  const double v = std::max(0.05, cur_speed_);
-  const Eigen::Vector2d vel_world(v * std::cos(cur_yaw_), v * std::sin(cur_yaw_));
-
-  const double dt = 1.0 / loop_rate_hz_ctrl_;
-  const double v_ref = std::max(0.05, v_max_);
-
-  Eigen::Matrix2d R_wb;
-  R_wb << std::cos(cur_yaw_), -std::sin(cur_yaw_),
-          std::sin(cur_yaw_),  std::cos(cur_yaw_);
-
-  bool using_upper_guides = false;
-  double upper_guides_age = -1.0;
-  Eigen::Vector2d wp0_world = ref[std::max(0, std::min(wp0_idx, static_cast<int>(ref.size()) - 1))];
-  Eigen::Vector2d wp1_world = ref[std::max(0, std::min(wp1_idx, static_cast<int>(ref.size()) - 1))];
-
-  if (use_upper_guides_) {
-    std::lock_guard<std::mutex> lk(upper_guides_mtx_);
-    if (have_upper_guides_ && upper_guides_world_.size() >= 2) {
-      upper_guides_age =
-        (last_upper_guides_rx_time_.nanoseconds() > 0) ?
-        (now - last_upper_guides_rx_time_).seconds() : -1.0;
-      const double guides_age =
-        upper_guides_age;
-      if (upper_guides_timeout_sec_ <= 0.0 || guides_age <= upper_guides_timeout_sec_) {
-        wp0_world = upper_guides_world_[0];
-        wp1_world = upper_guides_world_[1];
-        using_upper_guides = (wp1_world - wp0_world).norm() > 1e-6;
-      }
+      ++index;
     }
   }
+  return {index, std::min(index + 1, static_cast<int>(waypoints.size()) - 1)};
+}
 
-  if (!using_upper_guides) {
-    if (!waypoint_seeded) {
-      wp0_idx = 0;
-      wp1_idx = std::min(1, static_cast<int>(ref.size()) - 1);
-      waypoint_seeded = true;
-    }
-    const std::array<int, 2> wp_pair =
-      findWaypointPair(ref, wp0_idx, pos_cur, vel_world, wp_switch_eps_);
-    wp0_idx = wp_pair[0];
-    wp1_idx = wp_pair[1];
-    wp0_world = ref[wp0_idx];
-    wp1_world = ref[wp1_idx];
-    {
-      std::lock_guard<std::mutex> lk(map_mtx_);
-      wp0_index_ = wp0_idx;
-      wp1_index_ = wp1_idx;
-      waypoint_seeded_ = waypoint_seeded;
-    }
+int SdMapUpperPlannerNode::computeRequestedPreviewSteps(
+  const GridMapSnapshot * grid) const
+{
+  int requested = upper_preview_steps_;
+  if (!preview_limit_to_grid_extent_ || grid == nullptr || !grid->valid) {
+    return requested;
   }
 
-  // body frame preview
-  const int preview_steps = 6;
-  const double delta_s = std::max(0.05, dt * v_ref);
-  const Eigen::Vector2d wp0_body = R_wb.transpose() * (wp0_world - pos_cur);
-  const Eigen::Vector2d wp1_body = R_wb.transpose() * (wp1_world - pos_cur);
+  const double width_m = static_cast<double>(grid->width) * grid->resolution;
+  const double height_m = static_cast<double>(grid->height) * grid->resolution;
+  const double cosine = std::cos(grid->origin_yaw_rad);
+  const double sine = std::sin(grid->origin_yaw_rad);
+  Eigen::Matrix2d rotation;
+  rotation << cosine, -sine, sine, cosine;
 
-  RCLCPP_INFO_THROTTLE(
-    this->get_logger(), *this->get_clock(), 2000,
-    "guide source: %s wp0=(%.3f,%.3f) wp1=(%.3f,%.3f)",
-    using_upper_guides ? "upper_guides" : "global_path",
-    wp0_world.x(), wp0_world.y(), wp1_world.x(), wp1_world.y());
+  const std::array<Eigen::Vector2d, 4> local_corners{{
+    Eigen::Vector2d(0.0, 0.0),
+    Eigen::Vector2d(width_m, 0.0),
+    Eigen::Vector2d(0.0, height_m),
+    Eigen::Vector2d(width_m, height_m)}};
 
-  double preview_seed_size_for_trace = 0.0;
-  const PreviewFallbackDirection fallback_dir =
-    computePreviewFallbackDirection(wp0_body, wp1_body);
-  const bool preview_wp0_usable = fallback_dir.wp0_usable;
-  double preview_yaw0_before_clamp =
-    std::numeric_limits<double>::quiet_NaN();
-  double preview_yaw0_after_clamp =
-    std::numeric_limits<double>::quiet_NaN();
-
-  if (preview_seed_body_.size() < 2) {
-    preview_yaw0_before_clamp = fallback_dir.yaw_before_clamp;
-    preview_yaw0_after_clamp = fallback_dir.yaw_after_clamp;
+  double max_x_body = -std::numeric_limits<double>::infinity();
+  for (const auto & local : local_corners) {
+    const Eigen::Vector2d body = grid->origin_body + rotation * local;
+    max_x_body = std::max(max_x_body, body.x());
   }
 
-  if (preview_reset_on_bad_seed_) {
-    bool bad_seed = false;
-    for (const Eigen::Vector2d &p_seed : preview_seed_body_) {
-      if (!std::isfinite(p_seed.x()) ||
-        !std::isfinite(p_seed.y()) ||
-        p_seed.x() < preview_seed_min_forward_x_m_ ||
-        std::abs(p_seed.y()) > preview_seed_max_lateral_y_m_)
-      {
-        bad_seed = true;
+  const double delta_s = target_speed_mps_ * upper_prediction_dt_sec_;
+  if (!std::isfinite(max_x_body) || delta_s <= 1e-9) {
+    return 0;
+  }
+
+  const double usable_forward_m = std::min(max_x_body, bev_forward_m_);
+  const int extent_limited = static_cast<int>(std::floor(usable_forward_m / delta_s));
+  requested = clampi(extent_limited, 0, upper_preview_steps_);
+  return requested;
+}
+
+SdMapUpperPlannerNode::PreviewReferenceData
+SdMapUpperPlannerNode::buildPreviewReference(
+  const Eigen::Vector2d & wp_prev_body,
+  const Eigen::Vector2d & wp0_body,
+  const Eigen::Vector2d & wp1_body,
+  bool has_previous_waypoint,
+  int requested_horizon,
+  const std::vector<Eigen::Vector2d> & previous_reference_body,
+  const std::vector<double> & previous_reference_heading_rad) const
+{
+  PreviewReferenceData output;
+  if (requested_horizon <= 0) {
+    output.status = "requested preview horizon is zero";
+    return output;
+  }
+  if (!finitePoint(wp0_body) || !finitePoint(wp1_body) ||
+    (has_previous_waypoint && !finitePoint(wp_prev_body)))
+  {
+    output.status = "non-finite body-frame waypoint";
+    return output;
+  }
+
+  const double target_norm = wp1_body.norm();
+  if (target_norm < preview_min_target_distance_m_) {
+    output.status = "wp1 is too close to the ego origin";
+    return output;
+  }
+
+  const Eigen::Vector2d outgoing = wp1_body - wp0_body;
+  if (outgoing.norm() < preview_min_target_distance_m_) {
+    output.status = "wp0 and wp1 do not define a nonzero outgoing road segment";
+    return output;
+  }
+  double psi_in = 0.0;
+  if (has_previous_waypoint) {
+    const Eigen::Vector2d incoming = wp0_body - wp_prev_body;
+    if (incoming.norm() < preview_min_target_distance_m_) {
+      output.status = "wpPrev and wp0 do not define a nonzero incoming road segment";
+      return output;
+    }
+    psi_in = std::atan2(incoming.y(), incoming.x());
+  }
+
+  const double psi_out_raw = std::atan2(outgoing.y(), outgoing.x());
+  const double psi_out = psi_in + wrapToPi(psi_out_raw - psi_in);
+  output.road_segment_heading_rad = {{psi_in, psi_out}};
+  output.delta_psi_road_rad = wrapToPi(psi_out - psi_in);
+
+  const Eigen::Vector2d reference_direction = wp1_body / target_norm;
+  const double waypoint_heading =
+    std::atan2(reference_direction.y(), reference_direction.x());
+  const double delta_s = target_speed_mps_ * upper_prediction_dt_sec_;
+  const std::size_t reference_size = static_cast<std::size_t>(requested_horizon + 1);
+
+  bool previous_solution_usable = requested_horizon >= 3 &&
+    previous_reference_body.size() == reference_size &&
+    previous_reference_heading_rad.size() == reference_size &&
+    finitePoint(previous_reference_body.front()) &&
+    previous_reference_body.front().norm() <= 1e-9;
+  if (previous_solution_usable) {
+    // The stored data is already localized about p*[1], psi*[1]. Only the
+    // normalized p*[2] ... p*[N-1] prefix is reusable; p*[N] was never stored.
+    for (int k = 1; k <= requested_horizon - 2; ++k) {
+      if (!finitePoint(previous_reference_body[static_cast<std::size_t>(k)])) {
+        previous_solution_usable = false;
         break;
       }
     }
-
-    if (bad_seed) {
-      preview_seed_body_.clear();
-      RCLCPP_WARN_THROTTLE(
-        this->get_logger(), *this->get_clock(), 1000,
-        "preview seed reset: nonfinite or outside body bounds");
+    for (int k = 0; previous_solution_usable && k <= requested_horizon - 3; ++k) {
+      if (!std::isfinite(
+          previous_reference_heading_rad[static_cast<std::size_t>(k)]))
+      {
+        previous_solution_usable = false;
+      }
     }
   }
-  preview_seed_size_for_trace = static_cast<double>(preview_seed_body_.size());
 
-  std::vector<Eigen::Vector2d> preview_body;
-  std::vector<double> preview_psi_rad;
-  buildPreviewFromPredictionSeed(
-    wp0_body,
-    wp1_body,
-    preview_steps,
-    delta_s,
-    preview_seed_body_,
-    preview_body,
-    preview_psi_rad);
-  if (!preview_psi_rad.empty()) {
-    if (!std::isfinite(preview_yaw0_before_clamp)) {
-      preview_yaw0_before_clamp = preview_psi_rad.front();
+  if (!previous_solution_usable && requested_horizon < 3) {
+    // A shifted terminal buffer needs at least three steps. Preserve the
+    // original ego-to-wp1 straight reference for short horizons.
+    output.points_body.reserve(reference_size);
+    output.heading_rad.assign(reference_size, waypoint_heading);
+    for (int k = 0; k <= requested_horizon; ++k) {
+      output.points_body.push_back(
+        static_cast<double>(k) * delta_s * reference_direction);
     }
-    preview_yaw0_after_clamp = preview_psi_rad.front();
+    output.constraint_points_body = output.points_body;
+    output.constraint_heading_rad = output.heading_rad;
+    output.stable_heading_rad = waypoint_heading;
+    output.waypoint_bearing_rad = waypoint_heading;
+    output.terminal_buffer_turn_rad = 0.0;
+    output.used_previous_solution = false;
+    output.status = "valid initial straight seed";
+    output.valid = true;
+    return output;
   }
 
-  std::vector<Eigen::Vector2d> preview_world;
-  preview_world.reserve(preview_body.size());
-  for (const Eigen::Vector2d &p_body : preview_body) {
-    preview_world.emplace_back(pos_cur + R_wb * p_body);
+  output.points_body.assign(reference_size, Eigen::Vector2d::Zero());
+  if (previous_solution_usable) {
+    for (int k = 1; k <= requested_horizon - 2; ++k) {
+      output.points_body[static_cast<std::size_t>(k)] =
+        previous_reference_body[static_cast<std::size_t>(k)];
+    }
+  } else {
+    // First cycle, path revision change, or dimension mismatch: retain the
+    // original straight seed through the last reliable point. The common
+    // terminal construction below still makes r[N] the waypoint.
+    for (int k = 1; k <= requested_horizon - 2; ++k) {
+      output.points_body[static_cast<std::size_t>(k)] =
+        static_cast<double>(k) * delta_s * reference_direction;
+    }
   }
-  publishPath(preview_world, "map");
 
-  // ---- DAQP MIQP  ----
-  GridMapSnapshot grid_snapshot;
-  bool have_grid = false;
+  constexpr double kHeadingEpsilon = 1e-9;
+  Eigen::Vector2d direction_sum = Eigen::Vector2d::Zero();
+  Eigen::Vector2d last_valid_direction = Eigen::Vector2d::Zero();
+  int direction_count = 0;
+  for (int i = requested_horizon - 2; i >= 1 && direction_count < 3; --i) {
+    const Eigen::Vector2d segment =
+      output.points_body[static_cast<std::size_t>(i)] -
+      output.points_body[static_cast<std::size_t>(i - 1)];
+    const double segment_norm = segment.norm();
+    if (segment_norm > kHeadingEpsilon) {
+      const Eigen::Vector2d direction = segment / segment_norm;
+      if (direction_count == 0) {
+        last_valid_direction = direction;
+      }
+      direction_sum += direction;
+      ++direction_count;
+    }
+  }
+
+  double stable_heading = waypoint_heading;
+  if (direction_count > 0) {
+    const Eigen::Vector2d stable_direction =
+      direction_sum.norm() > kHeadingEpsilon ?
+      direction_sum.normalized() : last_valid_direction;
+    stable_heading = std::atan2(stable_direction.y(), stable_direction.x());
+  }
+
+  const Eigen::Vector2d reliable_terminal =
+    output.points_body[static_cast<std::size_t>(requested_horizon - 2)];
+  const Eigen::Vector2d waypoint_delta = wp1_body - reliable_terminal;
+  const double waypoint_bearing = waypoint_delta.norm() > kHeadingEpsilon ?
+    std::atan2(waypoint_delta.y(), waypoint_delta.x()) : stable_heading;
+  const double bounded_turn = clampd(
+    wrapToPi(waypoint_bearing - stable_heading),
+    -terminal_buffer_max_turn_rad_, terminal_buffer_max_turn_rad_);
+  const double bounded_heading = stable_heading + bounded_turn;
+
+  output.points_body[static_cast<std::size_t>(requested_horizon - 1)] =
+    reliable_terminal + delta_s * Eigen::Vector2d(
+    std::cos(bounded_heading), std::sin(bounded_heading));
+  output.points_body[static_cast<std::size_t>(requested_horizon)] = wp1_body;
+
+  output.heading_rad.assign(reference_size, stable_heading);
+  if (previous_solution_usable) {
+    // heading[k] drives r[k] -> r[k+1]. It was normalized at solve time as
+    // wrap(psi*[k+2] - psi*[1]), matching r[k+1] = p*[k+2] - p*[1].
+    for (int k = 0; k < requested_horizon - 2; ++k) {
+      output.heading_rad[static_cast<std::size_t>(k)] =
+        previous_reference_heading_rad[static_cast<std::size_t>(k)];
+    }
+  } else {
+    for (int k = 0; k < requested_horizon - 2; ++k) {
+      const Eigen::Vector2d segment =
+        output.points_body[static_cast<std::size_t>(k + 1)] -
+        output.points_body[static_cast<std::size_t>(k)];
+      if (segment.norm() > kHeadingEpsilon) {
+        output.heading_rad[static_cast<std::size_t>(k)] =
+          std::atan2(segment.y(), segment.x());
+      } else if (k > 0) {
+        output.heading_rad[static_cast<std::size_t>(k)] =
+          output.heading_rad[static_cast<std::size_t>(k - 1)];
+      }
+    }
+  }
+  output.heading_rad[static_cast<std::size_t>(requested_horizon - 2)] = bounded_heading;
+  output.heading_rad[static_cast<std::size_t>(requested_horizon - 1)] = bounded_heading;
+  output.heading_rad[static_cast<std::size_t>(requested_horizon)] = bounded_heading;
+
+  output.constraint_points_body = output.points_body;
+  const Eigen::Vector2d stable_step = delta_s * Eigen::Vector2d(
+    std::cos(stable_heading), std::sin(stable_heading));
+  output.constraint_points_body[static_cast<std::size_t>(requested_horizon - 1)] =
+    reliable_terminal + stable_step;
+  output.constraint_points_body[static_cast<std::size_t>(requested_horizon)] =
+    output.constraint_points_body[static_cast<std::size_t>(requested_horizon - 1)] +
+    stable_step;
+  output.constraint_heading_rad = output.heading_rad;
+  output.constraint_heading_rad[static_cast<std::size_t>(requested_horizon - 2)] =
+    stable_heading;
+  output.constraint_heading_rad[static_cast<std::size_t>(requested_horizon - 1)] =
+    stable_heading;
+  output.constraint_heading_rad[static_cast<std::size_t>(requested_horizon)] =
+    stable_heading;
+
+  output.stable_heading_rad = stable_heading;
+  output.waypoint_bearing_rad = waypoint_bearing;
+  output.terminal_buffer_turn_rad = bounded_turn;
+  output.used_previous_solution = previous_solution_usable;
+  output.status = previous_solution_usable ?
+    "valid locally re-anchored previous solution" :
+    "valid initial straight seed with terminal waypoint";
+  output.valid = true;
+  return output;
+}
+
+bool SdMapUpperPlannerNode::buildShiftedPreviousReference(
+  const UpperSolveResult & solve,
+  std::vector<Eigen::Vector2d> & next_reference_body,
+  std::vector<double> & next_reference_heading_rad) const
+{
+  next_reference_body.clear();
+  next_reference_heading_rad.clear();
+  if (!solve.valid || solve.predicted_body.size() < 4) {
+    return false;
+  }
+
+  const int horizon = static_cast<int>(solve.predicted_body.size()) - 1;
+  if (horizon < 3 ||
+    solve.psi_pred_model_rad.size() != static_cast<std::size_t>(horizon) ||
+    !finitePoint(solve.predicted_body[1]) ||
+    !std::isfinite(solve.psi_pred_model_rad[0]))
   {
-    std::lock_guard<std::mutex> lk(grid_mtx_);
-    grid_snapshot = grid_map_;
-    have_grid = have_grid_map_;
+    return false;
   }
 
-  if (input_timeout_sec_ > 0.0 && last_grid_rx_time_.nanoseconds() > 0) {
-    const double grid_age = (now - last_grid_rx_time_).seconds();
-    if (grid_age > input_timeout_sec_) {
-      have_grid = false;
+  const Eigen::Vector2d shift_origin = solve.predicted_body[1];
+  const double shift_yaw = solve.psi_pred_model_rad[0];
+  const double cosine = std::cos(shift_yaw);
+  const double sine = std::sin(shift_yaw);
+  Eigen::Matrix2d rotation_next_body;
+  rotation_next_body << cosine, sine, -sine, cosine;
+
+  const std::size_t reference_size = static_cast<std::size_t>(horizon + 1);
+  next_reference_body.assign(reference_size, Eigen::Vector2d::Zero());
+  next_reference_heading_rad.assign(reference_size, 0.0);
+
+  // k <= N-2 means the largest source position is p*[N-1]. The terminal
+  // optimum p*[N] is deliberately never read or propagated.
+  for (int k = 1; k <= horizon - 2; ++k) {
+    const Eigen::Vector2d & source =
+      solve.predicted_body[static_cast<std::size_t>(k + 1)];
+    if (!finitePoint(source)) {
+      next_reference_body.clear();
+      next_reference_heading_rad.clear();
+      return false;
     }
+    next_reference_body[static_cast<std::size_t>(k)] =
+      rotation_next_body * (source - shift_origin);
   }
 
-  if (require_grid_map_ && !have_grid) {
-    publishZeroDebugCmd("grid map not received/invalid (required)");
-    return;
+  // psi_pred_model_rad[i] is the heading for p*[i] -> p*[i+1]. Therefore
+  // next r[k] -> r[k+1] uses prior index k+1, with psi*[1] removed.
+  for (int k = 0; k <= horizon - 3; ++k) {
+    const double source_heading =
+      solve.psi_pred_model_rad[static_cast<std::size_t>(k + 1)];
+    if (!std::isfinite(source_heading)) {
+      next_reference_body.clear();
+      next_reference_heading_rad.clear();
+      return false;
+    }
+    next_reference_heading_rad[static_cast<std::size_t>(k)] =
+      wrapToPi(source_heading - shift_yaw);
   }
 
-  if (!have_grid) {
-    RCLCPP_WARN_THROTTLE(
-      this->get_logger(), *this->get_clock(), 2000 /*ms*/,
-      "grid map not received/invalid, using lane-offset fallback");
-  }
-  const GridMapSnapshot* grid_ptr = have_grid ? &grid_snapshot : nullptr;
+  return finitePoint(next_reference_body.front()) &&
+         next_reference_body.front().norm() <= 1e-9;
+}
 
-  const PreviewConstraintData preview_c = makePreviewConstraints2(
-    preview_body, preview_psi_rad, preview_steps, pos_cur, R_wb, lane_offsets_, lane_width_, grid_ptr);
-  const int N_pred = preview_c.N_pred;
-  if (N_pred <= 0) {
-    publishZeroDebugCmd("preview constraints invalid or empty");
-    return;
+bool SdMapUpperPlannerNode::bodyPointToGrid(
+  const Eigen::Vector2d & point_body,
+  const GridMapSnapshot & grid,
+  int & gx,
+  int & gy) const
+{
+  const double cosine = std::cos(grid.origin_yaw_rad);
+  const double sine = std::sin(grid.origin_yaw_rad);
+  const Eigen::Vector2d relative = point_body - grid.origin_body;
+  const Eigen::Vector2d local(
+    cosine * relative.x() + sine * relative.y(),
+    -sine * relative.x() + cosine * relative.y());
+  const double width_m = static_cast<double>(grid.width) * grid.resolution;
+  const double height_m = static_cast<double>(grid.height) * grid.resolution;
+  if (!finitePoint(local) || local.x() < 0.0 || local.y() < 0.0 ||
+    local.x() >= width_m || local.y() >= height_m)
+  {
+    gx = -1;
+    gy = -1;
+    return false;
+  }
+  gx = static_cast<int>(std::floor(local.x() / grid.resolution));
+  gy = static_cast<int>(std::floor(local.y() / grid.resolution));
+  return gx >= 0 && gx < grid.width && gy >= 0 && gy < grid.height;
+}
+
+bool SdMapUpperPlannerNode::sampleGridValue(
+  const Eigen::Vector2d & point_body,
+  const GridMapSnapshot & grid,
+  int8_t & value) const
+{
+  int gx = -1;
+  int gy = -1;
+  if (!bodyPointToGrid(point_body, grid, gx, gy)) {
+    return false;
+  }
+  const int index = gy * grid.width + gx;
+  if (index < 0 || index >= static_cast<int>(grid.data.size())) {
+    return false;
+  }
+  value = grid.data[static_cast<std::size_t>(index)];
+  return true;
+}
+
+bool SdMapUpperPlannerNode::clipLineToGridRectangle(
+  const Eigen::Vector2d & point_body,
+  const Eigen::Vector2d & direction_body,
+  const GridMapSnapshot & grid,
+  double & lambda_min,
+  double & lambda_max) const
+{
+  if (!grid.valid || direction_body.norm() < 1e-12) {
+    return false;
+  }
+  const double cosine = std::cos(grid.origin_yaw_rad);
+  const double sine = std::sin(grid.origin_yaw_rad);
+  const Eigen::Vector2d relative = point_body - grid.origin_body;
+  const Eigen::Vector2d point_local(
+    cosine * relative.x() + sine * relative.y(),
+    -sine * relative.x() + cosine * relative.y());
+  const Eigen::Vector2d direction_local(
+    cosine * direction_body.x() + sine * direction_body.y(),
+    -sine * direction_body.x() + cosine * direction_body.y());
+
+  lambda_min = -std::numeric_limits<double>::infinity();
+  lambda_max = std::numeric_limits<double>::infinity();
+  auto clip_slab = [&](double point, double direction, double lower, double upper) {
+      if (std::abs(direction) < 1e-12) {
+        return point >= lower && point <= upper;
+      }
+      double first = (lower - point) / direction;
+      double second = (upper - point) / direction;
+      if (first > second) {std::swap(first, second);}
+      lambda_min = std::max(lambda_min, first);
+      lambda_max = std::min(lambda_max, second);
+      return lambda_min <= lambda_max;
+    };
+  const double width_m = static_cast<double>(grid.width) * grid.resolution;
+  const double height_m = static_cast<double>(grid.height) * grid.resolution;
+  return clip_slab(point_local.x(), direction_local.x(), 0.0, width_m) &&
+         clip_slab(point_local.y(), direction_local.y(), 0.0, height_m) &&
+         std::isfinite(lambda_min) && std::isfinite(lambda_max) &&
+         lambda_max >= lambda_min;
+}
+
+bool SdMapUpperPlannerNode::isDrivable(int8_t value) const
+{
+  if (value < 0) {
+    return false;
+  }
+  return grid_positive_is_drivable_ ?
+         static_cast<int>(value) > grid_value_threshold_ :
+         static_cast<int>(value) <= grid_value_threshold_;
+}
+
+SdMapUpperPlannerNode::PreviewConstraintData
+SdMapUpperPlannerNode::extractPreviewIntervals(
+  const PreviewReferenceData & reference,
+  const GridMapSnapshot * grid) const
+{
+  PreviewConstraintData output;
+  if (!reference.valid || reference.points_body.size() < 2 ||
+    reference.heading_rad.size() != reference.points_body.size() ||
+    reference.constraint_points_body.size() != reference.points_body.size() ||
+    reference.constraint_heading_rad.size() != reference.points_body.size())
+  {
+    return output;
   }
 
-  // ny = sum(Nck(2:end))
-  std::vector<int> z_step_offset(N_pred + 1, 0);
-  for (int k = 1; k <= N_pred; ++k) {
-    const int nck_k = (k < static_cast<int>(preview_c.Nck.size())) ? preview_c.Nck[k] : 0;
-    z_step_offset[k] = z_step_offset[k - 1] + std::max(0, nck_k);
-  }
+  const int requested_horizon = static_cast<int>(reference.points_body.size()) - 1;
+  output.N_pred = requested_horizon;
+  const std::size_t size = static_cast<std::size_t>(requested_horizon + 1);
+  output.pmk.resize(size);
+  output.pMk.resize(size);
+  output.raw_lengths.resize(size);
+  output.processed_lengths.resize(size);
+  output.treatment_modes.resize(size);
+  output.source_modes.resize(size);
+  output.fallback_reason_codes.assign(
+    size, static_cast<int>(IntervalFallbackReason::None));
+  output.Nck.assign(size, 0);
+  output.prk = reference.points_body;
+  output.psirk = reference.heading_rad;
+  output.constraint_prk = reference.constraint_points_body;
+  output.constraint_psirk = reference.constraint_heading_rad;
+  output.road_segment_heading_rad = reference.road_segment_heading_rad;
+  output.delta_psi_road_rad = reference.delta_psi_road_rad;
+  output.stable_heading_rad = reference.stable_heading_rad;
+  output.waypoint_bearing_rad = reference.waypoint_bearing_rad;
+  output.terminal_buffer_turn_rad = reference.terminal_buffer_turn_rad;
+  output.used_previous_solution = reference.used_previous_solution;
 
-  const int nu = 2 * N_pred;
-  const int ny = z_step_offset[N_pred];
-  const int nv = nu + ny;
-  if (ny <= 0 || nv <= 0) {
-    publishZeroDebugCmd("invalid MIQP dimensions");
-    return;
-  }
+  const double max_centering_length =
+    preview_interval_nominal_road_width_m_ *
+    preview_interval_max_centering_length_factor_;
 
-  // G matrix X_con = G * U
-  std::vector<Matrix<double>> Bk;
-  Bk.reserve(N_pred);
-  for (int k = 0; k < N_pred; ++k) {
-    const double psi_k = preview_c.psirk[k];
-    Matrix<double> Bk_k;
-    Bk_k.resize(0.0, 2, 2);
-    Bk_k[0][0] = dt * std::cos(psi_k);
-    Bk_k[0][1] = -dt * v_ref * std::sin(psi_k);
-    Bk_k[1][0] = dt * std::sin(psi_k);
-    Bk_k[1][1] = dt * v_ref * std::cos(psi_k);
-    Bk.push_back(Bk_k);
-  }
+  for (int k = 0; k <= requested_horizon; ++k) {
+    const std::size_t step = static_cast<std::size_t>(k);
+    const Eigen::Vector2d reference_point = output.constraint_prk[step];
+    const double heading = output.constraint_psirk[step];
+    const Eigen::Vector2d lateral_direction(-std::sin(heading), std::cos(heading));
 
-  Matrix<double> G;
-  G.resize(0.0, 2 * (N_pred + 1), nv);
-  for (int k = 0; k < N_pred; ++k) {
-    const int r0 = 2 * (k + 1);
-    for (int j = 0; j <= k; ++j) {
-      const int c0 = 2 * j;
-      const Matrix<double> &Bj = Bk[j];
-      for (int rr = 0; rr < 2; ++rr) {
-        for (int cc = 0; cc < 2; ++cc) {
-          G[r0 + rr][c0 + cc] = Bj[rr][cc];
+    std::vector<Eigen::Vector2d> raw_starts;
+    std::vector<Eigen::Vector2d> raw_ends;
+    std::vector<int> raw_source_modes;
+    IntervalFallbackReason fallback_reason = IntervalFallbackReason::None;
+
+    if (grid != nullptr && grid->valid) {
+      double lambda_min = 0.0;
+      double lambda_max = 0.0;
+      if (clipLineToGridRectangle(
+          reference_point, lateral_direction, *grid, lambda_min, lambda_max))
+      {
+        const double span = std::max(0.0, lambda_max - lambda_min);
+        std::vector<double> lambdas;
+        const int full_steps = static_cast<int>(std::floor(span / preview_line_sample_m_));
+        lambdas.reserve(static_cast<std::size_t>(full_steps + 2));
+        for (int sample = 0; sample <= full_steps; ++sample) {
+          lambdas.push_back(lambda_min + static_cast<double>(sample) * preview_line_sample_m_);
         }
-      }
-    }
-  }
+        if (lambdas.empty() || lambdas.back() < lambda_max - 1e-10) {
+          lambdas.push_back(lambda_max);
+        }
 
-  Matrix<double> Qblk;
-  Qblk.resize(0.0, 2 * (N_pred + 1), 2 * (N_pred + 1));
-  constexpr double qx = 0.1;
-  for (int k = 0; k <= N_pred; ++k) {
-    Qblk[2 * k + 0][2 * k + 0] = qx;
-    Qblk[2 * k + 1][2 * k + 1] = qx;
-  }
+        if (static_cast<int>(lambdas.size()) >= preview_min_segment_samples_) {
+          std::vector<Eigen::Vector2d> run;
+          auto flush_run = [&]() {
+              if (static_cast<int>(run.size()) >= preview_min_segment_samples_) {
+                raw_starts.push_back(run.front());
+                raw_ends.push_back(run.back());
+                raw_source_modes.push_back(static_cast<int>(IntervalSourceMode::BevObserved));
+              }
+              run.clear();
+            };
 
-  Matrix<double> Rblk;
-  Rblk.resize(0.0, nv, nv);
-  constexpr double ru = 1.0;
-  constexpr double binary_reg = 1e-6;
-  for (int k = 0; k < N_pred; ++k) {
-    Rblk[2 * k + 0][2 * k + 0] = ru;
-    Rblk[2 * k + 1][2 * k + 1] = ru;
-  }
-  const double segment_pref_weight = std::max(w_segment_preference_, binary_reg);
-  if (w_segment_preference_ <= 0.0) {
-    RCLCPP_WARN_ONCE(
-      this->get_logger(),
-      "w_segment_preference <= 0. Applying %.1e binary regularization so the DAQP Hessian stays positive definite.",
-      binary_reg);
-  }
-  for (int i = 0; i < ny; ++i) {
-    Rblk[nu + i][nu + i] = segment_pref_weight;
-  }
-
-  const Matrix<double> Gt = transpose(G);
-  const Matrix<double> QG = multiply(Qblk, G);
-  Matrix<double> Hqp = multiply(Gt, QG);
-  for (int r = 0; r < nv; ++r) {
-    for (int c = 0; c < nv; ++c) {
-      Hqp[r][c] += Rblk[r][c];
-    }
-  }
-  for (int r = 0; r < nv; ++r) {
-    for (int c = r + 1; c < nv; ++c) {
-      const double sym = 0.5 * (Hqp[r][c] + Hqp[c][r]);
-      Hqp[r][c] = sym;
-      Hqp[c][r] = sym;
-    }
-    Hqp[r][r] += 1e-10;
-  }
-  Vector<double> fqp(0.0, nv);  // X1=zeros => fqp=0
-
-  // Urk from preview yaw
-  // urk(1,k)=0, urk(2,k)=psirk(k)-psirk(k-1), psirk(0)=0.
-  Vector<double> Urk(0.0, nu);
-  for (int k = 0; k < N_pred; ++k) {
-    const double psir_k = preview_c.psirk[k];
-    const double psir_prev = (k == 0) ? 0.0 : preview_c.psirk[k - 1];
-    Urk[2 * k + 0] = 0.0;
-    Urk[2 * k + 1] = psir_k - psir_prev;
-  }
-
-  // Input inequality HU/hu 
-  Matrix<double> HU(0.0, 4 * N_pred, nu);
-  Vector<double> hu(0.0, 4 * N_pred);
-  const double steer_limit = std::max(std::abs(max_steer_left_), std::abs(max_steer_right_));
-  const double phi_M = std::tan(steer_limit) * dt / std::max(1e-3, wheelbase_);
-  const double v1 = std::max(1.0, v);
-  for (int k = 0; k < N_pred; ++k) {
-    HU[k][2 * k + 0] = 1.0;
-    HU[N_pred + k][2 * k + 0] = -1.0;
-    for (int j = 0; j <= k; ++j) {
-      HU[2 * N_pred + k][2 * j + 0] = -phi_M;
-      HU[3 * N_pred + k][2 * j + 0] = -phi_M;
-    }
-    HU[2 * N_pred + k][2 * k + 1] = 1.0;
-    HU[3 * N_pred + k][2 * k + 1] = -1.0;
-
-    hu[k] = a_max_ * dt;
-    hu[N_pred + k] = a_max_ * dt;
-    hu[2 * N_pred + k] = phi_M * v1;
-    hu[3 * N_pred + k] = phi_M * v1;
-  }
-
-  Vector<double> hu_shifted(0.0, 4 * N_pred);
-  for (int r = 0; r < 4 * N_pred; ++r) {
-    double acc = 0.0;
-    for (int c = 0; c < nu; ++c) {
-      acc += HU[r][c] * Urk[c];
-    }
-    hu_shifted[r] = hu[r] - acc;
-  }
-
-  // Hx/hx from makePreviewConstraints2 output (Big-M)
-  const int n_lane_ineq = 2 * ny;
-  const int n_input_ineq = 4 * N_pred;
-  const bool use_dpsi_delta_constraint =
-    std::isfinite(dpsi_delta_max_rad_) && dpsi_delta_max_rad_ > 0.0;
-  const int n_dpsi_delta_ineq = use_dpsi_delta_constraint ? 2 * N_pred : 0;
-  const int n_ineq = n_lane_ineq + n_input_ineq + n_dpsi_delta_ineq;
-  Matrix<double> Aineq(0.0, n_ineq, nv);
-  Vector<double> bineq(0.0, n_ineq);
-
-  int rineq = 0;
-  for (int k = 1; k <= N_pred; ++k) {
-    const int row_state = 2 * k;
-    const int nck_k = preview_c.Nck[k];
-    if (nck_k <= 0 ||
-      static_cast<int>(preview_c.pmk[k].size()) < nck_k ||
-      static_cast<int>(preview_c.pMk[k].size()) < nck_k)
-    {
-      publishZeroDebugCmd("invalid Nck/pmk/pMk while building MIQP");
-      return;
-    }
-
-    const double mk_k = preview_c.mk[k];
-    const double nk_k = preview_c.nk[k];
-    const double ck_k = preview_c.ck[k];
-    const Eigen::Vector2d prk_k = preview_c.prk[k];
-
-    
-    // Rc = [nk^2, -mk*nk; -mk*nk, mk^2], qc = -ck*[mk;nk]
-    const double Rc00 = nk_k * nk_k;
-    const double Rc01 = -mk_k * nk_k;
-    const double Rc10 = -mk_k * nk_k;
-    const double Rc11 = mk_k * mk_k;
-    const double qc0 = -ck_k * mk_k;
-    const double qc1 = -ck_k * nk_k;
-
-    const Eigen::Vector2d &pm_first = preview_c.pmk[k].front();
-    const Eigen::Vector2d &pM_last = preview_c.pMk[k].back();
-    const double dx = pM_last.x() - pm_first.x();
-    const double dy = pM_last.y() - pm_first.y();
-    const double dc2 = dx * dx + dy * dy;
-    if (dc2 < 1e-9) {
-      publishZeroDebugCmd("degenerate lane segment while building MIQP");
-      return;
-    }
-
-    const double RL0 = dx / dc2;
-    const double RL1 = dy / dc2;
-    const double qL = -(pm_first.x() * dx + pm_first.y() * dy) / dc2;
-
-    const double RL_Rc0 = RL0 * Rc00 + RL1 * Rc10;
-    const double RL_Rc1 = RL0 * Rc01 + RL1 * Rc11;
-    const double RL_qc = RL0 * qc0 + RL1 * qc1;
-    const double RL_Rc_pr = RL_Rc0 * prk_k.x() + RL_Rc1 * prk_k.y();
-
-    for (int i = 0; i < nck_k; ++i) {
-      const int zidx = nu + z_step_offset[k - 1] + i;
-      const Eigen::Vector2d &pmik = preview_c.pmk[k][i];
-      const Eigen::Vector2d &pMik = preview_c.pMk[k][i];
-      const double lMik = RL0 * pMik.x() + RL1 * pMik.y() + qL;
-      const double lmik = RL0 * pmik.x() + RL1 * pmik.y() + qL;
-
-      const double hDik0 = RL_Rc_pr + RL_qc + qL - lMik;
-      const double hDik1 = -RL_Rc_pr - RL_qc - qL + lmik;
-
-      for (int j = 0; j < nu; ++j) {
-        Aineq[rineq][j] = RL_Rc0 * G[row_state + 0][j] + RL_Rc1 * G[row_state + 1][j];
-      }
-      Aineq[rineq][zidx] += miqp_big_m_;
-      bineq[rineq++] = miqp_big_m_ - hDik0;
-
-      for (int j = 0; j < nu; ++j) {
-        Aineq[rineq][j] = -RL_Rc0 * G[row_state + 0][j] - RL_Rc1 * G[row_state + 1][j];
-      }
-      Aineq[rineq][zidx] += miqp_big_m_;
-      bineq[rineq++] = miqp_big_m_ - hDik1;
-    }
-  }
-
-  for (int r = 0; r < n_input_ineq; ++r) {
-    for (int c = 0; c < nu; ++c) {
-      Aineq[rineq + r][c] = HU[r][c];
-    }
-    bineq[rineq + r] = hu_shifted[r];
-  }
-  rineq += n_input_ineq;
-
-  if (use_dpsi_delta_constraint) {
-    const double limit = dpsi_delta_max_rad_;
-    const double prev_dpsi = have_prev_first_dpsi_ ? prev_first_dpsi_ : 0.0;
-
-    Aineq[rineq][1] = 1.0;
-    bineq[rineq++] = limit + prev_dpsi - Urk[1];
-
-    Aineq[rineq][1] = -1.0;
-    bineq[rineq++] = limit - prev_dpsi + Urk[1];
-
-    for (int k = 1; k < N_pred; ++k) {
-      const int i = 2 * k + 1;
-      const int j = 2 * (k - 1) + 1;
-      const double d_urk = Urk[i] - Urk[j];
-
-      Aineq[rineq][i] = 1.0;
-      Aineq[rineq][j] = -1.0;
-      bineq[rineq++] = limit - d_urk;
-
-      Aineq[rineq][i] = -1.0;
-      Aineq[rineq][j] = 1.0;
-      bineq[rineq++] = limit + d_urk;
-    }
-  }
-
-  if (rineq != n_ineq) {
-    publishZeroDebugCmd("MIQP row build mismatch");
-    return;
-  }
-
-  Matrix<double> Aeq(0.0, N_pred, nv);
-  Vector<double> beq(1.0, N_pred);
-  for (int k = 1; k <= N_pred; ++k) {
-    const int nck_k = preview_c.Nck[k];
-    if (nck_k <= 0) {
-      publishZeroDebugCmd("invalid Nck while building MIQP equalities");
-      return;
-    }
-    for (int i = 0; i < nck_k; ++i) {
-      Aeq[k - 1][nu + z_step_offset[k - 1] + i] = 1.0;
-    }
-  }
-
-  QuadraticProblem miqp_solver(false);
-  Variable *uvar = miqp_solver.vector_variable(nv, "U");
-  if (!miqp_solver.add_variable(uvar)) {
-    publishZeroDebugCmd("DAQP setup failed: cannot add variable");
-    return;
-  }
-  const Var U = miqp_solver.get_variable(uvar);
-  const Var main_var = miqp_solver.get_main_variable();
-
-  Constraint cineq(main_var);
-  cineq.set_constraint_variable(U, Aineq);
-  cineq.set_known_term(bineq);
-  miqp_solver.add_leq_constraint(cineq);
-
-  Constraint ceq(main_var);
-  ceq.set_constraint_variable(U, Aeq);
-  ceq.set_known_term(beq);
-  miqp_solver.add_equality_constraint(ceq);
-
-  miqp_solver.set_Q_matrix(Hqp);
-  miqp_solver.set_q0_vector(fqp);
-
-  for (int k = 1; k <= N_pred; ++k) {
-    const int nck_k = preview_c.Nck[k];
-    for (int i = 0; i < nck_k; ++i) {
-      const int zidx = nu + z_step_offset[k - 1] + i;
-      miqp_solver.set_binary_var(U[zidx]);
-    }
-  }
-
-  Vector<double> arg;
-  const double fval = miqp_solver.solve_problem(arg);
-  if (!std::isfinite(fval) || arg.size() < static_cast<unsigned int>(nu)) {
-    publishZeroDebugCmd("DAQP MIQP infeasible");
-    return;
-  }
-
-  RCLCPP_WARN_THROTTLE(
-    this->get_logger(), *this->get_clock(), 500 /*ms*/,
-    "DAQP MIQP solved: wp0=%d wp1=%d N_pred=%d obj=%.4f",
-    wp0_idx, wp1_idx, N_pred, fval);
-
-  std::vector<Eigen::Vector2d> p_pred_body(N_pred + 1, Eigen::Vector2d::Zero());
-  for (int k = 0; k <= N_pred; ++k) {
-    const int row = 2 * k;
-    double ex = 0.0;
-    double ey = 0.0;
-    for (int j = 0; j < nv; ++j) {
-      ex += G[row + 0][j] * arg[j];
-      ey += G[row + 1][j] * arg[j];
-    }
-    p_pred_body[k] = preview_c.prk[k] + Eigen::Vector2d(ex, ey);
-  }
-
-  preview_seed_body_.clear();
-  preview_seed_body_.reserve(std::max(1, N_pred));
-  preview_seed_body_.push_back(Eigen::Vector2d::Zero());
-  if (N_pred >= 2) {
-    const double psi1 = arg[1] + Urk[1];
-    const double c = std::cos(psi1);
-    const double s1 = std::sin(psi1);
-    for (int k = 1; k < N_pred; ++k) {
-      const Eigen::Vector2d rel = p_pred_body[k + 1] - p_pred_body[1];
-      const Eigen::Vector2d rel_rot(c * rel.x() + s1 * rel.y(),
-                                    -s1 * rel.x() + c * rel.y());
-      preview_seed_body_.push_back(rel_rot);
-    }
-  }
-
-  const auto make_control_step =
-    [this, dt, v1, steer_limit](double dv_cmd, double dpsi_cmd) {
-      const double yaw_rate_cmd = dpsi_cmd / std::max(1e-6, dt);
-      double steer_cmd = 0.0;
-      if (std::abs(v1) > 1e-4) {
-        steer_cmd = std::atan((wheelbase_ * yaw_rate_cmd) / v1);
-      }
-      SolverControlStep step;
-      step.dv_mps = dv_cmd;
-      step.dpsi_rad = dpsi_cmd;
-      step.steer_norm = clampd(
-        steer_cmd / std::max(1e-6, steer_limit), -1.0, 1.0);
-      return step;
-    };
-
-  std::vector<SolverControlStep> solver_cmds;
-  solver_cmds.reserve(static_cast<size_t>(N_pred));
-  for (int k = 0; k < N_pred; ++k) {
-    solver_cmds.push_back(make_control_step(
-      arg[2 * k + 0] + Urk[2 * k + 0],
-      arg[2 * k + 1] + Urk[2 * k + 1]));
-  }
-
-  if (solver_cmds.empty()) {
-    publishZeroDebugCmd("solver returned empty command sequence");
-    return;
-  }
-
-  previous_solver_cmds_.assign(
-    solver_cmds.begin() + (solver_cmds.size() > 1 ? 1 : 0),
-    solver_cmds.end());
-  previous_solver_cmd_index_ = 0;
-
-  if (mpc_trace_pub_) {
-    const double nan = std::numeric_limits<double>::quiet_NaN();
-
-    auto safe_prk_x = [&](int k) -> double {
-      return (k >= 0 && k < static_cast<int>(preview_c.prk.size())) ? preview_c.prk[k].x() : nan;
-    };
-
-    auto safe_prk_y = [&](int k) -> double {
-      return (k >= 0 && k < static_cast<int>(preview_c.prk.size())) ? preview_c.prk[k].y() : nan;
-    };
-
-    auto safe_Nck = [&](int k) -> double {
-      return (k >= 0 && k < static_cast<int>(preview_c.Nck.size())) ?
-        static_cast<double>(preview_c.Nck[k]) : 0.0;
-    };
-
-    auto selected_corridor = [&](int k) -> std::pair<double, double> {
-      if (k <= 0 || k > N_pred) {
-        return {-1.0, nan};
-      }
-
-      const int nck_k = (k < static_cast<int>(preview_c.Nck.size())) ? preview_c.Nck[k] : 0;
-      if (nck_k <= 0) {
-        return {-1.0, nan};
-      }
-
-      double selected_idx = -1.0;
-      double center_y = nan;
-
-      for (int i = 0; i < nck_k; ++i) {
-        const int zidx = nu + z_step_offset[k - 1] + i;
-        if (zidx >= 0 && zidx < static_cast<int>(arg.size()) && arg[zidx] > 0.5) {
-          selected_idx = static_cast<double>(i);
-
-          if (k < static_cast<int>(preview_c.pmk.size()) &&
-              k < static_cast<int>(preview_c.pMk.size()) &&
-              i < static_cast<int>(preview_c.pmk[k].size()) &&
-              i < static_cast<int>(preview_c.pMk[k].size()))
-          {
-            center_y = 0.5 * (preview_c.pmk[k][i].y() + preview_c.pMk[k][i].y());
+          for (const double lambda : lambdas) {
+            const Eigen::Vector2d point = reference_point + lambda * lateral_direction;
+            int8_t value = -1;
+            const bool drivable = sampleGridValue(point, *grid, value) && isDrivable(value);
+            if (drivable) {
+              run.push_back(point);
+            } else {
+              flush_run();
+            }
           }
-          break;
+          flush_run();
+          if (raw_starts.empty()) {
+            fallback_reason = IntervalFallbackReason::NoValidDrivableRun;
+          }
+        } else {
+          fallback_reason = IntervalFallbackReason::InsufficientBevSamples;
+        }
+      } else {
+        fallback_reason = IntervalFallbackReason::LineOutsideBev;
+        if (preview_interval_debug_) {
+          const double width_m = static_cast<double>(grid->width) * grid->resolution;
+          const double height_m = static_cast<double>(grid->height) * grid->resolution;
+          const double grid_cosine = std::cos(grid->origin_yaw_rad);
+          const double grid_sine = std::sin(grid->origin_yaw_rad);
+          const std::array<Eigen::Vector2d, 4> local_corners{{
+            Eigen::Vector2d(0.0, 0.0),
+            Eigen::Vector2d(width_m, 0.0),
+            Eigen::Vector2d(0.0, height_m),
+            Eigen::Vector2d(width_m, height_m)}};
+          double grid_forward_extent = -std::numeric_limits<double>::infinity();
+          for (const auto & local : local_corners) {
+            const Eigen::Vector2d body = grid->origin_body + Eigen::Vector2d(
+              grid_cosine * local.x() - grid_sine * local.y(),
+              grid_sine * local.x() + grid_cosine * local.y());
+            grid_forward_extent = std::max(grid_forward_extent, body.x());
+          }
+          RCLCPP_INFO(
+            get_logger(),
+            "interval reason=1 step=%d constraint=(%.3f,%.3f) psi=%.3f "
+            "grid_forward_extent=%.3f bev_forward_limit=%.3f previous=%d",
+            k, reference_point.x(), reference_point.y(), heading,
+            grid_forward_extent, bev_forward_m_,
+            reference.used_previous_solution ? 1 : 0);
         }
       }
+    } else {
+      fallback_reason = IntervalFallbackReason::GridUnavailable;
+    }
 
-      return {selected_idx, center_y};
-    };
+    output.fallback_reason_codes[step] = static_cast<int>(fallback_reason);
 
-    const double pose_age =
-      (last_pose_rx_time_.nanoseconds() > 0) ? (now - last_pose_rx_time_).seconds() : -1.0;
+    for (std::size_t candidate = 0; candidate < raw_starts.size(); ++candidate) {
+      const Eigen::Vector2d p0 = raw_starts[candidate];
+      const Eigen::Vector2d p1 = raw_ends[candidate];
+      const double raw_length = (p1 - p0).norm();
+      if (!finitePoint(p0) || !finitePoint(p1) || !std::isfinite(raw_length) ||
+        raw_length <= 1e-8)
+      {
+        continue;
+      }
 
-    const double grid_age =
-      (last_grid_rx_time_.nanoseconds() > 0) ? (now - last_grid_rx_time_).seconds() : -1.0;
+      Eigen::Vector2d processed_start;
+      Eigen::Vector2d processed_end;
+      int treatment_mode = static_cast<int>(IntervalTreatmentMode::CenterContraction);
+      if (raw_length <= max_centering_length) {
+        processed_start =
+          preview_interval_soft_ratio_ * p0 +
+          (1.0 - preview_interval_soft_ratio_) * p1;
+        processed_end =
+          preview_interval_soft_ratio_ * p1 +
+          (1.0 - preview_interval_soft_ratio_) * p0;
+      } else {
+        const Eigen::Vector2d direction = (p1 - p0) / raw_length;
+        const double margin = std::min(
+          preview_interval_boundary_margin_m_, 0.45 * raw_length);
+        processed_start = p0 + margin * direction;
+        processed_end = p1 - margin * direction;
+        treatment_mode = static_cast<int>(IntervalTreatmentMode::BoundaryMargin);
+      }
 
-    const double guide_angle0 = std::atan2(wp0_body.y(), wp0_body.x());
-    const double guide_angle1 = std::atan2(wp1_body.y(), wp1_body.x());
+      const double processed_length = (processed_end - processed_start).norm();
+      if (!finitePoint(processed_start) || !finitePoint(processed_end) ||
+        !std::isfinite(processed_length) || processed_length <= 1e-8)
+      {
+        continue;
+      }
 
-    const double preview_psi0 = (!preview_c.psirk.empty()) ? preview_c.psirk[0] : nan;
-    const double preview_psi1 = (preview_c.psirk.size() > 1) ? preview_c.psirk[1] : nan;
-    const double preview_psi2 = (preview_c.psirk.size() > 2) ? preview_c.psirk[2] : nan;
+      output.pmk[step].push_back(processed_start);
+      output.pMk[step].push_back(processed_end);
+      output.raw_lengths[step].push_back(raw_length);
+      output.processed_lengths[step].push_back(processed_length);
+      output.treatment_modes[step].push_back(treatment_mode);
+      output.source_modes[step].push_back(raw_source_modes[candidate]);
 
-    const double Urk_dv0 = (Urk.size() > 0) ? Urk[0] : nan;
-    const double Urk_dpsi0 = (Urk.size() > 1) ? Urk[1] : nan;
+      if (preview_interval_debug_) {
+        RCLCPP_INFO(
+          get_logger(),
+          "interval step=%d candidate=%zu raw=%.3f processed=%.3f treatment=%s source=%s",
+          k, output.pmk[step].size() - 1, raw_length, processed_length,
+          treatment_mode == static_cast<int>(IntervalTreatmentMode::CenterContraction) ?
+          "center-contraction" : "boundary-margin", "bev-observed");
+      }
+    }
 
-    const double arg_dv0 = (arg.size() > 0) ? arg[0] : nan;
-    const double arg_dpsi0 = (arg.size() > 1) ? arg[1] : nan;
-
-    const double cmd_dv0 = arg_dv0 + Urk_dv0;
-    const double cmd_dpsi0 = arg_dpsi0 + Urk_dpsi0;
-
-    const double prev_first_dpsi = have_prev_first_dpsi_ ? prev_first_dpsi_ : 0.0;
-    const double dpsi_delta = cmd_dpsi0 - prev_first_dpsi;
-    const double dpsi_delta_limit =
-      (std::isfinite(dpsi_delta_max_rad_) && dpsi_delta_max_rad_ > 0.0) ?
-      dpsi_delta_max_rad_ : nan;
-
-    const double yaw_rate_cmd = cmd_dpsi0 / std::max(1e-6, dt);
-
-    const double steer_angle_raw =
-      (std::abs(v1) > 1e-4) ?
-      std::atan((wheelbase_ * yaw_rate_cmd) / v1) : 0.0;
-
-    const double steer_norm_raw =
-      steer_angle_raw / std::max(1e-6, steer_limit);
-
-    const double steer_norm_clamped =
-      clampd(steer_norm_raw, -1.0, 1.0);
-
-    const double mavlink_steering_norm =
-      -clampd(mavlink_steer_sign_ * steer_norm_clamped, -1.0, 1.0);
-
-    const double throttle_norm = computeThrottleNorm(cmd_dv0, true);
-    const double output_steer_max = std::max(0.0, std::abs(steer_norm_max_));
-    const double raw_steer_before_filter =
-      clampd(solver_cmds.front().steer_norm, -output_steer_max, output_steer_max);
-    const double applied_steer_after_filter =
-      computeFilteredSteerNorm(solver_cmds.front().steer_norm, now);
-
-    const auto sel1 = selected_corridor(1);
-    const auto sel2 = selected_corridor(2);
-    const auto sel3 = selected_corridor(3);
-
-    std_msgs::msg::Float64MultiArray trace;
-    trace.data = {
-      now.seconds(),
-      1.0,
-      cur_x_,
-      cur_y_,
-      cur_yaw_,
-      cur_speed_,
-      pose_age,
-      grid_age,
-      upper_guides_age,
-      using_upper_guides ? 1.0 : 0.0,
-      wp0_body.x(),
-      wp0_body.y(),
-      wp1_body.x(),
-      wp1_body.y(),
-      guide_angle0,
-      guide_angle1,
-      preview_psi0,
-      preview_psi1,
-      preview_psi2,
-      Urk_dv0,
-      Urk_dpsi0,
-      arg_dv0,
-      arg_dpsi0,
-      cmd_dv0,
-      cmd_dpsi0,
-      prev_first_dpsi,
-      dpsi_delta,
-      dpsi_delta_limit,
-      dt,
-      v,
-      v1,
-      v_ref,
-      wheelbase_,
-      steer_limit,
-      yaw_rate_cmd,
-      steer_angle_raw,
-      steer_norm_raw,
-      steer_norm_clamped,
-      mavlink_steering_norm,
-      throttle_norm,
-      fval,
-      static_cast<double>(N_pred),
-      static_cast<double>(ny),
-      safe_Nck(1),
-      safe_Nck(2),
-      safe_Nck(3),
-      sel1.first,
-      sel2.first,
-      sel3.first,
-      sel1.second,
-      sel2.second,
-      sel3.second,
-      safe_prk_x(1),
-      safe_prk_y(1),
-      safe_prk_x(2),
-      safe_prk_y(2),
-      have_grid ? 1.0 : 0.0,
-      have_grid ? grid_snapshot.origin_x : nan,
-      have_grid ? grid_snapshot.origin_y : nan,
-      have_grid ? grid_snapshot.origin_yaw : nan,
-      have_grid ? grid_snapshot.resolution : nan,
-      have_grid ? static_cast<double>(grid_snapshot.width) : 0.0,
-      have_grid ? static_cast<double>(grid_snapshot.height) : 0.0,
-      preview_seed_size_for_trace,
-      preview_wp0_usable ? 1.0 : 0.0,
-      preview_yaw0_before_clamp,
-      preview_yaw0_after_clamp,
-      raw_steer_before_filter,
-      applied_steer_after_filter
-    };
-
-    mpc_trace_pub_->publish(trace);
-  }
-
-  const SolverControlStep & cmd = solver_cmds.front();
-  publishcontrolCmd(cmd.dv_mps, cmd.dpsi_rad, cmd.steer_norm, true);
-  prev_first_dpsi_ = cmd.dpsi_rad;
-  have_prev_first_dpsi_ = true;
-
-}
-// find_wp 
-std::array<int, 2> TrackingControllerNode::findWaypointPair(
-  const std::vector<Eigen::Vector2d>& waypoints,
-  int wp0_idx,
-  const Eigen::Vector2d& position,
-  const Eigen::Vector2d& velocity,
-  double eps) const
-{
-  if (waypoints.empty()) {
-    return {0, 0};
-  }
-
-  const int n_wp = static_cast<int>(waypoints.size());
-  if (n_wp == 1) {
-    return {0, 0};
-  }
-
-  int i0 = clampi(wp0_idx, 0, n_wp - 2);
-
-  Eigen::Vector2d moving_dir = velocity;
-  const double v_norm = moving_dir.norm();
-  if (v_norm >= 1e-9) {
-    moving_dir /= v_norm;
-    if ((waypoints[i0] - position).dot(moving_dir) < eps) {
-      i0 = std::min(i0 + 1, n_wp - 2);
+    output.Nck[step] = static_cast<int>(output.pmk[step].size());
+    // Match make_preview_constraints8.m: only the contiguous valid prefix,
+    // including the k=0 ego-origin stage, may reach the MIQP.
+    if (output.Nck[step] == 0) {
+      const int usable_horizon = std::max(k - 1, 0);
+      output.N_pred = usable_horizon;
+      const std::size_t usable_size = static_cast<std::size_t>(usable_horizon + 1);
+      output.pmk.resize(usable_size);
+      output.pMk.resize(usable_size);
+      output.raw_lengths.resize(usable_size);
+      output.processed_lengths.resize(usable_size);
+      output.treatment_modes.resize(usable_size);
+      output.source_modes.resize(usable_size);
+      output.fallback_reason_codes.resize(usable_size);
+      output.Nck.resize(usable_size);
+      output.prk.resize(usable_size);
+      output.psirk.resize(usable_size);
+      output.constraint_prk.resize(usable_size);
+      output.constraint_psirk.resize(usable_size);
+      RCLCPP_WARN(
+        get_logger(),
+        "no valid preview interval at step=%d; usable horizon=%d reason=%d",
+        k, usable_horizon, static_cast<int>(fallback_reason));
+      break;
     }
   }
-  return {i0, i0 + 1};
+
+  return output;
 }
 
-TrackingControllerNode::PreviewFallbackDirection
-TrackingControllerNode::computePreviewFallbackDirection(
-  const Eigen::Vector2d& wp0_body,
-  const Eigen::Vector2d& wp1_body) const
+SdMapUpperPlannerNode::UpperSolveResult SdMapUpperPlannerNode::solveUpperMiqp(
+  const PreviewConstraintData & preview,
+  double current_speed_mps) const
 {
-  PreviewFallbackDirection result;
-  result.dir_before_clamp = Eigen::Vector2d(1.0, 0.0);
-
-  const double wp0_norm = wp0_body.norm();
-  result.wp0_usable =
-    std::isfinite(wp0_body.x()) &&
-    std::isfinite(wp0_body.y()) &&
-    wp0_norm >= preview_min_wp_norm_m_ &&
-    wp0_body.x() >= preview_min_forward_x_m_ &&
-    std::abs(wp0_body.y()) <= preview_max_lateral_y_m_;
-
-  Eigen::Vector2d tangent = wp1_body - wp0_body;
-  const bool tangent_usable =
-    std::isfinite(tangent.x()) &&
-    std::isfinite(tangent.y()) &&
-    tangent.norm() > 1e-6;
-
-  if (preview_use_path_tangent_when_seed_empty_ && tangent_usable) {
-    if (tangent.x() < 0.0) {
-      tangent = -tangent;
-    }
-    result.dir_before_clamp = tangent.normalized();
-  } else if (result.wp0_usable) {
-    result.dir_before_clamp = wp0_body / wp0_norm;
-  } else if (tangent_usable) {
-    if (tangent.x() < 0.0) {
-      tangent = -tangent;
-    }
-    result.dir_before_clamp = tangent.normalized();
+  UpperSolveResult result;
+  const auto started = std::chrono::steady_clock::now();
+  const int horizon = preview.N_pred;
+  if (horizon <= 0 ||
+    preview.prk.size() != static_cast<std::size_t>(horizon + 1) ||
+    preview.psirk.size() != static_cast<std::size_t>(horizon + 1) ||
+    preview.constraint_prk.size() != static_cast<std::size_t>(horizon + 1) ||
+    preview.constraint_psirk.size() != static_cast<std::size_t>(horizon + 1) ||
+    preview.Nck.size() != static_cast<std::size_t>(horizon + 1) ||
+    preview.pmk.size() != static_cast<std::size_t>(horizon + 1) ||
+    preview.pMk.size() != static_cast<std::size_t>(horizon + 1))
+  {
+    result.status = "invalid preview dimensions";
+    return result;
   }
 
-  const double yaw_limit = std::max(1e-3, std::abs(preview_max_yaw_rad_));
-  result.yaw_before_clamp =
-    std::atan2(result.dir_before_clamp.y(), result.dir_before_clamp.x());
-  result.yaw_after_clamp =
-    clampd(result.yaw_before_clamp, -yaw_limit, yaw_limit);
+  std::vector<int> binary_offsets(static_cast<std::size_t>(horizon + 1), 0);
+  for (int k = 1; k <= horizon; ++k) {
+    const int candidates = preview.Nck[static_cast<std::size_t>(k)];
+    if (candidates <= 0 ||
+      preview.pmk[static_cast<std::size_t>(k)].size() !=
+      static_cast<std::size_t>(candidates) ||
+      preview.pMk[static_cast<std::size_t>(k)].size() !=
+      static_cast<std::size_t>(candidates))
+    {
+      result.status = "invalid candidate dimensions";
+      return result;
+    }
+    binary_offsets[static_cast<std::size_t>(k)] =
+      binary_offsets[static_cast<std::size_t>(k - 1)] + candidates;
+  }
 
+  const int input_count = 2 * horizon;
+  const int binary_count = binary_offsets.back();
+  const int variable_count = input_count + binary_count;
+
+  Matrix<double> G(0.0, 2 * (horizon + 1), variable_count);
+  for (int state_step = 1; state_step <= horizon; ++state_step) {
+    for (int input_step = 0; input_step < state_step; ++input_step) {
+      const double heading = preview.psirk[static_cast<std::size_t>(input_step)];
+      const int row = 2 * state_step;
+      const int column = 2 * input_step;
+      G[row][column] = upper_prediction_dt_sec_ * std::cos(heading);
+      G[row][column + 1] =
+        -upper_prediction_dt_sec_ * target_speed_mps_ * std::sin(heading);
+      G[row + 1][column] = upper_prediction_dt_sec_ * std::sin(heading);
+      G[row + 1][column + 1] =
+        upper_prediction_dt_sec_ * target_speed_mps_ * std::cos(heading);
+    }
+  }
+
+  Vector<double> nominal_input(0.0, input_count);
+  for (int k = 0; k < horizon; ++k) {
+    const double previous_heading =
+      k == 0 ? 0.0 : preview.psirk[static_cast<std::size_t>(k - 1)];
+    nominal_input[2 * k] = 0.0;
+    nominal_input[2 * k + 1] = wrapToPi(
+      preview.psirk[static_cast<std::size_t>(k)] - previous_heading);
+  }
+
+  const double max_dv = a_max_mps2_ * upper_prediction_dt_sec_;
+  const double phi =
+    std::tan(max_steering_angle_rad_) * upper_prediction_dt_sec_ / wheelbase_;
+  const double normalized_dv_weight = upper_r_dv_ / (max_dv * max_dv);
+  const double nominal_max_dpsi = std::max(1e-9, phi * target_speed_mps_);
+  const double normalized_dpsi_weight =
+    upper_r_dpsi_ / (nominal_max_dpsi * nominal_max_dpsi);
+
+  Matrix<double> hessian(0.0, variable_count, variable_count);
+  const double position_stage_weight =
+    lambda_position_ /
+    (position_scale_m_ * position_scale_m_) /
+    static_cast<double>(horizon + 1);
+  std::vector<double> position_weights(
+    static_cast<std::size_t>(horizon + 1), position_stage_weight);
+  position_weights[static_cast<std::size_t>(horizon)] =
+    terminal_position_weight_multiplier_ * position_stage_weight;
+  for (int row = 0; row < variable_count; ++row) {
+    for (int column = 0; column < variable_count; ++column) {
+      double value = 0.0;
+      for (int step = 0; step <= horizon; ++step) {
+        const double weight = position_weights[static_cast<std::size_t>(step)];
+        value += weight * (
+          G[2 * step][row] * G[2 * step][column] +
+          G[2 * step + 1][row] * G[2 * step + 1][column]);
+      }
+      hessian[row][column] = value;
+    }
+  }
+  for (int k = 0; k < horizon; ++k) {
+    hessian[2 * k][2 * k] += normalized_dv_weight;
+    hessian[2 * k + 1][2 * k + 1] += normalized_dpsi_weight;
+  }
+  Vector<double> linear_term(0.0, variable_count);
+
+  for (int k = 1; k <= horizon; ++k) {
+    if (preview.Nck[static_cast<std::size_t>(k)] >= 2) {
+      result.branch_step = k;
+      break;
+    }
+  }
+
+  if (result.branch_step >= 1 && lambda_relative_turn_ > 0.0) {
+    const int turn_start = std::max(1, result.branch_step - turn_preview_steps_);
+    const int active_count = result.branch_step - turn_start + 1;
+    std::vector<double> unnormalized_weights(static_cast<std::size_t>(active_count), 1.0);
+    double weight_sum = 0.0;
+    for (int i = 0; i < active_count; ++i) {
+      unnormalized_weights[static_cast<std::size_t>(i)] =
+        std::pow(turn_weight_growth_, static_cast<double>(i));
+      weight_sum += unnormalized_weights[static_cast<std::size_t>(i)];
+    }
+
+    const double turn_base_weight =
+      lambda_relative_turn_ /
+      (relative_turn_scale_rad_ * relative_turn_scale_rad_);
+    for (int i = 0; i < active_count; ++i) {
+      const int step = turn_start + i;
+      const double stage_weight =
+        unnormalized_weights[static_cast<std::size_t>(i)] / weight_sum;
+      const double target =
+        static_cast<double>(i + 1) / static_cast<double>(active_count) *
+        preview.delta_psi_road_rad;
+      const double q_weight = turn_base_weight * stage_weight;
+
+      result.turn_window_steps.push_back(step);
+      result.turn_target_rad.push_back(target);
+      result.turn_stage_weights.push_back(stage_weight);
+
+      for (int first = 0; first < step; ++first) {
+        const int first_column = 2 * first + 1;
+        linear_term[first_column] += -target * q_weight;
+        for (int second = 0; second < step; ++second) {
+          const int second_column = 2 * second + 1;
+          hessian[first_column][second_column] += q_weight;
+        }
+      }
+    }
+  }
+
+  for (int row = 0; row < variable_count; ++row) {
+    for (int column = row + 1; column < variable_count; ++column) {
+      const double symmetric = 0.5 * (hessian[row][column] + hessian[column][row]);
+      hessian[row][column] = symmetric;
+      hessian[column][row] = symmetric;
+    }
+    hessian[row][row] += miqp_diagonal_regularization_;
+  }
+
+  const int lane_rows = 2 * binary_count;
+  const int input_rows = 4 * horizon;
+  Matrix<double> inequality(0.0, lane_rows + input_rows, variable_count);
+  Vector<double> inequality_bound(0.0, lane_rows + input_rows);
+  int row = 0;
+
+  for (int k = 1; k <= horizon; ++k) {
+    const double heading = preview.constraint_psirk[static_cast<std::size_t>(k)];
+    const Eigen::Vector2d axis(-std::sin(heading), std::cos(heading));
+    const Eigen::Vector2d reference = preview.prk[static_cast<std::size_t>(k)];
+    const double reference_projection = axis.dot(reference);
+    for (int candidate = 0;
+      candidate < preview.Nck[static_cast<std::size_t>(k)]; ++candidate)
+    {
+      double lower = axis.dot(
+        preview.pmk[static_cast<std::size_t>(k)][static_cast<std::size_t>(candidate)]);
+      double upper = axis.dot(
+        preview.pMk[static_cast<std::size_t>(k)][static_cast<std::size_t>(candidate)]);
+      if (lower > upper) {std::swap(lower, upper);}
+      const int binary_index = input_count +
+        binary_offsets[static_cast<std::size_t>(k - 1)] + candidate;
+
+      for (int column = 0; column < input_count; ++column) {
+        inequality[row][column] =
+          axis.x() * G[2 * k][column] + axis.y() * G[2 * k + 1][column];
+      }
+      inequality[row][binary_index] = miqp_big_m_;
+      inequality_bound[row++] = miqp_big_m_ + upper - reference_projection;
+
+      for (int column = 0; column < input_count; ++column) {
+        inequality[row][column] = -(
+          axis.x() * G[2 * k][column] + axis.y() * G[2 * k + 1][column]);
+      }
+      inequality[row][binary_index] = miqp_big_m_;
+      inequality_bound[row++] = miqp_big_m_ - lower + reference_projection;
+    }
+  }
+
+  const double speed = std::max(0.0, current_speed_mps);
+
+  auto finalize_input_row = [&](int current_row, double base_bound) {
+      double adjusted = base_bound;
+      for (int column = 0; column < input_count; ++column) {
+        adjusted -= inequality[current_row][column] * nominal_input[column];
+      }
+      inequality_bound[current_row] = adjusted;
+    };
+
+  for (int k = 0; k < horizon; ++k) {
+    inequality[row][2 * k] = 1.0;
+    finalize_input_row(row, max_dv);
+    ++row;
+
+    inequality[row][2 * k] = -1.0;
+    finalize_input_row(row, max_dv);
+    ++row;
+
+    for (int i = 0; i <= k; ++i) {
+      inequality[row][2 * i] = -phi;
+    }
+    inequality[row][2 * k + 1] = 1.0;
+    finalize_input_row(row, phi * speed);
+    ++row;
+
+    for (int i = 0; i <= k; ++i) {
+      inequality[row][2 * i] = -phi;
+    }
+    inequality[row][2 * k + 1] = -1.0;
+    finalize_input_row(row, phi * speed);
+    ++row;
+  }
+
+  if (row != lane_rows + input_rows) {
+    result.status = "inequality row mismatch";
+    return result;
+  }
+
+  Matrix<double> equality(0.0, horizon, variable_count);
+  Vector<double> equality_bound(1.0, horizon);
+  for (int k = 1; k <= horizon; ++k) {
+    for (int candidate = 0;
+      candidate < preview.Nck[static_cast<std::size_t>(k)]; ++candidate)
+    {
+      equality[k - 1][input_count +
+        binary_offsets[static_cast<std::size_t>(k - 1)] + candidate] = 1.0;
+    }
+  }
+
+  QuadraticProblem solver(false);
+  Variable * variable = solver.vector_variable(variable_count, "upper_decision");
+  if (!solver.add_variable(variable)) {
+    result.status = "DAQP add_variable failed";
+    return result;
+  }
+  const Var decision = solver.get_variable(variable);
+  const Var main_variable = solver.get_main_variable();
+
+  Constraint inequality_constraint(main_variable);
+  inequality_constraint.set_constraint_variable(decision, inequality);
+  inequality_constraint.set_known_term(inequality_bound);
+  solver.add_leq_constraint(inequality_constraint);
+
+  Constraint equality_constraint(main_variable);
+  equality_constraint.set_constraint_variable(decision, equality);
+  equality_constraint.set_known_term(equality_bound);
+  solver.add_equality_constraint(equality_constraint);
+
+  solver.set_Q_matrix(hessian);
+  solver.set_q0_vector(linear_term);
+  for (int index = input_count; index < variable_count; ++index) {
+    solver.set_binary_var(decision[index]);
+  }
+
+  Vector<double> argument;
+  const double objective = solver.solve_problem(argument);
+  result.solve_time_ms = std::chrono::duration<double, std::milli>(
+    std::chrono::steady_clock::now() - started).count();
+  if (!std::isfinite(objective) ||
+    argument.size() < static_cast<unsigned int>(variable_count))
+  {
+    result.status = "DAQP MIQP infeasible";
+    return result;
+  }
+  for (int index = 0; index < variable_count; ++index) {
+    if (!std::isfinite(argument[index])) {
+      result.status = "DAQP MIQP returned a non-finite decision";
+      return result;
+    }
+  }
+
+  result.correction_input.resize(static_cast<std::size_t>(input_count), 0.0);
+  result.nominal_input.resize(static_cast<std::size_t>(input_count), 0.0);
+  result.actual_input.resize(static_cast<std::size_t>(input_count), 0.0);
+  for (int index = 0; index < input_count; ++index) {
+    result.correction_input[static_cast<std::size_t>(index)] = argument[index];
+    result.nominal_input[static_cast<std::size_t>(index)] = nominal_input[index];
+    result.actual_input[static_cast<std::size_t>(index)] =
+      argument[index] + nominal_input[index];
+  }
+
+  result.predicted_body.resize(static_cast<std::size_t>(horizon + 1));
+  std::vector<Eigen::Vector2d> position_error(
+    static_cast<std::size_t>(horizon + 1), Eigen::Vector2d::Zero());
+  for (int k = 0; k <= horizon; ++k) {
+    Eigen::Vector2d error = Eigen::Vector2d::Zero();
+    for (int column = 0; column < input_count; ++column) {
+      error.x() += G[2 * k][column] * argument[column];
+      error.y() += G[2 * k + 1][column] * argument[column];
+    }
+    position_error[static_cast<std::size_t>(k)] = error;
+    result.predicted_body[static_cast<std::size_t>(k)] =
+      preview.prk[static_cast<std::size_t>(k)] + error;
+    if (!finitePoint(result.predicted_body[static_cast<std::size_t>(k)])) {
+      result.status = "DAQP MIQP produced a non-finite predicted position";
+      return result;
+    }
+  }
+
+  result.selected_corridors.assign(static_cast<std::size_t>(horizon + 1), -1);
+  for (int k = 1; k <= horizon; ++k) {
+    for (int candidate = 0;
+      candidate < preview.Nck[static_cast<std::size_t>(k)]; ++candidate)
+    {
+      const int index = input_count +
+        binary_offsets[static_cast<std::size_t>(k - 1)] + candidate;
+      if (argument[index] > 0.5) {
+        result.selected_corridors[static_cast<std::size_t>(k)] = candidate;
+        break;
+      }
+    }
+  }
+
+  result.psi_pred_cost_rad.assign(static_cast<std::size_t>(horizon), 0.0);
+  result.psi_pred_model_rad.assign(static_cast<std::size_t>(horizon), 0.0);
+  double accumulated_correction_yaw = 0.0;
+  double accumulated_model_yaw = 0.0;
+  for (int k = 0; k < horizon; ++k) {
+    accumulated_correction_yaw += argument[2 * k + 1];
+    accumulated_model_yaw += argument[2 * k + 1] + nominal_input[2 * k + 1];
+    result.psi_pred_cost_rad[static_cast<std::size_t>(k)] = accumulated_correction_yaw;
+    result.psi_pred_model_rad[static_cast<std::size_t>(k)] = accumulated_model_yaw;
+  }
+
+  result.position_cost = 0.0;
+  for (int k = 0; k <= horizon; ++k) {
+    result.position_cost += 0.5 * position_weights[static_cast<std::size_t>(k)] *
+      position_error[static_cast<std::size_t>(k)].squaredNorm();
+  }
+  result.terminal_position_error =
+    position_error[static_cast<std::size_t>(horizon)].norm();
+  result.input_cost = 0.0;
+  for (int k = 0; k < horizon; ++k) {
+    const double dv = argument[2 * k];
+    const double dpsi = argument[2 * k + 1];
+    result.input_cost += 0.5 * (
+      normalized_dv_weight * dv * dv + normalized_dpsi_weight * dpsi * dpsi);
+  }
+  result.turn_cost = 0.0;
+  const double turn_base_weight =
+    lambda_relative_turn_ /
+    (relative_turn_scale_rad_ * relative_turn_scale_rad_);
+  for (std::size_t i = 0; i < result.turn_window_steps.size(); ++i) {
+    const int step = result.turn_window_steps[i];
+    const double prediction = result.psi_pred_cost_rad[static_cast<std::size_t>(step - 1)];
+    const double error = wrapToPi(prediction - result.turn_target_rad[i]);
+    result.turn_cost += 0.5 * turn_base_weight *
+      result.turn_stage_weights[i] * error * error;
+  }
+
+  result.objective = objective;
+  result.status = "solved";
+  result.valid = true;
   return result;
 }
 
-void TrackingControllerNode::buildPreviewFromPredictionSeed(
-  const Eigen::Vector2d& wp0_body,
-  const Eigen::Vector2d& wp1_body,
-  int horizon_steps,
-  double delta_s,
-  const std::vector<Eigen::Vector2d>& p_seed_body,
-  std::vector<Eigen::Vector2d>& preview_pts_body,
-  std::vector<double>& preview_psi_rad) const
+double SdMapUpperPlannerNode::remainingPathLength(
+  const std::vector<Eigen::Vector2d> & path,
+  const Eigen::Vector2d & position) const
 {
-  const int n = std::max(1, horizon_steps);
-  const double ds = std::max(1e-3, delta_s);
-
-  preview_pts_body.assign(n + 1, Eigen::Vector2d::Zero());
-  preview_psi_rad.assign(n + 1, 0.0);
-
-  if (p_seed_body.size() < 2) {
-    const PreviewFallbackDirection fallback_dir =
-      computePreviewFallbackDirection(wp0_body, wp1_body);
-    const Eigen::Vector2d dir0(
-      std::cos(fallback_dir.yaw_after_clamp),
-      std::sin(fallback_dir.yaw_after_clamp));
-
-    for (int k = 0; k <= n; ++k) {
-      preview_pts_body[k] = dir0 * (ds * static_cast<double>(k));
-    }
-  } else {
-    const Eigen::Vector2d& plast = p_seed_body.back();
-    const Eigen::Vector2d& pprev = p_seed_body[p_seed_body.size() - 2];
-    const Eigen::Vector2d to_wp0 = wp0_body - plast;
-    const Eigen::Vector2d travel = plast - pprev;
-    const bool switch_to_wp1 = to_wp0.dot(travel) < ds;
-    const Eigen::Vector2d target = switch_to_wp1 ? wp1_body : wp0_body;
-
-    Eigen::Vector2d wpB = plast;
-    const Eigen::Vector2d dir = target - plast;
-    const double nd = dir.norm();
-    if (nd > 1e-6) {
-      wpB += ds * dir / nd;
-    }
-
-    std::vector<Eigen::Vector2d> trj = p_seed_body;
-    trj.push_back(wpB);
-    for (int k = 0; k <= n; ++k) {
-      const int idx = std::min(k, static_cast<int>(trj.size()) - 1);
-      preview_pts_body[k] = trj[idx];
+  if (path.size() < 2) {return std::numeric_limits<double>::infinity();}
+  std::size_t best_segment = 0;
+  double best_ratio = 0.0;
+  double best_distance = std::numeric_limits<double>::infinity();
+  for (std::size_t i = 0; i + 1 < path.size(); ++i) {
+    const Eigen::Vector2d segment = path[i + 1] - path[i];
+    const double length_squared = segment.squaredNorm();
+    if (length_squared <= 1e-12) {continue;}
+    const double ratio = clampd(
+      (position - path[i]).dot(segment) / length_squared, 0.0, 1.0);
+    const double distance =
+      (position - (path[i] + ratio * segment)).squaredNorm();
+    if (distance < best_distance) {
+      best_distance = distance;
+      best_segment = i;
+      best_ratio = ratio;
     }
   }
-
-  for (int k = 0; k < n; ++k) {
-    const Eigen::Vector2d dp = preview_pts_body[k + 1] - preview_pts_body[k];
-    if (dp.norm() > 1e-9) {
-      preview_psi_rad[k] = std::atan2(dp.y(), dp.x());
-    } else if (k > 0) {
-      preview_psi_rad[k] = preview_psi_rad[k - 1];
-    }
+  double remaining =
+    (1.0 - best_ratio) * (path[best_segment + 1] - path[best_segment]).norm();
+  for (std::size_t i = best_segment + 1; i + 1 < path.size(); ++i) {
+    remaining += (path[i + 1] - path[i]).norm();
   }
-  preview_psi_rad[n] = preview_psi_rad[n - 1];
-
-  const double yaw_limit = std::max(1e-3, std::abs(preview_max_yaw_rad_));
-  for (double &psi : preview_psi_rad) {
-    if (!std::isfinite(psi)) {
-      psi = 0.0;
-    }
-    psi = clampd(psi, -yaw_limit, yaw_limit);
-  }
+  return remaining;
 }
 
-// nav_msgs/Path 
-void TrackingControllerNode::publishPath(
-  const std::vector<Eigen::Vector2d> & pts,
-  const std::string & frame_id)
+std::vector<Eigen::Vector2d> SdMapUpperPlannerNode::densifyPath(
+  const std::vector<Eigen::Vector2d> & sparse_world,
+  double current_speed_mps) const
 {
-  if (!local_curve_pub_) {
+  if (sparse_world.size() < 2) {return sparse_world;}
+  std::vector<Eigen::Vector2d> filtered_sparse;
+  filtered_sparse.reserve(sparse_world.size());
+  filtered_sparse.push_back(sparse_world.front());
+  for (std::size_t i = 1; i < sparse_world.size(); ++i) {
+    if ((sparse_world[i] - filtered_sparse.back()).norm() > 1e-8) {
+      filtered_sparse.push_back(sparse_world[i]);
+    }
+  }
+  if (filtered_sparse.size() < 2) {return filtered_sparse;}
+
+  const double spacing = std::max(
+    std::max(0.0, current_speed_mps) * lower_prediction_dt_sec_,
+    lower_min_path_spacing_m_);
+  std::vector<double> arc(filtered_sparse.size(), 0.0);
+  for (std::size_t i = 1; i < filtered_sparse.size(); ++i) {
+    arc[i] = arc[i - 1] + (filtered_sparse[i] - filtered_sparse[i - 1]).norm();
+  }
+  if (arc.back() <= 1e-9) {return filtered_sparse;}
+
+  std::vector<Eigen::Vector2d> dense;
+  std::size_t segment = 0;
+  for (double query = 0.0; query < arc.back(); query += spacing) {
+    while (segment + 1 < arc.size() && arc[segment + 1] < query) {++segment;}
+    const double length = arc[segment + 1] - arc[segment];
+    const double ratio = length > 1e-12 ? (query - arc[segment]) / length : 0.0;
+    dense.push_back(
+      filtered_sparse[segment] + ratio *
+      (filtered_sparse[segment + 1] - filtered_sparse[segment]));
+  }
+  if (dense.empty() || (dense.back() - filtered_sparse.back()).norm() > 1e-6) {
+    dense.push_back(filtered_sparse.back());
+  }
+  return dense;
+}
+
+void SdMapUpperPlannerNode::publishPath(
+  const rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr & publisher,
+  const std::vector<Eigen::Vector2d> & points,
+  const std::string & frame_id) const
+{
+  if (!publisher) {return;}
+  nav_msgs::msg::Path message;
+  message.header.stamp = now();
+  message.header.frame_id = frame_id;
+  message.poses.resize(points.size());
+  for (std::size_t i = 0; i < points.size(); ++i) {
+    message.poses[i].header = message.header;
+    message.poses[i].pose.position.x = points[i].x();
+    message.poses[i].pose.position.y = points[i].y();
+    double yaw = 0.0;
+    if (i + 1 < points.size()) {
+      const Eigen::Vector2d tangent = points[i + 1] - points[i];
+      if (tangent.norm() > 1e-9) {yaw = std::atan2(tangent.y(), tangent.x());}
+    } else if (i > 0) {
+      const Eigen::Vector2d tangent = points[i] - points[i - 1];
+      if (tangent.norm() > 1e-9) {yaw = std::atan2(tangent.y(), tangent.x());}
+    }
+    message.poses[i].pose.orientation = yawQuaternion(yaw);
+  }
+  publisher->publish(message);
+}
+
+void SdMapUpperPlannerNode::publishGoalReached(bool reached)
+{
+  std_msgs::msg::Bool message;
+  message.data = reached;
+  goal_reached_pub_->publish(message);
+}
+
+void SdMapUpperPlannerNode::publishIntervalDebug(
+  const PreviewConstraintData & preview) const
+{
+  std_msgs::msg::Float64MultiArray message;
+  for (std::size_t step = 0; step < preview.raw_lengths.size(); ++step) {
+    for (std::size_t candidate = 0;
+      candidate < preview.raw_lengths[step].size(); ++candidate)
+    {
+      message.data.push_back(static_cast<double>(step));
+      message.data.push_back(static_cast<double>(candidate));
+      message.data.push_back(preview.raw_lengths[step][candidate]);
+      message.data.push_back(preview.processed_lengths[step][candidate]);
+      message.data.push_back(static_cast<double>(preview.treatment_modes[step][candidate]));
+      message.data.push_back(static_cast<double>(preview.source_modes[step][candidate]));
+      message.data.push_back(
+        static_cast<double>(preview.fallback_reason_codes[step]));
+    }
+  }
+  interval_debug_pub_->publish(message);
+}
+
+void SdMapUpperPlannerNode::publishUpperTrace(
+  const PoseSnapshot & pose,
+  int wp0_idx,
+  int wp1_idx,
+  const PreviewConstraintData & preview,
+  const UpperSolveResult & solve) const
+{
+  std_msgs::msg::Float64MultiArray trace;
+  trace.data = {
+    now().seconds(),
+    pose.position.x(),
+    pose.position.y(),
+    pose.yaw_rad,
+    pose.speed_mps,
+    static_cast<double>(wp0_idx),
+    static_cast<double>(wp1_idx),
+    static_cast<double>(preview.N_pred),
+    solve.valid ? 1.0 : 0.0,
+    solve.objective,
+    solve.solve_time_ms,
+    preview.road_segment_heading_rad[0],
+    preview.road_segment_heading_rad[1],
+    preview.delta_psi_road_rad,
+    static_cast<double>(solve.branch_step),
+    solve.position_cost,
+    solve.input_cost,
+    solve.turn_cost
+  };
+  for (double heading : preview.psirk) {
+    trace.data.push_back(heading);
+  }
+  for (int count : preview.Nck) {
+    trace.data.push_back(static_cast<double>(count));
+  }
+  for (int selected : solve.selected_corridors) {
+    trace.data.push_back(static_cast<double>(selected));
+  }
+  for (double value : solve.psi_pred_cost_rad) {
+    trace.data.push_back(value);
+  }
+  for (double value : solve.psi_pred_model_rad) {
+    trace.data.push_back(value);
+  }
+  for (std::size_t i = 0; i < solve.turn_window_steps.size(); ++i) {
+    trace.data.push_back(static_cast<double>(solve.turn_window_steps[i]));
+    trace.data.push_back(solve.turn_target_rad[i]);
+    trace.data.push_back(solve.turn_stage_weights[i]);
+  }
+  // Append terminal-reference diagnostics so existing trace field offsets stay
+  // unchanged for downstream MATLAB parsers.
+  trace.data.push_back(solve.terminal_position_error);
+  trace.data.push_back(terminal_position_weight_multiplier_);
+  trace.data.push_back(preview.terminal_buffer_turn_rad);
+  trace.data.push_back(preview.stable_heading_rad);
+  trace.data.push_back(preview.waypoint_bearing_rad);
+  trace.data.push_back(preview.used_previous_solution ? 1.0 : 0.0);
+  upper_trace_pub_->publish(trace);
+}
+
+void SdMapUpperPlannerNode::plannerLoop()
+{
+  PoseSnapshot pose;
+  {
+    std::lock_guard<std::mutex> lock(pose_mtx_);
+    pose = pose_;
+  }
+  if (!pose.valid) {
+    RCLCPP_WARN_THROTTLE(get_logger(), *get_clock(), 2000, "planner waiting for pose");
+    return;
+  }
+  if (!pose.speed_valid) {
+    RCLCPP_WARN_THROTTLE(
+      get_logger(), *get_clock(), 1000,
+      "planner waiting for a valid finite-difference speed sample");
     return;
   }
 
-  nav_msgs::msg::Path path;
-  path.header.stamp = this->now();
-  path.header.frame_id = frame_id;
-  path.poses.resize(pts.size());
-
-  for (size_t i = 0; i < pts.size(); ++i) {
-    path.poses[i].header = path.header;
-    path.poses[i].pose.position.x = pts[i].x();
-    path.poses[i].pose.position.y = pts[i].y();
-    path.poses[i].pose.position.z = 0.0;
+  const rclcpp::Time current_time = now();
+  if (input_timeout_sec_ > 0.0 &&
+    (current_time - pose.received).seconds() > input_timeout_sec_)
+  {
+    RCLCPP_WARN_THROTTLE(get_logger(), *get_clock(), 1000, "planner pose is stale");
+    return;
   }
 
-  local_curve_pub_->publish(path);
+  GridMapSnapshot grid;
+  {
+    std::lock_guard<std::mutex> lock(grid_mtx_);
+    grid = grid_;
+  }
+  bool grid_available = grid.valid;
+  if (grid_available && input_timeout_sec_ > 0.0 &&
+    (current_time - grid.received).seconds() > input_timeout_sec_)
+  {
+    grid_available = false;
+  }
+  if (require_grid_map_ && !grid_available) {
+    RCLCPP_WARN_THROTTLE(
+      get_logger(), *get_clock(), 1000,
+      "planner grid is missing, invalid, or stale");
+    // Clear the upper-to-lower reference immediately. The lower controller
+    // treats a path with fewer than two points as invalid and commands its
+    // bounded neutral fallback instead of tracking a path produced from an
+    // old body-frame grid.
+    const std::string invalid_path_frame =
+      pose.frame_id.empty() ? path_frame_id_ : pose.frame_id;
+    publishPath(dense_path_pub_, {}, invalid_path_frame);
+    return;
+  }
+
+  std::vector<Eigen::Vector2d> global_path;
+  std::string frame_id;
+  int wp0_idx = 0;
+  int wp1_idx = 1;
+  bool already_reached = false;
+  std::uint64_t planning_revision = 0;
+  {
+    std::lock_guard<std::mutex> lock(path_mtx_);
+    global_path = global_path_;
+    frame_id = global_path_frame_id_;
+    wp0_idx = wp0_index_;
+    wp1_idx = wp1_index_;
+    already_reached = goal_reached_;
+    planning_revision = planning_revision_;
+  }
+  if (global_path.size() < 2) {
+    RCLCPP_WARN_THROTTLE(
+      get_logger(), *get_clock(), 2000, "planner waiting for global path");
+    return;
+  }
+  if (!normalizedFrameId(pose.frame_id).empty() &&
+    !normalizedFrameId(frame_id).empty() &&
+    !frameIdsEquivalent(pose.frame_id, frame_id))
+  {
+    RCLCPP_WARN_THROTTLE(
+      get_logger(), *get_clock(), 1000,
+      "pose/path frame mismatch: pose='%s' path='%s'; TF conversion is not implemented",
+      pose.frame_id.c_str(), frame_id.c_str());
+    return;
+  }
+
+  const double remaining = remainingPathLength(global_path, pose.position);
+  const double direct_goal_distance = (global_path.back() - pose.position).norm();
+  const bool reached = already_reached ||
+    (goal_stop_distance_m_ >= 0.0 &&
+    (remaining <= goal_stop_distance_m_ || direct_goal_distance <= goal_stop_distance_m_));
+  if (reached) {
+    {
+      std::lock_guard<std::mutex> lock(path_mtx_);
+      goal_reached_ = true;
+    }
+    publishGoalReached(true);
+    RCLCPP_INFO_THROTTLE(
+      get_logger(), *get_clock(), 1000,
+      "goal reached: remaining=%.3f direct=%.3f", remaining, direct_goal_distance);
+    return;
+  }
+  publishGoalReached(false);
+
+  const Eigen::Vector2d velocity = pose.speed_mps *
+    Eigen::Vector2d(std::cos(pose.yaw_rad), std::sin(pose.yaw_rad));
+  const auto pair = findWaypointPair(
+    global_path, wp0_idx, pose.position, velocity, waypoint_switch_eps_m_);
+  wp0_idx = pair[0];
+  wp1_idx = pair[1];
+  if (wp1_idx <= wp0_idx || wp1_idx >= static_cast<int>(global_path.size())) {
+    RCLCPP_WARN_THROTTLE(
+      get_logger(), *get_clock(), 1000,
+      "no valid forward waypoint pair remains: wp0=%d wp1=%d size=%zu",
+      wp0_idx, wp1_idx, global_path.size());
+    return;
+  }
+
+  {
+    std::lock_guard<std::mutex> lock(path_mtx_);
+    if (planning_revision_ == planning_revision) {
+      wp0_index_ = wp0_idx;
+      wp1_index_ = wp1_idx;
+    }
+  }
+
+  const bool has_previous_waypoint = wp0_idx > 0;
+  const Eigen::Vector2d wp0_world = global_path[static_cast<std::size_t>(wp0_idx)];
+  const Eigen::Vector2d wp1_world = global_path[static_cast<std::size_t>(wp1_idx)];
+  const Eigen::Vector2d wp_prev_world = has_previous_waypoint ?
+    global_path[static_cast<std::size_t>(wp0_idx - 1)] : pose.position;
+
+  const double cosine = std::cos(pose.yaw_rad);
+  const double sine = std::sin(pose.yaw_rad);
+  Eigen::Matrix2d rotation_body_world;
+  rotation_body_world << cosine, sine, -sine, cosine;
+  Eigen::Matrix2d rotation_world_body;
+  rotation_world_body << cosine, -sine, sine, cosine;
+
+  const Eigen::Vector2d wp0_body = rotation_body_world * (wp0_world - pose.position);
+  const Eigen::Vector2d wp1_body = rotation_body_world * (wp1_world - pose.position);
+  const Eigen::Vector2d wp_prev_body =
+    rotation_body_world * (wp_prev_world - pose.position);
+
+  const int requested_horizon = computeRequestedPreviewSteps(
+    grid_available ? &grid : nullptr);
+  if (requested_horizon <= 0) {
+    RCLCPP_WARN_THROTTLE(
+      get_logger(), *get_clock(), 1000,
+      "no preview horizon fits in the current BEV extent");
+    return;
+  }
+
+  std::vector<Eigen::Vector2d> previous_reference_body;
+  std::vector<double> previous_reference_heading_rad;
+  {
+    std::lock_guard<std::mutex> lock(previous_solution_mtx_);
+    if (previous_solution_valid_) {
+      const std::size_t expected_size =
+        static_cast<std::size_t>(requested_horizon + 1);
+      bool compatible = previous_solution_revision_ == planning_revision &&
+        previous_reference_body_.size() == expected_size &&
+        previous_reference_heading_rad_.size() == expected_size;
+      for (const auto & point : previous_reference_body_) {
+        compatible = compatible && finitePoint(point);
+      }
+      for (const double heading : previous_reference_heading_rad_) {
+        compatible = compatible && std::isfinite(heading);
+      }
+      if (compatible) {
+        previous_reference_body = previous_reference_body_;
+        previous_reference_heading_rad = previous_reference_heading_rad_;
+      } else {
+        previous_reference_body_.clear();
+        previous_reference_heading_rad_.clear();
+        previous_solution_valid_ = false;
+      }
+    }
+  }
+
+  const PreviewReferenceData reference = buildPreviewReference(
+    wp_prev_body, wp0_body, wp1_body, has_previous_waypoint, requested_horizon,
+    previous_reference_body, previous_reference_heading_rad);
+  if (!reference.valid) {
+    RCLCPP_WARN_THROTTLE(
+      get_logger(), *get_clock(), 1000,
+      "failed to build V8 preview reference: %s", reference.status.c_str());
+    return;
+  }
+
+  std::vector<Eigen::Vector2d> preview_world;
+  preview_world.reserve(reference.points_body.size());
+  for (const auto & point : reference.points_body) {
+    preview_world.push_back(pose.position + rotation_world_body * point);
+  }
+  publishPath(preview_debug_pub_, preview_world, frame_id);
+
+  const PreviewConstraintData constraints = extractPreviewIntervals(
+    reference, grid_available ? &grid : nullptr);
+  publishIntervalDebug(constraints);
+  if (constraints.N_pred <= 0) {
+    UpperSolveResult failed;
+    failed.status = "empty valid interval prefix";
+    publishPath(dense_path_pub_, {}, frame_id);
+    publishUpperTrace(pose, wp0_idx, wp1_idx, constraints, failed);
+    return;
+  }
+
+  RCLCPP_INFO(
+    get_logger(),
+    "road turn wp=[%s%d %d] psi_in=%+.2fdeg psi_out=%+.2fdeg delta=%+.2fdeg N=%d",
+    has_previous_waypoint ? "prev " : "ego ", wp0_idx, wp1_idx,
+    radToDeg(constraints.road_segment_heading_rad[0]),
+    radToDeg(constraints.road_segment_heading_rad[1]),
+    radToDeg(constraints.delta_psi_road_rad), constraints.N_pred);
+
+  const UpperSolveResult solve = solveUpperMiqp(constraints, pose.speed_mps);
+  publishUpperTrace(pose, wp0_idx, wp1_idx, constraints, solve);
+  if (!solve.valid) {
+    RCLCPP_WARN_THROTTLE(
+      get_logger(), *get_clock(), 1000,
+      "egocentric MIQP failed: status=%s solve_ms=%.3f; retaining last published path",
+      solve.status.c_str(), solve.solve_time_ms);
+    return;
+  }
+
+  std::vector<Eigen::Vector2d> sparse_world;
+  sparse_world.reserve(solve.predicted_body.size());
+  for (const auto & point : solve.predicted_body) {
+    sparse_world.push_back(pose.position + rotation_world_body * point);
+  }
+  const auto dense_world = densifyPath(sparse_world, pose.speed_mps);
+  std::vector<Eigen::Vector2d> next_reference_body;
+  std::vector<double> next_reference_heading_rad;
+  const bool next_reference_valid = buildShiftedPreviousReference(
+    solve, next_reference_body, next_reference_heading_rad);
+
+  {
+    std::lock_guard<std::mutex> lock(path_mtx_);
+    if (planning_revision_ != planning_revision) {
+      RCLCPP_WARN(
+        get_logger(),
+        "discarding MIQP result because the global waypoint path changed during solve");
+      return;
+    }
+    std::lock_guard<std::mutex> previous_lock(previous_solution_mtx_);
+    if (next_reference_valid) {
+      previous_reference_body_ = std::move(next_reference_body);
+      previous_reference_heading_rad_ = std::move(next_reference_heading_rad);
+      previous_solution_revision_ = planning_revision;
+      previous_solution_valid_ = true;
+    } else {
+      previous_reference_body_.clear();
+      previous_reference_heading_rad_.clear();
+      previous_solution_valid_ = false;
+    }
+  }
+
+  publishPath(sparse_path_pub_, sparse_world, frame_id);
+  publishPath(dense_path_pub_, dense_world, frame_id);
+  RCLCPP_INFO(
+    get_logger(),
+    "MIQP solved: N=%d branch=%d obj=%.6f Jpos=%.6f Jin=%.6f Jturn=%.6f "
+    "solve_ms=%.3f sparse=%zu dense=%zu",
+    constraints.N_pred, solve.branch_step, solve.objective,
+    solve.position_cost, solve.input_cost, solve.turn_cost,
+    solve.solve_time_ms, sparse_world.size(), dense_world.size());
 }
 
-}
+}  // namespace imac_ctrl
 
 int main(int argc, char * argv[])
 {
   rclcpp::init(argc, argv);
-  auto node = std::make_shared<imac_ctrl::TrackingControllerNode>();
+  auto node = std::make_shared<imac_ctrl::SdMapUpperPlannerNode>();
   rclcpp::spin(node);
   node.reset();
   rclcpp::shutdown();

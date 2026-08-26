@@ -5,8 +5,8 @@
   <name>virtual_control</name>
   <version>0.0.0</version>
   <description>
-    Stanley 기반 경로 추종 Ackermann 컨트롤러와
-    Ackermann 명령을 저수준 VirtualControlCommand로 변환하는 노드 패키지
+    OccupancyGrid/MIQP 상위 경로 계획, 고주기 QP-MPC 추종, 그리고
+    VirtualControlCommand 및 MAVLink/Pixhawk 출력을 제공하는 계층형 제어 패키지
   </description>
 
   <maintainer email="fairytail0508@naver.com">eunhu</maintainer>
@@ -17,6 +17,7 @@
 
   <!-- Build & run dependencies -->
   <depend>rclcpp</depend>
+  <depend>builtin_interfaces</depend>
   <depend>nav_msgs</depend>
   <depend>ackermann_msgs</depend>
   <depend>imac_interfaces</depend>
@@ -32,6 +33,8 @@
   <exec_depend>ament_index_python</exec_depend>
   <exec_depend>launch</exec_depend>
   <exec_depend>launch_ros</exec_depend>
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>python3-pymavlink</exec_depend>
 
   <!-- Eigen (CMake 모듈) -->
   <build_depend>eigen3_cmake_module</build_depend>
@@ -40,6 +43,7 @@
   <!-- 테스트 의존성 -->
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
+  <test_depend>ament_cmake_gtest</test_depend>
 
   <export>
     <build_type>ament_cmake</build_type>
