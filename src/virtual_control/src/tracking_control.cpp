@@ -191,6 +191,76 @@ geometry_msgs::msg::Quaternion yawQuaternion(double yaw)
 namespace imac_ctrl
 {
 
+bool SdMapUpperPlannerNode::hasIntervalReference(const IntervalCenteringState & state)
+{
+  return std::isfinite(state.reference_length) && state.reference_length > 0.0;
+}
+
+// Pure explicit state transition; called once after extracting the entire preview.
+SdMapUpperPlannerNode::IntervalCenteringUpdate
+SdMapUpperPlannerNode::updateIntervalCentering(
+  const IntervalCenteringState & previous,
+  const std::vector<std::vector<IntervalObservation>> & preview,
+  const IntervalCenteringSettings & settings)
+{
+  IntervalCenteringUpdate info;
+  info.state = previous;
+  info.previous_reference_length = previous.reference_length;
+  for (std::size_t k = 0; k < preview.size(); ++k) {
+    const auto & intervals = preview[k];
+    std::size_t containing_count = 0U;
+    std::size_t containing_index = 0U;
+    // Count containment before testing reliability: an unreliable overlapping
+    // interval still makes the reference's membership ambiguous.
+    for (std::size_t i = 0; i < intervals.size(); ++i) {
+      if (intervals[i].reference_inside) {
+        ++containing_count;
+        containing_index = i;
+      }
+    }
+    if (containing_count != 1U) {continue;}
+    const auto & interval = intervals[containing_index];
+    // Unknown/map-edge clipping is represented by an unobserved boundary.
+    if (interval.nominal_fallback || !interval.start_boundary_observed ||
+      !interval.end_boundary_observed || !std::isfinite(interval.length) || interval.length <= 0.0)
+    {
+      continue;
+    }
+    if (info.candidate_step < 0 || interval.length < info.candidate_length) {
+      info.candidate_length = interval.length;
+      info.candidate_step = static_cast<int>(k);
+      info.candidate_interval = static_cast<int>(containing_index);
+    }
+  }
+
+  if (info.candidate_step >= 0 &&
+    (!hasIntervalReference(previous) ||
+    info.candidate_length <= settings.relative_length_factor * previous.reference_length))
+  {
+    info.state.reference_length = info.candidate_length;
+  }
+  return info;
+}
+
+SdMapUpperPlannerNode::IntervalTreatment
+SdMapUpperPlannerNode::intervalTreatment(
+  const IntervalObservation & interval, const IntervalCenteringState & state,
+  const IntervalCenteringSettings & settings, double soft_ratio,
+  double boundary_margin, double fallback_max_centering_length)
+{
+  IntervalTreatment result;
+  // Fallback keeps its independent threshold; all observed stages share 1.5*B.
+  if (interval.nominal_fallback) {
+    result.threshold = fallback_max_centering_length;
+  } else if (hasIntervalReference(state)) {
+    result.threshold = settings.relative_length_factor * state.reference_length;
+  }
+  result.centering_on = std::isfinite(result.threshold) && interval.length <= result.threshold;
+  result.inset = result.centering_on ? (1.0 - soft_ratio) * interval.length :
+    std::min(boundary_margin, 0.45 * interval.length);
+  return result;
+}
+
 SdMapUpperPlannerNode::SdMapUpperPlannerNode(const rclcpp::NodeOptions & options)
 : Node("upper_planner_node", options)
 {
@@ -294,12 +364,6 @@ void SdMapUpperPlannerNode::declareAndLoadParameters()
   declare_parameter<double>(
     "preview_interval_relative_length_factor", interval_centering_settings_.relative_length_factor);
   declare_parameter<double>(
-    "preview_interval_scale_agreement_ratio", interval_centering_settings_.scale_agreement_ratio);
-  declare_parameter<int>(
-    "preview_interval_scale_confirm_steps", interval_centering_settings_.scale_confirm_steps);
-  declare_parameter<double>(
-    "preview_interval_scale_max_relative_change", interval_centering_settings_.scale_max_relative_change);
-  declare_parameter<double>(
     "preview_interval_boundary_margin_m", preview_interval_boundary_margin_m_);
   declare_parameter<bool>(
     "preview_interval_enable_nominal_fallback",
@@ -396,12 +460,6 @@ void SdMapUpperPlannerNode::declareAndLoadParameters()
   get_parameter("preview_interval_soft_ratio", preview_interval_soft_ratio_);
   get_parameter(
     "preview_interval_relative_length_factor", interval_centering_settings_.relative_length_factor);
-  get_parameter(
-    "preview_interval_scale_agreement_ratio", interval_centering_settings_.scale_agreement_ratio);
-  get_parameter(
-    "preview_interval_scale_confirm_steps", interval_centering_settings_.scale_confirm_steps);
-  get_parameter(
-    "preview_interval_scale_max_relative_change", interval_centering_settings_.scale_max_relative_change);
   get_parameter("preview_interval_boundary_margin_m", preview_interval_boundary_margin_m_);
   get_parameter(
     "preview_interval_enable_nominal_fallback",
@@ -524,22 +582,9 @@ void SdMapUpperPlannerNode::validateParameters() const
     fail("main9 requires fixed preview_interval_soft_ratio=0.7");
   }
   if (!std::isfinite(interval_centering_settings_.relative_length_factor) ||
-    interval_centering_settings_.relative_length_factor <= 1.0)
+    std::abs(interval_centering_settings_.relative_length_factor - 1.5) > 1e-12)
   {
-    fail("preview_interval_relative_length_factor must be finite and > 1");
-  }
-  if (!std::isfinite(interval_centering_settings_.scale_agreement_ratio) ||
-    interval_centering_settings_.scale_agreement_ratio < 1.0)
-  {
-    fail("preview_interval_scale_agreement_ratio must be finite and >= 1");
-  }
-  if (interval_centering_settings_.scale_confirm_steps < 1) {
-    fail("preview_interval_scale_confirm_steps must be >= 1");
-  }
-  if (!std::isfinite(interval_centering_settings_.scale_max_relative_change) ||
-    interval_centering_settings_.scale_max_relative_change < 0.0)
-  {
-    fail("preview_interval_scale_max_relative_change must be finite and >= 0");
+    fail("interval centering requires fixed preview_interval_relative_length_factor=1.5");
   }
   if (!std::isfinite(preview_interval_boundary_margin_m_) ||
     preview_interval_boundary_margin_m_ < 0.0)
@@ -602,6 +647,8 @@ void SdMapUpperPlannerNode::createInterfaces()
   auto path_qos = rclcpp::QoS(rclcpp::KeepLast(1)).reliable().transient_local();
   sparse_path_pub_ = create_publisher<nav_msgs::msg::Path>(sparse_path_topic_, path_qos);
   dense_path_pub_ = create_publisher<nav_msgs::msg::Path>(dense_path_topic_, path_qos);
+  dense_arc_path_pub_ = create_publisher<imac_interfaces::msg::PathWithArcLength>(
+    dense_path_topic_ + "/with_arclength", path_qos);
   preview_debug_pub_ = create_publisher<nav_msgs::msg::Path>(
     "/debug/upper_preview_reference", 10);
   goal_reached_pub_ = create_publisher<std_msgs::msg::Bool>(
@@ -1208,7 +1255,7 @@ SdMapUpperPlannerNode::PreviewConstraintData
 SdMapUpperPlannerNode::extractPreviewIntervals(
   const PreviewReferenceData & reference,
   const GridMapSnapshot * grid,
-  const interval_centering::State & interval_state) const
+  const IntervalCenteringState & interval_state) const
 {
   PreviewConstraintData output;
   output.interval_update.state = interval_state;
@@ -1241,9 +1288,9 @@ SdMapUpperPlannerNode::extractPreviewIntervals(
   output.terminal_buffer_turn_rad = reference.terminal_buffer_turn_rad;
   output.used_previous_solution = reference.used_previous_solution;
 
-  std::vector<std::vector<interval_centering::Observation>> observations(size);
-  // Extract every requested stage before updating B. A branch beyond a missing
-  // stage still freezes the scale even though the MIQP uses only a valid prefix.
+  std::vector<std::vector<IntervalObservation>> observations(size);
+  // Extract every requested stage before updating B, including observed stages
+  // beyond a missing interval that shortens the MIQP horizon.
 
   for (int k = 0; k <= requested_horizon; ++k) {
     const std::size_t step = static_cast<std::size_t>(k);
@@ -1325,31 +1372,6 @@ SdMapUpperPlannerNode::extractPreviewIntervals(
         }
       } else {
         fallback_reason = IntervalFallbackReason::LineOutsideBev;
-        if (preview_interval_debug_) {
-          const double width_m = static_cast<double>(grid->width) * grid->resolution;
-          const double height_m = static_cast<double>(grid->height) * grid->resolution;
-          const double grid_cosine = std::cos(grid->origin_yaw_rad);
-          const double grid_sine = std::sin(grid->origin_yaw_rad);
-          const std::array<Eigen::Vector2d, 4> local_corners{{
-            Eigen::Vector2d(0.0, 0.0),
-            Eigen::Vector2d(width_m, 0.0),
-            Eigen::Vector2d(0.0, height_m),
-            Eigen::Vector2d(width_m, height_m)}};
-          double grid_forward_extent = -std::numeric_limits<double>::infinity();
-          for (const auto & local : local_corners) {
-            const Eigen::Vector2d body = grid->origin_body + Eigen::Vector2d(
-              grid_cosine * local.x() - grid_sine * local.y(),
-              grid_sine * local.x() + grid_cosine * local.y());
-            grid_forward_extent = std::max(grid_forward_extent, body.x());
-          }
-          RCLCPP_INFO(
-            get_logger(),
-            "interval reason=1 step=%d constraint=(%.3f,%.3f) psi=%.3f "
-            "grid_forward_extent=%.3f bev_forward_limit=%.3f previous=%d",
-            k, reference_point.x(), reference_point.y(), heading,
-            grid_forward_extent, bev_forward_m_,
-            reference.used_previous_solution ? 1 : 0);
-        }
       }
     } else {
       fallback_reason = IntervalFallbackReason::GridUnavailable;
@@ -1391,7 +1413,7 @@ SdMapUpperPlannerNode::extractPreviewIntervals(
       }
 
       const double reference_distance = (reference_point - p0).dot((p1 - p0) / raw_length);
-      interval_centering::Observation observation;
+      IntervalObservation observation;
       observation.length = raw_length;
       observation.start_boundary_observed = raw_observed_boundaries[candidate][0];
       observation.end_boundary_observed = raw_observed_boundaries[candidate][1];
@@ -1473,21 +1495,21 @@ SdMapUpperPlannerNode::extractPreviewIntervals(
     }
   }
 
-  output.interval_update = interval_centering::update(
+  observations.resize(static_cast<std::size_t>(output.N_pred + 1));
+  output.interval_update = updateIntervalCentering(
     interval_state, observations, interval_centering_settings_);
   const auto & next_state = output.interval_update.state;
   if (preview_interval_debug_) {
     RCLCPP_INFO(
       get_logger(),
-      "interval_scale B_before=%.3f B=%.3f threshold=%.3f candidate=%.3f "
-      "pair_start=%d confirmations=%zu multiple=%d reason=%s",
-      interval_state.reference_length, next_state.reference_length,
-      interval_centering::hasReference(next_state) ?
+      "interval_scale B_before=%.3f candidate_B=%.3f B=%.3f threshold_1_5B=%.3f "
+      "candidate_step=%d candidate_interval=%d",
+      interval_state.reference_length, output.interval_update.candidate_length,
+      next_state.reference_length,
+      hasIntervalReference(next_state) ?
       interval_centering_settings_.relative_length_factor * next_state.reference_length :
       std::numeric_limits<double>::quiet_NaN(),
-      output.interval_update.candidate_length, output.interval_update.candidate_first_step,
-      next_state.confirmation_lengths.size(), output.interval_update.multiple_observed_intervals,
-      interval_centering::reasonName(output.interval_update.reason));
+      output.interval_update.candidate_step, output.interval_update.candidate_interval);
   }
 
   for (int k = 0; k <= requested_horizon; ++k) {
@@ -1495,7 +1517,7 @@ SdMapUpperPlannerNode::extractPreviewIntervals(
     std::size_t retained = 0;
     for (std::size_t candidate = 0; candidate < output.pmk[step].size(); ++candidate) {
       auto & info = output.interval_info[step][candidate];
-      info.treatment = interval_centering::treatment(
+      info.treatment = intervalTreatment(
         info.observation, next_state, interval_centering_settings_,
         preview_interval_soft_ratio_, preview_interval_boundary_margin_m_,
         preview_interval_fallback_max_centering_length_m_);
@@ -1521,13 +1543,8 @@ SdMapUpperPlannerNode::extractPreviewIntervals(
       if (preview_interval_debug_) {
         RCLCPP_INFO(
           get_logger(),
-          "interval step=%d candidate=%zu raw=%.3f processed=%.3f threshold=%.3f "
-          "centering=%s boundaries=%d,%d reference_inside=%d source=%s",
-          k, candidate, raw_length, info.processed_length, info.treatment.threshold,
-          info.treatment.centering_on ? "ON" : "OFF",
-          info.observation.start_boundary_observed, info.observation.end_boundary_observed,
-          info.observation.reference_inside,
-          info.observation.nominal_fallback ? "nominal-fallback" : "bev-observed");
+          "interval step=%d candidate=%zu raw=%.3f centering=%s",
+          k, candidate, raw_length, info.treatment.centering_on ? "ON" : "OFF");
       }
       ++retained;
     }
@@ -2304,9 +2321,13 @@ double SdMapUpperPlannerNode::remainingPathLength(
 
 std::vector<Eigen::Vector2d> SdMapUpperPlannerNode::densifyPath(
   const std::vector<Eigen::Vector2d> & sparse_world,
-  double current_speed_mps) const
+  double current_speed_mps, std::vector<double> & sample_s) const
 {
-  if (sparse_world.size() < 2) {return sparse_world;}
+  sample_s.clear();
+  if (sparse_world.size() < 2) {
+    sample_s.assign(sparse_world.size(), 0.0);
+    return sparse_world;
+  }
   std::vector<Eigen::Vector2d> filtered_sparse;
   filtered_sparse.reserve(sparse_world.size());
   filtered_sparse.push_back(sparse_world.front());
@@ -2315,7 +2336,10 @@ std::vector<Eigen::Vector2d> SdMapUpperPlannerNode::densifyPath(
       filtered_sparse.push_back(sparse_world[i]);
     }
   }
-  if (filtered_sparse.size() < 2) {return filtered_sparse;}
+  if (filtered_sparse.size() < 2) {
+    sample_s.assign(filtered_sparse.size(), 0.0);
+    return filtered_sparse;
+  }
 
   const double spacing = std::max(
     std::max(0.0, current_speed_mps) * lower_prediction_dt_sec_,
@@ -2324,7 +2348,7 @@ std::vector<Eigen::Vector2d> SdMapUpperPlannerNode::densifyPath(
   for (std::size_t i = 1; i < filtered_sparse.size(); ++i) {
     arc[i] = arc[i - 1] + (filtered_sparse[i] - filtered_sparse[i - 1]).norm();
   }
-  if (arc.back() <= 1e-9) {return filtered_sparse;}
+  if (arc.back() <= 1e-9) {sample_s = arc; return filtered_sparse;}
 
   std::vector<Eigen::Vector2d> dense;
   std::size_t segment = 0;
@@ -2332,12 +2356,14 @@ std::vector<Eigen::Vector2d> SdMapUpperPlannerNode::densifyPath(
     while (segment + 1 < arc.size() && arc[segment + 1] < query) {++segment;}
     const double length = arc[segment + 1] - arc[segment];
     const double ratio = length > 1e-12 ? (query - arc[segment]) / length : 0.0;
+    sample_s.push_back(query);
     dense.push_back(
       filtered_sparse[segment] + ratio *
       (filtered_sparse[segment + 1] - filtered_sparse[segment]));
   }
   if (dense.empty() || (dense.back() - filtered_sparse.back()).norm() > 1e-6) {
     dense.push_back(filtered_sparse.back());
+    sample_s.push_back(arc.back());
   }
   return dense;
 }
@@ -2345,7 +2371,7 @@ std::vector<Eigen::Vector2d> SdMapUpperPlannerNode::densifyPath(
 void SdMapUpperPlannerNode::publishPath(
   const rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr & publisher,
   const std::vector<Eigen::Vector2d> & points,
-  const std::string & frame_id) const
+  const std::string & frame_id, const std::vector<double> * sample_s) const
 {
   if (!publisher) {return;}
   nav_msgs::msg::Path message;
@@ -2365,6 +2391,16 @@ void SdMapUpperPlannerNode::publishPath(
       if (tangent.norm() > 1e-9) {yaw = std::atan2(tangent.y(), tangent.x());}
     }
     message.poses[i].pose.orientation = yawQuaternion(yaw);
+  }
+  if (sample_s) {
+    if (sample_s->size() != points.size()) {
+      RCLCPP_ERROR(get_logger(), "dense path/s size mismatch; path not published");
+      return;
+    }
+    imac_interfaces::msg::PathWithArcLength bundled;
+    bundled.path = message;
+    bundled.s = *sample_s;
+    dense_arc_path_pub_->publish(bundled);
   }
   publisher->publish(message);
 }
@@ -2427,22 +2463,17 @@ void SdMapUpperPlannerNode::publishIntervalDebug(
   interval_info_pub_->publish(details);
 
   const auto & update = preview.interval_update;
-  const auto & history = update.state.confirmation_lengths;
   const double nan = std::numeric_limits<double>::quiet_NaN();
   std_msgs::msg::Float64MultiArray state_message;
   state_message.data = {
     now().seconds(), update.previous_reference_length, update.state.reference_length,
-    interval_centering::hasReference(update.state) ?
+    hasIntervalReference(update.state) ?
     interval_centering_settings_.relative_length_factor * update.state.reference_length : nan,
-    update.candidate_length, static_cast<double>(update.candidate_first_step),
-    static_cast<double>(history.size()),
-    history.empty() ? nan : *std::min_element(history.begin(), history.end()),
-    history.empty() ? nan : *std::max_element(history.begin(), history.end()),
-    update.update_target, static_cast<double>(update.reason),
-    update.multiple_observed_intervals ? 1.0 : 0.0};
+    update.candidate_length, static_cast<double>(update.candidate_step),
+    static_cast<double>(update.candidate_interval)};
   state_message.layout.dim.resize(1);
   state_message.layout.dim[0].label =
-    "stamp,B_before,B,threshold,candidate,pair_start,confirm_count,min,max,target,reason,multiple";
+    "stamp,B_before,B,threshold,candidate,candidate_step,candidate_interval";
   state_message.layout.dim[0].size = static_cast<uint32_t>(state_message.data.size());
   state_message.layout.dim[0].stride = static_cast<uint32_t>(state_message.data.size());
   interval_state_pub_->publish(state_message);
@@ -2642,8 +2673,6 @@ void SdMapUpperPlannerNode::plannerLoop()
     grid_available = false;
   }
   if (require_grid_map_ && !grid_available) {
-    // An observation gap interrupts confirmation, but never discards B.
-    interval_centering_state_.confirmation_lengths.clear();
     RCLCPP_WARN_THROTTLE(
       get_logger(), *get_clock(), 1000,
       "planner grid is missing, invalid, or stale; retaining the last published path");
@@ -2913,7 +2942,8 @@ void SdMapUpperPlannerNode::plannerLoop()
   for (const auto & point : solve.predicted_body) {
     sparse_world.push_back(pose.position + rotation_world_body * point);
   }
-  const auto dense_world = densifyPath(sparse_world, planning_speed_mps);
+  std::vector<double> dense_s;
+  const auto dense_world = densifyPath(sparse_world, planning_speed_mps, dense_s);
 
   {
     std::lock_guard<std::mutex> lock(path_mtx_);
@@ -2937,7 +2967,7 @@ void SdMapUpperPlannerNode::plannerLoop()
   }
 
   publishPath(sparse_path_pub_, sparse_world, frame_id);
-  publishPath(dense_path_pub_, dense_world, frame_id);
+  publishPath(dense_path_pub_, dense_world, frame_id, &dense_s);
   timing.valid = true;
   publishBranchEvent(cycle_stamp, timing.sequence, planning_revision, pose, wp0_idx, wp1_idx,
     &constraints, &solve, "success", solve.status, true);
@@ -2954,6 +2984,8 @@ void SdMapUpperPlannerNode::plannerLoop()
 
 }  // namespace imac_ctrl
 
+// Unit tests link the same planner implementation without starting a ROS node.
+#ifndef VIRTUAL_CONTROL_UPPER_PLANNER_NO_MAIN
 int main(int argc, char * argv[])
 {
   rclcpp::init(argc, argv);
@@ -2963,3 +2995,4 @@ int main(int argc, char * argv[])
   rclcpp::shutdown();
   return 0;
 }
+#endif

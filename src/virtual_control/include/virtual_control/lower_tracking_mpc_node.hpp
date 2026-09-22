@@ -16,6 +16,7 @@ public:
   ~LowerTrackingMpcNode() override;
 
 private:
+  friend struct LowerTrackingMpcTestAccess;
   struct Impl;
   std::unique_ptr<Impl> impl_;
 };

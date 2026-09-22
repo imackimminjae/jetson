@@ -10,14 +10,17 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
+find_package(nav_msgs REQUIRED)
 
 set(msg_files
   "msg/VirtualControlCommand.msg"
+  "msg/PathWithArcLength.msg"
 )
 
 # 메시지 생성
 rosidl_generate_interfaces(${PROJECT_NAME}
   ${msg_files}
+  DEPENDENCIES nav_msgs
 )
 
 ament_export_dependencies(rosidl_default_runtime)

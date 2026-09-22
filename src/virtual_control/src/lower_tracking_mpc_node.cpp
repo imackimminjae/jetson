@@ -1,5 +1,8 @@
+#include <Eigen/Dense>  // Before vendor headers that define the inverse macro.
 #include "virtual_control/lower_tracking_mpc_node.hpp"
 #include "virtual_control/lower_steering_actuator_model.hpp"
+#include "virtual_control/lower_path_geometry.hpp"
+#include <imac_interfaces/msg/path_with_arc_length.hpp>
 
 #include "QuadraticProblem.h"
 #include "matrix_utils.h"
@@ -16,7 +19,6 @@
 #include <tf2/LinearMath/Matrix3x3.h>
 #include <tf2/LinearMath/Quaternion.h>
 
-#include <Eigen/Dense>
 
 #include <algorithm>
 #include <array>
@@ -119,18 +121,15 @@ struct LowerTrackingMpcNode::Impl
     bool valid{false};
   };
 
-  struct PathProjection
-  {
-    bool valid{false};
-    int segment_index{-1};
-    double path_s{0.0};
-    double path_yaw_rad{0.0};
-    double lateral_error_m{0.0};
-  };
-
   struct MpcResult
   {
-    bool valid{false};
+    bool valid{false};  // QP success only.
+    bool fallback_valid{false};
+    double fallback_steering_rad{0.0};
+    double delta_prev_rad{0.0};
+    std::vector<double> curvature_reference;
+    Eigen::VectorXd affine_prediction;
+    Eigen::MatrixXd condensed_prediction;
     std::vector<double> steering_sequence_rad;
     std::vector<Eigen::Vector2d> reference_horizon;
     double objective{0.0};
@@ -138,7 +137,7 @@ struct LowerTrackingMpcNode::Impl
     double solver_only_time_ms{std::numeric_limits<double>::quiet_NaN()};
     double lateral_error_m{0.0};
     double heading_error_rad{0.0};
-    int nearest_segment{-1};
+    int nearest_point{-1};
     std::string status;
   };
 
@@ -146,7 +145,7 @@ struct LowerTrackingMpcNode::Impl
   {
     double steering_angle_rad{0.0};
     bool drive_valid{false};
-    int fallback_mode{3};  // 0=solver, 1=previous sequence, 2=hold, 3=neutral, 4=goal stop
+    int fallback_mode{3};  // 0=solver, 1=previous sequence, 2=hold, 3=neutral, 4=goal stop, 5=curvature fallback
   };
 
   struct VirtualDriveCommand
@@ -265,6 +264,7 @@ struct LowerTrackingMpcNode::Impl
     node_.declare_parameter<double>("pose_max_dt_for_speed", pose_max_dt_for_speed_);
     node_.declare_parameter<std::string>(
       "lower_reference_path_topic", lower_reference_path_topic_);
+    node_.declare_parameter<bool>("lower_use_path_arclength", lower_use_path_arclength_);
     node_.declare_parameter<std::string>("goal_reached_topic", goal_reached_topic_);
     node_.declare_parameter<std::string>("reset_topic", reset_topic_);
 
@@ -359,6 +359,7 @@ struct LowerTrackingMpcNode::Impl
     node_.get_parameter("pose_speed_lpf_alpha", pose_speed_lpf_alpha_);
     node_.get_parameter("pose_max_dt_for_speed", pose_max_dt_for_speed_);
     node_.get_parameter("lower_reference_path_topic", lower_reference_path_topic_);
+    node_.get_parameter("lower_use_path_arclength", lower_use_path_arclength_);
     node_.get_parameter("goal_reached_topic", goal_reached_topic_);
     node_.get_parameter("reset_topic", reset_topic_);
     node_.get_parameter("enable_output_filter", enable_output_filter_);
@@ -447,9 +448,6 @@ struct LowerTrackingMpcNode::Impl
         fail("steering actuator delay must be shorter than the lower prediction horizon");
       }
     }
-    if (lower_min_path_spacing_m_ <= 0.0 || lower_min_effective_speed_mps_ <= 0.0) {
-      fail("lower path spacing and minimum effective speed must be > 0");
-    }
     if (input_timeout_sec_ < 0.0 || lower_path_timeout_sec_ < 0.0 ||
       solver_hold_last_valid_sec_ < 0.0 || mavlink_hold_last_valid_sec_ < 0.0)
     {
@@ -497,9 +495,21 @@ struct LowerTrackingMpcNode::Impl
         });
     }
     auto path_qos = rclcpp::QoS(rclcpp::KeepLast(1)).reliable().transient_local();
-    path_sub_ = node_.create_subscription<nav_msgs::msg::Path>(
-      lower_reference_path_topic_, path_qos,
-      std::bind(&Impl::pathCallback, this, std::placeholders::_1));
+    if (lower_use_path_arclength_) {
+      arc_path_sub_ = node_.create_subscription<imac_interfaces::msg::PathWithArcLength>(
+        lower_reference_path_topic_ + "/with_arclength", path_qos,
+        [this](const imac_interfaces::msg::PathWithArcLength::SharedPtr message) {
+          acceptPath(message->path, &message->s);
+        });
+    } else {
+      path_sub_ = node_.create_subscription<nav_msgs::msg::Path>(
+        lower_reference_path_topic_, path_qos,
+        [this](const nav_msgs::msg::Path::SharedPtr message) {
+          acceptPath(*message, nullptr);
+        });
+      RCLCPP_WARN(node_.get_logger(),
+        "External Path mode: using input polyline chord s, not original interpolation s");
+    }
     goal_sub_ = node_.create_subscription<std_msgs::msg::Bool>(
       goal_reached_topic_, rclcpp::QoS(1).reliable().transient_local(),
       std::bind(&Impl::goalCallback, this, std::placeholders::_1));
@@ -640,27 +650,32 @@ struct LowerTrackingMpcNode::Impl
     return difference > path_change_reset_threshold_m_;
   }
 
-  void pathCallback(const nav_msgs::msg::Path::SharedPtr message)
+  void acceptPath(const nav_msgs::msg::Path & message, const std::vector<double> * s)
   {
-    std::vector<Eigen::Vector2d> next;
-    next.reserve(message->poses.size());
-    for (const auto & pose : message->poses) {
-      const Eigen::Vector2d point(pose.pose.position.x, pose.pose.position.y);
-      if (finitePoint(point) &&
-        (next.empty() || (point - next.back()).norm() >= lower_min_path_spacing_m_ * 0.1))
-      {
-        next.push_back(point);
-      }
+    std::vector<Eigen::Vector2d> points;
+    points.reserve(message.poses.size());
+    bool valid_coordinates = true;
+    for (const auto & pose : message.poses) {
+      points.emplace_back(pose.pose.position.x, pose.pose.position.y);
+      valid_coordinates = valid_coordinates && std::isfinite(pose.pose.position.z) &&
+        (pose.header.frame_id.empty() ||
+        frameIdsEquivalent(pose.header.frame_id, message.header.frame_id));
+    }
+    auto next = prepareLowerPath(points, s);
+    if (!valid_coordinates) {
+      next.valid = false;
+      next.status = "invalid path coordinate or pose frame";
+    }
+    if (!next.valid) {
+      RCLCPP_WARN(node_.get_logger(), "Rejected lower path: %s", next.status.c_str());
     }
     std::lock_guard<std::mutex> lock(data_mtx_);
-    const bool hard_change = pathMateriallyDifferent(path_, next);
+    const bool hard_change = pathMateriallyDifferent(path_.points, next.points);
     path_ = std::move(next);
-    path_frame_id_ = message->header.frame_id.empty() ? "map" : message->header.frame_id;
+    path_frame_id_ = message.header.frame_id.empty() ? "map" : message.header.frame_id;
     path_received_ = node_.now();
-    // main8.m keeps deltaLowerPrev across upper-planner path refreshes. A
-    // newly published dense path is normal receding-horizon operation, not a
-    // controller reset event. Keep the old behavior available as an opt-in.
-    if (path_.size() < 2 || (reset_on_path_change_ && hard_change)) {
+    // Keep applied steering history across ordinary receding-horizon refreshes.
+    if (!path_.valid || (reset_on_path_change_ && hard_change)) {
       reset_pending_ = true;
     }
   }
@@ -681,112 +696,47 @@ struct LowerTrackingMpcNode::Impl
     reset_pending_ = true;
   }
 
-  PathProjection projectToPath(
-    const std::vector<Eigen::Vector2d> & path,
-    const Eigen::Vector2d & vehicle_position) const
-  {
-    PathProjection projection;
-    if (path.size() < 2) {return projection;}
-    double accumulated_s = 0.0;
-    double best_distance_squared = std::numeric_limits<double>::infinity();
-    for (std::size_t i = 0; i + 1 < path.size(); ++i) {
-      const Eigen::Vector2d segment = path[i + 1] - path[i];
-      const double length = segment.norm();
-      if (length <= 1e-9) {continue;}
-      const Eigen::Vector2d tangent = segment / length;
-      const double ratio = clampd(
-        (vehicle_position - path[i]).dot(segment) / segment.squaredNorm(), 0.0, 1.0);
-      const Eigen::Vector2d point = path[i] + ratio * segment;
-      const Eigen::Vector2d error = vehicle_position - point;
-      const double distance_squared = error.squaredNorm();
-      if (distance_squared < best_distance_squared) {
-        best_distance_squared = distance_squared;
-        projection.valid = true;
-        projection.segment_index = static_cast<int>(i);
-        projection.path_s = accumulated_s + ratio * length;
-        projection.path_yaw_rad = std::atan2(tangent.y(), tangent.x());
-        // Sign convention: a vehicle on the left side of the directed path has e_y > 0.
-        projection.lateral_error_m = tangent.x() * error.y() - tangent.y() * error.x();
-      }
-      accumulated_s += length;
-    }
-    return projection;
-  }
-
-  std::vector<double> buildArcLength(const std::vector<Eigen::Vector2d> & path) const
-  {
-    std::vector<double> arc(path.size(), 0.0);
-    for (std::size_t i = 1; i < path.size(); ++i) {
-      arc[i] = arc[i - 1] + (path[i] - path[i - 1]).norm();
-    }
-    return arc;
-  }
-
-  std::pair<Eigen::Vector2d, double> samplePath(
-    const std::vector<Eigen::Vector2d> & path,
-    const std::vector<double> & arc,
-    double query_s) const
-  {
-    if (path.size() < 2) {return {Eigen::Vector2d::Zero(), 0.0};}
-    query_s = clampd(query_s, 0.0, arc.back());
-    auto upper = std::upper_bound(arc.begin(), arc.end(), query_s);
-    std::size_t segment = upper == arc.begin() ? 0 :
-      static_cast<std::size_t>(std::distance(arc.begin(), upper) - 1);
-    segment = std::min(segment, path.size() - 2);
-    while (segment + 1 < path.size() - 1 &&
-      (path[segment + 1] - path[segment]).norm() <= 1e-9)
-    {
-      ++segment;
-    }
-    const Eigen::Vector2d delta = path[segment + 1] - path[segment];
-    const double length = delta.norm();
-    const double ratio = length > 1e-9 ?
-      clampd((query_s - arc[segment]) / length, 0.0, 1.0) : 0.0;
-    const double yaw = length > 1e-9 ? std::atan2(delta.y(), delta.x()) : 0.0;
-    return {path[segment] + ratio * delta, yaw};
-  }
-
   MpcResult solveTrackingMpc(
     const PoseSnapshot & pose,
-    const std::vector<Eigen::Vector2d> & path) const
+    const LowerPathGeometry & path) const
   {
     MpcResult result;
     const auto started = std::chrono::steady_clock::now();
-    if (pose.speed_mps < 1e-3) {
-      result.steering_sequence_rad.assign(
-        static_cast<std::size_t>(lower_prediction_steps_), 0.0);
-      result.solve_time_ms = std::chrono::duration<double, std::milli>(
-        std::chrono::steady_clock::now() - started).count();
-      result.status = "stationary steering reset";
-      result.valid = true;
+    if (!path.valid || !pose.valid || !pose.speed_valid ||
+      !finitePoint(pose.position) || !std::isfinite(pose.yaw_rad) ||
+      !std::isfinite(pose.speed_mps))
+    {
+      result.status = "invalid MPC path/state";
       return result;
     }
-    const PathProjection projection = projectToPath(path, pose.position);
-    if (!projection.valid) {
-      result.status = "no valid path segment";
-      return result;
+    std::size_t nearest = 0;
+    double best = std::numeric_limits<double>::infinity();
+    for (std::size_t i = 0; i < path.points.size(); ++i) {
+      const double distance = (pose.position - path.points[i]).squaredNorm();
+      if (distance < best) {best = distance; nearest = i;}
     }
-    result.nearest_segment = projection.segment_index;
-    result.lateral_error_m = projection.lateral_error_m;
-    result.heading_error_rad = wrapToPi(pose.yaw_rad - projection.path_yaw_rad);
-
+    if (!std::isfinite(best)) {result.status = "invalid path distance"; return result;}
+    result.nearest_point = static_cast<int>(nearest);
+    const double psi = path.psi[nearest];
+    result.lateral_error_m = Eigen::Vector2d(-std::sin(psi), std::cos(psi)).dot(
+      pose.position - path.points[nearest]);
+    result.heading_error_rad = wrapToPi(pose.yaw_rad - psi);
     const int horizon = lower_prediction_steps_;
-    const double speed = std::max(lower_min_effective_speed_mps_, pose.speed_mps);
-    const double sample_spacing = std::max(
-      lower_min_path_spacing_m_, speed * lower_prediction_dt_sec_);
-    const auto arc = buildArcLength(path);
-    std::vector<double> reference_yaw(static_cast<std::size_t>(horizon + 1), 0.0);
-    result.reference_horizon.reserve(static_cast<std::size_t>(horizon + 1));
+    const double speed = pose.speed_mps;
     for (int k = 0; k <= horizon; ++k) {
-      const auto sampled = samplePath(path, arc, projection.path_s + k * sample_spacing);
-      result.reference_horizon.push_back(sampled.first);
-      double yaw = sampled.second;
-      if (k > 0) {
-        yaw = reference_yaw[static_cast<std::size_t>(k - 1)] +
-          wrapToPi(yaw - reference_yaw[static_cast<std::size_t>(k - 1)]);
-      }
-      reference_yaw[static_cast<std::size_t>(k)] = yaw;
+      const std::size_t index = std::min(nearest + k, path.points.size() - 1);
+      result.reference_horizon.push_back(path.points[index]);
+      if (k < horizon) {result.curvature_reference.push_back(path.kappa[index]);}
     }
+    const double previous = last_applied_steering_angle_rad_;
+    result.delta_prev_rad = previous;
+    const double max_step = lower_max_steering_rate_radps_ * lower_prediction_dt_sec_;
+    const double fallback = std::atan(wheelbase_ * result.curvature_reference.front()) -
+      0.35 * result.lateral_error_m - result.heading_error_rad;
+    result.fallback_steering_rad = clampd(
+      clampd(fallback, -lower_max_steering_angle_rad_, lower_max_steering_angle_rad_),
+      previous - max_step, previous + max_step);
+    result.fallback_valid = std::isfinite(fallback);
 
     Eigen::VectorXd affine = Eigen::VectorXd::Zero(2 * horizon);
     Eigen::MatrixXd condensed = Eigen::MatrixXd::Zero(2 * horizon, horizon);
@@ -806,9 +756,8 @@ struct LowerTrackingMpcNode::Impl
         estimated_effective_steering_angle_rad_);
       Eigen::MatrixXd input_map = Eigen::MatrixXd::Zero(3, horizon);
       for (int k = 0; k < horizon; ++k) {
-        const double path_yaw_increment = wrapToPi(
-          reference_yaw[static_cast<std::size_t>(k + 1)] -
-          reference_yaw[static_cast<std::size_t>(k)]);
+        const double curvature_disturbance =
+          -speed * lower_prediction_dt_sec_ * result.curvature_reference[k];
         const int command_index = k - actuator.delay_steps;
         double known_delayed_command = 0.0;
         if (command_index < 0 &&
@@ -821,7 +770,7 @@ struct LowerTrackingMpcNode::Impl
         affine_state = system * affine_state + Eigen::Vector3d(
           0.0,
           speed / wheelbase_ * actuator.steering_integral_command_sec *
-          known_delayed_command - path_yaw_increment,
+          known_delayed_command + curvature_disturbance,
           actuator.command_gain * known_delayed_command);
         input_map = system * input_map;
         if (command_index >= 0) {
@@ -841,16 +790,18 @@ struct LowerTrackingMpcNode::Impl
         result.lateral_error_m, result.heading_error_rad);
       Eigen::MatrixXd input_map = Eigen::MatrixXd::Zero(2, horizon);
       for (int k = 0; k < horizon; ++k) {
-        const double path_yaw_increment = wrapToPi(
-          reference_yaw[static_cast<std::size_t>(k + 1)] -
-          reference_yaw[static_cast<std::size_t>(k)]);
-        affine_state = system * affine_state + Eigen::Vector2d(0.0, -path_yaw_increment);
+        const double curvature_disturbance =
+          -speed * lower_prediction_dt_sec_ * result.curvature_reference[k];
+        affine_state = system * affine_state + Eigen::Vector2d(0.0, curvature_disturbance);
         input_map = system * input_map;
         input_map.col(k) += input;
         affine.segment<2>(2 * k) = affine_state;
         condensed.block(2 * k, 0, 2, horizon) = input_map;
       }
     }
+
+    result.affine_prediction = affine;
+    result.condensed_prediction = condensed;
 
     Eigen::MatrixXd state_weight = Eigen::MatrixXd::Zero(2 * horizon, 2 * horizon);
     for (int k = 0; k < horizon; ++k) {
@@ -863,16 +814,13 @@ struct LowerTrackingMpcNode::Impl
       difference(k, k) = 1.0;
       difference(k, k - 1) = -1.0;
     }
+    // QuadraticProblem forwards H/f to DAQP: 0.5 * delta^T H delta + f^T delta.
     Eigen::MatrixXd hessian_eigen = 2.0 * (
       condensed.transpose() * state_weight * condensed +
       lower_r_steering_ * Eigen::MatrixXd::Identity(horizon, horizon) +
       lower_rd_steering_rate_ * difference.transpose() * difference);
     Eigen::VectorXd linear_eigen =
       2.0 * condensed.transpose() * state_weight * affine;
-    const double previous = clampd(
-      lower_enable_steering_actuator_model_ ?
-      last_applied_steering_angle_rad_ : last_mpc_steering_angle_rad_,
-      -lower_max_steering_angle_rad_, lower_max_steering_angle_rad_);
     linear_eigen(0) -= 2.0 * lower_rd_steering_rate_ * previous;
     hessian_eigen.diagonal().array() += 1e-9;
 
@@ -893,7 +841,6 @@ struct LowerTrackingMpcNode::Impl
       inequality[row][k] = -1.0;
       bound[row++] = lower_max_steering_angle_rad_;
     }
-    const double max_step = lower_max_steering_rate_radps_ * lower_prediction_dt_sec_;
     for (int k = 0; k < horizon; ++k) {
       if (k == 0) {
         inequality[row][0] = 1.0;
@@ -921,6 +868,17 @@ struct LowerTrackingMpcNode::Impl
     constraint.set_constraint_variable(steering, inequality);
     constraint.set_known_term(bound);
     solver.add_leq_constraint(constraint);
+#ifdef VIRTUAL_CONTROL_LOWER_MPC_TESTING
+    // Exercise a real infeasible DAQP solve, without a production fault parameter.
+    if (force_qp_failure_for_test_) {
+      Matrix<double> impossible(0.0, 1, horizon);
+      Vector<double> negative_bound(-1.0, 1);
+      Constraint fault(solver.get_main_variable());
+      fault.set_constraint_variable(steering, impossible);
+      fault.set_known_term(negative_bound);
+      solver.add_leq_constraint(fault);
+    }
+#endif
     solver.set_Q_matrix(hessian);
     solver.set_q0_vector(linear);
     Vector<double> argument;
@@ -999,7 +957,6 @@ struct LowerTrackingMpcNode::Impl
   {
     previous_lower_steering_sequence_.clear();
     previous_lower_steering_index_ = 0;
-    last_mpc_steering_angle_rad_ = 0.0;
     last_valid_steering_angle_rad_ = 0.0;
     last_valid_steering_time_ = rclcpp::Time(0, 0, RCL_ROS_TIME);
     have_filtered_command_ = false;
@@ -1150,7 +1107,6 @@ struct LowerTrackingMpcNode::Impl
   {
     previous_lower_steering_sequence_.clear();
     previous_lower_steering_index_ = 0;
-    last_mpc_steering_angle_rad_ = 0.0;
     last_valid_steering_angle_rad_ = 0.0;
     last_valid_steering_time_ = rclcpp::Time(0, 0, RCL_ROS_TIME);
     speed_integral_ = 0.0;
@@ -1208,7 +1164,7 @@ struct LowerTrackingMpcNode::Impl
     std_msgs::msg::Float64MultiArray trace;
     trace.data = {
       node_.now().seconds(), pose.position.x(), pose.position.y(), pose.yaw_rad,
-      pose.speed_mps, static_cast<double>(mpc.nearest_segment),
+      pose.speed_mps, static_cast<double>(mpc.nearest_point),
       mpc.lateral_error_m, mpc.heading_error_rad,
       mpc.steering_sequence_rad.empty() ? 0.0 : mpc.steering_sequence_rad.front(),
       applied_steering_norm, mpc.valid ? 1.0 : 0.0, mpc.solve_time_ms,
@@ -1223,8 +1179,14 @@ struct LowerTrackingMpcNode::Impl
     trace.data.push_back(lower_enable_steering_actuator_model_ ? 1.0 : 0.0);
     trace.data.push_back(lower_steering_actuator_delay_sec_);
     trace.data.push_back(lower_steering_actuator_time_constant_sec_);
-    // Append only: indices 0..23 retain their deployed meaning.
+    // Keep existing field positions; index 5 now denotes the nearest dense point.
     trace.data.push_back(mpc.solver_only_time_ms);
+    trace.data.push_back(selected.steering_angle_rad);  // 25: selected, before filter
+    trace.data.push_back(virtual_command.steer * lower_max_steering_angle_rad_);  // 26
+    trace.data.push_back(mpc.fallback_valid ? 1.0 : 0.0);  // 27: available, not QP success
+    trace.data.push_back(mpc.curvature_reference.empty() ?
+      std::numeric_limits<double>::quiet_NaN() : mpc.curvature_reference.front());  // 28
+    trace.data.push_back(mpc.delta_prev_rad);  // 29: QP/fallback rate-limit reference
     lower_trace_pub_->publish(trace);
   }
 
@@ -1240,7 +1202,6 @@ struct LowerTrackingMpcNode::Impl
       command.fallback_mode = 3;
     }
     const rclcpp::Time current_time = node_.now();
-    last_mpc_steering_angle_rad_ = command.steering_angle_rad;
     if (command.drive_valid) {
       last_valid_steering_angle_rad_ = command.steering_angle_rad;
       last_valid_steering_time_ = current_time;
@@ -1256,17 +1217,17 @@ struct LowerTrackingMpcNode::Impl
     raw.linear.z = command.drive_valid ? 1.0 : 0.0;
     raw.angular.z = mpc.heading_error_rad;
     raw_cmd_pub_->publish(raw);
-    geometry_msgs::msg::Twist applied = raw;
-    applied.linear.y = applied_normalized;
-    if (command.drive_valid || publish_applied_cmd_when_invalid_) {
-      applied_cmd_pub_->publish(applied);
-    }
-
     const bool hold_steering = command.fallback_mode == 2;
     const VirtualDriveCommand drive = computeVirtualDrive(
       applied_normalized, command.drive_valid, hold_steering, pose.speed_mps);
     const double applied_steering_angle_rad =
       drive.steer * lower_max_steering_angle_rad_;
+    geometry_msgs::msg::Twist applied = raw;
+    applied.linear.x = applied_steering_angle_rad;
+    applied.linear.y = drive.steer;
+    if (command.drive_valid || publish_applied_cmd_when_invalid_) {
+      applied_cmd_pub_->publish(applied);
+    }
     imac_interfaces::msg::VirtualControlCommand virtual_message;
     virtual_message.steer = static_cast<float>(drive.steer);
     virtual_message.throttle = static_cast<float>(drive.throttle);
@@ -1296,7 +1257,7 @@ struct LowerTrackingMpcNode::Impl
   void controllerLoop()
   {
     PoseSnapshot pose;
-    std::vector<Eigen::Vector2d> path;
+    LowerPathGeometry path;
     std::string frame_id;
     rclcpp::Time path_received(0, 0, RCL_ROS_TIME);
     bool goal_reached = false;
@@ -1341,9 +1302,9 @@ struct LowerTrackingMpcNode::Impl
       publishSelectedCommand(pose, failed, selectFailureCommand("stale pose", false));
       return;
     }
-    if (path.size() < 2) {
+    if (!path.valid) {
       const MpcResult failed;
-      publishSelectedCommand(pose, failed, selectFailureCommand("empty lower path", false));
+      publishSelectedCommand(pose, failed, selectFailureCommand(path.status, false));
       return;
     }
     if (!normalizedFrameId(pose.frame_id).empty() &&
@@ -1364,16 +1325,26 @@ struct LowerTrackingMpcNode::Impl
     }
 
     MpcResult mpc = solveTrackingMpc(pose, path);
-    // Stationary resets and missing inputs do not invoke the solver. Publish
-    // only measured solver calls, including those that return invalid results.
+    // Publish only measured solver calls, including invalid results.
     if (std::isfinite(mpc.solver_only_time_ms)) {
       std_msgs::msg::Float64 solver_time;
       solver_time.data = mpc.solver_only_time_ms;
       lower_solver_time_pub_->publish(solver_time);
     }
     if (!mpc.valid) {
-      publishSelectedCommand(
-        pose, mpc, selectFailureCommand(mpc.status, true));
+      if (mpc.fallback_valid) {
+        SelectedCommand fallback;
+        fallback.steering_angle_rad = mpc.fallback_steering_rad;
+        fallback.drive_valid = true;
+        fallback.fallback_mode = 5;
+        RCLCPP_WARN_THROTTLE(node_.get_logger(), *node_.get_clock(), 1000,
+          "lower QP failed; applying curvature fallback delta=%.6f: %s",
+          fallback.steering_angle_rad, mpc.status.c_str());
+        publishLocalReference(mpc.reference_horizon, frame_id);
+        publishSelectedCommand(pose, mpc, fallback);
+      } else {
+        publishSelectedCommand(pose, mpc, selectFailureCommand(mpc.status, false));
+      }
       return;
     }
     SelectedCommand selected;
@@ -1698,6 +1669,9 @@ struct LowerTrackingMpcNode::Impl
   }
 
   LowerTrackingMpcNode & node_;
+#ifdef VIRTUAL_CONTROL_LOWER_MPC_TESTING
+  bool force_qp_failure_for_test_{false};
+#endif
   double lower_controller_rate_hz_{10.0};
   double lower_prediction_dt_sec_{0.1};
   int lower_prediction_steps_{10};
@@ -1735,6 +1709,7 @@ struct LowerTrackingMpcNode::Impl
   bool pose_invert_y_{false};
   double pose_speed_lpf_alpha_{0.4};
   double pose_max_dt_for_speed_{0.5};
+  bool lower_use_path_arclength_{true};
   std::string lower_reference_path_topic_{"/planner/lower_reference_path"};
   std::string goal_reached_topic_{"/planner/goal_reached"};
   std::string reset_topic_{"/controller/reset"};
@@ -1790,7 +1765,7 @@ struct LowerTrackingMpcNode::Impl
   bool have_previous_pose_measurement_{false};
   Eigen::Vector2d previous_pose_measurement_{Eigen::Vector2d::Zero()};
   rclcpp::Time previous_pose_time_{0, 0, RCL_ROS_TIME};
-  std::vector<Eigen::Vector2d> path_;
+  LowerPathGeometry path_;
   std::string path_frame_id_{"map"};
   rclcpp::Time path_received_{0, 0, RCL_ROS_TIME};
   bool goal_reached_{false};
@@ -1798,7 +1773,6 @@ struct LowerTrackingMpcNode::Impl
 
   std::vector<double> previous_lower_steering_sequence_;
   std::size_t previous_lower_steering_index_{0};
-  double last_mpc_steering_angle_rad_{0.0};
   double last_valid_steering_angle_rad_{0.0};
   rclcpp::Time last_valid_steering_time_{0, 0, RCL_ROS_TIME};
   bool have_filtered_command_{false};
@@ -1827,6 +1801,7 @@ struct LowerTrackingMpcNode::Impl
   rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
   rclcpp::Subscription<geometry_msgs::msg::PoseStamped>::SharedPtr pose_sub_;
   rclcpp::Subscription<nav_msgs::msg::Path>::SharedPtr path_sub_;
+  rclcpp::Subscription<imac_interfaces::msg::PathWithArcLength>::SharedPtr arc_path_sub_;
   rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr goal_sub_;
   rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr reset_sub_;
   rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr batch_run_sub_;
@@ -1855,6 +1830,7 @@ LowerTrackingMpcNode::~LowerTrackingMpcNode() = default;
 
 }  // namespace imac_ctrl
 
+#ifndef VIRTUAL_CONTROL_LOWER_MPC_NO_MAIN
 int main(int argc, char * argv[])
 {
   rclcpp::init(argc, argv);
@@ -1864,3 +1840,5 @@ int main(int argc, char * argv[])
   rclcpp::shutdown();
   return 0;
 }
+
+#endif

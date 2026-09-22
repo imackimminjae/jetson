@@ -223,12 +223,9 @@ upper_planner_node:
     preview_line_sample_m: 0.10
     preview_min_segment_samples: 2
     preview_interval_soft_ratio: 0.7
-    # B comes from fully observed single intervals at consecutive near nodes.
-    # Keep B across branches/gaps; confirm three candidates before bounded updates.
+    # B is the shortest fully observed interval uniquely containing the reference
+    # across k=0..N. Hold B if no candidate exists or candidate > 1.5*B.
     preview_interval_relative_length_factor: 1.5
-    preview_interval_scale_agreement_ratio: 1.2
-    preview_interval_scale_confirm_steps: 3
-    preview_interval_scale_max_relative_change: 0.05
     # These fixed fallback values never initialize B or classify observed intervals.
     preview_interval_enable_nominal_fallback: true
     preview_interval_nominal_fallback_width_m: 4.50
@@ -259,12 +256,15 @@ lower_tracking_mpc_node:
     lower_enable_steering_actuator_model: false
     lower_steering_actuator_delay_sec: 0.20
     lower_steering_actuator_time_constant_sec: 0.85
+    # Atomic path + original interpolation s from the upper planner.
+    lower_use_path_arclength: true
+    # Compatibility parameters only; lower MPC never resamples or raises actual speed.
     lower_min_path_spacing_m: 0.05
     lower_min_effective_speed_mps: 0.10
     input_timeout_sec: 0.60
     lower_path_timeout_sec: 1.50
-    # On a QP failure, consume the remaining previous steering sequence first.
-    # Once exhausted, do not hold the last steering command; use neutral output.
+    # Valid-path QP failures use curvature fallback (mode 5).
+    # Invalid/stale inputs use the existing neutral/hold policy below.
     solver_hold_last_valid_sec: 0.0
     path_change_reset_threshold_m: 0.75
     reset_on_path_change: false

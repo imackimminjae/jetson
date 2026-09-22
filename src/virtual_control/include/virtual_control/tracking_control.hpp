@@ -2,12 +2,11 @@
 
 #include <rclcpp/rclcpp.hpp>
 
-#include "virtual_control/interval_centering_state.hpp"
-
 #include <geometry_msgs/msg/pose_stamped.hpp>
 #include <nav_msgs/msg/occupancy_grid.hpp>
 #include <nav_msgs/msg/odometry.hpp>
 #include <nav_msgs/msg/path.hpp>
+#include <imac_interfaces/msg/path_with_arc_length.hpp>
 #include <std_msgs/msg/bool.hpp>
 #include <std_msgs/msg/float64.hpp>
 #include <std_msgs/msg/float64_multi_array.hpp>
@@ -35,6 +34,56 @@ public:
     const rclcpp::NodeOptions & options = rclcpp::NodeOptions());
 
 private:
+  friend struct IntervalCenteringTestAccess;
+  friend struct LowerPathGenerationTestAccess;
+
+  struct IntervalCenteringSettings
+  {
+    double relative_length_factor{1.5};
+  };
+
+  struct IntervalObservation
+  {
+    double length{0.0};  // Original length, before either treatment.
+    bool start_boundary_observed{false};
+    bool end_boundary_observed{false};
+    bool reference_inside{false};
+    bool nominal_fallback{false};
+  };
+
+  struct IntervalCenteringState
+  {
+    // An observed interval-length scale, not an estimate of physical road width.
+    double reference_length{0.0};
+  };
+
+  struct IntervalCenteringUpdate
+  {
+    IntervalCenteringState state;
+    double previous_reference_length{0.0};
+    double candidate_length{std::numeric_limits<double>::quiet_NaN()};
+    int candidate_step{-1};
+    int candidate_interval{-1};
+  };
+
+  struct IntervalTreatment
+  {
+    bool centering_on{false};
+    double threshold{std::numeric_limits<double>::quiet_NaN()};
+    double inset{0.0};
+  };
+
+  // Pure helpers used only inside this planner. B is the sole retained state.
+  static bool hasIntervalReference(const IntervalCenteringState & state);
+  static IntervalCenteringUpdate updateIntervalCentering(
+    const IntervalCenteringState & previous,
+    const std::vector<std::vector<IntervalObservation>> & preview,
+    const IntervalCenteringSettings & settings);
+  static IntervalTreatment intervalTreatment(
+    const IntervalObservation & interval, const IntervalCenteringState & state,
+    const IntervalCenteringSettings & settings, double soft_ratio,
+    double boundary_margin, double fallback_max_centering_length);
+
   enum class IntervalTreatmentMode : int
   {
     CenterContraction = 0,
@@ -97,8 +146,8 @@ private:
 
   struct IntervalInfo
   {
-    interval_centering::Observation observation;
-    interval_centering::Treatment treatment;
+    IntervalObservation observation;
+    IntervalTreatment treatment;
     double processed_length{0.0};
   };
 
@@ -114,7 +163,7 @@ private:
     std::vector<int> Nck;
     // Full requested preview, including observations beyond a missing MIQP stage.
     std::vector<std::vector<IntervalInfo>> interval_info;
-    interval_centering::UpdateInfo interval_update;
+    IntervalCenteringUpdate interval_update;
     std::vector<Eigen::Vector2d> prk;
     std::vector<double> psirk;
     // Cost-only terminal targets; prk/psirk remain shared model/constraint geometry.
@@ -186,7 +235,7 @@ private:
   PreviewConstraintData extractPreviewIntervals(
     const PreviewReferenceData & reference,
     const GridMapSnapshot * grid,
-    const interval_centering::State & interval_state) const;
+    const IntervalCenteringState & interval_state) const;
   void applyTerminalPositionTargets(
     PreviewConstraintData & preview,
     const Eigen::Vector2d & wp0_body,
@@ -214,7 +263,7 @@ private:
     double planning_speed_mps) const;
   std::vector<Eigen::Vector2d> densifyPath(
     const std::vector<Eigen::Vector2d> & sparse_world,
-    double current_speed_mps) const;
+    double current_speed_mps, std::vector<double> & sample_s) const;
   double remainingPathLength(
     const std::vector<Eigen::Vector2d> & path,
     const Eigen::Vector2d & position) const;
@@ -222,7 +271,7 @@ private:
   void publishPath(
     const rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr & publisher,
     const std::vector<Eigen::Vector2d> & points,
-    const std::string & frame_id) const;
+    const std::string & frame_id, const std::vector<double> * sample_s = nullptr) const;
   void publishGoalReached(bool reached);
   void publishBranchEvent(
     double started, std::uint64_t sequence, std::uint64_t revision,
@@ -300,7 +349,7 @@ private:
   double preview_line_sample_m_{0.10};
   int preview_min_segment_samples_{2};
   double preview_interval_soft_ratio_{0.70};
-  interval_centering::Settings interval_centering_settings_;
+  IntervalCenteringSettings interval_centering_settings_;
   double preview_interval_boundary_margin_m_{2.0};
   bool preview_interval_enable_nominal_fallback_{true};
   double preview_interval_nominal_fallback_width_m_{4.5};
@@ -360,7 +409,7 @@ private:
   bool previous_solution_valid_{false};
 
   // Initialized once per node run; retained across cycles, missing data and solver failures.
-  interval_centering::State interval_centering_state_;
+  IntervalCenteringState interval_centering_state_;
 
   GridMapSnapshot grid_;
 
@@ -371,6 +420,7 @@ private:
 
   rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr sparse_path_pub_;
   rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr dense_path_pub_;
+  rclcpp::Publisher<imac_interfaces::msg::PathWithArcLength>::SharedPtr dense_arc_path_pub_;
   rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr preview_debug_pub_;
   rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr goal_reached_pub_;
   rclcpp::Publisher<std_msgs::msg::Float64MultiArray>::SharedPtr interval_debug_pub_;

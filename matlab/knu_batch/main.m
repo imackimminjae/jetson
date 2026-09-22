@@ -50,7 +50,7 @@ poseTimeoutSec = 0.50;
 % Optional MPC trace input.
 % Runtime 주행 중 렉을 줄이려면 false 유지.
 % 조향 원인 분석할 때만 true.
-mpcTraceTopic = "/debug/lower_mpc_trace";   % current lower node, 19 fields
+mpcTraceTopic = "/debug/lower_mpc_trace";   % current lower node, 30 fields
 enableMpcTraceSub = false;
 
 % Upper-planner dense reference path consumed by the current lower controller.
@@ -160,10 +160,13 @@ if enableRosLog
     if enableMpcTraceSub && enableMpcTraceLog
         mpcTraceLogFile = fullfile(logFileDir, "mpc_trace_log.csv");
         createCsvWithHeader(mpcTraceLogFile, ...
-            "t_matlab_rx,t_node,cur_x,cur_y,cur_yaw,cur_speed,nearest_segment," + ...
+            "t_matlab_rx,t_node,cur_x,cur_y,cur_yaw,cur_speed,nearest_dense_point," + ...
             "lateral_error,heading_error,first_steering_rad,applied_steering_norm," + ...
             "valid_solve,solve_time_ms,fallback_mode,virtual_steer,virtual_throttle," + ...
-            "virtual_brake,mavlink_throttle,mavlink_steering,objective");
+            "virtual_brake,mavlink_throttle,mavlink_steering,objective," + ...
+            "estimated_effective_steering_rad,previous_applied_steering_rad,actuator_enabled," + ...
+            "actuator_delay_sec,actuator_tau_sec,solver_only_time_ms," + ...
+            "selected_steering_rad,output_steering_rad,fallback_available,kappa_ref0,delta_prev_rad");
     end
 
     if enableLoopLog
@@ -1009,7 +1012,7 @@ function s = emptyMpcTraceState()
         "rx_time", 0.0, ...
         "topic", "", ...
         "valid", false, ...
-        "data", zeros(1, 19));
+        "data", zeros(1, 30));
 end
 
 function mpcTraceCb(msg, topicName, appKey, logFile)
@@ -1196,10 +1199,17 @@ function summary = getMpcTraceSummary(mpcTrace)
     summary.applied_steering_norm = d(10);  % C++ index 9
     summary.valid_solve = d(11) ~= 0.0;      % C++ index 10
     summary.solve_time_ms = d(12);          % C++ index 11
-    summary.fallback_mode = d(13);          % C++ index 12
+    summary.fallback_mode = d(13);          % 0=QP, 1=legacy sequence, 2=hold, 3=neutral, 4=stop, 5=curvature fallback
     summary.mavlink_throttle = d(17);       % C++ index 16
     summary.mavlink_steering = d(18);       % C++ index 17
     summary.objective = d(19);              % C++ index 18
+    if numel(d) >= 30
+        summary.selected_steering_rad = d(26);
+        summary.output_steering_rad = d(27);
+        summary.fallback_available = d(28) ~= 0;
+        summary.kappa_ref0 = d(29);
+        summary.delta_prev_rad = d(30);
+    end
 end
 
 function createCsvWithHeader(filePath, headerLine)
@@ -1237,7 +1247,8 @@ function appendMpcTraceLog(filePath, tRx, vals)
     end
 
     fprintf(fid, "%.9f", tRx);
-    for i = 1:numel(vals)
+    vals(end+1:30) = NaN;  % Old traces retain a fixed-width CSV schema.
+    for i = 1:30
         fprintf(fid, ",%.9g", vals(i));
     end
     fprintf(fid, "\n");

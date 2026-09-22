@@ -67,6 +67,7 @@ add_executable(upper_planner_node
   src/tracking_control.cpp
 )
 ament_target_dependencies(upper_planner_node
+  imac_interfaces
   rclcpp
   nav_msgs
   geometry_msgs
@@ -198,10 +199,54 @@ if(BUILD_TESTING)
 
   ament_add_gtest(test_interval_centering_state
     test/test_interval_centering_state.cpp
+    src/tracking_control.cpp
+  )
+  target_compile_definitions(test_interval_centering_state PRIVATE
+    VIRTUAL_CONTROL_UPPER_PLANNER_NO_MAIN
+  )
+  ament_target_dependencies(test_interval_centering_state
+    rclcpp nav_msgs geometry_msgs imac_interfaces std_msgs tf2 ament_index_cpp mpclib_vendor
   )
   target_include_directories(test_interval_centering_state PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    ${EIGEN3_INCLUDE_DIRS}
   )
+  if(TARGET mpclib_vendor::MIQPLib)
+    target_link_libraries(test_interval_centering_state mpclib_vendor::MIQPLib)
+  elseif(TARGET MIQPLib)
+    target_link_libraries(test_interval_centering_state MIQPLib)
+  endif()
+  target_link_libraries(test_interval_centering_state Threads::Threads)
+
+  ament_add_gtest(test_lower_path_generation
+    test/test_lower_path_generation.cpp src/tracking_control.cpp)
+  target_compile_definitions(test_lower_path_generation PRIVATE VIRTUAL_CONTROL_UPPER_PLANNER_NO_MAIN)
+  ament_target_dependencies(test_lower_path_generation
+    rclcpp nav_msgs geometry_msgs imac_interfaces std_msgs tf2 ament_index_cpp mpclib_vendor)
+  target_include_directories(test_lower_path_generation PRIVATE include ${EIGEN3_INCLUDE_DIRS})
+  if(TARGET mpclib_vendor::MIQPLib)
+    target_link_libraries(test_lower_path_generation mpclib_vendor::MIQPLib)
+  elseif(TARGET MIQPLib)
+    target_link_libraries(test_lower_path_generation MIQPLib)
+  endif()
+  target_link_libraries(test_lower_path_generation Threads::Threads)
+  set_tests_properties(test_lower_path_generation PROPERTIES
+    ENVIRONMENT "ROS_DOMAIN_ID=175;ROS_LOCALHOST_ONLY=1;ROS_LOG_DIR=/tmp/lower_mpc_test_logs")
+
+  ament_add_gtest(test_lower_tracking_mpc test/test_lower_tracking_mpc.cpp)
+  target_compile_definitions(test_lower_tracking_mpc PRIVATE
+    VIRTUAL_CONTROL_LOWER_MPC_NO_MAIN VIRTUAL_CONTROL_LOWER_MPC_TESTING)
+  ament_target_dependencies(test_lower_tracking_mpc
+    rclcpp nav_msgs geometry_msgs imac_interfaces tf2 std_msgs mavlink mpclib_vendor)
+  target_include_directories(test_lower_tracking_mpc PRIVATE include ${EIGEN3_INCLUDE_DIRS})
+  if(TARGET mpclib_vendor::MIQPLib)
+    target_link_libraries(test_lower_tracking_mpc mpclib_vendor::MIQPLib)
+  elseif(TARGET MIQPLib)
+    target_link_libraries(test_lower_tracking_mpc MIQPLib)
+  endif()
+  target_link_libraries(test_lower_tracking_mpc Threads::Threads)
+  set_tests_properties(test_lower_tracking_mpc PROPERTIES
+    ENVIRONMENT "ROS_DOMAIN_ID=174;ROS_LOCALHOST_ONLY=1;ROS_LOG_DIR=/tmp/lower_mpc_test_logs")
 
   ament_add_gtest(test_lower_steering_actuator_model
     test/test_lower_steering_actuator_model.cpp

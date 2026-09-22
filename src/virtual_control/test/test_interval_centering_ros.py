@@ -31,8 +31,14 @@ def test_main9_observation_state_and_interval_processing(tmp_path):
     grid_pub = node.create_publisher(OccupancyGrid, '/main9_test/grid', 10)
     odom_pub = node.create_publisher(Odometry, '/main9_test/odom', 10)
     states, details, legacy = [], [], []
+    state_columns = []
+
+    def receive_state(msg):
+        state_columns[:] = msg.layout.dim[0].label.split(',')
+        states.append(list(msg.data))
+
     node.create_subscription(Float64MultiArray, '/debug/upper_interval_centering_state',
-                             lambda msg: states.append(list(msg.data)), 10)
+                             receive_state, 10)
     node.create_subscription(Float64MultiArray, '/debug/upper_interval_info',
                              lambda msg: details.append(list(msg.data)), 10)
     node.create_subscription(Float64MultiArray, '/debug/upper_constraint_intervals',
@@ -142,44 +148,60 @@ def test_main9_observation_state_and_interval_processing(tmp_path):
         return [details[-1][i:i+12] for i in range(0, len(details[-1]), 12)]
 
     try:
-        start('normal_then_update', [4, 4, 4, 15, 4, 4])
+        start('far_narrow_road', [10, 10, 10, 10, 10, 4.9])
         wait_for(lambda: states and details and states[-1][2] > 0)
-        baseline = states[0][2]
-        assert baseline == pytest.approx(3.9, abs=0.11)
-        assert states[0][10] == 1  # initialized
-        assert all(bool(row[4]) == (int(row[0]) != 3) for row in rows())
+        assert state_columns == ['stamp', 'B_before', 'B', 'threshold', 'candidate',
+                                 'candidate_step', 'candidate_interval']
+        assert len(states[-1]) == 7
+        baseline = states[-1][2]
+        assert baseline == pytest.approx(4.8, abs=0.11)
+        assert states[-1][3] == pytest.approx(1.5 * baseline)
+        assert states[-1][5:7] == [5.0, 0.0]
+        assert all(bool(row[4]) == (int(row[0]) == 5) for row in rows())
         assert all(row[5:7] == [1.0, 1.0] for row in rows())
         for row in rows():
             assert row[3] == pytest.approx(row[2] * 0.4 if row[4] else row[2] - 4.0)
-        current_grid = grid_for([8]*6)
-        start_index = len(states)
-        wait_for(lambda: any(s[4] > 7 and s[10] == 5 for s in states[start_index:]))
-        candidates = [s for s in states[start_index:] if s[4] > 7]
-        assert candidates[0][2] == pytest.approx(baseline)
-        assert candidates[1][2] == pytest.approx(baseline)
-        assert candidates[2][2] == pytest.approx(baseline * 1.05)
-        assert [s[10] for s in candidates[:3]] == [3, 3, 5]
 
-        # A branch beyond a blocked stage must still freeze B; retain diagnostics
-        # for that suffix while shortening only the existing solver message.
-        current_grid = grid_for([8, 8, 8, 0, 8, [(-4, 4), (5, 7)]])
+        # Wide-only observations cannot grow B past the previous 1.5*B limit.
+        current_grid = grid_for([10]*6)
         start_index = len(states)
-        wait_for(lambda: any(s[10] == 2 for s in states[start_index:]) and
-                 details and any(r[0] == 5 for r in rows()) and
+        wait_for(lambda: len([s for s in states[start_index:] if s[4] > 9]) >= 3)
+        assert all(s[2] == pytest.approx(baseline)
+                   for s in states[start_index:] if s[4] > 9)
+
+        # A shorter non-reference branch does not win or freeze B. Extract the
+        # full preview even beyond a blocked stage; preserve the solver prefix.
+        current_grid = grid_for([8, 8, 8, 0, 8, [(-2, 2), (5, 6)]])
+        start_index = len(states)
+        wait_for(lambda: any(s[5:7] == [5.0, 0.0] and s[4] < 4.1
+                             for s in states[start_index:]) and
+                 details and any(r[0] == 5 and r[1] == 1 for r in rows()) and
                  legacy and max(legacy[-1][0::7]) == 2)
-        frozen = next(s for s in states[start_index:] if s[10] == 2)
-        assert frozen[2] == frozen[1]
-        assert frozen[6] == 0
-        assert frozen[11] == 1
+        narrowed = next(s for s in states[start_index:] if s[4] < 4.1)
+        assert narrowed[2] == pytest.approx(3.9, abs=0.11)
+        assert narrowed[2] == narrowed[4]
+        assert all(r[0] != 3 for r in rows())  # Blocked reference gets no fallback.
+        branch = next(r for r in rows() if r[0] == 5 and r[1] == 1)
+        assert branch[2] < narrowed[4] and branch[9] == 0
 
         current_grid = grid_for([None]*6)
         start_index = len(states)
-        wait_for(lambda: any(s[10] == 0 for s in states[start_index:]) and
+        wait_for(lambda: any(math.isnan(s[4]) for s in states[start_index:]) and
                  details and all(r[8] == 1 for r in rows()))
-        missing = next(s for s in states[start_index:] if s[10] == 0)
-        assert missing[2] == pytest.approx(frozen[2])
-        assert missing[6] == 0
+        missing = next(s for s in states[start_index:] if math.isnan(s[4]))
+        assert missing[2] == pytest.approx(narrowed[2])
+        assert missing[5:7] == [-1.0, -1.0]
         assert all(r[4] == 1 and r[11] == 9.0 for r in rows())
+        assert all(r[2] == pytest.approx(4.5) for r in rows())
+
+        # A stale required grid retains B; resumed observations above its limit
+        # must not reinitialize it.
+        deadline = time.monotonic() + 0.8
+        wait_for(lambda: time.monotonic() >= deadline, publish_grid=False)
+        current_grid = grid_for([10]*6)
+        start_index = len(states)
+        wait_for(lambda: any(s[4] > 9 for s in states[start_index:]))
+        assert next(s for s in states[start_index:] if s[4] > 9)[2] == pytest.approx(narrowed[2])
 
         # Without B, clipped and unknown-boundary observations stay OFF.
         for name, specs in (
@@ -198,7 +220,7 @@ def test_main9_observation_state_and_interval_processing(tmp_path):
             else:
                 assert all(r[9] == 0 for r in rows())
 
-        start('use_k1_k2', [0, 4, 4, 15, 4, 4])
+        start('skip_blocked_k0', [0, 4, 4, 15, 4, 4])
         wait_for(lambda: states and details)
         assert states[0][5] == 1
         assert states[0][2] > 0
