@@ -29,6 +29,14 @@ __pycache__/
 # Vehicle/autopilot local parameter dumps
 *.parm
 
+# Local archives and experiment outputs (not part of the HILS source release)
+/archive/
+/coordinate_debug*/
+/cutoff_a1_speed3/
+/knu_batch_results/
+/rosbag2_*/
+*.mcap
+
 # OS files
 .DS_Store
 Thumbs.db

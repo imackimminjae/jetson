@@ -16,12 +16,10 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(builtin_interfaces REQUIRED)
 find_package(nav_msgs REQUIRED)
-find_package(ackermann_msgs REQUIRED)
 find_package(imac_interfaces REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(ament_index_cpp REQUIRED)
-find_package(sensor_msgs REQUIRED)   # ★ 추가
 find_package(std_msgs REQUIRED)
 find_package(std_srvs REQUIRED)
 find_package(mavlink REQUIRED)
@@ -64,55 +62,7 @@ target_include_directories(px4_odom_map_bridge PUBLIC
 )
 target_link_libraries(px4_odom_map_bridge px4_odom_map_transform)
 
-# 1) Ackermann -> Control 변환 노드
-add_executable(ackermann_to_control_node
-  src/ackermann_to_control_node.cpp
-)
-ament_target_dependencies(ackermann_to_control_node
-  rclcpp
-  nav_msgs
-  ackermann_msgs
-  imac_interfaces
-)
-
-# 2) Odom + Path -> Ackermann (Stanley) 노드
-add_executable(leatherback_stanley_node
-  src/leatherback_stanley_node.cpp
-)
-ament_target_dependencies(leatherback_stanley_node
-  rclcpp
-  nav_msgs
-  ackermann_msgs
-)
-
-# 3) CSV -> Path 퍼블리셔 노드
-add_executable(csv_path_publisher_node
-  src/csv_path_publisher_node.cpp
-)
-ament_target_dependencies(csv_path_publisher_node
-  rclcpp
-  nav_msgs
-  imac_interfaces
-)
-
-# 4) GlobalPath + Obstacles → LocalCurve (Trajectory Planner)
-add_executable(trajectory_plan_node
-  src/trajectory_plan_node.cpp
-)
-ament_target_dependencies(trajectory_plan_node
-  rclcpp
-  nav_msgs
-  imac_interfaces
-)
-target_include_directories(trajectory_plan_node PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>
-  ${EIGEN3_INCLUDE_DIRS}
-)
-
-# 4-1) Egocentric OccupancyGrid + MIQP upper planner extracted from
-# tracking_control.cpp. The previous graph-based src/upper_planner_node.cpp is
-# intentionally not in the active control chain.
+# Egocentric OccupancyGrid + MIQP upper planner.
 add_executable(upper_planner_node
   src/tracking_control.cpp
 )
@@ -137,56 +87,7 @@ elseif(TARGET MIQPLib)
 endif()
 target_link_libraries(upper_planner_node Threads::Threads)
 
-# 5) Tracking / Vehicle Controller Node
-#    - src/tracking_controller_node.cpp 안에서
-#      imac_ctrl::VehicleControllerNode 를 만들든, TrackingControllerNode를 만들든 상관 없음
-add_executable(tracking_controller_node
-  src/tracking_controller_node.cpp
-)
-ament_target_dependencies(tracking_controller_node
-  rclcpp
-  nav_msgs
-  geometry_msgs
-  imac_interfaces
-  tf2
-  sensor_msgs        # ★ Joy 메시지 때문에 추가
-  std_msgs
-)
-target_include_directories(tracking_controller_node PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>
-  ${EIGEN3_INCLUDE_DIRS}
-)
-
-# 6) Backward-compatible executable name for the former tracking_control node.
-# It now runs the same actuator-free upper planner implementation.
-add_executable(tracking_control_node
-  src/tracking_control.cpp
-)
-ament_target_dependencies(tracking_control_node
-  rclcpp
-  nav_msgs
-  geometry_msgs
-  imac_interfaces
-  tf2
-  ament_index_cpp
-  std_msgs
-  mavlink
-  mpclib_vendor
-)
-target_include_directories(tracking_control_node PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>
-  ${EIGEN3_INCLUDE_DIRS}
-)
-if(TARGET mpclib_vendor::MIQPLib)
-  target_link_libraries(tracking_control_node mpclib_vendor::MIQPLib)
-elseif(TARGET MIQPLib)
-  target_link_libraries(tracking_control_node MIQPLib)
-endif()
-target_link_libraries(tracking_control_node Threads::Threads)
-
-# 6-1) High-rate lower lateral QP-MPC + all actuator output backends.
+# High-rate lower lateral QP-MPC + all actuator output backends.
 add_executable(lower_tracking_mpc_node
   src/lower_tracking_mpc_node.cpp
 )
@@ -212,74 +113,14 @@ elseif(TARGET MIQPLib)
 endif()
 target_link_libraries(lower_tracking_mpc_node Threads::Threads)
 
-# 6-2) Deprecated standalone lower duty / MAVLink output node
-add_executable(lower_duty_node
-  src/lower_duty_node.cpp
-)
-ament_target_dependencies(lower_duty_node
-  rclcpp
-  geometry_msgs
-  imac_interfaces
-  std_msgs
-  mavlink
-)
-target_include_directories(lower_duty_node PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>
-)
-target_link_libraries(lower_duty_node Threads::Threads)
-
-# 7) Mocap straight PWM MAVLink test node
-add_executable(straight_mocap_pwm_node
-  src/straight_mocap_pwm_node.cpp
-)
-ament_target_dependencies(straight_mocap_pwm_node
-  rclcpp
-  geometry_msgs
-  nav_msgs
-  std_srvs
-  mavlink
-)
-target_include_directories(straight_mocap_pwm_node PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>
-)
-target_link_libraries(straight_mocap_pwm_node Threads::Threads)
-
-# Backward-compatible executable name for the previous bench-test target.
-add_executable(mc_test_node
-  src/straight_mocap_pwm_node.cpp
-)
-ament_target_dependencies(mc_test_node
-  rclcpp
-  geometry_msgs
-  nav_msgs
-  std_srvs
-  mavlink
-)
-target_include_directories(mc_test_node PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>
-)
-target_link_libraries(mc_test_node Threads::Threads)
-
 #################################
 # Install
 #################################
 install(
   TARGETS
     px4_odom_map_bridge
-    ackermann_to_control_node
-    leatherback_stanley_node
-    csv_path_publisher_node
-    trajectory_plan_node
     upper_planner_node
-    tracking_controller_node
-    tracking_control_node
     lower_tracking_mpc_node
-    lower_duty_node
-    straight_mocap_pwm_node
-    mc_test_node
   DESTINATION lib/${PROJECT_NAME}
 )
 
@@ -293,10 +134,13 @@ install(
 install(
   PROGRAMS
     scripts/px4_ekf_bridge.py
+    scripts/knu_global_path_publisher.py
+    scripts/knu_batch_runner.py
+    scripts/knu_batch_monitor.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
-# 헤더(trajectory_plan_node.hpp, tracking_controller_node.hpp, vehicle_controller_node.hpp 등)
+# HILS controller headers.
 install(
   DIRECTORY include/
   DESTINATION include
@@ -322,6 +166,16 @@ install(
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   find_package(ament_cmake_gtest REQUIRED)
+  find_package(ament_cmake_pytest REQUIRED)
+  ament_add_pytest_test(test_knu_global_path
+    test/test_knu_global_path.py
+  )
+  ament_add_pytest_test(test_knu_batch
+    test/test_knu_batch.py
+  )
+  ament_add_pytest_test(test_knu_batch_ros
+    test/test_knu_batch_ros.py
+  )
   set(ament_cmakecopyright_FOUND TRUE)
   set(ament_cmakecpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
@@ -333,6 +187,40 @@ if(BUILD_TESTING)
   target_include_directories(test_px4_odom_map_transform PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   )
+
+  ament_add_gtest(test_egocentric_planner_geometry
+    test/test_egocentric_planner_geometry.cpp
+  )
+  target_include_directories(test_egocentric_planner_geometry PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    ${EIGEN3_INCLUDE_DIRS}
+  )
+
+  ament_add_gtest(test_interval_centering_state
+    test/test_interval_centering_state.cpp
+  )
+  target_include_directories(test_interval_centering_state PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  )
+
+  ament_add_gtest(test_lower_steering_actuator_model
+    test/test_lower_steering_actuator_model.cpp
+  )
+  target_include_directories(test_lower_steering_actuator_model PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  )
+
+  ament_add_gtest(test_miqp_constraint_enforcement
+    test/test_miqp_constraint_enforcement.cpp
+  )
+  target_include_directories(test_miqp_constraint_enforcement PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  )
+  if(TARGET mpclib_vendor::MIQPLib)
+    target_link_libraries(test_miqp_constraint_enforcement mpclib_vendor::MIQPLib)
+  elseif(TARGET MIQPLib)
+    target_link_libraries(test_miqp_constraint_enforcement MIQPLib)
+  endif()
 endif()
 
 ament_package()

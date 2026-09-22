@@ -1,2 +1,0 @@
-float32 steering_pwm
-float32 throttle_pwm

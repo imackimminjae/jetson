@@ -1,5 +1,8 @@
 #include "virtual_control/tracking_control.hpp"
 
+#include "virtual_control/egocentric_planner_geometry.hpp"
+#include "virtual_control/miqp_solution_validation.hpp"
+
 #include "QuadraticProblem.h"
 #include "matrix_utils.h"
 
@@ -14,9 +17,9 @@
 #include <filesystem>
 #include <functional>
 #include <fstream>
+#include <iomanip>
 #include <limits>
 #include <memory>
-#include <numeric>
 #include <sstream>
 #include <stdexcept>
 #include <utility>
@@ -27,6 +30,23 @@ namespace
 {
 
 constexpr double kPi = 3.141592653589793238462643383279502884;
+
+std::string branchJsonNumber(double value)
+{
+  if (!std::isfinite(value)) {return "null";}
+  std::ostringstream out; out << std::setprecision(17) << value; return out.str();
+}
+
+std::string branchJsonString(const std::string & value)
+{
+  std::ostringstream out; out << '"';
+  for (unsigned char ch : value) {
+    if (ch == '"' || ch == '\\') {out << '\\' << ch;}
+    else if (ch < 0x20) {out << "\\u" << std::hex << std::setw(4) << std::setfill('0') << int(ch);}
+    else {out << ch;}
+  }
+  out << '"'; return out.str();
+}
 
 double clampd(double value, double lower, double upper)
 {
@@ -185,11 +205,12 @@ SdMapUpperPlannerNode::SdMapUpperPlannerNode(const rclcpp::NodeOptions & options
   RCLCPP_INFO(
     get_logger(),
     "Egocentric MIQP planner ready: rate=%.2fHz pred_dt=%.3fs Nmax=%d "
-    "lower_dt=%.3fs target_v=%.3fm/s scale=%s wheelbase=%.2fm length=%.2fm "
-    "bev=%.2fm width=%.2fm margin=%.2fm state=%s grid=%s sparse=%s dense=%s",
+    "lower_dt=%.3fs target_v=%.3fm/s scale=%s "
+    "wheelbase=%.2fm length=%.2fm "
+    "bev=%.2fm margin=%.2fm state=%s grid=%s sparse=%s dense=%s",
     upper_planner_rate_hz_, upper_prediction_dt_sec_, upper_preview_steps_,
     lower_prediction_dt_sec_, target_speed_mps_, scale_mode_.c_str(), wheelbase_,
-    vehicle_length_m_, bev_forward_m_, preview_interval_nominal_road_width_m_,
+    vehicle_length_m_, bev_forward_m_,
     preview_interval_boundary_margin_m_, state_input_type_.c_str(),
     grid_map_topic_.c_str(), sparse_path_topic_.c_str(), dense_path_topic_.c_str());
 }
@@ -202,22 +223,24 @@ void SdMapUpperPlannerNode::declareAndLoadParameters()
     wheelbase_ = 2.80;
     vehicle_length_m_ = 4.70;
     bev_forward_m_ = 20.0;
-    preview_interval_nominal_road_width_m_ = 4.50;
-    preview_interval_boundary_margin_m_ = 2.00;
+    waypoint_switch_eps_m_ = 10.0;
+    waypoint_switch_distance_m_ = 10.0;
   } else {
     // The model profile is also used temporarily for validation diagnostics
     // when an unsupported scale_mode is supplied.
     wheelbase_ = 0.30;
     vehicle_length_m_ = 0.42;
     bev_forward_m_ = 1.50;
-    preview_interval_nominal_road_width_m_ = 0.45;
-    preview_interval_boundary_margin_m_ = 0.15;
+    waypoint_switch_eps_m_ = 0.5;
+    waypoint_switch_distance_m_ = 0.5;
   }
 
   declare_parameter<double>("upper_planner_rate_hz", upper_planner_rate_hz_);
   declare_parameter<double>("upper_prediction_dt_sec", upper_prediction_dt_sec_);
   declare_parameter<int>("upper_preview_steps", upper_preview_steps_);
   declare_parameter<bool>("preview_limit_to_grid_extent", preview_limit_to_grid_extent_);
+  declare_parameter<int>("preview_grid_reserve_steps", preview_grid_reserve_steps_);
+  declare_parameter<bool>("preview_restore_full_horizon", preview_restore_full_horizon_);
   declare_parameter<double>("lower_prediction_dt_sec", lower_prediction_dt_sec_);
   declare_parameter<double>("lower_min_path_spacing_m", lower_min_path_spacing_m_);
   declare_parameter<double>("target_speed_mps", target_speed_mps_);
@@ -238,11 +261,16 @@ void SdMapUpperPlannerNode::declareAndLoadParameters()
     "terminal_position_weight_multiplier", terminal_position_weight_multiplier_);
   declare_parameter<double>("upper_r_dv", upper_r_dv_);
   declare_parameter<double>("upper_r_dpsi", upper_r_dpsi_);
+  declare_parameter<bool>("normalize_upper_input_cost", normalize_upper_input_cost_);
   declare_parameter<int>("turn_preview_steps", turn_preview_steps_);
   declare_parameter<double>("turn_weight_growth", turn_weight_growth_);
   declare_parameter<double>("miqp_diagonal_regularization", miqp_diagonal_regularization_);
+  declare_parameter<double>(
+    "miqp_binary_diagonal_regularization", miqp_binary_diagonal_regularization_);
+  declare_parameter<double>("miqp_feasibility_tolerance", miqp_feasibility_tolerance_);
 
   declare_parameter<double>("wp_switch_eps", waypoint_switch_eps_m_);
+  declare_parameter<double>("wp_switch_max_distance_m", waypoint_switch_distance_m_);
   declare_parameter<double>("goal_stop_distance_m", goal_stop_distance_m_);
   declare_parameter<bool>("enable_waypoint_bias", enable_waypoint_bias_);
   declare_parameter<double>("waypoint_x_bias_m", waypoint_x_bias_m_);
@@ -264,12 +292,24 @@ void SdMapUpperPlannerNode::declareAndLoadParameters()
   declare_parameter<int>("preview_min_segment_samples", preview_min_segment_samples_);
   declare_parameter<double>("preview_interval_soft_ratio", preview_interval_soft_ratio_);
   declare_parameter<double>(
-    "preview_interval_nominal_road_width_m", preview_interval_nominal_road_width_m_);
+    "preview_interval_relative_length_factor", interval_centering_settings_.relative_length_factor);
   declare_parameter<double>(
-    "preview_interval_max_centering_length_factor",
-    preview_interval_max_centering_length_factor_);
+    "preview_interval_scale_agreement_ratio", interval_centering_settings_.scale_agreement_ratio);
+  declare_parameter<int>(
+    "preview_interval_scale_confirm_steps", interval_centering_settings_.scale_confirm_steps);
+  declare_parameter<double>(
+    "preview_interval_scale_max_relative_change", interval_centering_settings_.scale_max_relative_change);
   declare_parameter<double>(
     "preview_interval_boundary_margin_m", preview_interval_boundary_margin_m_);
+  declare_parameter<bool>(
+    "preview_interval_enable_nominal_fallback",
+    preview_interval_enable_nominal_fallback_);
+  declare_parameter<double>(
+    "preview_interval_nominal_fallback_width_m",
+    preview_interval_nominal_fallback_width_m_);
+  declare_parameter<double>(
+    "preview_interval_fallback_max_centering_length_m",
+    preview_interval_fallback_max_centering_length_m_);
   declare_parameter<bool>("preview_interval_debug", preview_interval_debug_);
 
   declare_parameter<int>("grid_value_threshold", grid_value_threshold_);
@@ -279,12 +319,12 @@ void SdMapUpperPlannerNode::declareAndLoadParameters()
 
   declare_parameter<std::string>("state_input_type", state_input_type_);
   declare_parameter<std::string>("odom_topic", odom_topic_);
+  declare_parameter<bool>("odom_yaw_is_orientation_z", odom_yaw_is_orientation_z_);
   declare_parameter<std::string>("pose_stamped_topic", pose_stamped_topic_);
   declare_parameter<bool>(
     "pose_stamped_yaw_is_orientation_z", pose_stamped_yaw_is_orientation_z_);
   declare_parameter<double>("pose_x_offset", pose_x_offset_);
   declare_parameter<double>("pose_y_offset", pose_y_offset_);
-  declare_parameter<double>("pose_z_offset", pose_z_offset_);
   declare_parameter<double>("pose_yaw_offset_rad", pose_yaw_offset_rad_);
   declare_parameter<double>("pose_position_scale", pose_position_scale_);
   declare_parameter<bool>("pose_swap_xy", pose_swap_xy_);
@@ -304,6 +344,8 @@ void SdMapUpperPlannerNode::declareAndLoadParameters()
   get_parameter("upper_prediction_dt_sec", upper_prediction_dt_sec_);
   get_parameter("upper_preview_steps", upper_preview_steps_);
   get_parameter("preview_limit_to_grid_extent", preview_limit_to_grid_extent_);
+  get_parameter("preview_grid_reserve_steps", preview_grid_reserve_steps_);
+  get_parameter("preview_restore_full_horizon", preview_restore_full_horizon_);
   get_parameter("lower_prediction_dt_sec", lower_prediction_dt_sec_);
   get_parameter("lower_min_path_spacing_m", lower_min_path_spacing_m_);
   get_parameter("target_speed_mps", target_speed_mps_);
@@ -323,11 +365,16 @@ void SdMapUpperPlannerNode::declareAndLoadParameters()
     "terminal_position_weight_multiplier", terminal_position_weight_multiplier_);
   get_parameter("upper_r_dv", upper_r_dv_);
   get_parameter("upper_r_dpsi", upper_r_dpsi_);
+  get_parameter("normalize_upper_input_cost", normalize_upper_input_cost_);
   get_parameter("turn_preview_steps", turn_preview_steps_);
   get_parameter("turn_weight_growth", turn_weight_growth_);
   get_parameter("miqp_diagonal_regularization", miqp_diagonal_regularization_);
+  get_parameter(
+    "miqp_binary_diagonal_regularization", miqp_binary_diagonal_regularization_);
+  get_parameter("miqp_feasibility_tolerance", miqp_feasibility_tolerance_);
 
   get_parameter("wp_switch_eps", waypoint_switch_eps_m_);
+  get_parameter("wp_switch_max_distance_m", waypoint_switch_distance_m_);
   get_parameter("goal_stop_distance_m", goal_stop_distance_m_);
   get_parameter("enable_waypoint_bias", enable_waypoint_bias_);
   get_parameter("waypoint_x_bias_m", waypoint_x_bias_m_);
@@ -348,11 +395,23 @@ void SdMapUpperPlannerNode::declareAndLoadParameters()
   get_parameter("preview_min_segment_samples", preview_min_segment_samples_);
   get_parameter("preview_interval_soft_ratio", preview_interval_soft_ratio_);
   get_parameter(
-    "preview_interval_nominal_road_width_m", preview_interval_nominal_road_width_m_);
+    "preview_interval_relative_length_factor", interval_centering_settings_.relative_length_factor);
   get_parameter(
-    "preview_interval_max_centering_length_factor",
-    preview_interval_max_centering_length_factor_);
+    "preview_interval_scale_agreement_ratio", interval_centering_settings_.scale_agreement_ratio);
+  get_parameter(
+    "preview_interval_scale_confirm_steps", interval_centering_settings_.scale_confirm_steps);
+  get_parameter(
+    "preview_interval_scale_max_relative_change", interval_centering_settings_.scale_max_relative_change);
   get_parameter("preview_interval_boundary_margin_m", preview_interval_boundary_margin_m_);
+  get_parameter(
+    "preview_interval_enable_nominal_fallback",
+    preview_interval_enable_nominal_fallback_);
+  get_parameter(
+    "preview_interval_nominal_fallback_width_m",
+    preview_interval_nominal_fallback_width_m_);
+  get_parameter(
+    "preview_interval_fallback_max_centering_length_m",
+    preview_interval_fallback_max_centering_length_m_);
   get_parameter("preview_interval_debug", preview_interval_debug_);
 
   get_parameter("grid_value_threshold", grid_value_threshold_);
@@ -362,11 +421,11 @@ void SdMapUpperPlannerNode::declareAndLoadParameters()
 
   get_parameter("state_input_type", state_input_type_);
   get_parameter("odom_topic", odom_topic_);
+  get_parameter("odom_yaw_is_orientation_z", odom_yaw_is_orientation_z_);
   get_parameter("pose_stamped_topic", pose_stamped_topic_);
   get_parameter("pose_stamped_yaw_is_orientation_z", pose_stamped_yaw_is_orientation_z_);
   get_parameter("pose_x_offset", pose_x_offset_);
   get_parameter("pose_y_offset", pose_y_offset_);
-  get_parameter("pose_z_offset", pose_z_offset_);
   get_parameter("pose_yaw_offset_rad", pose_yaw_offset_rad_);
   get_parameter("pose_position_scale", pose_position_scale_);
   get_parameter("pose_swap_xy", pose_swap_xy_);
@@ -393,6 +452,7 @@ void SdMapUpperPlannerNode::validateParameters() const
   if (upper_planner_rate_hz_ <= 0.0) {fail("upper_planner_rate_hz must be > 0");}
   if (upper_prediction_dt_sec_ <= 0.0) {fail("upper_prediction_dt_sec must be > 0");}
   if (upper_preview_steps_ <= 0) {fail("upper_preview_steps must be > 0");}
+  if (preview_grid_reserve_steps_ < 0) {fail("preview_grid_reserve_steps must be >= 0");}
   if (lower_prediction_dt_sec_ <= 0.0) {fail("lower_prediction_dt_sec must be > 0");}
   if (lower_min_path_spacing_m_ <= 0.0) {fail("lower_min_path_spacing_m must be > 0");}
   if (target_speed_mps_ <= 0.0) {fail("target_speed_mps must be > 0");}
@@ -431,7 +491,20 @@ void SdMapUpperPlannerNode::validateParameters() const
   if (miqp_diagonal_regularization_ < 0.0) {
     fail("miqp_diagonal_regularization must be >= 0");
   }
+  if (!std::isfinite(miqp_binary_diagonal_regularization_) ||
+    miqp_binary_diagonal_regularization_ < 1e-4)
+  {
+    fail("miqp_binary_diagonal_regularization must be finite and >= 1e-4");
+  }
+  if (!std::isfinite(miqp_feasibility_tolerance_) ||
+    miqp_feasibility_tolerance_ <= 0.0)
+  {
+    fail("miqp_feasibility_tolerance must be finite and > 0");
+  }
   if (waypoint_switch_eps_m_ < 0.0) {fail("wp_switch_eps must be >= 0");}
+  if (waypoint_switch_distance_m_ < 0.0) {
+    fail("wp_switch_max_distance_m must be >= 0");
+  }
   if (!std::isfinite(waypoint_x_bias_m_) || !std::isfinite(waypoint_y_bias_m_) ||
     !std::isfinite(waypoint_yaw_bias_rad_))
   {
@@ -445,17 +518,43 @@ void SdMapUpperPlannerNode::validateParameters() const
   if (preview_min_segment_samples_ < 2) {
     fail("preview_min_segment_samples must be >= 2");
   }
-  if (preview_interval_soft_ratio_ < 0.5 || preview_interval_soft_ratio_ > 1.0) {
-    fail("preview_interval_soft_ratio must be in [0.5, 1.0]");
+  if (!std::isfinite(preview_interval_soft_ratio_) ||
+    std::abs(preview_interval_soft_ratio_ - 0.7) > 1e-12)
+  {
+    fail("main9 requires fixed preview_interval_soft_ratio=0.7");
   }
-  if (preview_interval_nominal_road_width_m_ <= 0.0) {
-    fail("preview_interval_nominal_road_width_m must be > 0");
+  if (!std::isfinite(interval_centering_settings_.relative_length_factor) ||
+    interval_centering_settings_.relative_length_factor <= 1.0)
+  {
+    fail("preview_interval_relative_length_factor must be finite and > 1");
   }
-  if (preview_interval_max_centering_length_factor_ <= 0.0) {
-    fail("preview_interval_max_centering_length_factor must be > 0");
+  if (!std::isfinite(interval_centering_settings_.scale_agreement_ratio) ||
+    interval_centering_settings_.scale_agreement_ratio < 1.0)
+  {
+    fail("preview_interval_scale_agreement_ratio must be finite and >= 1");
   }
-  if (preview_interval_boundary_margin_m_ < 0.0) {
-    fail("preview_interval_boundary_margin_m must be >= 0");
+  if (interval_centering_settings_.scale_confirm_steps < 1) {
+    fail("preview_interval_scale_confirm_steps must be >= 1");
+  }
+  if (!std::isfinite(interval_centering_settings_.scale_max_relative_change) ||
+    interval_centering_settings_.scale_max_relative_change < 0.0)
+  {
+    fail("preview_interval_scale_max_relative_change must be finite and >= 0");
+  }
+  if (!std::isfinite(preview_interval_boundary_margin_m_) ||
+    preview_interval_boundary_margin_m_ < 0.0)
+  {
+    fail("preview_interval_boundary_margin_m must be finite and >= 0");
+  }
+  if (!std::isfinite(preview_interval_nominal_fallback_width_m_) ||
+    preview_interval_nominal_fallback_width_m_ <= 0.0)
+  {
+    fail("preview_interval_nominal_fallback_width_m must be finite and > 0");
+  }
+  if (!std::isfinite(preview_interval_fallback_max_centering_length_m_) ||
+    preview_interval_fallback_max_centering_length_m_ <= 0.0)
+  {
+    fail("preview_interval_fallback_max_centering_length_m must be finite and > 0");
   }
   if (grid_value_threshold_ < 0 || grid_value_threshold_ > 100) {
     fail("grid_value_threshold must be in [0, 100]");
@@ -478,14 +577,18 @@ void SdMapUpperPlannerNode::validateParameters() const
 void SdMapUpperPlannerNode::createInterfaces()
 {
   global_path_sub_ = create_subscription<nav_msgs::msg::Path>(
-    global_path_topic_, 10, std::bind(&SdMapUpperPlannerNode::globalPathCallback, this, _1));
+    global_path_topic_, rclcpp::QoS(1).reliable().transient_local(),
+    std::bind(&SdMapUpperPlannerNode::globalPathCallback, this, _1));
   grid_sub_ = create_subscription<nav_msgs::msg::OccupancyGrid>(
     grid_map_topic_, 10, std::bind(&SdMapUpperPlannerNode::gridMapCallback, this, _1));
 
   if (state_input_type_ == "odom") {
     odom_sub_ = create_subscription<nav_msgs::msg::Odometry>(
       odom_topic_, 10, std::bind(&SdMapUpperPlannerNode::odomCallback, this, _1));
-    RCLCPP_INFO(get_logger(), "planner state input: Odometry topic=%s", odom_topic_.c_str());
+    RCLCPP_INFO(
+      get_logger(), "planner state input: Odometry topic=%s yaw=%s",
+      odom_topic_.c_str(),
+      odom_yaw_is_orientation_z_ ? "orientation.z scalar" : "quaternion");
   } else {
     pose_sub_ = create_subscription<geometry_msgs::msg::PoseStamped>(
       pose_stamped_topic_, 10,
@@ -505,15 +608,27 @@ void SdMapUpperPlannerNode::createInterfaces()
     goal_reached_topic_, rclcpp::QoS(1).reliable().transient_local());
   interval_debug_pub_ = create_publisher<std_msgs::msg::Float64MultiArray>(
     "/debug/upper_constraint_intervals", 10);
+  interval_info_pub_ = create_publisher<std_msgs::msg::Float64MultiArray>(
+    "/debug/upper_interval_info", 10);
+  interval_state_pub_ = create_publisher<std_msgs::msg::Float64MultiArray>(
+    "/debug/upper_interval_centering_state", 10);
   upper_trace_pub_ = create_publisher<std_msgs::msg::Float64MultiArray>(
     "/debug/upper_miqp_trace", 10);
+  branch_event_pub_ = create_publisher<std_msgs::msg::String>(
+    "/debug/upper_branch_event", 10);
+  upper_timing_pub_ = create_publisher<std_msgs::msg::Float64MultiArray>(
+    "/debug/upper_solver_timing", 10);
+  upper_solver_time_pub_ = create_publisher<std_msgs::msg::Float64>(
+    "/debug/upper_solver_time_ms", 10);
 }
 
 void SdMapUpperPlannerNode::odomCallback(const nav_msgs::msg::Odometry::SharedPtr msg)
 {
   PoseSnapshot next;
   next.position = Eigen::Vector2d(msg->pose.pose.position.x, msg->pose.pose.position.y);
-  next.yaw_rad = quaternionYaw(msg->pose.pose.orientation);
+  const double raw_yaw = odom_yaw_is_orientation_z_ ?
+    msg->pose.pose.orientation.z : quaternionYaw(msg->pose.pose.orientation);
+  next.yaw_rad = wrapToPi(raw_yaw);
   next.speed_mps = std::hypot(msg->twist.twist.linear.x, msg->twist.twist.linear.y);
   next.frame_id = msg->header.frame_id;
   next.received = now();
@@ -533,9 +648,6 @@ void SdMapUpperPlannerNode::poseStampedCallback(
   if (pose_invert_y_) {y = -y;}
   x = pose_position_scale_ * x + pose_x_offset_;
   y = pose_position_scale_ * y + pose_y_offset_;
-  const double transformed_z =
-    pose_position_scale_ * msg->pose.position.z + pose_z_offset_;
-  (void)transformed_z;
 
   PoseSnapshot next;
   next.position = Eigen::Vector2d(x, y);
@@ -643,7 +755,7 @@ void SdMapUpperPlannerNode::applyReferencePath(
     std::lock_guard<std::mutex> lock(path_mtx_);
     const bool same_frame = frameIdsEquivalent(global_path_frame_id_, resolved_frame);
     if (same_frame && pathsExactlyEqual(global_path_, configured_path)) {
-      // The MATLAB bridge republishes the route as a heartbeat. An identical
+      // The global path publisher republishes the route as a heartbeat. An identical
       // path is not a new mission and must never reset waypoint progress.
       return;
     }
@@ -672,21 +784,23 @@ void SdMapUpperPlannerNode::applyReferencePath(
     goal_reached_ = false;
     ++planning_revision_;
   }
-  {
-    // Do not nest path_mtx_ and previous_solution_mtx_. A changed path must
-    // invalidate the locally re-anchored reference before another cycle can
-    // consider it, while identical heartbeat paths return above unchanged.
-    std::lock_guard<std::mutex> lock(previous_solution_mtx_);
-    previous_reference_body_.clear();
-    previous_reference_heading_rad_.clear();
-    previous_solution_valid_ = false;
-  }
+  // Do not nest path_mtx_ and previous_solution_mtx_. A changed path must
+  // invalidate the locally re-anchored reference before another cycle can
+  // consider it, while identical heartbeat paths return above unchanged.
+  invalidatePreviousReference();
   publishGoalReached(false);
   RCLCPP_INFO(
     get_logger(),
     "reference path loaded from %s: %zu points frame=%s waypoint_bias=%s",
     source_label.c_str(), configured_path.size(), resolved_frame.c_str(),
     enable_waypoint_bias_ ? "enabled" : "disabled");
+}
+
+void SdMapUpperPlannerNode::invalidatePreviousReference()
+{
+  std::lock_guard<std::mutex> lock(previous_solution_mtx_);
+  previous_optimal_path_world_.clear();
+  previous_solution_valid_ = false;
 }
 
 void SdMapUpperPlannerNode::gridMapCallback(
@@ -814,35 +928,9 @@ bool SdMapUpperPlannerNode::loadReferencePathCsvIfConfigured()
   return true;
 }
 
-std::array<int, 2> SdMapUpperPlannerNode::findWaypointPair(
-  const std::vector<Eigen::Vector2d> & waypoints,
-  int wp0_idx,
-  const Eigen::Vector2d & position,
-  const Eigen::Vector2d & velocity,
-  double eps) const
-{
-  if (waypoints.size() < 2) {
-    return {0, 0};
-  }
-  const int last_pair_start = static_cast<int>(waypoints.size()) - 2;
-  int index = clampi(wp0_idx, 0, last_pair_start);
-  const double velocity_norm = velocity.norm();
-  if (velocity_norm > 1e-9) {
-    const Eigen::Vector2d direction = velocity / velocity_norm;
-    // Advance at most one pair per upper cycle. This preserves the ordered
-    // wpPrev -> wp0 -> wp1 relationship at corners instead of skipping
-    // several future waypoints using the current velocity direction.
-    if (index < last_pair_start &&
-      (waypoints[static_cast<std::size_t>(index + 1)] - position).dot(direction) < eps)
-    {
-      ++index;
-    }
-  }
-  return {index, std::min(index + 1, static_cast<int>(waypoints.size()) - 1)};
-}
-
 int SdMapUpperPlannerNode::computeRequestedPreviewSteps(
-  const GridMapSnapshot * grid) const
+  const GridMapSnapshot * grid,
+  double planning_speed_mps) const
 {
   int requested = upper_preview_steps_;
   if (!preview_limit_to_grid_extent_ || grid == nullptr || !grid->valid) {
@@ -868,14 +956,14 @@ int SdMapUpperPlannerNode::computeRequestedPreviewSteps(
     max_x_body = std::max(max_x_body, body.x());
   }
 
-  const double delta_s = target_speed_mps_ * upper_prediction_dt_sec_;
+  const double delta_s = planning_speed_mps * upper_prediction_dt_sec_;
   if (!std::isfinite(max_x_body) || delta_s <= 1e-9) {
     return 0;
   }
 
   const double usable_forward_m = std::min(max_x_body, bev_forward_m_);
-  const int extent_limited = static_cast<int>(std::floor(usable_forward_m / delta_s));
-  requested = clampi(extent_limited, 0, upper_preview_steps_);
+  requested = egocentric_planner_geometry::previewStepsFromForwardExtent(
+    usable_forward_m, delta_s, upper_preview_steps_, preview_grid_reserve_steps_);
   return requested;
 }
 
@@ -885,9 +973,9 @@ SdMapUpperPlannerNode::buildPreviewReference(
   const Eigen::Vector2d & wp0_body,
   const Eigen::Vector2d & wp1_body,
   bool has_previous_waypoint,
+  double planning_speed_mps,
   int requested_horizon,
-  const std::vector<Eigen::Vector2d> & previous_reference_body,
-  const std::vector<double> & previous_reference_heading_rad) const
+  const std::vector<Eigen::Vector2d> & previous_reference_body) const
 {
   PreviewReferenceData output;
   if (requested_horizon <= 0) {
@@ -930,224 +1018,99 @@ SdMapUpperPlannerNode::buildPreviewReference(
   const Eigen::Vector2d reference_direction = wp1_body / target_norm;
   const double waypoint_heading =
     std::atan2(reference_direction.y(), reference_direction.x());
-  const double delta_s = target_speed_mps_ * upper_prediction_dt_sec_;
+  const double delta_s = planning_speed_mps * upper_prediction_dt_sec_;
   const std::size_t reference_size = static_cast<std::size_t>(requested_horizon + 1);
 
-  bool previous_solution_usable = requested_horizon >= 3 &&
+  bool previous_solution_usable = requested_horizon >= 2 &&
     previous_reference_body.size() == reference_size &&
-    previous_reference_heading_rad.size() == reference_size &&
     finitePoint(previous_reference_body.front()) &&
     previous_reference_body.front().norm() <= 1e-9;
   if (previous_solution_usable) {
-    // The stored data is already localized about p*[1], psi*[1]. Only the
-    // normalized p*[2] ... p*[N-1] prefix is reusable; p*[N] was never stored.
-    for (int k = 1; k <= requested_horizon - 2; ++k) {
+    // Old p1,...,pN-1 were re-expressed using the current measured yaw.
+    // Only r0,...,rN-2 are populated; old pN is deliberately absent.
+    for (int k = 0; k <= requested_horizon - 2; ++k) {
       if (!finitePoint(previous_reference_body[static_cast<std::size_t>(k)])) {
         previous_solution_usable = false;
         break;
       }
     }
-    for (int k = 0; previous_solution_usable && k <= requested_horizon - 3; ++k) {
-      if (!std::isfinite(
-          previous_reference_heading_rad[static_cast<std::size_t>(k)]))
-      {
-        previous_solution_usable = false;
-      }
-    }
-  }
-
-  if (!previous_solution_usable && requested_horizon < 3) {
-    // A shifted terminal buffer needs at least three steps. Preserve the
-    // original ego-to-wp1 straight reference for short horizons.
-    output.points_body.reserve(reference_size);
-    output.heading_rad.assign(reference_size, waypoint_heading);
-    for (int k = 0; k <= requested_horizon; ++k) {
-      output.points_body.push_back(
-        static_cast<double>(k) * delta_s * reference_direction);
-    }
-    output.constraint_points_body = output.points_body;
-    output.constraint_heading_rad = output.heading_rad;
-    output.stable_heading_rad = waypoint_heading;
-    output.waypoint_bearing_rad = waypoint_heading;
-    output.terminal_buffer_turn_rad = 0.0;
-    output.used_previous_solution = false;
-    output.status = "valid initial straight seed";
-    output.valid = true;
-    return output;
   }
 
   output.points_body.assign(reference_size, Eigen::Vector2d::Zero());
   if (previous_solution_usable) {
-    for (int k = 1; k <= requested_horizon - 2; ++k) {
+    for (int k = 0; k <= requested_horizon - 2; ++k) {
       output.points_body[static_cast<std::size_t>(k)] =
         previous_reference_body[static_cast<std::size_t>(k)];
     }
   } else {
-    // First cycle, path revision change, or dimension mismatch: retain the
-    // original straight seed through the last reliable point. The common
-    // terminal construction below still makes r[N] the waypoint.
-    for (int k = 1; k <= requested_horizon - 2; ++k) {
+    // First cycle, route revision, or dimension mismatch: main8.m creates a
+    // fresh straight reference from the measured body origin toward wp1_B.
+    for (int k = 0; k <= requested_horizon; ++k) {
       output.points_body[static_cast<std::size_t>(k)] =
         static_cast<double>(k) * delta_s * reference_direction;
     }
   }
 
   constexpr double kHeadingEpsilon = 1e-9;
-  Eigen::Vector2d direction_sum = Eigen::Vector2d::Zero();
-  Eigen::Vector2d last_valid_direction = Eigen::Vector2d::Zero();
-  int direction_count = 0;
-  for (int i = requested_horizon - 2; i >= 1 && direction_count < 3; --i) {
-    const Eigen::Vector2d segment =
-      output.points_body[static_cast<std::size_t>(i)] -
-      output.points_body[static_cast<std::size_t>(i - 1)];
-    const double segment_norm = segment.norm();
-    if (segment_norm > kHeadingEpsilon) {
-      const Eigen::Vector2d direction = segment / segment_norm;
-      if (direction_count == 0) {
-        last_valid_direction = direction;
-      }
-      direction_sum += direction;
-      ++direction_count;
-    }
-  }
-
   double stable_heading = waypoint_heading;
-  if (direction_count > 0) {
-    const Eigen::Vector2d stable_direction =
-      direction_sum.norm() > kHeadingEpsilon ?
-      direction_sum.normalized() : last_valid_direction;
-    stable_heading = std::atan2(stable_direction.y(), stable_direction.x());
-  }
-
-  const Eigen::Vector2d reliable_terminal =
-    output.points_body[static_cast<std::size_t>(requested_horizon - 2)];
-  const Eigen::Vector2d waypoint_delta = wp1_body - reliable_terminal;
-  const double waypoint_bearing = waypoint_delta.norm() > kHeadingEpsilon ?
-    std::atan2(waypoint_delta.y(), waypoint_delta.x()) : stable_heading;
-  const double bounded_turn = clampd(
-    wrapToPi(waypoint_bearing - stable_heading),
-    -terminal_buffer_max_turn_rad_, terminal_buffer_max_turn_rad_);
-  const double bounded_heading = stable_heading + bounded_turn;
-
-  output.points_body[static_cast<std::size_t>(requested_horizon - 1)] =
-    reliable_terminal + delta_s * Eigen::Vector2d(
-    std::cos(bounded_heading), std::sin(bounded_heading));
-  output.points_body[static_cast<std::size_t>(requested_horizon)] = wp1_body;
-
-  output.heading_rad.assign(reference_size, stable_heading);
   if (previous_solution_usable) {
-    // heading[k] drives r[k] -> r[k+1]. It was normalized at solve time as
-    // wrap(psi*[k+2] - psi*[1]), matching r[k+1] = p*[k+2] - p*[1].
-    for (int k = 0; k < requested_horizon - 2; ++k) {
-      output.heading_rad[static_cast<std::size_t>(k)] =
-        previous_reference_heading_rad[static_cast<std::size_t>(k)];
-    }
-  } else {
-    for (int k = 0; k < requested_horizon - 2; ++k) {
+    Eigen::Vector2d direction_sum = Eigen::Vector2d::Zero();
+    Eigen::Vector2d last_valid_direction = reference_direction;
+    int direction_count = 0;
+    for (int i = requested_horizon - 2; i >= 1 && direction_count < 3; --i) {
       const Eigen::Vector2d segment =
-        output.points_body[static_cast<std::size_t>(k + 1)] -
-        output.points_body[static_cast<std::size_t>(k)];
-      if (segment.norm() > kHeadingEpsilon) {
-        output.heading_rad[static_cast<std::size_t>(k)] =
-          std::atan2(segment.y(), segment.x());
-      } else if (k > 0) {
-        output.heading_rad[static_cast<std::size_t>(k)] =
-          output.heading_rad[static_cast<std::size_t>(k - 1)];
+        output.points_body[static_cast<std::size_t>(i)] -
+        output.points_body[static_cast<std::size_t>(i - 1)];
+      const double segment_norm = segment.norm();
+      if (segment_norm > kHeadingEpsilon) {
+        const Eigen::Vector2d direction = segment / segment_norm;
+        if (direction_count == 0) {last_valid_direction = direction;}
+        direction_sum += direction;
+        ++direction_count;
       }
     }
+    if (direction_count > 0) {
+      const Eigen::Vector2d stable_direction =
+        direction_sum.norm() > kHeadingEpsilon ?
+        direction_sum.normalized() : last_valid_direction;
+      stable_heading = std::atan2(stable_direction.y(), stable_direction.x());
+    }
+    const Eigen::Vector2d stable_step = delta_s * Eigen::Vector2d(
+      std::cos(stable_heading), std::sin(stable_heading));
+    output.points_body[static_cast<std::size_t>(requested_horizon - 1)] =
+      output.points_body[static_cast<std::size_t>(requested_horizon - 2)] + stable_step;
+    output.points_body[static_cast<std::size_t>(requested_horizon)] =
+      output.points_body[static_cast<std::size_t>(requested_horizon - 1)] + stable_step;
   }
-  output.heading_rad[static_cast<std::size_t>(requested_horizon - 2)] = bounded_heading;
-  output.heading_rad[static_cast<std::size_t>(requested_horizon - 1)] = bounded_heading;
-  output.heading_rad[static_cast<std::size_t>(requested_horizon)] = bounded_heading;
 
-  output.constraint_points_body = output.points_body;
-  const Eigen::Vector2d stable_step = delta_s * Eigen::Vector2d(
-    std::cos(stable_heading), std::sin(stable_heading));
-  output.constraint_points_body[static_cast<std::size_t>(requested_horizon - 1)] =
-    reliable_terminal + stable_step;
-  output.constraint_points_body[static_cast<std::size_t>(requested_horizon)] =
-    output.constraint_points_body[static_cast<std::size_t>(requested_horizon - 1)] +
-    stable_step;
-  output.constraint_heading_rad = output.heading_rad;
-  output.constraint_heading_rad[static_cast<std::size_t>(requested_horizon - 2)] =
-    stable_heading;
-  output.constraint_heading_rad[static_cast<std::size_t>(requested_horizon - 1)] =
-    stable_heading;
-  output.constraint_heading_rad[static_cast<std::size_t>(requested_horizon)] =
-    stable_heading;
+  // make_preview_constraints8.m recomputes point-tangent headings every
+  // cycle after the old world path has been expressed in the measured frame.
+  output.heading_rad.assign(reference_size, stable_heading);
+  for (int k = 0; k < requested_horizon; ++k) {
+    const Eigen::Vector2d segment =
+      output.points_body[static_cast<std::size_t>(k + 1)] -
+      output.points_body[static_cast<std::size_t>(k)];
+    double heading = k > 0 ? output.heading_rad[static_cast<std::size_t>(k - 1)] :
+      stable_heading;
+    if (segment.norm() > kHeadingEpsilon) {
+      const double raw_heading = std::atan2(segment.y(), segment.x());
+      heading = k == 0 ? raw_heading :
+        output.heading_rad[static_cast<std::size_t>(k - 1)] +
+        wrapToPi(raw_heading - output.heading_rad[static_cast<std::size_t>(k - 1)]);
+    }
+    output.heading_rad[static_cast<std::size_t>(k)] = heading;
+  }
+  output.heading_rad.back() = output.heading_rad[reference_size - 2];
 
   output.stable_heading_rad = stable_heading;
-  output.waypoint_bearing_rad = waypoint_bearing;
-  output.terminal_buffer_turn_rad = bounded_turn;
+  output.waypoint_bearing_rad = waypoint_heading;
+  output.terminal_buffer_turn_rad = 0.0;
   output.used_previous_solution = previous_solution_usable;
   output.status = previous_solution_usable ?
-    "valid locally re-anchored previous solution" :
-    "valid initial straight seed with terminal waypoint";
+    "valid previous optimum in current measured frame" :
+    "valid initial straight seed with one-step terminal target";
   output.valid = true;
   return output;
-}
-
-bool SdMapUpperPlannerNode::buildShiftedPreviousReference(
-  const UpperSolveResult & solve,
-  std::vector<Eigen::Vector2d> & next_reference_body,
-  std::vector<double> & next_reference_heading_rad) const
-{
-  next_reference_body.clear();
-  next_reference_heading_rad.clear();
-  if (!solve.valid || solve.predicted_body.size() < 4) {
-    return false;
-  }
-
-  const int horizon = static_cast<int>(solve.predicted_body.size()) - 1;
-  if (horizon < 3 ||
-    solve.psi_pred_model_rad.size() != static_cast<std::size_t>(horizon) ||
-    !finitePoint(solve.predicted_body[1]) ||
-    !std::isfinite(solve.psi_pred_model_rad[0]))
-  {
-    return false;
-  }
-
-  const Eigen::Vector2d shift_origin = solve.predicted_body[1];
-  const double shift_yaw = solve.psi_pred_model_rad[0];
-  const double cosine = std::cos(shift_yaw);
-  const double sine = std::sin(shift_yaw);
-  Eigen::Matrix2d rotation_next_body;
-  rotation_next_body << cosine, sine, -sine, cosine;
-
-  const std::size_t reference_size = static_cast<std::size_t>(horizon + 1);
-  next_reference_body.assign(reference_size, Eigen::Vector2d::Zero());
-  next_reference_heading_rad.assign(reference_size, 0.0);
-
-  // k <= N-2 means the largest source position is p*[N-1]. The terminal
-  // optimum p*[N] is deliberately never read or propagated.
-  for (int k = 1; k <= horizon - 2; ++k) {
-    const Eigen::Vector2d & source =
-      solve.predicted_body[static_cast<std::size_t>(k + 1)];
-    if (!finitePoint(source)) {
-      next_reference_body.clear();
-      next_reference_heading_rad.clear();
-      return false;
-    }
-    next_reference_body[static_cast<std::size_t>(k)] =
-      rotation_next_body * (source - shift_origin);
-  }
-
-  // psi_pred_model_rad[i] is the heading for p*[i] -> p*[i+1]. Therefore
-  // next r[k] -> r[k+1] uses prior index k+1, with psi*[1] removed.
-  for (int k = 0; k <= horizon - 3; ++k) {
-    const double source_heading =
-      solve.psi_pred_model_rad[static_cast<std::size_t>(k + 1)];
-    if (!std::isfinite(source_heading)) {
-      next_reference_body.clear();
-      next_reference_heading_rad.clear();
-      return false;
-    }
-    next_reference_heading_rad[static_cast<std::size_t>(k)] =
-      wrapToPi(source_heading - shift_yaw);
-  }
-
-  return finitePoint(next_reference_body.front()) &&
-         next_reference_body.front().norm() <= 1e-9;
 }
 
 bool SdMapUpperPlannerNode::bodyPointToGrid(
@@ -1237,24 +1200,20 @@ bool SdMapUpperPlannerNode::clipLineToGridRectangle(
 
 bool SdMapUpperPlannerNode::isDrivable(int8_t value) const
 {
-  if (value < 0) {
-    return false;
-  }
-  return grid_positive_is_drivable_ ?
-         static_cast<int>(value) > grid_value_threshold_ :
-         static_cast<int>(value) <= grid_value_threshold_;
+  return egocentric_planner_geometry::gridValueIsDrivable(
+    static_cast<int>(value), grid_positive_is_drivable_, grid_value_threshold_);
 }
 
 SdMapUpperPlannerNode::PreviewConstraintData
 SdMapUpperPlannerNode::extractPreviewIntervals(
   const PreviewReferenceData & reference,
-  const GridMapSnapshot * grid) const
+  const GridMapSnapshot * grid,
+  const interval_centering::State & interval_state) const
 {
   PreviewConstraintData output;
+  output.interval_update.state = interval_state;
   if (!reference.valid || reference.points_body.size() < 2 ||
-    reference.heading_rad.size() != reference.points_body.size() ||
-    reference.constraint_points_body.size() != reference.points_body.size() ||
-    reference.constraint_heading_rad.size() != reference.points_body.size())
+    reference.heading_rad.size() != reference.points_body.size())
   {
     return output;
   }
@@ -1271,10 +1230,10 @@ SdMapUpperPlannerNode::extractPreviewIntervals(
   output.fallback_reason_codes.assign(
     size, static_cast<int>(IntervalFallbackReason::None));
   output.Nck.assign(size, 0);
+  output.interval_info.resize(size);
   output.prk = reference.points_body;
   output.psirk = reference.heading_rad;
-  output.constraint_prk = reference.constraint_points_body;
-  output.constraint_psirk = reference.constraint_heading_rad;
+  output.position_targets = reference.points_body;
   output.road_segment_heading_rad = reference.road_segment_heading_rad;
   output.delta_psi_road_rad = reference.delta_psi_road_rad;
   output.stable_heading_rad = reference.stable_heading_rad;
@@ -1282,20 +1241,26 @@ SdMapUpperPlannerNode::extractPreviewIntervals(
   output.terminal_buffer_turn_rad = reference.terminal_buffer_turn_rad;
   output.used_previous_solution = reference.used_previous_solution;
 
-  const double max_centering_length =
-    preview_interval_nominal_road_width_m_ *
-    preview_interval_max_centering_length_factor_;
+  std::vector<std::vector<interval_centering::Observation>> observations(size);
+  // Extract every requested stage before updating B. A branch beyond a missing
+  // stage still freezes the scale even though the MIQP uses only a valid prefix.
 
   for (int k = 0; k <= requested_horizon; ++k) {
     const std::size_t step = static_cast<std::size_t>(k);
-    const Eigen::Vector2d reference_point = output.constraint_prk[step];
-    const double heading = output.constraint_psirk[step];
+    const Eigen::Vector2d reference_point = output.prk[step];
+    const double heading = output.psirk[step];
     const Eigen::Vector2d lateral_direction(-std::sin(heading), std::cos(heading));
 
     std::vector<Eigen::Vector2d> raw_starts;
     std::vector<Eigen::Vector2d> raw_ends;
     std::vector<int> raw_source_modes;
+    std::vector<std::array<bool, 2>> raw_observed_boundaries;
     IntervalFallbackReason fallback_reason = IntervalFallbackReason::None;
+    std::size_t sampled_free = 0;
+    std::size_t sampled_blocked = 0;
+    std::size_t sampled_unknown = 0;
+    std::size_t sampled_outside = 0;
+    std::size_t longest_free_run = 0;
 
     if (grid != nullptr && grid->valid) {
       double lambda_min = 0.0;
@@ -1316,10 +1281,13 @@ SdMapUpperPlannerNode::extractPreviewIntervals(
 
         if (static_cast<int>(lambdas.size()) >= preview_min_segment_samples_) {
           std::vector<Eigen::Vector2d> run;
-          auto flush_run = [&]() {
+          bool previous_known_blocked = false;
+          bool run_start_observed = false;
+          auto flush_run = [&](bool end_observed) {
               if (static_cast<int>(run.size()) >= preview_min_segment_samples_) {
                 raw_starts.push_back(run.front());
                 raw_ends.push_back(run.back());
+                raw_observed_boundaries.push_back({run_start_observed, end_observed});
                 raw_source_modes.push_back(static_cast<int>(IntervalSourceMode::BevObserved));
               }
               run.clear();
@@ -1328,14 +1296,27 @@ SdMapUpperPlannerNode::extractPreviewIntervals(
           for (const double lambda : lambdas) {
             const Eigen::Vector2d point = reference_point + lambda * lateral_direction;
             int8_t value = -1;
-            const bool drivable = sampleGridValue(point, *grid, value) && isDrivable(value);
+            const bool sampled = sampleGridValue(point, *grid, value);
+            const bool drivable = sampled && isDrivable(value);
             if (drivable) {
+              ++sampled_free;
+              if (run.empty()) {run_start_observed = previous_known_blocked;}
               run.push_back(point);
+              longest_free_run = std::max(longest_free_run, run.size());
             } else {
-              flush_run();
+              if (!sampled) {
+                ++sampled_outside;
+              } else if (value < 0) {
+                ++sampled_unknown;
+              } else {
+                ++sampled_blocked;
+              }
+              flush_run(sampled && value >= 0);
             }
+            // Unknown/outside samples are clipping, not observed road boundaries.
+            previous_known_blocked = sampled && value >= 0 && !drivable;
           }
-          flush_run();
+          flush_run(false);
           if (raw_starts.empty()) {
             fallback_reason = IntervalFallbackReason::NoValidDrivableRun;
           }
@@ -1376,6 +1357,29 @@ SdMapUpperPlannerNode::extractPreviewIntervals(
 
     output.fallback_reason_codes[step] = static_cast<int>(fallback_reason);
 
+    // main8.m uses a bounded virtual road only when the reference point is
+    // unknown or outside the BEV. A cell positively observed as blocked must
+    // not be made feasible by the fallback.
+    if (raw_starts.empty() && preview_interval_enable_nominal_fallback_) {
+      bool reference_sample_available = false;
+      int8_t reference_value = -1;
+      if (grid != nullptr && grid->valid) {
+        reference_sample_available =
+          sampleGridValue(reference_point, *grid, reference_value);
+      }
+
+      if (egocentric_planner_geometry::referenceAllowsNominalFallback(
+          reference_sample_available, static_cast<int>(reference_value),
+          grid_positive_is_drivable_, grid_value_threshold_))
+      {
+        const double half_width = 0.5 * preview_interval_nominal_fallback_width_m_;
+        raw_starts.push_back(reference_point - half_width * lateral_direction);
+        raw_ends.push_back(reference_point + half_width * lateral_direction);
+        raw_source_modes.push_back(static_cast<int>(IntervalSourceMode::NominalFallback));
+        raw_observed_boundaries.push_back({false, false});
+      }
+    }
+
     for (std::size_t candidate = 0; candidate < raw_starts.size(); ++candidate) {
       const Eigen::Vector2d p0 = raw_starts[candidate];
       const Eigen::Vector2d p1 = raw_ends[candidate];
@@ -1386,91 +1390,274 @@ SdMapUpperPlannerNode::extractPreviewIntervals(
         continue;
       }
 
-      Eigen::Vector2d processed_start;
-      Eigen::Vector2d processed_end;
-      int treatment_mode = static_cast<int>(IntervalTreatmentMode::CenterContraction);
-      if (raw_length <= max_centering_length) {
-        processed_start =
-          preview_interval_soft_ratio_ * p0 +
-          (1.0 - preview_interval_soft_ratio_) * p1;
-        processed_end =
-          preview_interval_soft_ratio_ * p1 +
-          (1.0 - preview_interval_soft_ratio_) * p0;
-      } else {
-        const Eigen::Vector2d direction = (p1 - p0) / raw_length;
-        const double margin = std::min(
-          preview_interval_boundary_margin_m_, 0.45 * raw_length);
-        processed_start = p0 + margin * direction;
-        processed_end = p1 - margin * direction;
-        treatment_mode = static_cast<int>(IntervalTreatmentMode::BoundaryMargin);
-      }
-
-      const double processed_length = (processed_end - processed_start).norm();
-      if (!finitePoint(processed_start) || !finitePoint(processed_end) ||
-        !std::isfinite(processed_length) || processed_length <= 1e-8)
-      {
-        continue;
-      }
-
-      output.pmk[step].push_back(processed_start);
-      output.pMk[step].push_back(processed_end);
+      const double reference_distance = (reference_point - p0).dot((p1 - p0) / raw_length);
+      interval_centering::Observation observation;
+      observation.length = raw_length;
+      observation.start_boundary_observed = raw_observed_boundaries[candidate][0];
+      observation.end_boundary_observed = raw_observed_boundaries[candidate][1];
+      observation.reference_inside = reference_distance >= -1e-8 &&
+        reference_distance <= raw_length + 1e-8;
+      observation.nominal_fallback = raw_source_modes[candidate] ==
+        static_cast<int>(IntervalSourceMode::NominalFallback);
+      observations[step].push_back(observation);
+      output.interval_info[step].push_back(IntervalInfo{observation, {}, 0.0});
+      output.pmk[step].push_back(p0);
+      output.pMk[step].push_back(p1);
       output.raw_lengths[step].push_back(raw_length);
-      output.processed_lengths[step].push_back(processed_length);
-      output.treatment_modes[step].push_back(treatment_mode);
       output.source_modes[step].push_back(raw_source_modes[candidate]);
-
-      if (preview_interval_debug_) {
-        RCLCPP_INFO(
-          get_logger(),
-          "interval step=%d candidate=%zu raw=%.3f processed=%.3f treatment=%s source=%s",
-          k, output.pmk[step].size() - 1, raw_length, processed_length,
-          treatment_mode == static_cast<int>(IntervalTreatmentMode::CenterContraction) ?
-          "center-contraction" : "boundary-margin", "bev-observed");
-      }
     }
 
     output.Nck[step] = static_cast<int>(output.pmk[step].size());
-    // Match make_preview_constraints8.m: only the contiguous valid prefix,
-    // including the k=0 ego-origin stage, may reach the MIQP.
+    // Only k=1,...,N are constrained by the MIQP. A missing k=0 interval
+    // means the measured body origin is outside the known drivable cells; it
+    // does not make the future preview intervals unusable.
     if (output.Nck[step] == 0) {
-      const int usable_horizon = std::max(k - 1, 0);
+      // Report the actual failed lookup without relaxing road constraints.
+      // Keep this enabled independently of verbose per-candidate debug output.
+      if (k > 0 && grid != nullptr && grid->valid) {
+        std::size_t grid_zero = 0;
+        std::size_t grid_positive = 0;
+        std::size_t grid_unknown = 0;
+        std::size_t grid_free = 0;
+        for (const int8_t value : grid->data) {
+          if (value < 0) {
+            ++grid_unknown;
+          } else if (value == 0) {
+            ++grid_zero;
+          } else {
+            ++grid_positive;
+          }
+          if (isDrivable(value)) {++grid_free;}
+        }
+        int center_gx = -1;
+        int center_gy = -1;
+        int8_t center_value = -1;
+        const bool center_sampled = sampleGridValue(reference_point, *grid, center_value);
+        bodyPointToGrid(reference_point, *grid, center_gx, center_gy);
+        static rclcpp::Clock diagnostic_clock{RCL_STEADY_TIME};
+        RCLCPP_WARN_THROTTLE(
+          get_logger(), diagnostic_clock, 2000,
+          "interval_diag step=%d reason=%d ref_body=(%.3f,%.3f) heading_deg=%.2f "
+          "center_cell=(%d,%d) center_value=%d "
+          "line_free=%zu blocked=%zu unknown=%zu outside=%zu longest_run=%zu min_run=%d "
+          "grid_free=%zu zero=%zu positive=%zu unknown=%zu "
+          "topic=%s frame=%s origin=(%.3f,%.3f) origin_yaw_deg=%.2f "
+          "size=%dx%d res=%.4f positive_is_drivable=%d threshold=%d "
+          "waypoint_bias=%d previous=%d",
+          k, static_cast<int>(fallback_reason), reference_point.x(), reference_point.y(),
+          radToDeg(heading), center_gx, center_gy,
+          center_sampled ? static_cast<int>(center_value) : -999,
+          sampled_free, sampled_blocked, sampled_unknown, sampled_outside,
+          longest_free_run, preview_min_segment_samples_,
+          grid_free, grid_zero, grid_positive, grid_unknown,
+          grid_map_topic_.c_str(), grid->frame_id.c_str(),
+          grid->origin_body.x(), grid->origin_body.y(), radToDeg(grid->origin_yaw_rad),
+          grid->width, grid->height, grid->resolution,
+          grid_positive_is_drivable_ ? 1 : 0, grid_value_threshold_,
+          enable_waypoint_bias_ ? 1 : 0, reference.used_previous_solution ? 1 : 0);
+      }
+      const int usable_horizon =
+        egocentric_planner_geometry::previewHorizonAfterMissingInterval(k, output.N_pred);
+      if (k == 0) {
+        RCLCPP_WARN(
+          get_logger(),
+          "no valid interval at the measured k=0 state; retaining future horizon=%d reason=%d",
+          usable_horizon, static_cast<int>(fallback_reason));
+        continue;
+      }
       output.N_pred = usable_horizon;
-      const std::size_t usable_size = static_cast<std::size_t>(usable_horizon + 1);
-      output.pmk.resize(usable_size);
-      output.pMk.resize(usable_size);
-      output.raw_lengths.resize(usable_size);
-      output.processed_lengths.resize(usable_size);
-      output.treatment_modes.resize(usable_size);
-      output.source_modes.resize(usable_size);
-      output.fallback_reason_codes.resize(usable_size);
-      output.Nck.resize(usable_size);
-      output.prk.resize(usable_size);
-      output.psirk.resize(usable_size);
-      output.constraint_prk.resize(usable_size);
-      output.constraint_psirk.resize(usable_size);
       RCLCPP_WARN(
         get_logger(),
         "no valid preview interval at step=%d; usable horizon=%d reason=%d",
         k, usable_horizon, static_cast<int>(fallback_reason));
-      break;
     }
   }
+
+  output.interval_update = interval_centering::update(
+    interval_state, observations, interval_centering_settings_);
+  const auto & next_state = output.interval_update.state;
+  if (preview_interval_debug_) {
+    RCLCPP_INFO(
+      get_logger(),
+      "interval_scale B_before=%.3f B=%.3f threshold=%.3f candidate=%.3f "
+      "pair_start=%d confirmations=%zu multiple=%d reason=%s",
+      interval_state.reference_length, next_state.reference_length,
+      interval_centering::hasReference(next_state) ?
+      interval_centering_settings_.relative_length_factor * next_state.reference_length :
+      std::numeric_limits<double>::quiet_NaN(),
+      output.interval_update.candidate_length, output.interval_update.candidate_first_step,
+      next_state.confirmation_lengths.size(), output.interval_update.multiple_observed_intervals,
+      interval_centering::reasonName(output.interval_update.reason));
+  }
+
+  for (int k = 0; k <= requested_horizon; ++k) {
+    const std::size_t step = static_cast<std::size_t>(k);
+    std::size_t retained = 0;
+    for (std::size_t candidate = 0; candidate < output.pmk[step].size(); ++candidate) {
+      auto & info = output.interval_info[step][candidate];
+      info.treatment = interval_centering::treatment(
+        info.observation, next_state, interval_centering_settings_,
+        preview_interval_soft_ratio_, preview_interval_boundary_margin_m_,
+        preview_interval_fallback_max_centering_length_m_);
+      const Eigen::Vector2d p0 = output.pmk[step][candidate];
+      const Eigen::Vector2d p1 = output.pMk[step][candidate];
+      const double raw_length = info.observation.length;
+      const Eigen::Vector2d direction = (p1 - p0) / raw_length;
+      const Eigen::Vector2d processed_start = p0 + info.treatment.inset * direction;
+      const Eigen::Vector2d processed_end = p1 - info.treatment.inset * direction;
+      info.processed_length = (processed_end - processed_start).norm();
+      if (!finitePoint(processed_start) || !finitePoint(processed_end) ||
+        !std::isfinite(info.processed_length) || info.processed_length <= 1e-8)
+      {
+        continue;
+      }
+      output.pmk[step][retained] = processed_start;
+      output.pMk[step][retained] = processed_end;
+      output.raw_lengths[step][retained] = raw_length;
+      output.source_modes[step][retained] = output.source_modes[step][candidate];
+      output.processed_lengths[step].push_back(info.processed_length);
+      output.treatment_modes[step].push_back(static_cast<int>(info.treatment.centering_on ?
+        IntervalTreatmentMode::CenterContraction : IntervalTreatmentMode::BoundaryMargin));
+      if (preview_interval_debug_) {
+        RCLCPP_INFO(
+          get_logger(),
+          "interval step=%d candidate=%zu raw=%.3f processed=%.3f threshold=%.3f "
+          "centering=%s boundaries=%d,%d reference_inside=%d source=%s",
+          k, candidate, raw_length, info.processed_length, info.treatment.threshold,
+          info.treatment.centering_on ? "ON" : "OFF",
+          info.observation.start_boundary_observed, info.observation.end_boundary_observed,
+          info.observation.reference_inside,
+          info.observation.nominal_fallback ? "nominal-fallback" : "bev-observed");
+      }
+      ++retained;
+    }
+    output.pmk[step].resize(retained);
+    output.pMk[step].resize(retained);
+    output.raw_lengths[step].resize(retained);
+    output.source_modes[step].resize(retained);
+    output.Nck[step] = static_cast<int>(retained);
+    if (retained == 0U && k > 0) {output.N_pred = std::min(output.N_pred, k - 1);}
+  }
+
+  const std::size_t usable_size = static_cast<std::size_t>(output.N_pred + 1);
+  output.pmk.resize(usable_size);
+  output.pMk.resize(usable_size);
+  output.raw_lengths.resize(usable_size);
+  output.processed_lengths.resize(usable_size);
+  output.treatment_modes.resize(usable_size);
+  output.source_modes.resize(usable_size);
+  output.fallback_reason_codes.resize(usable_size);
+  output.Nck.resize(usable_size);
+  output.prk.resize(usable_size);
+  output.psirk.resize(usable_size);
+  output.position_targets.resize(usable_size);
 
   return output;
 }
 
+void SdMapUpperPlannerNode::applyTerminalPositionTargets(
+  PreviewConstraintData & preview,
+  const Eigen::Vector2d & wp0_body,
+  const Eigen::Vector2d & wp1_body,
+  double delta_s) const
+{
+  const int horizon = preview.N_pred;
+  const std::size_t expected_size = static_cast<std::size_t>(horizon + 1);
+  if (horizon <= 0 || preview.prk.size() != expected_size ||
+    preview.psirk.size() != expected_size || !std::isfinite(delta_s) || delta_s <= 0.0)
+  {
+    return;
+  }
+
+  constexpr double kDirectionEpsilon = 1e-9;
+  preview.position_targets = preview.prk;
+  preview.terminal_buffer_turn_rad = 0.0;
+
+  const std::size_t terminal_index = static_cast<std::size_t>(horizon);
+  const std::size_t terminal_anchor_index = static_cast<std::size_t>(horizon - 1);
+  const Eigen::Vector2d terminal_anchor = preview.prk[terminal_anchor_index];
+  const Eigen::Vector2d terminal_geometry_segment =
+    preview.prk[terminal_index] - terminal_anchor;
+  const double terminal_geometry_spacing = terminal_geometry_segment.norm();
+
+  Eigen::Vector2d terminal_geometry_direction(
+    std::cos(preview.psirk[terminal_anchor_index]),
+    std::sin(preview.psirk[terminal_anchor_index]));
+  Eigen::Vector2d terminal_waypoint = wp1_body;
+  if (horizon >= 2 && terminal_geometry_spacing >= kDirectionEpsilon) {
+    terminal_geometry_direction = terminal_geometry_segment / terminal_geometry_spacing;
+    const double distance_to_wp0 =
+      (wp0_body - terminal_anchor).dot(terminal_geometry_direction);
+    if (distance_to_wp0 > delta_s) {
+      terminal_waypoint = wp0_body;
+    }
+  }
+
+  preview.stable_heading_rad = std::atan2(
+    terminal_geometry_direction.y(), terminal_geometry_direction.x());
+  const Eigen::Vector2d terminal_direction = terminal_waypoint - terminal_anchor;
+  if (terminal_direction.norm() >= kDirectionEpsilon) {
+    preview.position_targets[terminal_index] =
+      terminal_anchor + delta_s * terminal_direction.normalized();
+    preview.waypoint_bearing_rad =
+      std::atan2(terminal_direction.y(), terminal_direction.x());
+  }
+
+  if (horizon < 2) {
+    return;
+  }
+
+  const std::size_t n1_index = static_cast<std::size_t>(horizon - 1);
+  const std::size_t n1_anchor_index = static_cast<std::size_t>(horizon - 2);
+  const Eigen::Vector2d n1_anchor = preview.prk[n1_anchor_index];
+  const Eigen::Vector2d n1_stable_segment = preview.prk[n1_index] - n1_anchor;
+  const Eigen::Vector2d n1_waypoint_vector = terminal_waypoint - n1_anchor;
+  if (n1_stable_segment.norm() < kDirectionEpsilon ||
+    n1_waypoint_vector.norm() < kDirectionEpsilon)
+  {
+    return;
+  }
+
+  const double n1_stable_heading =
+    std::atan2(n1_stable_segment.y(), n1_stable_segment.x());
+  const double n1_waypoint_bearing =
+    std::atan2(n1_waypoint_vector.y(), n1_waypoint_vector.x());
+  const double bounded_turn = clampd(
+    wrapToPi(n1_waypoint_bearing - n1_stable_heading),
+    -terminal_buffer_max_turn_rad_, terminal_buffer_max_turn_rad_);
+  const double n1_cost_heading = n1_stable_heading + bounded_turn;
+  preview.position_targets[n1_index] = n1_anchor + delta_s * Eigen::Vector2d(
+    std::cos(n1_cost_heading), std::sin(n1_cost_heading));
+  preview.waypoint_bearing_rad = n1_waypoint_bearing;
+  preview.terminal_buffer_turn_rad = bounded_turn;
+}
+
 SdMapUpperPlannerNode::UpperSolveResult SdMapUpperPlannerNode::solveUpperMiqp(
   const PreviewConstraintData & preview,
-  double current_speed_mps) const
+  double planning_speed_mps) const
 {
   UpperSolveResult result;
+  // Sum all actual solver calls, including fixed-corridor QPs and polishing.
+  const auto timed_solve = [&result](QuadraticProblem & problem, Vector<double> & argument) {
+      if (!std::isfinite(result.solver_only_time_ms)) result.solver_only_time_ms = 0.0;
+      const auto started = std::chrono::steady_clock::now();
+      try {
+        const double objective = problem.solve_problem(argument);
+        result.solver_only_time_ms += std::chrono::duration<double, std::milli>(
+          std::chrono::steady_clock::now() - started).count();
+        return objective;
+      } catch (...) {
+        result.solver_only_time_ms += std::chrono::duration<double, std::milli>(
+          std::chrono::steady_clock::now() - started).count();
+        throw;
+      }
+    };
   const auto started = std::chrono::steady_clock::now();
   const int horizon = preview.N_pred;
   if (horizon <= 0 ||
     preview.prk.size() != static_cast<std::size_t>(horizon + 1) ||
     preview.psirk.size() != static_cast<std::size_t>(horizon + 1) ||
-    preview.constraint_prk.size() != static_cast<std::size_t>(horizon + 1) ||
-    preview.constraint_psirk.size() != static_cast<std::size_t>(horizon + 1) ||
+    preview.position_targets.size() != static_cast<std::size_t>(horizon + 1) ||
     preview.Nck.size() != static_cast<std::size_t>(horizon + 1) ||
     preview.pmk.size() != static_cast<std::size_t>(horizon + 1) ||
     preview.pMk.size() != static_cast<std::size_t>(horizon + 1))
@@ -1507,10 +1694,10 @@ SdMapUpperPlannerNode::UpperSolveResult SdMapUpperPlannerNode::solveUpperMiqp(
       const int column = 2 * input_step;
       G[row][column] = upper_prediction_dt_sec_ * std::cos(heading);
       G[row][column + 1] =
-        -upper_prediction_dt_sec_ * target_speed_mps_ * std::sin(heading);
+        -upper_prediction_dt_sec_ * planning_speed_mps * std::sin(heading);
       G[row + 1][column] = upper_prediction_dt_sec_ * std::sin(heading);
       G[row + 1][column + 1] =
-        upper_prediction_dt_sec_ * target_speed_mps_ * std::cos(heading);
+        upper_prediction_dt_sec_ * planning_speed_mps * std::cos(heading);
     }
   }
 
@@ -1526,16 +1713,19 @@ SdMapUpperPlannerNode::UpperSolveResult SdMapUpperPlannerNode::solveUpperMiqp(
   const double max_dv = a_max_mps2_ * upper_prediction_dt_sec_;
   const double phi =
     std::tan(max_steering_angle_rad_) * upper_prediction_dt_sec_ / wheelbase_;
-  const double normalized_dv_weight = upper_r_dv_ / (max_dv * max_dv);
-  const double nominal_max_dpsi = std::max(1e-9, phi * target_speed_mps_);
-  const double normalized_dpsi_weight =
-    upper_r_dpsi_ / (nominal_max_dpsi * nominal_max_dpsi);
+  const double normalized_dv_weight = normalize_upper_input_cost_ ?
+    upper_r_dv_ / (max_dv * max_dv) : upper_r_dv_;
+  const double nominal_max_dpsi = std::max(1e-9, phi * planning_speed_mps);
+  const double normalized_dpsi_weight = normalize_upper_input_cost_ ?
+    upper_r_dpsi_ / (nominal_max_dpsi * nominal_max_dpsi) : upper_r_dpsi_;
 
   Matrix<double> hessian(0.0, variable_count, variable_count);
+  const double position_weight_sum =
+    static_cast<double>(horizon) + terminal_position_weight_multiplier_;
   const double position_stage_weight =
     lambda_position_ /
     (position_scale_m_ * position_scale_m_) /
-    static_cast<double>(horizon + 1);
+    position_weight_sum;
   std::vector<double> position_weights(
     static_cast<std::size_t>(horizon + 1), position_stage_weight);
   position_weights[static_cast<std::size_t>(horizon)] =
@@ -1557,6 +1747,20 @@ SdMapUpperPlannerNode::UpperSolveResult SdMapUpperPlannerNode::solveUpperMiqp(
     hessian[2 * k + 1][2 * k + 1] += normalized_dpsi_weight;
   }
   Vector<double> linear_term(0.0, variable_count);
+  std::vector<Eigen::Vector2d> position_cost_offset(
+    static_cast<std::size_t>(horizon + 1), Eigen::Vector2d::Zero());
+  for (int step = 0; step <= horizon; ++step) {
+    position_cost_offset[static_cast<std::size_t>(step)] =
+      preview.prk[static_cast<std::size_t>(step)] -
+      preview.position_targets[static_cast<std::size_t>(step)];
+    const double weight = position_weights[static_cast<std::size_t>(step)];
+    for (int column = 0; column < input_count; ++column) {
+      linear_term[column] += weight * (
+        position_cost_offset[static_cast<std::size_t>(step)].x() * G[2 * step][column] +
+        position_cost_offset[static_cast<std::size_t>(step)].y() *
+        G[2 * step + 1][column]);
+    }
+  }
 
   for (int k = 1; k <= horizon; ++k) {
     if (preview.Nck[static_cast<std::size_t>(k)] >= 2) {
@@ -1610,16 +1814,22 @@ SdMapUpperPlannerNode::UpperSolveResult SdMapUpperPlannerNode::solveUpperMiqp(
       hessian[column][row] = symmetric;
     }
     hessian[row][row] += miqp_diagonal_regularization_;
+    if (row >= input_count) {
+      // The selector constraint below requires at least one corridor.  Since
+      // selecting another corridor can only add restrictions, this positive
+      // cost makes the optimum use one selector without a one-hot equality.
+      hessian[row][row] += miqp_binary_diagonal_regularization_;
+    }
   }
 
-  const int lane_rows = 2 * binary_count;
+  const int lane_rows = 2 * binary_count + horizon;
   const int input_rows = 4 * horizon;
   Matrix<double> inequality(0.0, lane_rows + input_rows, variable_count);
   Vector<double> inequality_bound(0.0, lane_rows + input_rows);
   int row = 0;
 
   for (int k = 1; k <= horizon; ++k) {
-    const double heading = preview.constraint_psirk[static_cast<std::size_t>(k)];
+    const double heading = preview.psirk[static_cast<std::size_t>(k)];
     const Eigen::Vector2d axis(-std::sin(heading), std::cos(heading));
     const Eigen::Vector2d reference = preview.prk[static_cast<std::size_t>(k)];
     const double reference_projection = axis.dot(reference);
@@ -1648,9 +1858,21 @@ SdMapUpperPlannerNode::UpperSolveResult SdMapUpperPlannerNode::solveUpperMiqp(
       inequality[row][binary_index] = miqp_big_m_;
       inequality_bound[row++] = miqp_big_m_ - lower + reference_projection;
     }
+
+    // DAQP's branch-and-bound becomes singular when the one-hot selector is
+    // encoded as an immutable equality and a binary bound is fixed at a node.
+    // An at-least-one inequality plus the positive binary cost is equivalent
+    // for this disjunctive corridor formulation and keeps BnB well-posed.
+    for (int candidate = 0;
+      candidate < preview.Nck[static_cast<std::size_t>(k)]; ++candidate)
+    {
+      inequality[row][input_count +
+        binary_offsets[static_cast<std::size_t>(k - 1)] + candidate] = -1.0;
+    }
+    inequality_bound[row++] = -1.0;
   }
 
-  const double speed = std::max(0.0, current_speed_mps);
+  const double speed = std::max(0.0, planning_speed_mps);
 
   auto finalize_input_row = [&](int current_row, double base_bound) {
       double adjusted = base_bound;
@@ -1689,57 +1911,279 @@ SdMapUpperPlannerNode::UpperSolveResult SdMapUpperPlannerNode::solveUpperMiqp(
     return result;
   }
 
-  Matrix<double> equality(0.0, horizon, variable_count);
-  Vector<double> equality_bound(1.0, horizon);
+  Matrix<double> equality(0.0, 0, variable_count);
+  Vector<double> equality_bound(0.0, 0);
+
+  constexpr std::size_t kMaxDirectCorridorCombinations = 256U;
+  std::size_t combination_count = 1U;
+  bool combination_count_supported = true;
   for (int k = 1; k <= horizon; ++k) {
-    for (int candidate = 0;
-      candidate < preview.Nck[static_cast<std::size_t>(k)]; ++candidate)
+    const std::size_t candidates = static_cast<std::size_t>(
+      preview.Nck[static_cast<std::size_t>(k)]);
+    if (candidates == 0U ||
+      combination_count > kMaxDirectCorridorCombinations / candidates)
     {
-      equality[k - 1][input_count +
-        binary_offsets[static_cast<std::size_t>(k - 1)] + candidate] = 1.0;
+      combination_count_supported = false;
+      break;
     }
+    combination_count *= candidates;
   }
 
-  QuadraticProblem solver(false);
-  Variable * variable = solver.vector_variable(variable_count, "upper_decision");
-  if (!solver.add_variable(variable)) {
-    result.status = "DAQP add_variable failed";
-    return result;
-  }
-  const Var decision = solver.get_variable(variable);
-  const Var main_variable = solver.get_main_variable();
-
-  Constraint inequality_constraint(main_variable);
-  inequality_constraint.set_constraint_variable(decision, inequality);
-  inequality_constraint.set_known_term(inequality_bound);
-  solver.add_leq_constraint(inequality_constraint);
-
-  Constraint equality_constraint(main_variable);
-  equality_constraint.set_constraint_variable(decision, equality);
-  equality_constraint.set_known_term(equality_bound);
-  solver.add_equality_constraint(equality_constraint);
-
-  solver.set_Q_matrix(hessian);
-  solver.set_q0_vector(linear_term);
-  for (int index = input_count; index < variable_count; ++index) {
-    solver.set_binary_var(decision[index]);
-  }
-
+  // The usual short-horizon problem has only a handful of corridor
+  // combinations (and exactly one when branch_step == -1). Solve those
+  // combinations as ordinary continuous QPs. This avoids sending forced
+  // selector variables through DAQP branch-and-bound and also makes an
+  // outright MIQP "infeasible" result unable to bypass the direct solver.
   Vector<double> argument;
-  const double objective = solver.solve_problem(argument);
-  result.solve_time_ms = std::chrono::duration<double, std::milli>(
-    std::chrono::steady_clock::now() - started).count();
-  if (!std::isfinite(objective) ||
-    argument.size() < static_cast<unsigned int>(variable_count))
-  {
-    result.status = "DAQP MIQP infeasible";
-    return result;
-  }
-  for (int index = 0; index < variable_count; ++index) {
-    if (!std::isfinite(argument[index])) {
-      result.status = "DAQP MIQP returned a non-finite decision";
+  double objective = std::numeric_limits<double>::infinity();
+  miqp_solution_validation::FeasibilityReport feasibility;
+
+  if (!combination_count_supported) {
+    QuadraticProblem solver(false);
+    Variable * variable = solver.vector_variable(variable_count, "upper_decision");
+    if (!solver.add_variable(variable)) {
+      result.status = "DAQP add_variable failed";
       return result;
     }
+    const Var decision = solver.get_variable(variable);
+    const Var main_variable = solver.get_main_variable();
+
+    Constraint inequality_constraint(main_variable);
+    inequality_constraint.set_constraint_variable(decision, inequality);
+    inequality_constraint.set_known_term(inequality_bound);
+    if (!solver.add_leq_constraint(inequality_constraint)) {
+      result.status = "DAQP failed to add inequality constraints";
+      return result;
+    }
+
+    if (!solver.set_Q_matrix(hessian) || !solver.set_q0_vector(linear_term)) {
+      result.status = "DAQP failed to set the objective";
+      return result;
+    }
+    for (int index = input_count; index < variable_count; ++index) {
+      solver.set_binary_var(decision[index]);
+    }
+
+    objective = timed_solve(solver, argument);
+    if (!std::isfinite(objective) ||
+      argument.size() < static_cast<unsigned int>(variable_count))
+    {
+      result.solve_time_ms = std::chrono::duration<double, std::milli>(
+        std::chrono::steady_clock::now() - started).count();
+      result.status = "DAQP MIQP infeasible (direct corridor limit exceeded)";
+      return result;
+    }
+    for (int index = 0; index < variable_count; ++index) {
+      if (!std::isfinite(argument[index])) {
+        result.status = "DAQP MIQP returned a non-finite decision";
+        return result;
+      }
+    }
+
+    feasibility = miqp_solution_validation::evaluate(
+      inequality, inequality_bound, equality, equality_bound, argument,
+      static_cast<std::size_t>(input_count), miqp_feasibility_tolerance_);
+  }
+
+  // DAQP can return integral selectors while the continuous vector retained
+  // from branch-and-bound belongs to a stale relaxation.  Re-solving one QP
+  // with those selectors fixed recovers the continuous solution for the
+  // chosen corridor combination and provides an independently checked result.
+  if (!combination_count_supported && !feasibility.valid && feasibility.finite &&
+    feasibility.max_binary_violation <= miqp_feasibility_tolerance_)
+  {
+    QuadraticProblem polishing_solver(false);
+    Variable * polishing_variable =
+      polishing_solver.vector_variable(variable_count, "upper_decision_polished");
+    if (polishing_solver.add_variable(polishing_variable)) {
+      const Var polishing_decision = polishing_solver.get_variable(polishing_variable);
+      const Var polishing_main = polishing_solver.get_main_variable();
+
+      Constraint polishing_inequality(polishing_main);
+      polishing_inequality.set_constraint_variable(polishing_decision, inequality);
+      polishing_inequality.set_known_term(inequality_bound);
+      const bool constraint_added =
+        polishing_solver.add_leq_constraint(polishing_inequality);
+      const bool objective_added = constraint_added &&
+        polishing_solver.set_Q_matrix(hessian) &&
+        polishing_solver.set_q0_vector(linear_term);
+
+      if (objective_added) {
+        for (int index = input_count; index < variable_count; ++index) {
+          const double fixed_value = argument[index] >= 0.5 ? 1.0 : 0.0;
+          polishing_solver.set_var_bounds(index, fixed_value, fixed_value);
+        }
+
+        Vector<double> polished_argument;
+        const double polished_objective =
+          timed_solve(polishing_solver, polished_argument);
+        if (std::isfinite(polished_objective) &&
+          polished_argument.size() >= static_cast<unsigned int>(variable_count))
+        {
+          const auto polished_feasibility = miqp_solution_validation::evaluate(
+            inequality, inequality_bound, equality, equality_bound, polished_argument,
+            static_cast<std::size_t>(input_count), miqp_feasibility_tolerance_);
+          if (polished_feasibility.valid) {
+            argument = polished_argument;
+            objective = polished_objective;
+            feasibility = polished_feasibility;
+            result.polished = true;
+          }
+        }
+      }
+    }
+  }
+
+  // Enumerating the supported Cartesian product removes both the selector
+  // variables and Big-M=100 from every subproblem. Each returned solution is
+  // independently checked before it is reconstructed in the full model.
+  if (combination_count_supported) {
+      Matrix<double> direct_hessian(0.0, input_count, input_count);
+      Vector<double> direct_linear(0.0, input_count);
+      for (int r = 0; r < input_count; ++r) {
+        direct_linear[r] = linear_term[r];
+        for (int c = 0; c < input_count; ++c) {
+          direct_hessian[r][c] = hessian[r][c];
+        }
+      }
+
+      const int direct_lane_rows = 2 * horizon;
+      const int direct_row_count = direct_lane_rows + input_rows;
+      Matrix<double> direct_equality(0.0, 0, input_count);
+      Vector<double> direct_equality_bound(0.0, 0);
+      Vector<double> best_direct_argument;
+      std::vector<int> best_candidates(static_cast<std::size_t>(horizon + 1), -1);
+      double best_direct_objective = std::numeric_limits<double>::infinity();
+
+      for (std::size_t combination = 0U;
+        combination < combination_count; ++combination)
+      {
+        std::size_t code = combination;
+        std::vector<int> selected(static_cast<std::size_t>(horizon + 1), -1);
+        for (int k = 1; k <= horizon; ++k) {
+          const int candidates = preview.Nck[static_cast<std::size_t>(k)];
+          selected[static_cast<std::size_t>(k)] =
+            static_cast<int>(code % static_cast<std::size_t>(candidates));
+          code /= static_cast<std::size_t>(candidates);
+        }
+
+        Matrix<double> direct_inequality(0.0, direct_row_count, input_count);
+        Vector<double> direct_bound(0.0, direct_row_count);
+        int direct_row = 0;
+        for (int k = 1; k <= horizon; ++k) {
+          const std::size_t step = static_cast<std::size_t>(k);
+          const std::size_t candidate = static_cast<std::size_t>(selected[step]);
+          const double heading = preview.psirk[step];
+          const Eigen::Vector2d axis(-std::sin(heading), std::cos(heading));
+          const double reference_projection = axis.dot(preview.prk[step]);
+          double lower = axis.dot(preview.pmk[step][candidate]);
+          double upper = axis.dot(preview.pMk[step][candidate]);
+          if (lower > upper) {std::swap(lower, upper);}
+
+          for (int column = 0; column < input_count; ++column) {
+            const double projection =
+              axis.x() * G[2 * k][column] + axis.y() * G[2 * k + 1][column];
+            direct_inequality[direct_row][column] = projection;
+            direct_inequality[direct_row + 1][column] = -projection;
+          }
+          direct_bound[direct_row++] = upper - reference_projection;
+          direct_bound[direct_row++] = -lower + reference_projection;
+        }
+        for (int input_row = 0; input_row < input_rows; ++input_row) {
+          for (int column = 0; column < input_count; ++column) {
+            direct_inequality[direct_row][column] =
+              inequality[lane_rows + input_row][column];
+          }
+          direct_bound[direct_row++] = inequality_bound[lane_rows + input_row];
+        }
+
+        QuadraticProblem direct_solver(false);
+        Variable * direct_variable =
+          direct_solver.vector_variable(input_count, "upper_direct_corridor");
+        if (!direct_solver.add_variable(direct_variable)) {continue;}
+        const Var direct_decision = direct_solver.get_variable(direct_variable);
+        const Var direct_main = direct_solver.get_main_variable();
+        Constraint direct_constraint(direct_main);
+        direct_constraint.set_constraint_variable(direct_decision, direct_inequality);
+        direct_constraint.set_known_term(direct_bound);
+        if (!direct_solver.add_leq_constraint(direct_constraint) ||
+          !direct_solver.set_Q_matrix(direct_hessian) ||
+          !direct_solver.set_q0_vector(direct_linear))
+        {
+          continue;
+        }
+
+        Vector<double> direct_argument;
+        const double direct_objective = timed_solve(direct_solver, direct_argument);
+        ++result.direct_corridor_combinations;
+        if (!std::isfinite(direct_objective) ||
+          direct_argument.size() < static_cast<unsigned int>(input_count))
+        {
+          continue;
+        }
+        const auto direct_feasibility = miqp_solution_validation::evaluate(
+          direct_inequality, direct_bound, direct_equality, direct_equality_bound,
+          direct_argument, static_cast<std::size_t>(input_count),
+          miqp_feasibility_tolerance_);
+        if (!direct_feasibility.valid || direct_objective >= best_direct_objective) {
+          continue;
+        }
+        best_direct_argument = direct_argument;
+        best_direct_objective = direct_objective;
+        best_candidates = selected;
+      }
+
+      if (std::isfinite(best_direct_objective) &&
+        best_direct_argument.size() >= static_cast<unsigned int>(input_count))
+      {
+        Vector<double> reconstructed_argument(0.0, variable_count);
+        for (int index = 0; index < input_count; ++index) {
+          reconstructed_argument[index] = best_direct_argument[index];
+        }
+        for (int k = 1; k <= horizon; ++k) {
+          const int selected = best_candidates[static_cast<std::size_t>(k)];
+          reconstructed_argument[input_count +
+            binary_offsets[static_cast<std::size_t>(k - 1)] + selected] = 1.0;
+        }
+
+        const auto reconstructed_feasibility = miqp_solution_validation::evaluate(
+          inequality, inequality_bound, equality, equality_bound,
+          reconstructed_argument, static_cast<std::size_t>(input_count),
+          miqp_feasibility_tolerance_);
+        if (reconstructed_feasibility.valid) {
+          argument = reconstructed_argument;
+          feasibility = reconstructed_feasibility;
+          objective = 0.0;
+          for (int r = 0; r < variable_count; ++r) {
+            objective += linear_term[r] * argument[r];
+            for (int c = 0; c < variable_count; ++c) {
+              objective += 0.5 * argument[r] * hessian[r][c] * argument[c];
+            }
+          }
+          result.polished = true;
+        }
+      }
+  }
+
+  result.solve_time_ms = std::chrono::duration<double, std::milli>(
+    std::chrono::steady_clock::now() - started).count();
+  if (!feasibility.valid) {
+    std::ostringstream stream;
+    if (combination_count_supported) {
+      stream << "DAQP direct corridor QP infeasible: tried=" <<
+        result.direct_corridor_combinations;
+    } else {
+      stream << "DAQP MIQP rejected by post-solve feasibility check: ineq=" <<
+        feasibility.max_inequality_violation << " row=" <<
+        feasibility.max_inequality_row << " lhs=" <<
+        feasibility.max_inequality_lhs << " ub=" <<
+        feasibility.max_inequality_bound << " eq=" <<
+        feasibility.max_equality_violation << " binary=" <<
+        feasibility.max_binary_violation << " direct_qp=" <<
+        result.direct_corridor_combinations;
+    }
+    result.status = stream.str();
+    return result;
   }
 
   result.correction_input.resize(static_cast<std::size_t>(input_count), 0.0);
@@ -1761,7 +2205,8 @@ SdMapUpperPlannerNode::UpperSolveResult SdMapUpperPlannerNode::solveUpperMiqp(
       error.x() += G[2 * k][column] * argument[column];
       error.y() += G[2 * k + 1][column] * argument[column];
     }
-    position_error[static_cast<std::size_t>(k)] = error;
+    position_error[static_cast<std::size_t>(k)] =
+      error + position_cost_offset[static_cast<std::size_t>(k)];
     result.predicted_body[static_cast<std::size_t>(k)] =
       preview.prk[static_cast<std::size_t>(k)] + error;
     if (!finitePoint(result.predicted_body[static_cast<std::size_t>(k)])) {
@@ -1950,6 +2395,152 @@ void SdMapUpperPlannerNode::publishIntervalDebug(
     }
   }
   interval_debug_pub_->publish(message);
+
+  // Keep the existing seven-column message unchanged for current consumers.
+  // Main9 details cover ALL requested stages, including the unusable suffix.
+  std_msgs::msg::Float64MultiArray details;
+  for (std::size_t step = 0; step < preview.interval_info.size(); ++step) {
+    for (std::size_t candidate = 0; candidate < preview.interval_info[step].size(); ++candidate) {
+      const auto & info = preview.interval_info[step][candidate];
+      const auto & observation = info.observation;
+      const std::vector<double> row{
+        static_cast<double>(step), static_cast<double>(candidate), observation.length,
+        info.processed_length, info.treatment.centering_on ? 1.0 : 0.0,
+        observation.start_boundary_observed ? 1.0 : 0.0,
+        observation.end_boundary_observed ? 1.0 : 0.0,
+        (!observation.nominal_fallback &&
+        (!observation.start_boundary_observed || !observation.end_boundary_observed)) ? 1.0 : 0.0,
+        observation.nominal_fallback ? 1.0 : 0.0,
+        observation.reference_inside ? 1.0 : 0.0,
+        preview.interval_update.state.reference_length, info.treatment.threshold};
+      details.data.insert(details.data.end(), row.begin(), row.end());
+    }
+  }
+  details.layout.dim.resize(2);
+  details.layout.dim[0].label = "intervals";
+  details.layout.dim[0].size = static_cast<uint32_t>(details.data.size() / 12U);
+  details.layout.dim[0].stride = static_cast<uint32_t>(details.data.size());
+  details.layout.dim[1].label =
+    "k,candidate,raw,processed,on,start_observed,end_observed,clipped,fallback,inside,B,threshold";
+  details.layout.dim[1].size = 12U;
+  details.layout.dim[1].stride = 12U;
+  interval_info_pub_->publish(details);
+
+  const auto & update = preview.interval_update;
+  const auto & history = update.state.confirmation_lengths;
+  const double nan = std::numeric_limits<double>::quiet_NaN();
+  std_msgs::msg::Float64MultiArray state_message;
+  state_message.data = {
+    now().seconds(), update.previous_reference_length, update.state.reference_length,
+    interval_centering::hasReference(update.state) ?
+    interval_centering_settings_.relative_length_factor * update.state.reference_length : nan,
+    update.candidate_length, static_cast<double>(update.candidate_first_step),
+    static_cast<double>(history.size()),
+    history.empty() ? nan : *std::min_element(history.begin(), history.end()),
+    history.empty() ? nan : *std::max_element(history.begin(), history.end()),
+    update.update_target, static_cast<double>(update.reason),
+    update.multiple_observed_intervals ? 1.0 : 0.0};
+  state_message.layout.dim.resize(1);
+  state_message.layout.dim[0].label =
+    "stamp,B_before,B,threshold,candidate,pair_start,confirm_count,min,max,target,reason,multiple";
+  state_message.layout.dim[0].size = static_cast<uint32_t>(state_message.data.size());
+  state_message.layout.dim[0].stride = static_cast<uint32_t>(state_message.data.size());
+  interval_state_pub_->publish(state_message);
+}
+
+void SdMapUpperPlannerNode::publishBranchEvent(
+  double started, std::uint64_t sequence, std::uint64_t revision,
+  const PoseSnapshot & pose, int wp0, int wp1,
+  const PreviewConstraintData * preview, const UpperSolveResult * solve,
+  const std::string & reason, const std::string & status, bool published)
+{
+  const double emitted = now().seconds();
+  const double c = std::cos(pose.yaw_rad), s = std::sin(pose.yaw_rad);
+  auto world = [&](const Eigen::Vector2d & p) -> Eigen::Vector2d {
+      return pose.position + Eigen::Vector2d(c*p.x()-s*p.y(),s*p.x()+c*p.y());
+    };
+  std::ostringstream out;
+  auto point = [&](const Eigen::Vector2d & p) {
+      out << '[' << branchJsonNumber(p.x()) << ',' << branchJsonNumber(p.y()) << ']';
+    };
+  auto points = [&](const std::vector<Eigen::Vector2d> & values, bool body) {
+      out << '['; bool first = true;
+      for (const auto & p : values) {
+        if (!first) {out << ',';} first = false; point(body ? world(p) : p);
+      }
+      out << ']';
+    };
+  int branch_step = -1, max_candidates = 0;
+  if (preview) {
+    for (std::size_t k = 1; k < preview->Nck.size(); ++k) {
+      max_candidates = std::max(max_candidates, preview->Nck[k]);
+      if (branch_step < 0 && preview->Nck[k] >= 2) {branch_step = static_cast<int>(k);}
+    }
+  }
+  const bool solver_called = solve && std::isfinite(solve->solver_only_time_ms);
+  const bool branch_failure = branch_step >= 1 && solve && !solve->valid &&
+    (reason == "solver_rejected" || reason == "solver_setup_failed");
+  const bool retained = !published && diagnostic_last_revision_ == revision &&
+    !diagnostic_last_path_.empty();
+  out << "{\"schema_version\":1,\"t_start\":" << branchJsonNumber(started)
+      << ",\"t_emit\":" << branchJsonNumber(emitted)
+      << ",\"plan_seq\":" << sequence << ",\"path_revision\":" << revision
+      << ",\"frame_id\":" << branchJsonString(pose.frame_id)
+      << ",\"x\":" << branchJsonNumber(pose.position.x())
+      << ",\"y\":" << branchJsonNumber(pose.position.y())
+      << ",\"yaw_rad\":" << branchJsonNumber(pose.yaw_rad)
+      << ",\"wp0\":" << wp0 << ",\"wp1\":" << wp1
+      << ",\"horizon\":" << (preview ? preview->N_pred : 0)
+      << ",\"branch_step\":" << branch_step << ",\"max_candidates\":" << max_candidates
+      << ",\"branch_failure\":" << (branch_failure ? "true" : "false")
+      << ",\"valid_plan\":" << (published ? "true" : "false")
+      << ",\"solver_valid\":" << (solve && solve->valid ? "true" : "false")
+      << ",\"solver_called\":" << (solver_called ? "true" : "false")
+      << ",\"solver_time_ms\":" << branchJsonNumber(solve ? solve->solver_only_time_ms : NAN)
+      << ",\"reason\":" << branchJsonString(reason)
+      << ",\"status\":" << branchJsonString(status)
+      << ",\"retained_previous_path\":" << (retained ? "true" : "false")
+      << ",\"retained_path_age_sec\":" << branchJsonNumber(retained ? emitted-diagnostic_last_path_stamp_ : NAN)
+      << ",\"selected_corridors\":[";
+  if (solve) {
+    for (std::size_t k = 0; k < solve->selected_corridors.size(); ++k) {
+      if (k) {out << ',';} out << solve->selected_corridors[k];
+    }
+  }
+  out << "],\"candidate_counts\":[";
+  if (preview) {
+    for (std::size_t k = 0; k < preview->Nck.size(); ++k) {
+      if (k) {out << ',';} out << preview->Nck[k];
+    }
+  }
+  out << "],\"intervals_world\":[";
+  bool first = true;
+  if (preview) {
+    for (std::size_t k = 1; k < preview->pmk.size(); ++k) {
+      for (std::size_t j = 0; j < preview->pmk[k].size(); ++j) {
+        if (!first) {out << ',';} first = false;
+        const Eigen::Vector2d a = world(preview->pmk[k][j]), b = world(preview->pMk[k][j]);
+        out << '[' << k << ',' << j << ',' << branchJsonNumber(a.x()) << ','
+            << branchJsonNumber(a.y()) << ',' << branchJsonNumber(b.x()) << ','
+            << branchJsonNumber(b.y()) << ',' << branchJsonNumber(preview->raw_lengths[k][j])
+            << ',' << branchJsonNumber(preview->processed_lengths[k][j]) << ','
+            << preview->source_modes[k][j] << ',' << preview->fallback_reason_codes[k] << ']';
+      }
+    }
+  }
+  out << "],\"preview_world\":";
+  points(preview ? preview->prk : std::vector<Eigen::Vector2d>{}, true);
+  out << ",\"planned_world\":";
+  points(solve && solve->valid ? solve->predicted_body : std::vector<Eigen::Vector2d>{}, true);
+  out << ",\"retained_world\":";
+  points(retained ? diagnostic_last_path_ : std::vector<Eigen::Vector2d>{}, false);
+  out << '}';
+  std_msgs::msg::String msg; msg.data = out.str(); branch_event_pub_->publish(msg);
+  if (published && solve) {
+    diagnostic_last_path_.clear();
+    for (const auto & p : solve->predicted_body) {diagnostic_last_path_.push_back(world(p));}
+    diagnostic_last_revision_ = revision; diagnostic_last_path_stamp_ = emitted;
+  }
 }
 
 void SdMapUpperPlannerNode::publishUpperTrace(
@@ -2013,6 +2604,8 @@ void SdMapUpperPlannerNode::publishUpperTrace(
 
 void SdMapUpperPlannerNode::plannerLoop()
 {
+  const auto cycle_started = std::chrono::steady_clock::now();
+  const double cycle_stamp = now().seconds();
   PoseSnapshot pose;
   {
     std::lock_guard<std::mutex> lock(pose_mtx_);
@@ -2049,16 +2642,11 @@ void SdMapUpperPlannerNode::plannerLoop()
     grid_available = false;
   }
   if (require_grid_map_ && !grid_available) {
+    // An observation gap interrupts confirmation, but never discards B.
+    interval_centering_state_.confirmation_lengths.clear();
     RCLCPP_WARN_THROTTLE(
       get_logger(), *get_clock(), 1000,
-      "planner grid is missing, invalid, or stale");
-    // Clear the upper-to-lower reference immediately. The lower controller
-    // treats a path with fewer than two points as invalid and commands its
-    // bounded neutral fallback instead of tracking a path produced from an
-    // old body-frame grid.
-    const std::string invalid_path_frame =
-      pose.frame_id.empty() ? path_frame_id_ : pose.frame_id;
-    publishPath(dense_path_pub_, {}, invalid_path_frame);
+      "planner grid is missing, invalid, or stale; retaining the last published path");
     return;
   }
 
@@ -2111,10 +2699,23 @@ void SdMapUpperPlannerNode::plannerLoop()
   }
   publishGoalReached(false);
 
-  const Eigen::Vector2d velocity = pose.speed_mps *
+  // main8.m uses vr=3.0 as a fixed upper-model speed. Keeping delta_s and G
+  // independent of measured SIH speed also prevents N_pred from oscillating
+  // as the vehicle accelerates through BEV extent thresholds.
+  const double planning_speed_mps = target_speed_mps_;
+
+  // find_wp.m uses the commanded moving direction even at the initialized
+  // route pose. Fall back to the nominal speed so a stationary first odometry
+  // sample can still expose [wp1, wp2] using the measured yaw direction.
+  const double waypoint_progress_speed = pose.speed_mps > 1e-9 ?
+    pose.speed_mps : std::max(0.0, target_speed_mps_);
+  const Eigen::Vector2d velocity = waypoint_progress_speed *
     Eigen::Vector2d(std::cos(pose.yaw_rad), std::sin(pose.yaw_rad));
-  const auto pair = findWaypointPair(
-    global_path, wp0_idx, pose.position, velocity, waypoint_switch_eps_m_);
+  const int previous_wp0_idx = wp0_idx;
+  const int previous_wp1_idx = wp1_idx;
+  const auto pair = egocentric_planner_geometry::findWaypointPair(
+    global_path, wp0_idx, pose.position, velocity, waypoint_switch_eps_m_,
+    waypoint_switch_distance_m_);
   wp0_idx = pair[0];
   wp1_idx = pair[1];
   if (wp1_idx <= wp0_idx || wp1_idx >= static_cast<int>(global_path.size())) {
@@ -2125,12 +2726,23 @@ void SdMapUpperPlannerNode::plannerLoop()
     return;
   }
 
+  bool committed_pair_change = false;
   {
     std::lock_guard<std::mutex> lock(path_mtx_);
     if (planning_revision_ == planning_revision) {
       wp0_index_ = wp0_idx;
       wp1_index_ = wp1_idx;
+      committed_pair_change =
+        wp0_idx != previous_wp0_idx || wp1_idx != previous_wp1_idx;
     }
+  }
+  if (committed_pair_change) {
+    // main8.m carries the successful upper optimum continuously across the
+    // waypoint-pair boundary. It is re-expressed with the current measured
+    // yaw below, so the lower reference does not jump back to a fresh seed.
+    RCLCPP_INFO(
+      get_logger(), "waypoint pair advanced: [%d,%d] -> [%d,%d]; previous reference retained",
+      previous_wp0_idx, previous_wp1_idx, wp0_idx, wp1_idx);
   }
 
   const bool has_previous_waypoint = wp0_idx > 0;
@@ -2151,8 +2763,9 @@ void SdMapUpperPlannerNode::plannerLoop()
   const Eigen::Vector2d wp_prev_body =
     rotation_body_world * (wp_prev_world - pose.position);
 
-  const int requested_horizon = computeRequestedPreviewSteps(
-    grid_available ? &grid : nullptr);
+  int requested_horizon = computeRequestedPreviewSteps(
+    grid_available ? &grid : nullptr, planning_speed_mps);
+  const int extent_limited_horizon = requested_horizon;
   if (requested_horizon <= 0) {
     RCLCPP_WARN_THROTTLE(
       get_logger(), *get_clock(), 1000,
@@ -2161,36 +2774,69 @@ void SdMapUpperPlannerNode::plannerLoop()
   }
 
   std::vector<Eigen::Vector2d> previous_reference_body;
-  std::vector<double> previous_reference_heading_rad;
   {
     std::lock_guard<std::mutex> lock(previous_solution_mtx_);
     if (previous_solution_valid_) {
-      const std::size_t expected_size =
+      const bool same_revision = previous_solution_revision_ == planning_revision;
+      if (same_revision && previous_optimal_path_world_.size() >= 3U) {
+        // Preserve MATLAB's shortened horizon unless full-horizon recovery is
+        // enabled. On growth, the size check below discards the shorter seed
+        // and buildPreviewReference constructs a new one from the current pose.
+        requested_horizon = egocentric_planner_geometry::retainMatlabPreviewHorizon(
+          requested_horizon, previous_optimal_path_world_.size(),
+          preview_restore_full_horizon_);
+      }
+      bool compatible = same_revision &&
+        previous_optimal_path_world_.size() ==
         static_cast<std::size_t>(requested_horizon + 1);
-      bool compatible = previous_solution_revision_ == planning_revision &&
-        previous_reference_body_.size() == expected_size &&
-        previous_reference_heading_rad_.size() == expected_size;
-      for (const auto & point : previous_reference_body_) {
+      for (const auto & point : previous_optimal_path_world_) {
         compatible = compatible && finitePoint(point);
       }
-      for (const double heading : previous_reference_heading_rad_) {
-        compatible = compatible && std::isfinite(heading);
-      }
       if (compatible) {
-        previous_reference_body = previous_reference_body_;
-        previous_reference_heading_rad = previous_reference_heading_rad_;
-      } else {
-        previous_reference_body_.clear();
-        previous_reference_heading_rad_.clear();
+        compatible = egocentric_planner_geometry::buildMeasuredFrameShiftedPrefix(
+          previous_optimal_path_world_, pose.yaw_rad, requested_horizon,
+          previous_reference_body);
+      }
+      if (!compatible) {
+        previous_optimal_path_world_.clear();
         previous_solution_valid_ = false;
+      } else {
+        RCLCPP_DEBUG(
+          get_logger(), "previous upper optimum reprojected with measured yaw %.6f rad",
+          pose.yaw_rad);
       }
     }
   }
 
+  // Emit one sample per planning attempt, including early failures. Stamp the
+  // start so a solve begun before a route transition cannot enter the next log.
+  struct TimingRecord
+  {
+    std::chrono::steady_clock::time_point started;
+    double stamp;
+    rclcpp::Publisher<std_msgs::msg::Float64MultiArray>::SharedPtr publisher;
+    std::uint64_t sequence;
+    double solver_ms{std::numeric_limits<double>::quiet_NaN()};
+    bool valid{false};
+    ~TimingRecord()
+    {
+      std_msgs::msg::Float64MultiArray msg;
+      const double plan_ms = std::chrono::duration<double, std::milli>(
+        std::chrono::steady_clock::now() - started).count();
+      // start ROS stamp, solver sum ms, planner cycle ms, valid plan,
+      // attempt sequence, whether any solver was called.
+      msg.data = {stamp, solver_ms, plan_ms, valid ? 1.0 : 0.0,
+        static_cast<double>(sequence), std::isfinite(solver_ms) ? 1.0 : 0.0};
+      publisher->publish(msg);
+    }
+  } timing{cycle_started, cycle_stamp, upper_timing_pub_, ++timing_attempt_seq_};
+
   const PreviewReferenceData reference = buildPreviewReference(
-    wp_prev_body, wp0_body, wp1_body, has_previous_waypoint, requested_horizon,
-    previous_reference_body, previous_reference_heading_rad);
+    wp_prev_body, wp0_body, wp1_body, has_previous_waypoint, planning_speed_mps,
+    requested_horizon, previous_reference_body);
   if (!reference.valid) {
+    publishBranchEvent(cycle_stamp, timing.sequence, planning_revision, pose, wp0_idx, wp1_idx,
+      nullptr, nullptr, "preview_failed", reference.status, false);
     RCLCPP_WARN_THROTTLE(
       get_logger(), *get_clock(), 1000,
       "failed to build V8 preview reference: %s", reference.status.c_str());
@@ -2204,28 +2850,57 @@ void SdMapUpperPlannerNode::plannerLoop()
   }
   publishPath(preview_debug_pub_, preview_world, frame_id);
 
-  const PreviewConstraintData constraints = extractPreviewIntervals(
-    reference, grid_available ? &grid : nullptr);
+  PreviewConstraintData constraints = extractPreviewIntervals(
+    reference, grid_available ? &grid : nullptr, interval_centering_state_);
+  interval_centering_state_ = constraints.interval_update.state;
+  if (constraints.N_pred != upper_preview_steps_) {
+    RCLCPP_WARN_THROTTLE(
+      get_logger(), *get_clock(), 2000,
+      "horizon_diag configured=%d extent_limit=%d requested=%d usable=%d "
+      "reserve=%d restore=%d step_m=%.3f previous=%d",
+      upper_preview_steps_, extent_limited_horizon, requested_horizon, constraints.N_pred,
+      preview_grid_reserve_steps_, preview_restore_full_horizon_ ? 1 : 0,
+      planning_speed_mps * upper_prediction_dt_sec_, reference.used_previous_solution ? 1 : 0);
+  }
+  applyTerminalPositionTargets(
+    constraints, wp0_body, wp1_body, planning_speed_mps * upper_prediction_dt_sec_);
   publishIntervalDebug(constraints);
   if (constraints.N_pred <= 0) {
     UpperSolveResult failed;
     failed.status = "empty valid interval prefix";
-    publishPath(dense_path_pub_, {}, frame_id);
+    publishBranchEvent(cycle_stamp, timing.sequence, planning_revision, pose, wp0_idx, wp1_idx,
+      &constraints, &failed, "no_candidate", failed.status, false);
+    RCLCPP_WARN_THROTTLE(
+      get_logger(), *get_clock(), 1000,
+      "empty valid interval prefix; retaining the last published path");
     publishUpperTrace(pose, wp0_idx, wp1_idx, constraints, failed);
     return;
   }
 
   RCLCPP_INFO(
     get_logger(),
-    "road turn wp=[%s%d %d] psi_in=%+.2fdeg psi_out=%+.2fdeg delta=%+.2fdeg N=%d",
+    "road turn wp=[%s%d %d] psi_in=%+.2fdeg psi_out=%+.2fdeg "
+    "delta=%+.2fdeg N=%d plan_v=%.2fm/s",
     has_previous_waypoint ? "prev " : "ego ", wp0_idx, wp1_idx,
     radToDeg(constraints.road_segment_heading_rad[0]),
     radToDeg(constraints.road_segment_heading_rad[1]),
-    radToDeg(constraints.delta_psi_road_rad), constraints.N_pred);
+    radToDeg(constraints.delta_psi_road_rad), constraints.N_pred,
+    planning_speed_mps);
 
-  const UpperSolveResult solve = solveUpperMiqp(constraints, pose.speed_mps);
+  const UpperSolveResult solve = solveUpperMiqp(constraints, planning_speed_mps);
+  timing.solver_ms = solve.solver_only_time_ms;
+  // Publish actual solver work only, including unsuccessful solves. No sample
+  // is emitted when planning returns before invoking a solver.
+  if (std::isfinite(solve.solver_only_time_ms)) {
+    std_msgs::msg::Float64 solver_time;
+    solver_time.data = solve.solver_only_time_ms;
+    upper_solver_time_pub_->publish(solver_time);
+  }
   publishUpperTrace(pose, wp0_idx, wp1_idx, constraints, solve);
   if (!solve.valid) {
+    publishBranchEvent(cycle_stamp, timing.sequence, planning_revision, pose, wp0_idx, wp1_idx,
+      &constraints, &solve, std::isfinite(solve.solver_only_time_ms) ?
+      "solver_rejected" : "solver_setup_failed", solve.status, false);
     RCLCPP_WARN_THROTTLE(
       get_logger(), *get_clock(), 1000,
       "egocentric MIQP failed: status=%s solve_ms=%.3f; retaining last published path",
@@ -2238,42 +2913,43 @@ void SdMapUpperPlannerNode::plannerLoop()
   for (const auto & point : solve.predicted_body) {
     sparse_world.push_back(pose.position + rotation_world_body * point);
   }
-  const auto dense_world = densifyPath(sparse_world, pose.speed_mps);
-  std::vector<Eigen::Vector2d> next_reference_body;
-  std::vector<double> next_reference_heading_rad;
-  const bool next_reference_valid = buildShiftedPreviousReference(
-    solve, next_reference_body, next_reference_heading_rad);
+  const auto dense_world = densifyPath(sparse_world, planning_speed_mps);
 
   {
     std::lock_guard<std::mutex> lock(path_mtx_);
     if (planning_revision_ != planning_revision) {
+      publishBranchEvent(cycle_stamp, timing.sequence, planning_revision, pose, wp0_idx, wp1_idx,
+        &constraints, &solve, "path_changed", "Global path changed during solve", false);
       RCLCPP_WARN(
         get_logger(),
         "discarding MIQP result because the global waypoint path changed during solve");
       return;
     }
     std::lock_guard<std::mutex> previous_lock(previous_solution_mtx_);
-    if (next_reference_valid) {
-      previous_reference_body_ = std::move(next_reference_body);
-      previous_reference_heading_rad_ = std::move(next_reference_heading_rad);
+    if (sparse_world.size() == solve.predicted_body.size() && sparse_world.size() >= 3) {
+      previous_optimal_path_world_ = sparse_world;
       previous_solution_revision_ = planning_revision;
       previous_solution_valid_ = true;
     } else {
-      previous_reference_body_.clear();
-      previous_reference_heading_rad_.clear();
+      previous_optimal_path_world_.clear();
       previous_solution_valid_ = false;
     }
   }
 
   publishPath(sparse_path_pub_, sparse_world, frame_id);
   publishPath(dense_path_pub_, dense_world, frame_id);
+  timing.valid = true;
+  publishBranchEvent(cycle_stamp, timing.sequence, planning_revision, pose, wp0_idx, wp1_idx,
+    &constraints, &solve, "success", solve.status, true);
   RCLCPP_INFO(
     get_logger(),
     "MIQP solved: N=%d branch=%d obj=%.6f Jpos=%.6f Jin=%.6f Jturn=%.6f "
-    "solve_ms=%.3f sparse=%zu dense=%zu",
+    "solve_ms=%.3f polished=%s direct_qp=%d sparse=%zu dense=%zu",
     constraints.N_pred, solve.branch_step, solve.objective,
     solve.position_cost, solve.input_cost, solve.turn_cost,
-    solve.solve_time_ms, sparse_world.size(), dense_world.size());
+    solve.solve_time_ms, solve.polished ? "yes" : "no",
+    solve.direct_corridor_combinations,
+    sparse_world.size(), dense_world.size());
 }
 
 }  // namespace imac_ctrl

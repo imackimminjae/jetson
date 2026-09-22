@@ -19,12 +19,10 @@
   <depend>rclcpp</depend>
   <depend>builtin_interfaces</depend>
   <depend>nav_msgs</depend>
-  <depend>ackermann_msgs</depend>
   <depend>imac_interfaces</depend>
   <depend>geometry_msgs</depend>
   <depend>tf2</depend>
   <depend>ament_index_cpp</depend>
-  <depend>sensor_msgs</depend>   <!-- ★ 추가된 부분 -->
   <depend>std_msgs</depend>
   <depend>std_srvs</depend>
   <depend>mavlink</depend>
@@ -34,6 +32,8 @@
   <exec_depend>launch</exec_depend>
   <exec_depend>launch_ros</exec_depend>
   <exec_depend>rclpy</exec_depend>
+  <exec_depend>rcl_interfaces</exec_depend>
+  <exec_depend>python3-yaml</exec_depend>
   <exec_depend>python3-pymavlink</exec_depend>
 
   <!-- Eigen (CMake 모듈) -->
@@ -44,6 +44,7 @@
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
   <test_depend>ament_cmake_gtest</test_depend>
+  <test_depend>ament_cmake_pytest</test_depend>
 
   <export>
     <build_type>ament_cmake</build_type>

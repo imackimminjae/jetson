@@ -1,0 +1,8 @@
+# Pass this file to the rgb_to_occupancy publisher, after its existing YAML.
+# These overrides keep grid cells in the Vehicle coordinates already produced
+# by the BEV homography. They do not change camera calibration or road detection.
+rgb_to_occupancy:
+  ros__parameters:
+    occupancy_rotate_ccw_90: false
+    occupancy_flip_lr: false
+    occupancy_grid_rviz_standard_values: true

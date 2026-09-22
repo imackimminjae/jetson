@@ -2,6 +2,8 @@ px4_ekf_bridge:
   ros__parameters:
     # Motive/ROS input. This project currently stores planar yaw directly in
     # PoseStamped.pose.orientation.z, so yaw_scalar_z is the default.
+    # Temporary PX4-local-only mode: do not subscribe to the former Motive input.
+    enable_motive_pose_input: false
     motive_pose_topic: /motive/vehicle/pose
     output_odom_topic: /px4/ekf_odom
     # Fused PX4 pose in map ENU. orientation.z is yaw scalar in [-pi, pi].
@@ -83,8 +85,17 @@ px4_odom_map_bridge:
   ros__parameters:
     # /px4/sih/odom stores a wrapped yaw scalar directly in orientation.z.
     input_topic: "/px4/sih/odom"
-    output_topic: "/px4/sih/odom_map"
-    route_name: "scenario1"
+    # Map-aligned Odometry for the upper/lower controllers.
+    output_topic: "/motive/vehicle/odom_map"
+    # Isaac-compatible map-aligned PoseStamped. Yaw is stored directly in
+    # pose.orientation.z in radians and orientation.w is zero.
+    publish_pose_stamped: true
+    output_pose_topic: "/motive/vehicle/pose"
+    # Project convention: map-aligned yaw radians are stored directly in
+    # Odometry.pose.pose.orientation.z; orientation.w is set to zero.
+    output_yaw_is_orientation_z: true
+    # Keep this aligned with the scenario published on /navigation/global_path.
+    route_name: "scenario3"
     position_scale: 1.0
     x_offset: 0.0
     y_offset: 0.0
@@ -93,134 +104,187 @@ px4_odom_map_bridge:
     swap_xy: false
     invert_x: false
     invert_y: false
+    # A1: filter only finite-difference velocity first. Keep yaw rate raw so
+    # this run changes one signal path at a time.
+    # alpha=1.0 is pass-through; smaller alpha applies stronger smoothing.
     velocity_lpf_alpha: 0.4
+    yaw_rate_lpf_alpha: 1.0
     max_velocity_dt_sec: 0.5
     input_timeout_sec: 0.6
 
+knu_global_path_publisher:
+  ros__parameters:
+    # Independent route owner; route_name launch argument also selects the map anchor.
+    route_name: "scenario3"
+    global_path_topic: "/navigation/global_path"
+    frame_id: "map"
+    publish_period_sec: 2.0
+
 upper_planner_node:
   ros__parameters:
-    # model: 0.30/0.42/1.5/0.45/0.15 m
-    # fullscale: 2.80/4.70/15.0/4.50/1.50 m
-    # Order: wheelbase, vehicle length, BEV forward, nominal width, boundary margin.
-    scale_mode: "model"
-    # Optional per-value overrides (uncomment only the values to override):
-    # wheelbase: 0.30
-    # vehicle_length_m: 0.42
-    # bev_forward_m: 1.50
-    # preview_interval_nominal_road_width_m: 0.45
-    # preview_interval_boundary_margin_m: 0.15
+    # Main9 interval state with the existing main8 MIQP/heading calculation.
+    # Vehicle geometry profile and BEV extent remain independent of interval scale B.
+    scale_mode: "fullscale"
+    bev_forward_m: 20.0
+    preview_interval_boundary_margin_m: 2.00
 
     upper_planner_rate_hz: 2.0
+    # 1.5 m/s * 2.0 s = 3 m per nominal step; 5 steps cover 15 m.
     upper_prediction_dt_sec: 1.0
     upper_preview_steps: 5
     preview_limit_to_grid_extent: true
-    lower_prediction_dt_sec: 0.05
+    # A 17.5 m forward extent leaves 2.5 m beyond the nominal 15 m preview.
+    preview_grid_reserve_steps: 0
+    # Retry the full requested horizon after a temporary road/grid contraction.
+    preview_restore_full_horizon: true
+    lower_prediction_dt_sec: 0.10
     lower_min_path_spacing_m: 0.05
-    target_speed_mps: 1.0
-    max_steering_angle_rad: 0.35
+    # The latest rosbag entered the narrowing at 3.5--4.0 m/s and saturated
+    # steering. Use a conservative real-vehicle envelope for this section.
+    # A/B test for the identified 0.3--0.4 s steering delay and ~0.9 s
+    # time constant. Keep the 2 Hz upper rate unchanged for this run.
+    target_speed_mps: 3.0
+    # steering_debug_20260902_203219 identified about 17.2 deg of effective
+    # steering per normalized command. Keep the upper curvature achievable.
+    max_steering_angle_rad: 0.30
     a_max_mps2: 1.0
 
     miqp_big_m: 100.0
     position_scale_m: 10.0
     relative_turn_scale_rad: 0.3490658504
     lambda_position: 1.0
-    lambda_relative_turn: 1.0
+    lambda_relative_turn: 0.9
     terminal_buffer_max_turn_rad: 0.3490658504
-    terminal_position_weight_multiplier: 5.0
+    terminal_position_weight_multiplier: 1000.0
     upper_r_dv: 1.0
     upper_r_dpsi: 1.0
+    normalize_upper_input_cost: false
     turn_preview_steps: 2
     turn_weight_growth: 2.0
     miqp_diagonal_regularization: 0.0000000001
+    # DAQP can report an infeasible mixed-integer solution as successful when
+    # the corridor binary block is nearly singular. This term is constant
+    # across feasible choices because one corridor is selected per step.
+    miqp_binary_diagonal_regularization: 0.0001
+    # Never publish a solver result that violates a road or binary constraint.
+    miqp_feasibility_tolerance: 0.001
 
-    wp_switch_eps: 0.5
+    wp_switch_eps: 10.0
+    # Prevent the projection-only find_wp rule from switching while the
+    # vehicle is still far to the side of wp0.
+    wp_switch_max_distance_m: 15.0
     goal_stop_distance_m: 0.5
     enable_waypoint_bias: false
     waypoint_x_bias_m: 0.0
     waypoint_y_bias_m: 0.0
-    waypoint_yaw_bias_rad: -0.1745329252
+    waypoint_yaw_bias_rad: 0.17
     state_input_type: "odom"
-    odom_topic: "/px4/sih/odom_map"
+    odom_topic: "/motive/vehicle/odom_map"
+    odom_yaw_is_orientation_z: true
     pose_stamped_topic: "/px4/sih/odom"
     pose_stamped_yaw_is_orientation_z: true
     pose_x_offset: 0.0
     pose_y_offset: 0.0
-    pose_z_offset: 0.0
     pose_yaw_offset_rad: 0.0
     pose_position_scale: 1.0
     pose_swap_xy: false
     pose_invert_x: false
     pose_invert_y: false
-    pose_speed_lpf_alpha: 0.4
+    # Pass-through if pose_stamped input is selected in a later experiment.
+    # Currently state_input_type=odom, so this is inactive.
+    pose_speed_lpf_alpha: 1.0
     pose_max_dt_for_speed: 0.5
 
     input_timeout_sec: 0.60
     require_grid_map: true
 
-    global_path_topic: "/debug/global_path"
-    grid_map_topic: "/grid_map"
+    global_path_topic: "/navigation/global_path"
+    grid_map_topic: "/bev/occupancy_grid"
     upper_sparse_path_topic: "/planner/upper_path_sparse"
     lower_reference_path_topic: "/planner/lower_reference_path"
     goal_reached_topic: "/planner/goal_reached"
     path_frame_id: "map"
 
-    # The MATLAB bridge is the route owner; CSV remains an optional offline fallback.
+    # The ROS KNU publisher owns the route. Isaac Sim supplies the BEV grid.
+    # Direct planner CSV loading remains an optional fallback.
     use_csv_global_path: false
     csv_global_path_file: "local_map.csv"
     allow_topic_path_override_when_csv_loaded: false
     reset_waypoint_on_path_update: false
 
+    # Isaac BEV publisher with occupancy_grid_rviz_standard_values=true:
+    # 0=drivable, 100=non-drivable, -1=unknown. Accept only known free cells.
     grid_value_threshold: 0
-    # MATLAB bridge contract: 100=drivable, 0=known non-drivable, -1=unknown.
-    grid_positive_is_drivable: true
-    expected_grid_frame_id: "base_link"
+    grid_positive_is_drivable: false
+    expected_grid_frame_id: "Vehicle"
     require_grid_frame_match: true
 
     preview_min_target_distance_m: 0.10
-    preview_line_sample_m: 0.03
+    preview_line_sample_m: 0.10
     preview_min_segment_samples: 2
-    preview_interval_soft_ratio: 0.60
-    preview_interval_max_centering_length_factor: 1.50
+    preview_interval_soft_ratio: 0.7
+    # B comes from fully observed single intervals at consecutive near nodes.
+    # Keep B across branches/gaps; confirm three candidates before bounded updates.
+    preview_interval_relative_length_factor: 1.5
+    preview_interval_scale_agreement_ratio: 1.2
+    preview_interval_scale_confirm_steps: 3
+    preview_interval_scale_max_relative_change: 0.05
+    # These fixed fallback values never initialize B or classify observed intervals.
+    preview_interval_enable_nominal_fallback: true
+    preview_interval_nominal_fallback_width_m: 4.50
+    preview_interval_fallback_max_centering_length_m: 9.0
     preview_interval_debug: false
 
 lower_tracking_mpc_node:
   ros__parameters:
     # Use the same profile as upper_planner_node. Individual geometry
     # parameters can be overridden independently with the names shown above.
-    scale_mode: "model"
+    scale_mode: "fullscale"
 
-    lower_controller_rate_hz: 20.0
-    lower_prediction_dt_sec: 0.05
-    lower_prediction_steps: 15
+    lower_controller_rate_hz: 10.0
+    lower_prediction_dt_sec: 0.10
+    # Keep the established lower horizon while dynamic compensation layers are
+    # disabled for the A0 baseline.
+    lower_prediction_steps: 20
     lower_q_lateral: 1.0
     lower_q_heading: 0.5
     lower_r_steering: 0.30
     lower_rd_steering_rate: 8.0
-    lower_max_steering_angle_rad: 0.35
-    lower_max_steering_rate_radps: 2.09439510239
+    # Match the lower MPC angle and angle-to-normalized calibration to the
+    # effective steering gain identified from the SIH odometry log.
+    lower_max_steering_angle_rad: 0.30
+    lower_max_steering_rate_radps: 1.0471975512
+    # Disable both pure delay and first-order actuator lag in the lower model.
+    # Retain the parameters below for a later re-enable; ignored while disabled.
+    lower_enable_steering_actuator_model: false
+    lower_steering_actuator_delay_sec: 0.20
+    lower_steering_actuator_time_constant_sec: 0.85
     lower_min_path_spacing_m: 0.05
     lower_min_effective_speed_mps: 0.10
     input_timeout_sec: 0.60
     lower_path_timeout_sec: 1.50
-    solver_hold_last_valid_sec: 0.30
+    # On a QP failure, consume the remaining previous steering sequence first.
+    # Once exhausted, do not hold the last steering command; use neutral output.
+    solver_hold_last_valid_sec: 0.0
     path_change_reset_threshold_m: 0.75
+    reset_on_path_change: false
     pose_jump_reset_threshold_m: 1.0
-    publish_zero_on_failure: true
     publish_applied_cmd_when_invalid: true
 
     state_input_type: "odom"
-    odom_topic: "/px4/sih/odom_map"
+    odom_topic: "/motive/vehicle/odom_map"
+    odom_yaw_is_orientation_z: true
     pose_stamped_topic: "/px4/sih/odom"
     pose_stamped_yaw_is_orientation_z: true
     pose_x_offset: 0.0
     pose_y_offset: 0.0
-    pose_z_offset: 0.0
     pose_yaw_offset_rad: 0.0
     pose_position_scale: 1.0
     pose_swap_xy: false
     pose_invert_x: false
     pose_invert_y: false
-    pose_speed_lpf_alpha: 0.4
+    # Pass-through if pose_stamped input is selected; inactive for odom input.
+    pose_speed_lpf_alpha: 1.0
     pose_max_dt_for_speed: 0.5
     lower_reference_path_topic: "/planner/lower_reference_path"
     goal_reached_topic: "/planner/goal_reached"
@@ -230,21 +294,23 @@ lower_tracking_mpc_node:
     pwm_topic: "/cmd_pwm"
     virtual_cmd_topic: "/cmd_control"
 
-    enable_output_filter: true
+    # Baseline A0: bypass the post-MPC rate limiter and steering LPF.
+    enable_output_filter: false
     steer_norm_max: 1.0
-    steer_norm_rate_max: 2.0
-    steer_norm_lpf_alpha: 0.5
+    steer_norm_rate_max: 1.5
+    steer_norm_lpf_alpha: 0.7
     steer_sign: 1.0
 
-    target_speed_mps: 1.0
+    target_speed_mps: 1.5
     target_accel_mps2: 0.0
-    speed_kp: 0.45
-    speed_ki: 0.05
-    throttle_ff: 0.08
-    max_virtual_throttle: 0.35
+    # Closed-loop throttle is also used by duty/PWM and MAVLink outputs.
+    speed_kp: 0.08
+    speed_ki: 0.01
+    throttle_ff: 0.05
+    max_virtual_throttle: 0.09
     max_virtual_brake: 0.70
     speed_deadband_mps: 0.03
-    speed_integral_limit: 2.0
+    speed_integral_limit: 0.5
 
     publish_pwm: true
     pwm_min: 1000
@@ -265,11 +331,11 @@ lower_tracking_mpc_node:
     mavlink_target_system: 1
     mavlink_target_component: 1
     mavlink_send_neutral_on_invalid: true
-    mavlink_hold_last_valid_sec: 0.30
+    mavlink_hold_last_valid_sec: 0.0
     mavlink_auto_manual_mode: false
     mavlink_auto_arm: false
     mavlink_force_arm: false
     mavlink_disarm_on_shutdown: true
-    mavlink_throttle_max_norm: 0.17
+    mavlink_throttle_max_norm: 0.09
     mavlink_steer_sign: 1.0
     mavlink_keepalive_rate_hz: 20.0
