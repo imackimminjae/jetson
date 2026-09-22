@@ -1,0 +1,771 @@
+{
+  "version": 2,
+  "coordinate_frame": "map",
+  "policy": "Active compact10 vehicle starts centered on rendered road centerlines; paths and headings unchanged.",
+  "vehicle": {
+    "Length": 4.7,
+    "Width": 1.8,
+    "Height": 1.5,
+    "Wheelbase": 2.8,
+    "RearOverhang": 0.9
+  },
+  "corrected_margin_m": 0.25,
+  "starts": [
+    {
+      "scenario": "scenario1",
+      "position": [
+        150,
+        -140,
+        0
+      ],
+      "path_first": [
+        150,
+        -140,
+        0
+      ],
+      "heading_rad": 2.0663480002807253,
+      "ros_heading_rad": 2.0663480002807253,
+      "original_position": [
+        150,
+        -140,
+        0
+      ],
+      "original_point_on_road": true,
+      "original_body_on_road": true,
+      "shift_m": 0,
+      "corrected": false,
+      "body_on_road": true,
+      "clearance_margin_m": 0,
+      "section_number": 0,
+      "previous_position": [
+        150,
+        -140,
+        0
+      ],
+      "centered_in_active_batch": false,
+      "centerline_road_id": 0,
+      "centerline_station_m": 0,
+      "centerline_distance_m": null
+    },
+    {
+      "scenario": "scenario2",
+      "position": [
+        -252.789,
+        93.548,
+        0
+      ],
+      "path_first": [
+        -250,
+        101,
+        0
+      ],
+      "heading_rad": -0.35072794824820352,
+      "ros_heading_rad": -0.17069467985337489,
+      "original_position": [
+        -252.789,
+        93.548,
+        0
+      ],
+      "original_point_on_road": true,
+      "original_body_on_road": true,
+      "shift_m": 0,
+      "corrected": false,
+      "body_on_road": true,
+      "clearance_margin_m": 0,
+      "section_number": 0,
+      "previous_position": [
+        -252.789,
+        93.548,
+        0
+      ],
+      "centered_in_active_batch": false,
+      "centerline_road_id": 0,
+      "centerline_station_m": 0,
+      "centerline_distance_m": null
+    },
+    {
+      "scenario": "scenario3",
+      "position": [
+        187,
+        220,
+        0
+      ],
+      "path_first": [
+        187,
+        220,
+        0
+      ],
+      "heading_rad": -1.5707963267948966,
+      "ros_heading_rad": -1.5707963267948966,
+      "original_position": [
+        187,
+        220,
+        0
+      ],
+      "original_point_on_road": true,
+      "original_body_on_road": true,
+      "shift_m": 0,
+      "corrected": false,
+      "body_on_road": true,
+      "clearance_margin_m": 0,
+      "section_number": 0,
+      "previous_position": [
+        187,
+        220,
+        0
+      ],
+      "centered_in_active_batch": false,
+      "centerline_road_id": 0,
+      "centerline_station_m": 0,
+      "centerline_distance_m": null
+    },
+    {
+      "scenario": "scenario4",
+      "position": [
+        0,
+        7,
+        0
+      ],
+      "path_first": [
+        0,
+        7,
+        0
+      ],
+      "heading_rad": -0.039978687123290044,
+      "ros_heading_rad": -0.039978687123290044,
+      "original_position": [
+        0,
+        7,
+        0
+      ],
+      "original_point_on_road": true,
+      "original_body_on_road": true,
+      "shift_m": 0,
+      "corrected": false,
+      "body_on_road": true,
+      "clearance_margin_m": 0,
+      "section_number": 0,
+      "previous_position": [
+        0,
+        7,
+        0
+      ],
+      "centered_in_active_batch": false,
+      "centerline_road_id": 0,
+      "centerline_station_m": 0,
+      "centerline_distance_m": null
+    },
+    {
+      "scenario": "scenario5",
+      "position": [
+        -264.134,
+        99.01,
+        0
+      ],
+      "path_first": [
+        -264.134,
+        106.26,
+        0
+      ],
+      "heading_rad": -0.32015769177437103,
+      "ros_heading_rad": -0.32015769177437103,
+      "original_position": [
+        -264.134,
+        106.26,
+        0
+      ],
+      "original_point_on_road": false,
+      "original_body_on_road": false,
+      "shift_m": 7.25,
+      "corrected": true,
+      "body_on_road": true,
+      "clearance_margin_m": 0.25,
+      "section_number": 1,
+      "previous_position": [
+        -264.134,
+        99.01,
+        0
+      ],
+      "centered_in_active_batch": false,
+      "centerline_road_id": 0,
+      "centerline_station_m": 0,
+      "centerline_distance_m": null
+    },
+    {
+      "scenario": "scenario6",
+      "position": [
+        -196.057969795,
+        157.447255292,
+        0
+      ],
+      "path_first": [
+        -190.271,
+        157.159,
+        0
+      ],
+      "heading_rad": -1.8326876292841756,
+      "ros_heading_rad": -1.8326876292841756,
+      "original_position": [
+        -190.271,
+        157.159,
+        0
+      ],
+      "original_point_on_road": false,
+      "original_body_on_road": false,
+      "shift_m": 5.7941445029968319,
+      "corrected": true,
+      "body_on_road": true,
+      "clearance_margin_m": 0.25,
+      "section_number": 2,
+      "previous_position": [
+        -194.021,
+        156.909,
+        0
+      ],
+      "centered_in_active_batch": true,
+      "centerline_road_id": 2,
+      "centerline_station_m": 1.2190618579094725,
+      "centerline_distance_m": 8.73386968476716E-11
+    },
+    {
+      "scenario": "scenario7",
+      "position": [
+        -98.120930916,
+        147.747302441,
+        0
+      ],
+      "path_first": [
+        -93.506,
+        147.72,
+        0
+      ],
+      "heading_rad": -1.8750025666883705,
+      "ros_heading_rad": -1.8750025666883705,
+      "original_position": [
+        -93.506,
+        147.72,
+        0
+      ],
+      "original_point_on_road": false,
+      "original_body_on_road": false,
+      "shift_m": 4.6150116774215437,
+      "corrected": true,
+      "body_on_road": true,
+      "clearance_margin_m": 0.25,
+      "section_number": 3,
+      "previous_position": [
+        -96.006,
+        147.22,
+        0
+      ],
+      "centered_in_active_batch": true,
+      "centerline_road_id": 5,
+      "centerline_station_m": 1.3579425298630994,
+      "centerline_distance_m": 1.786668800997328E-10
+    },
+    {
+      "scenario": "scenario8",
+      "position": [
+        -152.533,
+        -81.575,
+        0
+      ],
+      "path_first": [
+        -152.533,
+        -82.825,
+        0
+      ],
+      "heading_rad": 1.3627578010636185,
+      "ros_heading_rad": 1.3627578010636185,
+      "original_position": [
+        -152.533,
+        -82.825,
+        0
+      ],
+      "original_point_on_road": true,
+      "original_body_on_road": false,
+      "shift_m": 1.25,
+      "corrected": true,
+      "body_on_road": true,
+      "clearance_margin_m": 0.25,
+      "section_number": 4,
+      "previous_position": [
+        -152.533,
+        -81.575,
+        0
+      ],
+      "centered_in_active_batch": false,
+      "centerline_road_id": 0,
+      "centerline_station_m": 0,
+      "centerline_distance_m": null
+    },
+    {
+      "scenario": "scenario9",
+      "position": [
+        -71.085,
+        69.126,
+        0
+      ],
+      "path_first": [
+        -70.085,
+        69.626,
+        0
+      ],
+      "heading_rad": -2.9117843628253506,
+      "ros_heading_rad": -2.9117843628253506,
+      "original_position": [
+        -70.085,
+        69.626,
+        0
+      ],
+      "original_point_on_road": true,
+      "original_body_on_road": false,
+      "shift_m": 1.1180339887498949,
+      "corrected": true,
+      "body_on_road": true,
+      "clearance_margin_m": 0.25,
+      "section_number": 5,
+      "previous_position": [
+        -71.085,
+        69.126,
+        0
+      ],
+      "centered_in_active_batch": false,
+      "centerline_road_id": 0,
+      "centerline_station_m": 0,
+      "centerline_distance_m": null
+    },
+    {
+      "scenario": "scenario10",
+      "position": [
+        -135.165279652,
+        51.211274402,
+        0
+      ],
+      "path_first": [
+        -135.218,
+        51.121,
+        0
+      ],
+      "heading_rad": -0.49139256901640954,
+      "ros_heading_rad": -0.49139256901640954,
+      "original_position": [
+        -135.218,
+        51.121,
+        0
+      ],
+      "original_point_on_road": true,
+      "original_body_on_road": true,
+      "shift_m": 0.10454139251844853,
+      "corrected": true,
+      "body_on_road": true,
+      "clearance_margin_m": 0.25,
+      "section_number": 6,
+      "previous_position": [
+        -135.218,
+        51.121,
+        0
+      ],
+      "centered_in_active_batch": true,
+      "centerline_road_id": 8,
+      "centerline_station_m": 34.154141786139292,
+      "centerline_distance_m": 7.1933763550993276E-11
+    },
+    {
+      "scenario": "scenario11",
+      "position": [
+        -114.447939094,
+        60.604796596,
+        0
+      ],
+      "path_first": [
+        -116.419,
+        59.414,
+        0
+      ],
+      "heading_rad": -1.372098530200375,
+      "ros_heading_rad": -1.372098530200375,
+      "original_position": [
+        -116.419,
+        59.414,
+        0
+      ],
+      "original_point_on_road": true,
+      "original_body_on_road": false,
+      "shift_m": 2.3028412077706726,
+      "corrected": true,
+      "body_on_road": true,
+      "clearance_margin_m": 0.25,
+      "section_number": 7,
+      "previous_position": [
+        -115.419,
+        59.664,
+        0
+      ],
+      "centered_in_active_batch": true,
+      "centerline_road_id": 13,
+      "centerline_station_m": 16.584428422794474,
+      "centerline_distance_m": 3.30690355047273E-10
+    },
+    {
+      "scenario": "scenario12",
+      "position": [
+        -101.089,
+        30.493,
+        0
+      ],
+      "path_first": [
+        -101.089,
+        30.493,
+        0
+      ],
+      "heading_rad": -0.71105818460438164,
+      "ros_heading_rad": -0.71105818460438164,
+      "original_position": [
+        -101.089,
+        30.493,
+        0
+      ],
+      "original_point_on_road": true,
+      "original_body_on_road": true,
+      "shift_m": 0,
+      "corrected": false,
+      "body_on_road": true,
+      "clearance_margin_m": 0,
+      "section_number": 8,
+      "previous_position": [
+        -101.089,
+        30.493,
+        0
+      ],
+      "centered_in_active_batch": false,
+      "centerline_road_id": 0,
+      "centerline_station_m": 0,
+      "centerline_distance_m": null
+    },
+    {
+      "scenario": "scenario13",
+      "position": [
+        197.601270328,
+        -5.629844838,
+        0
+      ],
+      "path_first": [
+        199.659,
+        -9.949,
+        0
+      ],
+      "heading_rad": 2.9668378986500969,
+      "ros_heading_rad": 2.9668378986500969,
+      "original_position": [
+        199.659,
+        -9.949,
+        0
+      ],
+      "original_point_on_road": false,
+      "original_body_on_road": false,
+      "shift_m": 4.7842818391541737,
+      "corrected": true,
+      "body_on_road": true,
+      "clearance_margin_m": 0.25,
+      "section_number": 9,
+      "previous_position": [
+        199.159,
+        -5.699,
+        0
+      ],
+      "centered_in_active_batch": true,
+      "centerline_road_id": 25,
+      "centerline_station_m": 119.16720983797309,
+      "centerline_distance_m": 1.3692330391583944E-10
+    },
+    {
+      "scenario": "scenario14",
+      "position": [
+        53.802,
+        9.079,
+        0
+      ],
+      "path_first": [
+        53.802,
+        9.079,
+        0
+      ],
+      "heading_rad": -0.025216606939205393,
+      "ros_heading_rad": -0.025216606939205393,
+      "original_position": [
+        53.802,
+        9.079,
+        0
+      ],
+      "original_point_on_road": true,
+      "original_body_on_road": true,
+      "shift_m": 0,
+      "corrected": false,
+      "body_on_road": true,
+      "clearance_margin_m": 0,
+      "section_number": 10,
+      "previous_position": [
+        53.802,
+        9.079,
+        0
+      ],
+      "centered_in_active_batch": false,
+      "centerline_road_id": 0,
+      "centerline_station_m": 0,
+      "centerline_distance_m": null
+    },
+    {
+      "scenario": "scenario15",
+      "position": [
+        189.401,
+        249.126,
+        0
+      ],
+      "path_first": [
+        195.901,
+        250.126,
+        0
+      ],
+      "heading_rad": -1.6089758134783507,
+      "ros_heading_rad": -1.6089758134783507,
+      "original_position": [
+        195.901,
+        250.126,
+        0
+      ],
+      "original_point_on_road": false,
+      "original_body_on_road": false,
+      "shift_m": 6.5764732189829527,
+      "corrected": true,
+      "body_on_road": true,
+      "clearance_margin_m": 0.25,
+      "section_number": 11,
+      "previous_position": [
+        189.401,
+        249.126,
+        0
+      ],
+      "centered_in_active_batch": false,
+      "centerline_road_id": 0,
+      "centerline_station_m": 0,
+      "centerline_distance_m": null
+    },
+    {
+      "scenario": "scenario16",
+      "position": [
+        279.94945839,
+        174.26234575,
+        0
+      ],
+      "path_first": [
+        287.172,
+        170.661,
+        0
+      ],
+      "heading_rad": -2.1963810923359235,
+      "ros_heading_rad": -2.1963810923359235,
+      "original_position": [
+        287.172,
+        170.661,
+        0
+      ],
+      "original_point_on_road": false,
+      "original_body_on_road": false,
+      "shift_m": 8.0706132678517442,
+      "corrected": true,
+      "body_on_road": true,
+      "clearance_margin_m": 0.25,
+      "section_number": 12,
+      "previous_position": [
+        282.172,
+        172.911,
+        0
+      ],
+      "centered_in_active_batch": true,
+      "centerline_road_id": 43,
+      "centerline_station_m": 1.3103489221787985,
+      "centerline_distance_m": 7.4809589032160666E-11
+    },
+    {
+      "scenario": "scenario17",
+      "position": [
+        157.55991607,
+        174.283537228,
+        0
+      ],
+      "path_first": [
+        156.293,
+        174.009,
+        0
+      ],
+      "heading_rad": 0.20804306913760859,
+      "ros_heading_rad": 0.20804306913760859,
+      "original_position": [
+        156.293,
+        174.009,
+        0
+      ],
+      "original_point_on_road": true,
+      "original_body_on_road": false,
+      "shift_m": 1.2963205691426007,
+      "corrected": true,
+      "body_on_road": true,
+      "clearance_margin_m": 0.25,
+      "section_number": 13,
+      "previous_position": [
+        157.543,
+        174.509,
+        0
+      ],
+      "centered_in_active_batch": true,
+      "centerline_road_id": 37,
+      "centerline_station_m": 1.3089506985067381,
+      "centerline_distance_m": 3.0431135037848323E-10
+    },
+    {
+      "scenario": "scenario18",
+      "position": [
+        187.766898753,
+        249.091077624,
+        0
+      ],
+      "path_first": [
+        195.902,
+        250.126,
+        0
+      ],
+      "heading_rad": -1.6085258122672947,
+      "ros_heading_rad": -1.6085258122672947,
+      "original_position": [
+        195.902,
+        250.126,
+        0
+      ],
+      "original_point_on_road": false,
+      "original_body_on_road": false,
+      "shift_m": 8.20066684015918,
+      "corrected": true,
+      "body_on_road": true,
+      "clearance_margin_m": 0.25,
+      "section_number": 14,
+      "previous_position": [
+        189.402,
+        249.126,
+        0
+      ],
+      "centered_in_active_batch": true,
+      "centerline_road_id": 42,
+      "centerline_station_m": 58.321231564795596,
+      "centerline_distance_m": 8.6592236060757973E-11
+    },
+    {
+      "scenario": "scenario19",
+      "position": [
+        144.185650196,
+        -124.673628748,
+        0
+      ],
+      "path_first": [
+        134.549,
+        -162.587,
+        0
+      ],
+      "heading_rad": 1.7000236322030842,
+      "ros_heading_rad": 1.7000236322030842,
+      "original_position": [
+        134.549,
+        -162.587,
+        0
+      ],
+      "original_point_on_road": false,
+      "original_body_on_road": false,
+      "shift_m": 39.118905233813052,
+      "corrected": true,
+      "body_on_road": true,
+      "clearance_margin_m": 0.25,
+      "section_number": 15,
+      "previous_position": [
+        147.049,
+        -159.587,
+        0
+      ],
+      "centered_in_active_batch": true,
+      "centerline_road_id": 24,
+      "centerline_station_m": 83.884478043401373,
+      "centerline_distance_m": 1.1974159027144942E-10
+    },
+    {
+      "scenario": "scenario20",
+      "position": [
+        118.526,
+        -8.623,
+        0
+      ],
+      "path_first": [
+        118.776,
+        -8.873,
+        0
+      ],
+      "heading_rad": 1.1224327609280813,
+      "ros_heading_rad": 1.1224327609280813,
+      "original_position": [
+        118.776,
+        -8.873,
+        0
+      ],
+      "original_point_on_road": true,
+      "original_body_on_road": false,
+      "shift_m": 0.35355339059327379,
+      "corrected": true,
+      "body_on_road": true,
+      "clearance_margin_m": 0.25,
+      "section_number": 16,
+      "previous_position": [
+        118.526,
+        -8.623,
+        0
+      ],
+      "centered_in_active_batch": false,
+      "centerline_road_id": 0,
+      "centerline_station_m": 0,
+      "centerline_distance_m": null
+    },
+    {
+      "scenario": "scenario21",
+      "position": [
+        -98.13504099,
+        147.690709055,
+        0
+      ],
+      "path_first": [
+        -93.461,
+        147.711,
+        0
+      ],
+      "heading_rad": -1.8693548336096242,
+      "ros_heading_rad": -1.8693548336096242,
+      "original_position": [
+        -93.461,
+        147.711,
+        0
+      ],
+      "original_point_on_road": false,
+      "original_body_on_road": false,
+      "shift_m": 4.6740850333139132,
+      "corrected": true,
+      "body_on_road": true,
+      "clearance_margin_m": 0.25,
+      "section_number": 17,
+      "previous_position": [
+        -96.211,
+        147.211,
+        0
+      ],
+      "centered_in_active_batch": true,
+      "centerline_road_id": 5,
+      "centerline_station_m": 1.416268386552469,
+      "centerline_distance_m": 3.3526148482471142E-10
+    }
+  ]
+}

@@ -83,6 +83,7 @@ class Px4EkfBridge(Node):
         super().__init__("px4_ekf_bridge")
 
         # ROS topics and frame conventions.
+        self.declare_parameter("enable_motive_pose_input", True)
         self.declare_parameter("motive_pose_topic", "/motive/vehicle/pose")
         self.declare_parameter("output_odom_topic", "/px4/ekf_odom")
         self.declare_parameter("output_pose_topic", "/px4/sih/odom")
@@ -163,6 +164,9 @@ class Px4EkfBridge(Node):
             ],
         )
 
+        self.enable_motive_pose_input = bool(
+            self.get_parameter("enable_motive_pose_input").value
+        )
         self.motive_pose_topic = str(self.get_parameter("motive_pose_topic").value)
         self.output_odom_topic = str(self.get_parameter("output_odom_topic").value)
         self.output_pose_topic = str(self.get_parameter("output_pose_topic").value)
@@ -279,8 +283,12 @@ class Px4EkfBridge(Node):
             reliability=ReliabilityPolicy.BEST_EFFORT,
             durability=DurabilityPolicy.VOLATILE,
         )
-        self.pose_sub = self.create_subscription(
-            PoseStamped, self.motive_pose_topic, self._pose_callback, pose_qos
+        self.pose_sub = (
+            self.create_subscription(
+                PoseStamped, self.motive_pose_topic, self._pose_callback, pose_qos
+            )
+            if self.enable_motive_pose_input
+            else None
         )
         self.odom_pub = self.create_publisher(Odometry, self.output_odom_topic, 10)
         self.yaw_scalar_pose_pub = (
@@ -332,8 +340,12 @@ class Px4EkfBridge(Node):
 
         self.rx_timer = self.create_timer(0.005, self._poll_mavlink)
         self.connect_timer = self.create_timer(0.25, self._connection_tick)
-        self.ev_timer = self.create_timer(
-            1.0 / self.external_vision_rate_hz, self._send_external_odometry
+        self.ev_timer = (
+            self.create_timer(
+                1.0 / self.external_vision_rate_hz, self._send_external_odometry
+            )
+            if self.enable_motive_pose_input
+            else None
         )
         self.heartbeat_timer = self.create_timer(
             1.0 / self.heartbeat_rate_hz, self._send_companion_heartbeat
@@ -349,7 +361,7 @@ class Px4EkfBridge(Node):
             "connection=%s @ %d, "
             "EV=%.1f Hz (%s), ENU(+X east,+Y north,+Z up) <-> NED/FRD"
             % (
-                self.motive_pose_topic,
+                self.motive_pose_topic if self.enable_motive_pose_input else "disabled",
                 self.output_odom_topic,
                 self.output_pose_topic if self.publish_yaw_scalar_pose else "disabled",
                 self.connection_url,

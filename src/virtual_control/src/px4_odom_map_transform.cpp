@@ -29,17 +29,71 @@ double RouteAnchor::targetYaw() const
 
 std::optional<RouteAnchor> routeAnchorForName(const std::string & route_name)
 {
+  // Spawn positions from data/knu_routes/knu_start_poses.json.
+  // Translate both anchor points equally to preserve the existing yaw.
+  // Mission waypoint CSVs remain unchanged.
   if (route_name == "scenario1") {
     return RouteAnchor{{150.0, -140.0, 0.0}, {130.0, -103.0, 0.0}};
   }
   if (route_name == "scenario2") {
-    return RouteAnchor{{-250.0, 101.0, 0.0}, {-209.0, 86.0, 0.0}};
+    return RouteAnchor{{-252.789, 93.548, 0.0}, {-209.0, 86.0, 0.0}};
   }
   if (route_name == "scenario3") {
     return RouteAnchor{{187.0, 220.0, 0.0}, {187.0, 192.0, 0.0}};
   }
   if (route_name == "scenario4") {
     return RouteAnchor{{0.0, 7.0, 0.0}, {50.0, 5.0, 0.0}};
+  }
+  if (route_name == "scenario5") {
+    return RouteAnchor{{-264.134000000, 99.010000000, 0.000000000}, {-259.423000000, 97.448000000, 0.000000000}};
+  }
+  if (route_name == "scenario6") {
+    return RouteAnchor{{-196.057969795, 157.447255292, 0.000000000}, {-197.338969795, 152.668255292, 0.000000000}};
+  }
+  if (route_name == "scenario7") {
+    return RouteAnchor{{-98.120930916, 147.747302441, 0.000000000}, {-99.594930916, 143.052302441, 0.000000000}};
+  }
+  if (route_name == "scenario8") {
+    return RouteAnchor{{-152.533000000, -81.575000000, 0.000000000}, {-151.513000000, -76.743000000, 0.000000000}};
+  }
+  if (route_name == "scenario9") {
+    return RouteAnchor{{-71.085000000, 69.126000000, 0.000000000}, {-75.911000000, 67.997000000, 0.000000000}};
+  }
+  if (route_name == "scenario10") {
+    return RouteAnchor{{-135.165279652, 51.211274402, 0.000000000}, {-130.901279652, 48.929274402, 0.000000000}};
+  }
+  if (route_name == "scenario11") {
+    return RouteAnchor{{-114.447939094, 60.604796596, 0.000000000}, {-113.466939094, 55.732796596, 0.000000000}};
+  }
+  if (route_name == "scenario12") {
+    return RouteAnchor{{-101.089, 30.493, 0.0}, {-97.338, 27.262, 0.0}};
+  }
+  if (route_name == "scenario13") {
+    return RouteAnchor{{197.601270328, -5.629844838, 0.000000000}, {192.764270328, -4.775844838, 0.000000000}};
+  }
+  if (route_name == "scenario14") {
+    return RouteAnchor{{53.802, 9.079, 0.0}, {58.758, 8.954, 0.0}};
+  }
+  if (route_name == "scenario15") {
+    return RouteAnchor{{189.401000000, 249.126000000, 0.000000000}, {189.217000000, 244.309000000, 0.000000000}};
+  }
+  if (route_name == "scenario16") {
+    return RouteAnchor{{279.949458390, 174.262345750, 0.000000000}, {277.040458390, 170.235345750, 0.000000000}};
+  }
+  if (route_name == "scenario17") {
+    return RouteAnchor{{157.559916070, 174.283537228, 0.000000000}, {162.443916070, 175.314537228, 0.000000000}};
+  }
+  if (route_name == "scenario18") {
+    return RouteAnchor{{187.766898753, 249.091077624, 0.000000000}, {187.581898753, 244.190077624, 0.000000000}};
+  }
+  if (route_name == "scenario19") {
+    return RouteAnchor{{144.185650196, -124.673628748, 0.000000000}, {143.542650196, -119.725628748, 0.000000000}};
+  }
+  if (route_name == "scenario20") {
+    return RouteAnchor{{118.526000000, -8.623000000, 0.000000000}, {120.657000000, -4.193000000, 0.000000000}};
+  }
+  if (route_name == "scenario21") {
+    return RouteAnchor{{-98.135040990, 147.690709055, 0.000000000}, {-99.587040990, 142.972709055, 0.000000000}};
   }
   return std::nullopt;
 }

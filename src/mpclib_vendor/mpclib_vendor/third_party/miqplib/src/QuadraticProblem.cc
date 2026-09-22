@@ -233,11 +233,11 @@ double QuadraticProblem::solve_problem(Vector<double> &arg) {
         sense[i]  = sense_bnd_[i]; // binary 표시가 여기 들어감
     }
 
+    int nbinary = 0;
+    for (int i = 0; i < ms; ++i) {
+        if (sense[i] & BINARY) nbinary++;
+    }
     if (debug) {
-        int nbinary = 0;
-        for (int i = 0; i < ms; ++i) {
-            if (sense[i] & BINARY) nbinary++;
-        }
         fprintf(stderr, "[sense-check] nbinary=%d / ms=%d\n", nbinary, ms);
     }
 
@@ -292,10 +292,15 @@ double QuadraticProblem::solve_problem(Vector<double> &arg) {
     res.x = x.data();
     res.lam = lam.data();
 
-    const std::array<double, 6> prox_schedule{{1e-5, 1e-4, 1e-3, 1e-2, 1e-1, 1.0}};
+    // Prefer DAQP's exact active-set path for an ordinary convex QP.  The
+    // proximal path is retained only as a non-convex-factorization fallback.
+    // Besides avoiding an unnecessary approximation, this makes a fixed-
+    // binary polishing QP obey the same feasibility semantics as the MIQP
+    // branch relaxations.
+    const std::array<double, 7> prox_schedule{{0.0, 1e-5, 1e-4, 1e-3, 1e-2, 1e-1, 1.0}};
     const double diag_shift_base = 1e-9;
+    const bool has_binary_variables = nbinary > 0;
 
-    const bool suspicious_hessian = (max_asym > 1e-9) || (min_diag < 1e-8);
     int final_exitflag = 0;
     double final_fval = std::numeric_limits<double>::infinity();
     for (size_t attempt = 0; attempt < prox_schedule.size(); ++attempt) {
@@ -308,15 +313,19 @@ double QuadraticProblem::solve_problem(Vector<double> &arg) {
 
         DAQPSettings settings;
         daqp_default_settings(&settings);
-        settings.eps_prox = prox_schedule[attempt];
+        // DAQP selects its branch-and-bound solver only when eps_prox is zero.
+        // A nonzero proximal value silently selects the continuous QP path, so
+        // multiple binary choices can be returned as fractional values (e.g. 0.5).
+        // Keep MIQPs on branch-and-bound and regularize them only through H.
+        settings.eps_prox = has_binary_variables ? 0.0 : prox_schedule[attempt];
         settings.iter_limit = 300;
         settings.progress_tol = 1e-8;
         settings.primal_tol = 1e-4;
         settings.dual_tol = 1e-6;
-        settings.rel_subopt = 1e-4;
-        settings.abs_subopt = 1e-6;
+        settings.rel_subopt = has_binary_variables ? 0.0 : 1e-4;
+        settings.abs_subopt = has_binary_variables ? 0.0 : 1e-6;
 
-        if (debug || attempt > 0 || suspicious_hessian) {
+        if (debug) {
             fprintf(stderr,
                 "[DAQP] attempt %zu/%zu eps_prox=%g diag_shift=%g diag[min,max]=[%g, %g] max_asym=%g\n",
                 attempt + 1, prox_schedule.size(), settings.eps_prox, diag_shift,
@@ -328,10 +337,13 @@ double QuadraticProblem::solve_problem(Vector<double> &arg) {
         final_fval = (double)res.fval;
 
         if (res.exitflag > 0) {
+          if (debug) {
             fprintf(stderr,
                 "[DAQP] success exitflag=%d fval=%g n=%d m=%d ms=%d (eq=%d geq=%d) diag[min,max]=[%g, %g] max_asym=%g\n",
-        final_exitflag, final_fval, qp.n, qp.m, qp.ms, n_eq, n_geq, min_diag, max_diag, max_asym);
+                final_exitflag, final_fval, qp.n, qp.m, qp.ms, n_eq, n_geq,
+                min_diag, max_diag, max_asym);
             fflush(stderr);
+          }
             arg.resize(0.0, n);
             for (int i = 0; i < n; ++i) arg[i] = (double)x[i];
             return (double)res.fval;
@@ -341,7 +353,7 @@ double QuadraticProblem::solve_problem(Vector<double> &arg) {
             break;
         }
 
-        if (attempt + 1 < prox_schedule.size()) {
+        if (debug && attempt + 1 < prox_schedule.size()) {
             fprintf(stderr,
                 "[DAQP] EXIT_NONCONVEX on attempt %zu/%zu (flag=%d, eps_prox=%g, diag_shift=%g); retrying\n",
                 attempt + 1, prox_schedule.size(), res.exitflag, settings.eps_prox, diag_shift);
@@ -349,10 +361,13 @@ double QuadraticProblem::solve_problem(Vector<double> &arg) {
         }
     }
 
-    fprintf(stderr,
-        "[DAQP] final exitflag=%d fval=%g n=%d m=%d ms=%d (eq=%d geq=%d) diag[min,max]=[%g, %g] max_asym=%g\n",
-        final_exitflag, final_fval, qp.n, qp.m, qp.ms, n_eq, n_geq, min_diag, max_diag, max_asym);
-    fflush(stderr);
+    if (debug) {
+        fprintf(stderr,
+            "[DAQP] final exitflag=%d fval=%g n=%d m=%d ms=%d (eq=%d geq=%d) diag[min,max]=[%g, %g] max_asym=%g\n",
+            final_exitflag, final_fval, qp.n, qp.m, qp.ms, n_eq, n_geq,
+            min_diag, max_diag, max_asym);
+        fflush(stderr);
+    }
     return std::numeric_limits<double>::infinity();
 }
 

@@ -54,12 +54,14 @@ def launch_setup(context, *args, **kwargs):
 
     bridge_overrides = {}
     map_bridge_overrides = {}
+    global_path_overrides = {}
     upper_overrides = {}
     lower_overrides = {}
 
     route_name = _optional_string_override(context, "route_name")
     if route_name is not None:
         map_bridge_overrides["route_name"] = route_name
+        global_path_overrides["route_name"] = route_name
 
     scale_mode = _optional_string_override(context, "scale_mode")
     if scale_mode is not None:
@@ -70,13 +72,13 @@ def launch_setup(context, *args, **kwargs):
         "wheelbase",
         "vehicle_length_m",
         "bev_forward_m",
-        "preview_interval_nominal_road_width_m",
         "preview_interval_boundary_margin_m",
     ):
         value = _optional_float_override(context, geometry_parameter)
         if value is not None:
             upper_overrides[geometry_parameter] = value
-            lower_overrides[geometry_parameter] = value
+            if geometry_parameter == "wheelbase":
+                lower_overrides[geometry_parameter] = value
 
     local_map_file = _local_map_file(context)
     if local_map_file is not None:
@@ -111,6 +113,7 @@ def launch_setup(context, *args, **kwargs):
     global_path_topic = _optional_string_override(context, "global_path_topic")
     if global_path_topic is not None:
         upper_overrides["global_path_topic"] = global_path_topic
+        global_path_overrides["global_path_topic"] = global_path_topic
 
     duty_topic = _optional_string_override(context, "duty_topic")
     if duty_topic is not None:
@@ -146,7 +149,19 @@ def launch_setup(context, *args, **kwargs):
     if lower_overrides:
         lower_parameters.append(lower_overrides)
 
+    global_path_parameters = [config_file]
+    if global_path_overrides:
+        global_path_parameters.append(global_path_overrides)
+
     return [
+        Node(
+            package=PACKAGE_NAME,
+            executable="knu_global_path_publisher.py",
+            name="knu_global_path_publisher",
+            output="screen",
+            parameters=global_path_parameters,
+            condition=IfCondition(LaunchConfiguration("enable_global_path_publisher")),
+        ),
         Node(
             package=PACKAGE_NAME,
             executable="px4_ekf_bridge.py",
@@ -209,22 +224,17 @@ def generate_launch_description():
         DeclareLaunchArgument(
             "vehicle_length_m",
             default_value="",
-            description="Override upper/lower vehicle length in metres.",
+            description="Override upper-planner vehicle length in metres.",
         ),
         DeclareLaunchArgument(
             "bev_forward_m",
             default_value="",
-            description="Override upper/lower BEV forward extent in metres.",
-        ),
-        DeclareLaunchArgument(
-            "preview_interval_nominal_road_width_m",
-            default_value="",
-            description="Override upper/lower nominal corridor width in metres.",
+            description="Override upper-planner BEV forward extent in metres.",
         ),
         DeclareLaunchArgument(
             "preview_interval_boundary_margin_m",
             default_value="",
-            description="Override upper/lower corridor boundary margin in metres.",
+            description="Override upper-planner corridor boundary margin in metres.",
         ),
         DeclareLaunchArgument(
             "local_map_id",
@@ -244,7 +254,7 @@ def generate_launch_description():
         DeclareLaunchArgument(
             "route_name",
             default_value="scenario1",
-            description="KNU map anchor route: scenario1, scenario2, scenario3, or scenario4.",
+            description="KNU global path and map anchor: scenario1, scenario2, scenario3, or scenario4.",
         ),
         DeclareLaunchArgument(
             "odom_topic",
@@ -271,7 +281,7 @@ def generate_launch_description():
         DeclareLaunchArgument(
             "global_path_topic",
             default_value="",
-            description="Override external map-frame global path topic.",
+            description="Override ROS global path publisher and upper-planner input topic.",
         ),
         DeclareLaunchArgument(
             "duty_topic",
@@ -292,6 +302,11 @@ def generate_launch_description():
             "pixhawk_output_backend",
             default_value="",
             description="Override Pixhawk backend: mavlink_udp or disabled.",
+        ),
+        DeclareLaunchArgument(
+            "enable_global_path_publisher",
+            default_value="true",
+            description="Start the MATLAB-independent KNU global path publisher.",
         ),
         DeclareLaunchArgument(
             "enable_px4_bridge",

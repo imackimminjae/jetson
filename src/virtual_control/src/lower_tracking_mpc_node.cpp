@@ -1,4 +1,5 @@
 #include "virtual_control/lower_tracking_mpc_node.hpp"
+#include "virtual_control/lower_steering_actuator_model.hpp"
 
 #include "QuadraticProblem.h"
 #include "matrix_utils.h"
@@ -9,6 +10,7 @@
 #include <nav_msgs/msg/odometry.hpp>
 #include <nav_msgs/msg/path.hpp>
 #include <std_msgs/msg/bool.hpp>
+#include <std_msgs/msg/float64.hpp>
 #include <std_msgs/msg/float64_multi_array.hpp>
 #include <std_msgs/msg/int32_multi_array.hpp>
 #include <tf2/LinearMath/Matrix3x3.h>
@@ -22,6 +24,7 @@
 #include <chrono>
 #include <cmath>
 #include <cstring>
+#include <deque>
 #include <limits>
 #include <mutex>
 #include <stdexcept>
@@ -120,10 +123,7 @@ struct LowerTrackingMpcNode::Impl
   {
     bool valid{false};
     int segment_index{-1};
-    double segment_ratio{0.0};
     double path_s{0.0};
-    Eigen::Vector2d point{Eigen::Vector2d::Zero()};
-    Eigen::Vector2d tangent{Eigen::Vector2d::UnitX()};
     double path_yaw_rad{0.0};
     double lateral_error_m{0.0};
   };
@@ -134,7 +134,8 @@ struct LowerTrackingMpcNode::Impl
     std::vector<double> steering_sequence_rad;
     std::vector<Eigen::Vector2d> reference_horizon;
     double objective{0.0};
-    double solve_time_ms{0.0};
+    double solve_time_ms{0.0};  // Existing MPC build + solve duration.
+    double solver_only_time_ms{std::numeric_limits<double>::quiet_NaN()};
     double lateral_error_m{0.0};
     double heading_error_rad{0.0};
     int nearest_segment{-1};
@@ -146,7 +147,6 @@ struct LowerTrackingMpcNode::Impl
     double steering_angle_rad{0.0};
     bool drive_valid{false};
     int fallback_mode{3};  // 0=solver, 1=previous sequence, 2=hold, 3=neutral, 4=goal stop
-    std::string reason;
   };
 
   struct VirtualDriveCommand
@@ -161,6 +161,7 @@ struct LowerTrackingMpcNode::Impl
   {
     declareAndLoadParameters();
     validateParameters();
+    resetSteeringActuatorModelState();
     createInterfaces();
     if (mavlinkActive()) {
       mavlinkInitUdp();
@@ -179,12 +180,13 @@ struct LowerTrackingMpcNode::Impl
     RCLCPP_INFO(
       node_.get_logger(),
       "LowerTrackingMpcNode ready: rate=%.2fHz dt=%.3fs N=%d path=%s "
-      "scale=%s wheelbase=%.2fm length=%.2fm bev=%.2fm width=%.2fm margin=%.2fm "
-      "backend=%s virtual=%s",
+      "scale=%s wheelbase=%.2fm "
+      "actuator_model=%d delay=%.2fs tau=%.2fs backend=%s virtual=%s",
       lower_controller_rate_hz_, lower_prediction_dt_sec_, lower_prediction_steps_,
       lower_reference_path_topic_.c_str(), scale_mode_.c_str(), wheelbase_,
-      vehicle_length_m_, bev_forward_m_, preview_interval_nominal_road_width_m_,
-      preview_interval_boundary_margin_m_, pixhawk_output_backend_.c_str(),
+      lower_enable_steering_actuator_model_ ? 1 : 0,
+      lower_steering_actuator_delay_sec_, lower_steering_actuator_time_constant_sec_,
+      pixhawk_output_backend_.c_str(),
       virtual_cmd_topic_.c_str());
   }
 
@@ -209,16 +211,8 @@ struct LowerTrackingMpcNode::Impl
     node_.get_parameter("scale_mode", scale_mode_);
     if (scale_mode_ == "fullscale") {
       wheelbase_ = 2.80;
-      vehicle_length_m_ = 4.70;
-      bev_forward_m_ = 15.0;
-      preview_interval_nominal_road_width_m_ = 4.50;
-      preview_interval_boundary_margin_m_ = 1.50;
     } else {
       wheelbase_ = 0.30;
-      vehicle_length_m_ = 0.42;
-      bev_forward_m_ = 1.50;
-      preview_interval_nominal_road_width_m_ = 0.45;
-      preview_interval_boundary_margin_m_ = 0.15;
     }
 
     node_.declare_parameter<double>("lower_controller_rate_hz", lower_controller_rate_hz_);
@@ -232,37 +226,36 @@ struct LowerTrackingMpcNode::Impl
       "lower_max_steering_angle_rad", lower_max_steering_angle_rad_);
     node_.declare_parameter<double>(
       "lower_max_steering_rate_radps", lower_max_steering_rate_radps_);
+    node_.declare_parameter<bool>(
+      "lower_enable_steering_actuator_model", lower_enable_steering_actuator_model_);
+    node_.declare_parameter<double>(
+      "lower_steering_actuator_delay_sec", lower_steering_actuator_delay_sec_);
+    node_.declare_parameter<double>(
+      "lower_steering_actuator_time_constant_sec",
+      lower_steering_actuator_time_constant_sec_);
     node_.declare_parameter<double>("lower_min_path_spacing_m", lower_min_path_spacing_m_);
     node_.declare_parameter<double>(
       "lower_min_effective_speed_mps",
       lower_min_effective_speed_mps_);
     node_.declare_parameter<double>("wheelbase", wheelbase_);
-    node_.declare_parameter<double>("vehicle_length_m", vehicle_length_m_);
-    node_.declare_parameter<double>("bev_forward_m", bev_forward_m_);
-    node_.declare_parameter<double>(
-      "preview_interval_nominal_road_width_m",
-      preview_interval_nominal_road_width_m_);
-    node_.declare_parameter<double>(
-      "preview_interval_boundary_margin_m",
-      preview_interval_boundary_margin_m_);
     node_.declare_parameter<double>("input_timeout_sec", input_timeout_sec_);
     node_.declare_parameter<double>("lower_path_timeout_sec", lower_path_timeout_sec_);
     node_.declare_parameter<double>("solver_hold_last_valid_sec", solver_hold_last_valid_sec_);
     node_.declare_parameter<double>(
       "path_change_reset_threshold_m",
       path_change_reset_threshold_m_);
+    node_.declare_parameter<bool>("reset_on_path_change", reset_on_path_change_);
     node_.declare_parameter<double>("pose_jump_reset_threshold_m", pose_jump_reset_threshold_m_);
-    node_.declare_parameter<bool>("publish_zero_on_failure", publish_zero_on_failure_);
     node_.declare_parameter<bool>(
       "publish_applied_cmd_when_invalid", publish_applied_cmd_when_invalid_);
     node_.declare_parameter<std::string>("state_input_type", state_input_type_);
     node_.declare_parameter<std::string>("odom_topic", odom_topic_);
+    node_.declare_parameter<bool>("odom_yaw_is_orientation_z", odom_yaw_is_orientation_z_);
     node_.declare_parameter<std::string>("pose_stamped_topic", pose_stamped_topic_);
     node_.declare_parameter<bool>(
       "pose_stamped_yaw_is_orientation_z", pose_stamped_yaw_is_orientation_z_);
     node_.declare_parameter<double>("pose_x_offset", pose_x_offset_);
     node_.declare_parameter<double>("pose_y_offset", pose_y_offset_);
-    node_.declare_parameter<double>("pose_z_offset", pose_z_offset_);
     node_.declare_parameter<double>("pose_yaw_offset_rad", pose_yaw_offset_rad_);
     node_.declare_parameter<double>("pose_position_scale", pose_position_scale_);
     node_.declare_parameter<bool>("pose_swap_xy", pose_swap_xy_);
@@ -333,32 +326,31 @@ struct LowerTrackingMpcNode::Impl
     node_.get_parameter("lower_rd_steering_rate", lower_rd_steering_rate_);
     node_.get_parameter("lower_max_steering_angle_rad", lower_max_steering_angle_rad_);
     node_.get_parameter("lower_max_steering_rate_radps", lower_max_steering_rate_radps_);
+    node_.get_parameter(
+      "lower_enable_steering_actuator_model", lower_enable_steering_actuator_model_);
+    node_.get_parameter(
+      "lower_steering_actuator_delay_sec", lower_steering_actuator_delay_sec_);
+    node_.get_parameter(
+      "lower_steering_actuator_time_constant_sec",
+      lower_steering_actuator_time_constant_sec_);
     node_.get_parameter("lower_min_path_spacing_m", lower_min_path_spacing_m_);
     node_.get_parameter("lower_min_effective_speed_mps", lower_min_effective_speed_mps_);
     node_.get_parameter("wheelbase", wheelbase_);
-    node_.get_parameter("vehicle_length_m", vehicle_length_m_);
-    node_.get_parameter("bev_forward_m", bev_forward_m_);
-    node_.get_parameter(
-      "preview_interval_nominal_road_width_m",
-      preview_interval_nominal_road_width_m_);
-    node_.get_parameter(
-      "preview_interval_boundary_margin_m",
-      preview_interval_boundary_margin_m_);
     node_.get_parameter("input_timeout_sec", input_timeout_sec_);
     node_.get_parameter("lower_path_timeout_sec", lower_path_timeout_sec_);
     node_.get_parameter("solver_hold_last_valid_sec", solver_hold_last_valid_sec_);
     node_.get_parameter("path_change_reset_threshold_m", path_change_reset_threshold_m_);
+    node_.get_parameter("reset_on_path_change", reset_on_path_change_);
     node_.get_parameter("pose_jump_reset_threshold_m", pose_jump_reset_threshold_m_);
-    node_.get_parameter("publish_zero_on_failure", publish_zero_on_failure_);
     node_.get_parameter(
       "publish_applied_cmd_when_invalid", publish_applied_cmd_when_invalid_);
     node_.get_parameter("state_input_type", state_input_type_);
     node_.get_parameter("odom_topic", odom_topic_);
+    node_.get_parameter("odom_yaw_is_orientation_z", odom_yaw_is_orientation_z_);
     node_.get_parameter("pose_stamped_topic", pose_stamped_topic_);
     node_.get_parameter("pose_stamped_yaw_is_orientation_z", pose_stamped_yaw_is_orientation_z_);
     node_.get_parameter("pose_x_offset", pose_x_offset_);
     node_.get_parameter("pose_y_offset", pose_y_offset_);
-    node_.get_parameter("pose_z_offset", pose_z_offset_);
     node_.get_parameter("pose_yaw_offset_rad", pose_yaw_offset_rad_);
     node_.get_parameter("pose_position_scale", pose_position_scale_);
     node_.get_parameter("pose_swap_xy", pose_swap_xy_);
@@ -427,19 +419,33 @@ struct LowerTrackingMpcNode::Impl
       fail("scale_mode must be 'model' or 'fullscale'");
     }
     if (wheelbase_ <= 0.0) {fail("wheelbase must be > 0");}
-    if (vehicle_length_m_ <= 0.0) {fail("vehicle_length_m must be > 0");}
-    if (bev_forward_m_ <= 0.0) {fail("bev_forward_m must be > 0");}
-    if (preview_interval_nominal_road_width_m_ <= 0.0) {
-      fail("preview_interval_nominal_road_width_m must be > 0");
-    }
-    if (preview_interval_boundary_margin_m_ < 0.0) {
-      fail("preview_interval_boundary_margin_m must be >= 0");
-    }
     if (lower_max_steering_angle_rad_ <= 0.0) {
       fail("lower_max_steering_angle_rad must be > 0");
     }
     if (lower_max_steering_rate_radps_ < 0.0) {
       fail("lower_max_steering_rate_radps must be >= 0");
+    }
+    if (lower_enable_steering_actuator_model_) {
+      if (!std::isfinite(lower_steering_actuator_delay_sec_) ||
+        lower_steering_actuator_delay_sec_ < 0.0)
+      {
+        fail("lower_steering_actuator_delay_sec must be finite and >= 0");
+      }
+      if (!std::isfinite(lower_steering_actuator_time_constant_sec_) ||
+        lower_steering_actuator_time_constant_sec_ <= 0.0)
+      {
+        fail("lower_steering_actuator_time_constant_sec must be finite and > 0");
+      }
+      const double controller_dt = 1.0 / lower_controller_rate_hz_;
+      if (std::abs(controller_dt - lower_prediction_dt_sec_) > 1e-6) {
+        fail("steering actuator model requires controller period == lower_prediction_dt_sec");
+      }
+      const auto actuator = lower_steering_actuator_model::discretize(
+        lower_prediction_dt_sec_, lower_steering_actuator_time_constant_sec_,
+        lower_steering_actuator_delay_sec_);
+      if (actuator.delay_steps >= lower_prediction_steps_) {
+        fail("steering actuator delay must be shorter than the lower prediction horizon");
+      }
     }
     if (lower_min_path_spacing_m_ <= 0.0 || lower_min_effective_speed_mps_ <= 0.0) {
       fail("lower path spacing and minimum effective speed must be > 0");
@@ -480,6 +486,16 @@ struct LowerTrackingMpcNode::Impl
 
   void createInterfaces()
   {
+    batch_supervision_ = node_.declare_parameter<bool>("batch_supervision", false);
+    if (batch_supervision_) {
+      batch_run_sub_ = node_.create_subscription<std_msgs::msg::Bool>(
+        "/knu_batch/run_permission", rclcpp::QoS(1).reliable(),
+        [this](const std_msgs::msg::Bool::SharedPtr message) {
+          std::lock_guard<std::mutex> lock(data_mtx_);
+          batch_run_allowed_ = message->data;
+          batch_permission_received_ = std::chrono::steady_clock::now();
+        });
+    }
     auto path_qos = rclcpp::QoS(rclcpp::KeepLast(1)).reliable().transient_local();
     path_sub_ = node_.create_subscription<nav_msgs::msg::Path>(
       lower_reference_path_topic_, path_qos,
@@ -506,6 +522,8 @@ struct LowerTrackingMpcNode::Impl
       "/controller/local_curve", 10);
     lower_trace_pub_ = node_.create_publisher<std_msgs::msg::Float64MultiArray>(
       "/debug/lower_mpc_trace", 10);
+    lower_solver_time_pub_ = node_.create_publisher<std_msgs::msg::Float64>(
+      "/debug/lower_solver_time_ms", 10);
     virtual_cmd_pub_ = node_.create_publisher<imac_interfaces::msg::VirtualControlCommand>(
       virtual_cmd_topic_, 10);
     duty_pub_ = node_.create_publisher<std_msgs::msg::Float64MultiArray>(duty_topic_, 10);
@@ -519,7 +537,9 @@ struct LowerTrackingMpcNode::Impl
     PoseSnapshot next;
     next.position = Eigen::Vector2d(
       message->pose.pose.position.x, message->pose.pose.position.y);
-    next.yaw_rad = quaternionYaw(message->pose.pose.orientation);
+    const double raw_yaw = odom_yaw_is_orientation_z_ ?
+      message->pose.pose.orientation.z : quaternionYaw(message->pose.pose.orientation);
+    next.yaw_rad = wrapToPi(raw_yaw);
     next.speed_mps = std::hypot(
       message->twist.twist.linear.x, message->twist.twist.linear.y);
     next.frame_id = message->header.frame_id;
@@ -542,9 +562,6 @@ struct LowerTrackingMpcNode::Impl
     if (pose_invert_y_) {y = -y;}
     x = pose_position_scale_ * x + pose_x_offset_;
     y = pose_position_scale_ * y + pose_y_offset_;
-    const double transformed_z =
-      pose_position_scale_ * message->pose.position.z + pose_z_offset_;
-    (void)transformed_z;
 
     PoseSnapshot next;
     next.position = Eigen::Vector2d(x, y);
@@ -640,7 +657,10 @@ struct LowerTrackingMpcNode::Impl
     path_ = std::move(next);
     path_frame_id_ = message->header.frame_id.empty() ? "map" : message->header.frame_id;
     path_received_ = node_.now();
-    if (path_.size() < 2 || hard_change) {
+    // main8.m keeps deltaLowerPrev across upper-planner path refreshes. A
+    // newly published dense path is normal receding-horizon operation, not a
+    // controller reset event. Keep the old behavior available as an opt-in.
+    if (path_.size() < 2 || (reset_on_path_change_ && hard_change)) {
       reset_pending_ = true;
     }
   }
@@ -683,10 +703,7 @@ struct LowerTrackingMpcNode::Impl
         best_distance_squared = distance_squared;
         projection.valid = true;
         projection.segment_index = static_cast<int>(i);
-        projection.segment_ratio = ratio;
         projection.path_s = accumulated_s + ratio * length;
-        projection.point = point;
-        projection.tangent = tangent;
         projection.path_yaw_rad = std::atan2(tangent.y(), tangent.x());
         // Sign convention: a vehicle on the left side of the directed path has e_y > 0.
         projection.lateral_error_m = tangent.x() * error.y() - tangent.y() * error.x();
@@ -771,24 +788,68 @@ struct LowerTrackingMpcNode::Impl
       reference_yaw[static_cast<std::size_t>(k)] = yaw;
     }
 
-    Eigen::Matrix2d system;
-    system << 1.0, speed * lower_prediction_dt_sec_, 0.0, 1.0;
-    Eigen::Vector2d input(
-      0.0, speed / wheelbase_ * lower_prediction_dt_sec_);
-    Eigen::Vector2d affine_state(
-      result.lateral_error_m, result.heading_error_rad);
-    Eigen::MatrixXd input_map = Eigen::MatrixXd::Zero(2, horizon);
     Eigen::VectorXd affine = Eigen::VectorXd::Zero(2 * horizon);
     Eigen::MatrixXd condensed = Eigen::MatrixXd::Zero(2 * horizon, horizon);
-    for (int k = 0; k < horizon; ++k) {
-      const double path_yaw_increment = wrapToPi(
-        reference_yaw[static_cast<std::size_t>(k + 1)] -
-        reference_yaw[static_cast<std::size_t>(k)]);
-      affine_state = system * affine_state + Eigen::Vector2d(0.0, -path_yaw_increment);
-      input_map = system * input_map;
-      input_map.col(k) += input;
-      affine.segment<2>(2 * k) = affine_state;
-      condensed.block(2 * k, 0, 2, horizon) = input_map;
+    if (lower_enable_steering_actuator_model_) {
+      const auto actuator = lower_steering_actuator_model::discretize(
+        lower_prediction_dt_sec_, lower_steering_actuator_time_constant_sec_,
+        lower_steering_actuator_delay_sec_);
+      Eigen::Matrix3d system = Eigen::Matrix3d::Zero();
+      system(0, 0) = 1.0;
+      system(0, 1) = speed * lower_prediction_dt_sec_;
+      system(1, 1) = 1.0;
+      system(1, 2) =
+        speed / wheelbase_ * actuator.steering_integral_state_sec;
+      system(2, 2) = actuator.state_decay;
+      Eigen::Vector3d affine_state(
+        result.lateral_error_m, result.heading_error_rad,
+        estimated_effective_steering_angle_rad_);
+      Eigen::MatrixXd input_map = Eigen::MatrixXd::Zero(3, horizon);
+      for (int k = 0; k < horizon; ++k) {
+        const double path_yaw_increment = wrapToPi(
+          reference_yaw[static_cast<std::size_t>(k + 1)] -
+          reference_yaw[static_cast<std::size_t>(k)]);
+        const int command_index = k - actuator.delay_steps;
+        double known_delayed_command = 0.0;
+        if (command_index < 0 &&
+          static_cast<std::size_t>(k) < delayed_steering_command_history_rad_.size())
+        {
+          known_delayed_command =
+            delayed_steering_command_history_rad_[static_cast<std::size_t>(k)];
+        }
+
+        affine_state = system * affine_state + Eigen::Vector3d(
+          0.0,
+          speed / wheelbase_ * actuator.steering_integral_command_sec *
+          known_delayed_command - path_yaw_increment,
+          actuator.command_gain * known_delayed_command);
+        input_map = system * input_map;
+        if (command_index >= 0) {
+          input_map(1, command_index) +=
+            speed / wheelbase_ * actuator.steering_integral_command_sec;
+          input_map(2, command_index) += actuator.command_gain;
+        }
+        affine.segment<2>(2 * k) = affine_state.head<2>();
+        condensed.block(2 * k, 0, 2, horizon) = input_map.topRows<2>();
+      }
+    } else {
+      Eigen::Matrix2d system;
+      system << 1.0, speed * lower_prediction_dt_sec_, 0.0, 1.0;
+      Eigen::Vector2d input(
+        0.0, speed / wheelbase_ * lower_prediction_dt_sec_);
+      Eigen::Vector2d affine_state(
+        result.lateral_error_m, result.heading_error_rad);
+      Eigen::MatrixXd input_map = Eigen::MatrixXd::Zero(2, horizon);
+      for (int k = 0; k < horizon; ++k) {
+        const double path_yaw_increment = wrapToPi(
+          reference_yaw[static_cast<std::size_t>(k + 1)] -
+          reference_yaw[static_cast<std::size_t>(k)]);
+        affine_state = system * affine_state + Eigen::Vector2d(0.0, -path_yaw_increment);
+        input_map = system * input_map;
+        input_map.col(k) += input;
+        affine.segment<2>(2 * k) = affine_state;
+        condensed.block(2 * k, 0, 2, horizon) = input_map;
+      }
     }
 
     Eigen::MatrixXd state_weight = Eigen::MatrixXd::Zero(2 * horizon, 2 * horizon);
@@ -809,7 +870,8 @@ struct LowerTrackingMpcNode::Impl
     Eigen::VectorXd linear_eigen =
       2.0 * condensed.transpose() * state_weight * affine;
     const double previous = clampd(
-      last_mpc_steering_angle_rad_,
+      lower_enable_steering_actuator_model_ ?
+      last_applied_steering_angle_rad_ : last_mpc_steering_angle_rad_,
       -lower_max_steering_angle_rad_, lower_max_steering_angle_rad_);
     linear_eigen(0) -= 2.0 * lower_rd_steering_rate_ * previous;
     hessian_eigen.diagonal().array() += 1e-9;
@@ -862,7 +924,10 @@ struct LowerTrackingMpcNode::Impl
     solver.set_Q_matrix(hessian);
     solver.set_q0_vector(linear);
     Vector<double> argument;
+    const auto solver_started = std::chrono::steady_clock::now();
     const double objective = solver.solve_problem(argument);
+    result.solver_only_time_ms = std::chrono::duration<double, std::milli>(
+      std::chrono::steady_clock::now() - solver_started).count();
     result.solve_time_ms = std::chrono::duration<double, std::milli>(
       std::chrono::steady_clock::now() - started).count();
     if (!std::isfinite(objective) || argument.size() < static_cast<unsigned int>(horizon)) {
@@ -885,6 +950,51 @@ struct LowerTrackingMpcNode::Impl
     return result;
   }
 
+  void resetSteeringActuatorModelState()
+  {
+    estimated_effective_steering_angle_rad_ = 0.0;
+    last_applied_steering_angle_rad_ = 0.0;
+    delayed_steering_command_history_rad_.clear();
+    if (!lower_enable_steering_actuator_model_) {return;}
+    const auto actuator = lower_steering_actuator_model::discretize(
+      lower_prediction_dt_sec_, lower_steering_actuator_time_constant_sec_,
+      lower_steering_actuator_delay_sec_);
+    delayed_steering_command_history_rad_.assign(
+      static_cast<std::size_t>(actuator.delay_steps), 0.0);
+  }
+
+  void advanceSteeringActuatorModel(double applied_steering_angle_rad)
+  {
+    applied_steering_angle_rad = clampd(
+      applied_steering_angle_rad,
+      -lower_max_steering_angle_rad_, lower_max_steering_angle_rad_);
+    last_applied_steering_angle_rad_ = applied_steering_angle_rad;
+    if (!lower_enable_steering_actuator_model_) {
+      estimated_effective_steering_angle_rad_ = applied_steering_angle_rad;
+      return;
+    }
+
+    const auto actuator = lower_steering_actuator_model::discretize(
+      lower_prediction_dt_sec_, lower_steering_actuator_time_constant_sec_,
+      lower_steering_actuator_delay_sec_);
+    double delayed_command = applied_steering_angle_rad;
+    if (actuator.delay_steps > 0) {
+      if (delayed_steering_command_history_rad_.size() !=
+        static_cast<std::size_t>(actuator.delay_steps))
+      {
+        delayed_steering_command_history_rad_.assign(
+          static_cast<std::size_t>(actuator.delay_steps), 0.0);
+      }
+      delayed_command = delayed_steering_command_history_rad_.front();
+      delayed_steering_command_history_rad_.pop_front();
+      delayed_steering_command_history_rad_.push_back(applied_steering_angle_rad);
+    }
+    estimated_effective_steering_angle_rad_ = clampd(
+      lower_steering_actuator_model::advance(
+        estimated_effective_steering_angle_rad_, delayed_command, actuator),
+      -lower_max_steering_angle_rad_, lower_max_steering_angle_rad_);
+  }
+
   void resetControllerState(const std::string & reason)
   {
     previous_lower_steering_sequence_.clear();
@@ -895,6 +1005,7 @@ struct LowerTrackingMpcNode::Impl
     have_filtered_command_ = false;
     previous_filtered_steer_norm_ = 0.0;
     last_filter_time_ = rclcpp::Time(0, 0, RCL_ROS_TIME);
+    resetSteeringActuatorModelState();
     speed_integral_ = 0.0;
     target_speed_profile_mps_ = std::max(0.0, target_speed_mps_);
     RCLCPP_WARN(node_.get_logger(), "lower MPC state reset: %s", reason.c_str());
@@ -903,7 +1014,6 @@ struct LowerTrackingMpcNode::Impl
   SelectedCommand selectFailureCommand(const std::string & reason, bool allow_sequence)
   {
     SelectedCommand selected;
-    selected.reason = reason;
     if (allow_sequence &&
       previous_lower_steering_index_ < previous_lower_steering_sequence_.size())
     {
@@ -1036,9 +1146,8 @@ struct LowerTrackingMpcNode::Impl
     local_curve_pub_->publish(message);
   }
 
-  void publishGoalStop(const PoseSnapshot & pose, const std::string & frame_id)
+  void publishGoalStop(const PoseSnapshot & pose)
   {
-    (void)frame_id;
     previous_lower_steering_sequence_.clear();
     previous_lower_steering_index_ = 0;
     last_mpc_steering_angle_rad_ = 0.0;
@@ -1063,8 +1172,9 @@ struct LowerTrackingMpcNode::Impl
     rememberMavlinkActuator(0.0, 0.0, false);
     if (mavlinkActive()) {mavlinkSendActuator(0.0, 0.0);}
     publishTrace(
-      pose, MpcResult(), SelectedCommand{0.0, false, 4, "goal reached"}, 0.0,
+      pose, MpcResult(), SelectedCommand{0.0, false, 4}, 0.0,
       virtual_command, 0.0, 0.0);
+    advanceSteeringActuatorModel(0.0);
     RCLCPP_INFO_THROTTLE(
       node_.get_logger(), *node_.get_clock(), 1000,
       "goal stop applied: steer=0 throttle=0 brake=%.3f MAVLink neutral",
@@ -1108,6 +1218,13 @@ struct LowerTrackingMpcNode::Impl
       static_cast<double>(virtual_command.brake),
       mavlink_throttle, mavlink_steering, mpc.objective
     };
+    trace.data.push_back(estimated_effective_steering_angle_rad_);
+    trace.data.push_back(last_applied_steering_angle_rad_);
+    trace.data.push_back(lower_enable_steering_actuator_model_ ? 1.0 : 0.0);
+    trace.data.push_back(lower_steering_actuator_delay_sec_);
+    trace.data.push_back(lower_steering_actuator_time_constant_sec_);
+    // Append only: indices 0..23 retain their deployed meaning.
+    trace.data.push_back(mpc.solver_only_time_ms);
     lower_trace_pub_->publish(trace);
   }
 
@@ -1121,7 +1238,6 @@ struct LowerTrackingMpcNode::Impl
       command.steering_angle_rad = 0.0;
       command.drive_valid = false;
       command.fallback_mode = 3;
-      command.reason = "non-finite steering command";
     }
     const rclcpp::Time current_time = node_.now();
     last_mpc_steering_angle_rad_ = command.steering_angle_rad;
@@ -1149,6 +1265,8 @@ struct LowerTrackingMpcNode::Impl
     const bool hold_steering = command.fallback_mode == 2;
     const VirtualDriveCommand drive = computeVirtualDrive(
       applied_normalized, command.drive_valid, hold_steering, pose.speed_mps);
+    const double applied_steering_angle_rad =
+      drive.steer * lower_max_steering_angle_rad_;
     imac_interfaces::msg::VirtualControlCommand virtual_message;
     virtual_message.steer = static_cast<float>(drive.steer);
     virtual_message.throttle = static_cast<float>(drive.throttle);
@@ -1157,17 +1275,22 @@ struct LowerTrackingMpcNode::Impl
 
     const double platform_steering =
       -clampd(steer_sign_ * applied_normalized, -1.0, 1.0);
+    // Apply the same closed-loop speed command to every output backend. This
+    // removes throttle when measured speed exceeds the target instead of
+    // continuing the old fixed-throttle command through a narrow section.
     const double platform_throttle = command.drive_valid ?
-      clampd(mavlink_throttle_max_norm_, 0.0, 1.0) : 0.0;
+      clampd(drive.throttle, 0.0, mavlink_throttle_max_norm_) : 0.0;
     publishDutyAndPwm(platform_throttle, platform_steering, command.drive_valid);
 
     double mavlink_throttle = 0.0;
     double mavlink_steering = 0.0;
     publishMavlinkCommand(
-      command.drive_valid, applied_normalized, mavlink_throttle, mavlink_steering);
+      command.drive_valid, platform_throttle, applied_normalized,
+      mavlink_throttle, mavlink_steering);
     publishTrace(
       pose, mpc, command, applied_normalized, virtual_message,
       mavlink_throttle, mavlink_steering);
+    advanceSteeringActuatorModel(applied_steering_angle_rad);
   }
 
   void controllerLoop()
@@ -1178,6 +1301,7 @@ struct LowerTrackingMpcNode::Impl
     rclcpp::Time path_received(0, 0, RCL_ROS_TIME);
     bool goal_reached = false;
     bool reset_pending = false;
+    bool batch_stop = false;
     {
       std::lock_guard<std::mutex> lock(data_mtx_);
       pose = pose_;
@@ -1187,10 +1311,13 @@ struct LowerTrackingMpcNode::Impl
       goal_reached = goal_reached_;
       reset_pending = reset_pending_;
       reset_pending_ = false;
+      batch_stop = batch_supervision_ && (!batch_run_allowed_ ||
+        std::chrono::duration<double>(std::chrono::steady_clock::now() -
+        batch_permission_received_).count() > 1.0);
     }
     if (reset_pending) {resetControllerState("path/mission/pose/reset event");}
-    if (goal_reached) {
-      publishGoalStop(pose, frame_id);
+    if (goal_reached || batch_stop) {
+      publishGoalStop(pose);
       return;
     }
 
@@ -1237,6 +1364,13 @@ struct LowerTrackingMpcNode::Impl
     }
 
     MpcResult mpc = solveTrackingMpc(pose, path);
+    // Stationary resets and missing inputs do not invoke the solver. Publish
+    // only measured solver calls, including those that return invalid results.
+    if (std::isfinite(mpc.solver_only_time_ms)) {
+      std_msgs::msg::Float64 solver_time;
+      solver_time.data = mpc.solver_only_time_ms;
+      lower_solver_time_pub_->publish(solver_time);
+    }
     if (!mpc.valid) {
       publishSelectedCommand(
         pose, mpc, selectFailureCommand(mpc.status, true));
@@ -1246,13 +1380,9 @@ struct LowerTrackingMpcNode::Impl
     selected.steering_angle_rad = mpc.steering_sequence_rad.front();
     selected.drive_valid = true;
     selected.fallback_mode = 0;
-    selected.reason = "lower QP solved";
     previous_lower_steering_sequence_.assign(
       mpc.steering_sequence_rad.begin() + 1, mpc.steering_sequence_rad.end());
     previous_lower_steering_index_ = 0;
-    last_mpc_steering_angle_rad_ = selected.steering_angle_rad;
-    last_valid_steering_angle_rad_ = selected.steering_angle_rad;
-    last_valid_steering_time_ = current_time;
     publishLocalReference(mpc.reference_horizon, frame_id);
     publishSelectedCommand(pose, mpc, selected);
   }
@@ -1276,6 +1406,7 @@ struct LowerTrackingMpcNode::Impl
 
   void publishMavlinkCommand(
     bool valid,
+    double requested_throttle,
     double applied_steering_norm,
     double & sent_throttle,
     double & sent_steering)
@@ -1283,7 +1414,8 @@ struct LowerTrackingMpcNode::Impl
     if (!mavlinkActive()) {return;}
     const rclcpp::Time current_time = node_.now();
     if (valid) {
-      sent_throttle = clampd(mavlink_throttle_max_norm_, 0.0, 1.0);
+      sent_throttle = clampd(
+        requested_throttle, 0.0, mavlink_throttle_max_norm_);
       sent_steering = -clampd(
         mavlink_steer_sign_ * applied_steering_norm, -1.0, 1.0);
       rememberMavlinkActuator(sent_throttle, sent_steering, true);
@@ -1575,28 +1707,27 @@ struct LowerTrackingMpcNode::Impl
   double lower_rd_steering_rate_{8.0};
   double lower_max_steering_angle_rad_{0.35};
   double lower_max_steering_rate_radps_{2.09439510239};
+  bool lower_enable_steering_actuator_model_{false};
+  double lower_steering_actuator_delay_sec_{0.0};
+  double lower_steering_actuator_time_constant_sec_{0.85};
   double lower_min_path_spacing_m_{0.05};
   double lower_min_effective_speed_mps_{0.10};
   std::string scale_mode_{"model"};
   double wheelbase_{0.3};
-  double vehicle_length_m_{0.42};
-  double bev_forward_m_{1.5};
-  double preview_interval_nominal_road_width_m_{0.45};
-  double preview_interval_boundary_margin_m_{0.15};
   double input_timeout_sec_{0.60};
   double lower_path_timeout_sec_{1.50};
   double solver_hold_last_valid_sec_{0.30};
   double path_change_reset_threshold_m_{0.75};
+  bool reset_on_path_change_{false};
   double pose_jump_reset_threshold_m_{1.0};
-  bool publish_zero_on_failure_{true};
   bool publish_applied_cmd_when_invalid_{true};
   std::string state_input_type_{"odom"};
   std::string odom_topic_{"/px4/sih/odom_map"};
+  bool odom_yaw_is_orientation_z_{false};
   std::string pose_stamped_topic_{"/motive/vehicle/pose"};
   bool pose_stamped_yaw_is_orientation_z_{true};
   double pose_x_offset_{0.0};
   double pose_y_offset_{0.0};
-  double pose_z_offset_{0.0};
   double pose_yaw_offset_rad_{0.0};
   double pose_position_scale_{1.0};
   bool pose_swap_xy_{false};
@@ -1673,6 +1804,9 @@ struct LowerTrackingMpcNode::Impl
   bool have_filtered_command_{false};
   double previous_filtered_steer_norm_{0.0};
   rclcpp::Time last_filter_time_{0, 0, RCL_ROS_TIME};
+  double estimated_effective_steering_angle_rad_{0.0};
+  double last_applied_steering_angle_rad_{0.0};
+  std::deque<double> delayed_steering_command_history_rad_;
 
   int mavlink_socket_{-1};
   bool mavlink_peer_known_{false};
@@ -1695,10 +1829,15 @@ struct LowerTrackingMpcNode::Impl
   rclcpp::Subscription<nav_msgs::msg::Path>::SharedPtr path_sub_;
   rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr goal_sub_;
   rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr reset_sub_;
+  rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr batch_run_sub_;
+  bool batch_supervision_{false};
+  bool batch_run_allowed_{false};
+  std::chrono::steady_clock::time_point batch_permission_received_{};
   rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr raw_cmd_pub_;
   rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr applied_cmd_pub_;
   rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr local_curve_pub_;
   rclcpp::Publisher<std_msgs::msg::Float64MultiArray>::SharedPtr lower_trace_pub_;
+  rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr lower_solver_time_pub_;
   rclcpp::Publisher<imac_interfaces::msg::VirtualControlCommand>::SharedPtr virtual_cmd_pub_;
   rclcpp::Publisher<std_msgs::msg::Float64MultiArray>::SharedPtr duty_pub_;
   rclcpp::Publisher<std_msgs::msg::Int32MultiArray>::SharedPtr pwm_pub_;

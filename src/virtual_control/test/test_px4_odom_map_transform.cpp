@@ -10,11 +10,10 @@ namespace map_transform = virtual_control::px4_odom_map;
 
 TEST(Px4OdomMapTransform, FirstSourcePoseMapsToEveryRouteAnchor)
 {
-  const std::array<std::string, 4> route_names{
-    "scenario1", "scenario2", "scenario3", "scenario4"};
   const map_transform::RawPose first_source{12.5, -7.25, 3.0, -0.42};
 
-  for (const auto & route_name : route_names) {
+  for (int number = 1; number <= 21; ++number) {
+    const auto route_name = "scenario" + std::to_string(number);
     const auto route = map_transform::routeAnchorForName(route_name);
     ASSERT_TRUE(route.has_value());
     map_transform::PoseAlignment alignment(map_transform::TransformConfig{}, *route);
@@ -48,6 +47,16 @@ TEST(Px4OdomMapTransform, Scenario1RegressionSample)
   EXPECT_NEAR(output.y, -113.421420, 1e-5);
   EXPECT_NEAR(output.z, 1.611267, 1e-5);
   EXPECT_NEAR(output.yaw, 2.095460, 1e-6);
+}
+
+TEST(Px4OdomMapTransform, Scenario2StartsAtRoadCenterline)
+{
+  const auto route = map_transform::routeAnchorForName("scenario2");
+  ASSERT_TRUE(route.has_value());
+
+  EXPECT_NEAR(route->first[0], -252.789, 1e-12);
+  EXPECT_NEAR(route->first[1], 93.548, 1e-12);
+  EXPECT_NEAR(route->first[2], 0.0, 1e-12);
 }
 
 TEST(Px4OdomMapTransform, AxisSelectionMatchesPositionAndHeading)
