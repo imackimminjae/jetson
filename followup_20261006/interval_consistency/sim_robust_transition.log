@@ -1,0 +1,367 @@
+getifaddrs: Operation not permitted
+getifaddrs: Operation not permitted
+getifaddrs: Operation not permitted
+getifaddrs: Operation not permitted
+[37;1m2026-10-06 02:45:06.134 [31;1m[[37;1mTRANSPORT[31;1m Error] [37mAll whitelist interfaces were filtered out[34;1m -> Function [36mUDPv4Transport[m
+[37;1m2026-10-06 02:45:06.134 [31;1m[[37;1mTRANSPORT_UDP[31;1m Error] [37mError creating socket: Operation not permitted[34;1m -> Function [36minit[m
+[37;1m2026-10-06 02:45:06.134 [31;1m[[37;1mRTPS_PARTICIPANT[31;1m Error] [37mUser transport failed to register.[34;1m -> Function [36mRTPSParticipantImpl[m
+[INFO] [1791222306.164099189] [upper_planner_node]: planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+[INFO] [1791222306.169819636] [upper_planner_node]: Egocentric MIQP planner ready: rate=1.00Hz pred_dt=0.750s Nmax=7 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791222306.170038234] [upper_planner_node]: upper branch model: cumulative_increment=1 turn_window_at_split=1 turn_target_absolute=1 split_continuity=6.75m r_dpsi=3.000 lambda_turn=0.600
+[INFO] [1791222306.181324210] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=30 path=/planner/lower_reference_path scale=fullscale wheelbase=2.80m rear_offset=1.40m command_scale=0.350rad actuator_model=1 delay=0.00s tau=0.74s backend=disabled virtual=/cmd_control
+[WARN] [1791222306.291795810] [upper_planner_node]: interval_diag step=7 reason=3 ref_body=(24.664,17.994) heading_deg=43.58 center_cell=(78,121) center_value=100 line_free=1 blocked=249 unknown=0 outside=2 longest_run=1 min_run=2 grid_free=3218 zero=3218 positive=13166 unknown=0 topic=/bev/occupancy_grid frame=Vehicle origin=(0.000,-20.000) origin_yaw_deg=0.00 size=128x128 res=0.3125 positive_is_drivable=0 threshold=0 waypoint_bias=0 previous=1
+[WARN] [1791222306.292074186] [upper_planner_node]: no valid preview interval at step=7; usable horizon=6 reason=3
+"live_curve" "tau0.74_noise2" "delay_near_tightening" "goal_reached" cycles=399
+getifaddrs: Operation not permitted
+getifaddrs: Operation not permitted
+[37;1m2026-10-06 02:45:06.367 [31;1m[[37;1mTRANSPORT[31;1m Error] [37mAll whitelist interfaces were filtered out[34;1m -> Function [36mUDPv4Transport[m
+[37;1m2026-10-06 02:45:06.367 [31;1m[[37;1mTRANSPORT_UDP[31;1m Error] [37mError creating socket: Operation not permitted[34;1m -> Function [36minit[m
+[37;1m2026-10-06 02:45:06.367 [31;1m[[37;1mRTPS_PARTICIPANT[31;1m Error] [37mUser transport failed to register.[34;1m -> Function [36mRTPSParticipantImpl[m
+[INFO] [1791222306.379154931] [upper_planner_node]: planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+[INFO] [1791222306.382140869] [upper_planner_node]: Egocentric MIQP planner ready: rate=1.00Hz pred_dt=0.750s Nmax=7 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791222306.382307306] [upper_planner_node]: upper branch model: cumulative_increment=1 turn_window_at_split=1 turn_target_absolute=1 split_continuity=6.75m r_dpsi=3.000 lambda_turn=0.600
+[INFO] [1791222306.391781552] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=30 path=/planner/lower_reference_path scale=fullscale wheelbase=2.80m rear_offset=1.40m command_scale=0.350rad actuator_model=1 delay=0.00s tau=0.74s backend=disabled virtual=/cmd_control
+"live_curve" "tau0.5" "delay_near_tightening" "goal_reached" cycles=401
+getifaddrs: Operation not permitted
+getifaddrs: Operation not permitted
+[37;1m2026-10-06 02:45:06.565 [31;1m[[37;1mTRANSPORT[31;1m Error] [37mAll whitelist interfaces were filtered out[34;1m -> Function [36mUDPv4Transport[m
+[37;1m2026-10-06 02:45:06.565 [31;1m[[37;1mTRANSPORT_UDP[31;1m Error] [37mError creating socket: Operation not permitted[34;1m -> Function [36minit[m
+[37;1m2026-10-06 02:45:06.565 [31;1m[[37;1mRTPS_PARTICIPANT[31;1m Error] [37mUser transport failed to register.[34;1m -> Function [36mRTPSParticipantImpl[m
+[INFO] [1791222306.576876849] [upper_planner_node]: planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+[INFO] [1791222306.579791841] [upper_planner_node]: Egocentric MIQP planner ready: rate=1.00Hz pred_dt=0.750s Nmax=7 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791222306.579983879] [upper_planner_node]: upper branch model: cumulative_increment=1 turn_window_at_split=1 turn_target_absolute=1 split_continuity=6.75m r_dpsi=3.000 lambda_turn=0.600
+[INFO] [1791222306.589224230] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=30 path=/planner/lower_reference_path scale=fullscale wheelbase=2.80m rear_offset=1.40m command_scale=0.350rad actuator_model=1 delay=0.00s tau=0.74s backend=disabled virtual=/cmd_control
+[WARN] [1791222306.694895378] [upper_planner_node]: no valid preview interval at step=7; usable horizon=6 reason=3
+"live_curve" "tau1.0" "delay_near_tightening" "goal_reached" cycles=400
+getifaddrs: Operation not permitted
+getifaddrs: Operation not permitted
+[37;1m2026-10-06 02:45:06.765 [31;1m[[37;1mTRANSPORT[31;1m Error] [37mAll whitelist interfaces were filtered out[34;1m -> Function [36mUDPv4Transport[m
+[37;1m2026-10-06 02:45:06.766 [31;1m[[37;1mTRANSPORT_UDP[31;1m Error] [37mError creating socket: Operation not permitted[34;1m -> Function [36minit[m
+[37;1m2026-10-06 02:45:06.766 [31;1m[[37;1mRTPS_PARTICIPANT[31;1m Error] [37mUser transport failed to register.[34;1m -> Function [36mRTPSParticipantImpl[m
+[INFO] [1791222306.777613890] [upper_planner_node]: planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+[INFO] [1791222306.780540147] [upper_planner_node]: Egocentric MIQP planner ready: rate=1.00Hz pred_dt=0.750s Nmax=7 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791222306.780711128] [upper_planner_node]: upper branch model: cumulative_increment=1 turn_window_at_split=1 turn_target_absolute=1 split_continuity=6.75m r_dpsi=3.000 lambda_turn=0.600
+[INFO] [1791222306.789723761] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=30 path=/planner/lower_reference_path scale=fullscale wheelbase=2.80m rear_offset=1.40m command_scale=0.350rad actuator_model=1 delay=0.00s tau=0.74s backend=disabled virtual=/cmd_control
+"branch_width" "tau0.74_noise2" "delay_near_tightening" "goal_reached" cycles=401
+getifaddrs: Operation not permitted
+getifaddrs: Operation not permitted
+[37;1m2026-10-06 02:45:06.966 [31;1m[[37;1mTRANSPORT[31;1m Error] [37mAll whitelist interfaces were filtered out[34;1m -> Function [36mUDPv4Transport[m
+[37;1m2026-10-06 02:45:06.966 [31;1m[[37;1mTRANSPORT_UDP[31;1m Error] [37mError creating socket: Operation not permitted[34;1m -> Function [36minit[m
+[37;1m2026-10-06 02:45:06.966 [31;1m[[37;1mRTPS_PARTICIPANT[31;1m Error] [37mUser transport failed to register.[34;1m -> Function [36mRTPSParticipantImpl[m
+[INFO] [1791222306.978544217] [upper_planner_node]: planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+[INFO] [1791222306.981475146] [upper_planner_node]: Egocentric MIQP planner ready: rate=1.00Hz pred_dt=0.750s Nmax=7 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791222306.981650543] [upper_planner_node]: upper branch model: cumulative_increment=1 turn_window_at_split=1 turn_target_absolute=1 split_continuity=6.75m r_dpsi=3.000 lambda_turn=0.600
+[INFO] [1791222306.991500511] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=30 path=/planner/lower_reference_path scale=fullscale wheelbase=2.80m rear_offset=1.40m command_scale=0.350rad actuator_model=1 delay=0.00s tau=0.74s backend=disabled virtual=/cmd_control
+[WARN] [1791222307.098945404] [upper_planner_node]: no valid preview interval at step=7; usable horizon=6 reason=3
+"branch_width" "tau0.5" "delay_near_tightening" "goal_reached" cycles=400
+getifaddrs: Operation not permitted
+getifaddrs: Operation not permitted
+[37;1m2026-10-06 02:45:07.170 [31;1m[[37;1mTRANSPORT[31;1m Error] [37mAll whitelist interfaces were filtered out[34;1m -> Function [36mUDPv4Transport[m
+[37;1m2026-10-06 02:45:07.171 [31;1m[[37;1mTRANSPORT_UDP[31;1m Error] [37mError creating socket: Operation not permitted[34;1m -> Function [36minit[m
+[37;1m2026-10-06 02:45:07.171 [31;1m[[37;1mRTPS_PARTICIPANT[31;1m Error] [37mUser transport failed to register.[34;1m -> Function [36mRTPSParticipantImpl[m
+[INFO] [1791222307.184034798] [upper_planner_node]: planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+[INFO] [1791222307.187129763] [upper_planner_node]: Egocentric MIQP planner ready: rate=1.00Hz pred_dt=0.750s Nmax=7 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791222307.187277127] [upper_planner_node]: upper branch model: cumulative_increment=1 turn_window_at_split=1 turn_target_absolute=1 split_continuity=6.75m r_dpsi=3.000 lambda_turn=0.600
+[INFO] [1791222307.196564232] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=30 path=/planner/lower_reference_path scale=fullscale wheelbase=2.80m rear_offset=1.40m command_scale=0.350rad actuator_model=1 delay=0.00s tau=0.74s backend=disabled virtual=/cmd_control
+[WARN] [1791222307.308997487] [upper_planner_node]: no valid preview interval at step=7; usable horizon=6 reason=3
+"branch_width" "tau1.0" "delay_near_tightening" "goal_reached" cycles=401
+getifaddrs: Operation not permitted
+getifaddrs: Operation not permitted
+[37;1m2026-10-06 02:45:07.384 [31;1m[[37;1mTRANSPORT[31;1m Error] [37mAll whitelist interfaces were filtered out[34;1m -> Function [36mUDPv4Transport[m
+[37;1m2026-10-06 02:45:07.384 [31;1m[[37;1mTRANSPORT_UDP[31;1m Error] [37mError creating socket: Operation not permitted[34;1m -> Function [36minit[m
+[37;1m2026-10-06 02:45:07.384 [31;1m[[37;1mRTPS_PARTICIPANT[31;1m Error] [37mUser transport failed to register.[34;1m -> Function [36mRTPSParticipantImpl[m
+[INFO] [1791222307.397641188] [upper_planner_node]: planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+[INFO] [1791222307.401151685] [upper_planner_node]: Egocentric MIQP planner ready: rate=1.00Hz pred_dt=0.750s Nmax=7 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791222307.401330922] [upper_planner_node]: upper branch model: cumulative_increment=1 turn_window_at_split=1 turn_target_absolute=1 split_continuity=6.75m r_dpsi=3.000 lambda_turn=0.600
+[INFO] [1791222307.412033522] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=30 path=/planner/lower_reference_path scale=fullscale wheelbase=2.80m rear_offset=1.40m command_scale=0.350rad actuator_model=1 delay=0.00s tau=0.74s backend=disabled virtual=/cmd_control
+"replica_east(scenario1)_off+0.0_yaw+0" "tau0.74_noise2" "delay_near_tightening" "time_limit" cycles=160
+getifaddrs: Operation not permitted
+getifaddrs: Operation not permitted
+[37;1m2026-10-06 02:45:07.502 [31;1m[[37;1mTRANSPORT[31;1m Error] [37mAll whitelist interfaces were filtered out[34;1m -> Function [36mUDPv4Transport[m
+[37;1m2026-10-06 02:45:07.502 [31;1m[[37;1mTRANSPORT_UDP[31;1m Error] [37mError creating socket: Operation not permitted[34;1m -> Function [36minit[m
+[37;1m2026-10-06 02:45:07.502 [31;1m[[37;1mRTPS_PARTICIPANT[31;1m Error] [37mUser transport failed to register.[34;1m -> Function [36mRTPSParticipantImpl[m
+[INFO] [1791222307.513584075] [upper_planner_node]: planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+[INFO] [1791222307.516464827] [upper_planner_node]: Egocentric MIQP planner ready: rate=1.00Hz pred_dt=0.750s Nmax=7 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791222307.516642464] [upper_planner_node]: upper branch model: cumulative_increment=1 turn_window_at_split=1 turn_target_absolute=1 split_continuity=6.75m r_dpsi=3.000 lambda_turn=0.600
+[INFO] [1791222307.526567346] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=30 path=/planner/lower_reference_path scale=fullscale wheelbase=2.80m rear_offset=1.40m command_scale=0.350rad actuator_model=1 delay=0.00s tau=0.74s backend=disabled virtual=/cmd_control
+"replica_east(scenario1)_off+0.0_yaw+0" "tau0.5" "delay_near_tightening" "time_limit" cycles=160
+getifaddrs: Operation not permitted
+getifaddrs: Operation not permitted
+[37;1m2026-10-06 02:45:07.614 [31;1m[[37;1mTRANSPORT[31;1m Error] [37mAll whitelist interfaces were filtered out[34;1m -> Function [36mUDPv4Transport[m
+[37;1m2026-10-06 02:45:07.614 [31;1m[[37;1mTRANSPORT_UDP[31;1m Error] [37mError creating socket: Operation not permitted[34;1m -> Function [36minit[m
+[37;1m2026-10-06 02:45:07.614 [31;1m[[37;1mRTPS_PARTICIPANT[31;1m Error] [37mUser transport failed to register.[34;1m -> Function [36mRTPSParticipantImpl[m
+[INFO] [1791222307.625542533] [upper_planner_node]: planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+[INFO] [1791222307.628422196] [upper_planner_node]: Egocentric MIQP planner ready: rate=1.00Hz pred_dt=0.750s Nmax=7 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791222307.628575097] [upper_planner_node]: upper branch model: cumulative_increment=1 turn_window_at_split=1 turn_target_absolute=1 split_continuity=6.75m r_dpsi=3.000 lambda_turn=0.600
+[INFO] [1791222307.637779703] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=30 path=/planner/lower_reference_path scale=fullscale wheelbase=2.80m rear_offset=1.40m command_scale=0.350rad actuator_model=1 delay=0.00s tau=0.74s backend=disabled virtual=/cmd_control
+"replica_east(scenario1)_off+0.0_yaw+0" "tau1.0" "delay_near_tightening" "time_limit" cycles=160
+getifaddrs: Operation not permitted
+getifaddrs: Operation not permitted
+[37;1m2026-10-06 02:45:07.725 [31;1m[[37;1mTRANSPORT[31;1m Error] [37mAll whitelist interfaces were filtered out[34;1m -> Function [36mUDPv4Transport[m
+[37;1m2026-10-06 02:45:07.725 [31;1m[[37;1mTRANSPORT_UDP[31;1m Error] [37mError creating socket: Operation not permitted[34;1m -> Function [36minit[m
+[37;1m2026-10-06 02:45:07.725 [31;1m[[37;1mRTPS_PARTICIPANT[31;1m Error] [37mUser transport failed to register.[34;1m -> Function [36mRTPSParticipantImpl[m
+[INFO] [1791222307.737746213] [upper_planner_node]: planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+[INFO] [1791222307.740796313] [upper_planner_node]: Egocentric MIQP planner ready: rate=1.00Hz pred_dt=0.750s Nmax=7 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791222307.740964574] [upper_planner_node]: upper branch model: cumulative_increment=1 turn_window_at_split=1 turn_target_absolute=1 split_continuity=6.75m r_dpsi=3.000 lambda_turn=0.600
+[INFO] [1791222307.749996792] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=30 path=/planner/lower_reference_path scale=fullscale wheelbase=2.80m rear_offset=1.40m command_scale=0.350rad actuator_model=1 delay=0.00s tau=0.74s backend=disabled virtual=/cmd_control
+"replica_east(scenario1)_off+0.8_yaw+3" "tau0.74_noise2" "delay_near_tightening" "time_limit" cycles=160
+getifaddrs: Operation not permitted
+getifaddrs: Operation not permitted
+[37;1m2026-10-06 02:45:07.836 [31;1m[[37;1mTRANSPORT[31;1m Error] [37mAll whitelist interfaces were filtered out[34;1m -> Function [36mUDPv4Transport[m
+[37;1m2026-10-06 02:45:07.836 [31;1m[[37;1mTRANSPORT_UDP[31;1m Error] [37mError creating socket: Operation not permitted[34;1m -> Function [36minit[m
+[37;1m2026-10-06 02:45:07.836 [31;1m[[37;1mRTPS_PARTICIPANT[31;1m Error] [37mUser transport failed to register.[34;1m -> Function [36mRTPSParticipantImpl[m
+[INFO] [1791222307.847565763] [upper_planner_node]: planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+[INFO] [1791222307.850771580] [upper_planner_node]: Egocentric MIQP planner ready: rate=1.00Hz pred_dt=0.750s Nmax=7 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791222307.850921888] [upper_planner_node]: upper branch model: cumulative_increment=1 turn_window_at_split=1 turn_target_absolute=1 split_continuity=6.75m r_dpsi=3.000 lambda_turn=0.600
+[INFO] [1791222307.859789942] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=30 path=/planner/lower_reference_path scale=fullscale wheelbase=2.80m rear_offset=1.40m command_scale=0.350rad actuator_model=1 delay=0.00s tau=0.74s backend=disabled virtual=/cmd_control
+"replica_east(scenario1)_off+0.8_yaw+3" "tau0.5" "delay_near_tightening" "time_limit" cycles=160
+getifaddrs: Operation not permitted
+getifaddrs: Operation not permitted
+[37;1m2026-10-06 02:45:07.948 [31;1m[[37;1mTRANSPORT[31;1m Error] [37mAll whitelist interfaces were filtered out[34;1m -> Function [36mUDPv4Transport[m
+[37;1m2026-10-06 02:45:07.948 [31;1m[[37;1mTRANSPORT_UDP[31;1m Error] [37mError creating socket: Operation not permitted[34;1m -> Function [36minit[m
+[37;1m2026-10-06 02:45:07.948 [31;1m[[37;1mRTPS_PARTICIPANT[31;1m Error] [37mUser transport failed to register.[34;1m -> Function [36mRTPSParticipantImpl[m
+[INFO] [1791222307.959701826] [upper_planner_node]: planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+[INFO] [1791222307.962504335] [upper_planner_node]: Egocentric MIQP planner ready: rate=1.00Hz pred_dt=0.750s Nmax=7 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791222307.962649491] [upper_planner_node]: upper branch model: cumulative_increment=1 turn_window_at_split=1 turn_target_absolute=1 split_continuity=6.75m r_dpsi=3.000 lambda_turn=0.600
+[INFO] [1791222307.971308867] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=30 path=/planner/lower_reference_path scale=fullscale wheelbase=2.80m rear_offset=1.40m command_scale=0.350rad actuator_model=1 delay=0.00s tau=0.74s backend=disabled virtual=/cmd_control
+"replica_east(scenario1)_off+0.8_yaw+3" "tau1.0" "delay_near_tightening" "time_limit" cycles=160
+getifaddrs: Operation not permitted
+getifaddrs: Operation not permitted
+[37;1m2026-10-06 02:45:08.061 [31;1m[[37;1mTRANSPORT[31;1m Error] [37mAll whitelist interfaces were filtered out[34;1m -> Function [36mUDPv4Transport[m
+[37;1m2026-10-06 02:45:08.061 [31;1m[[37;1mTRANSPORT_UDP[31;1m Error] [37mError creating socket: Operation not permitted[34;1m -> Function [36minit[m
+[37;1m2026-10-06 02:45:08.061 [31;1m[[37;1mRTPS_PARTICIPANT[31;1m Error] [37mUser transport failed to register.[34;1m -> Function [36mRTPSParticipantImpl[m
+[INFO] [1791222308.073590865] [upper_planner_node]: planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+[INFO] [1791222308.076510274] [upper_planner_node]: Egocentric MIQP planner ready: rate=1.00Hz pred_dt=0.750s Nmax=7 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791222308.076675174] [upper_planner_node]: upper branch model: cumulative_increment=1 turn_window_at_split=1 turn_target_absolute=1 split_continuity=6.75m r_dpsi=3.000 lambda_turn=0.600
+[INFO] [1791222308.085350166] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=30 path=/planner/lower_reference_path scale=fullscale wheelbase=2.80m rear_offset=1.40m command_scale=0.350rad actuator_model=1 delay=0.00s tau=0.74s backend=disabled virtual=/cmd_control
+"replica_east(scenario1)_off-0.8_yaw-3" "tau0.74_noise2" "delay_near_tightening" "time_limit" cycles=160
+getifaddrs: Operation not permitted
+getifaddrs: Operation not permitted
+[37;1m2026-10-06 02:45:08.172 [31;1m[[37;1mTRANSPORT[31;1m Error] [37mAll whitelist interfaces were filtered out[34;1m -> Function [36mUDPv4Transport[m
+[37;1m2026-10-06 02:45:08.172 [31;1m[[37;1mTRANSPORT_UDP[31;1m Error] [37mError creating socket: Operation not permitted[34;1m -> Function [36minit[m
+[37;1m2026-10-06 02:45:08.172 [31;1m[[37;1mRTPS_PARTICIPANT[31;1m Error] [37mUser transport failed to register.[34;1m -> Function [36mRTPSParticipantImpl[m
+[INFO] [1791222308.183909597] [upper_planner_node]: planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+[INFO] [1791222308.186777485] [upper_planner_node]: Egocentric MIQP planner ready: rate=1.00Hz pred_dt=0.750s Nmax=7 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791222308.186929777] [upper_planner_node]: upper branch model: cumulative_increment=1 turn_window_at_split=1 turn_target_absolute=1 split_continuity=6.75m r_dpsi=3.000 lambda_turn=0.600
+[INFO] [1791222308.195810535] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=30 path=/planner/lower_reference_path scale=fullscale wheelbase=2.80m rear_offset=1.40m command_scale=0.350rad actuator_model=1 delay=0.00s tau=0.74s backend=disabled virtual=/cmd_control
+"replica_east(scenario1)_off-0.8_yaw-3" "tau0.5" "delay_near_tightening" "time_limit" cycles=160
+getifaddrs: Operation not permitted
+getifaddrs: Operation not permitted
+[37;1m2026-10-06 02:45:08.279 [31;1m[[37;1mTRANSPORT[31;1m Error] [37mAll whitelist interfaces were filtered out[34;1m -> Function [36mUDPv4Transport[m
+[37;1m2026-10-06 02:45:08.279 [31;1m[[37;1mTRANSPORT_UDP[31;1m Error] [37mError creating socket: Operation not permitted[34;1m -> Function [36minit[m
+[37;1m2026-10-06 02:45:08.279 [31;1m[[37;1mRTPS_PARTICIPANT[31;1m Error] [37mUser transport failed to register.[34;1m -> Function [36mRTPSParticipantImpl[m
+[INFO] [1791222308.290280380] [upper_planner_node]: planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+[INFO] [1791222308.293146892] [upper_planner_node]: Egocentric MIQP planner ready: rate=1.00Hz pred_dt=0.750s Nmax=7 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791222308.293296944] [upper_planner_node]: upper branch model: cumulative_increment=1 turn_window_at_split=1 turn_target_absolute=1 split_continuity=6.75m r_dpsi=3.000 lambda_turn=0.600
+[INFO] [1791222308.302201894] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=30 path=/planner/lower_reference_path scale=fullscale wheelbase=2.80m rear_offset=1.40m command_scale=0.350rad actuator_model=1 delay=0.00s tau=0.74s backend=disabled virtual=/cmd_control
+"replica_east(scenario1)_off-0.8_yaw-3" "tau1.0" "delay_near_tightening" "time_limit" cycles=160
+getifaddrs: Operation not permitted
+getifaddrs: Operation not permitted
+[37;1m2026-10-06 02:45:08.389 [31;1m[[37;1mTRANSPORT[31;1m Error] [37mAll whitelist interfaces were filtered out[34;1m -> Function [36mUDPv4Transport[m
+[37;1m2026-10-06 02:45:08.389 [31;1m[[37;1mTRANSPORT_UDP[31;1m Error] [37mError creating socket: Operation not permitted[34;1m -> Function [36minit[m
+[37;1m2026-10-06 02:45:08.389 [31;1m[[37;1mRTPS_PARTICIPANT[31;1m Error] [37mUser transport failed to register.[34;1m -> Function [36mRTPSParticipantImpl[m
+[INFO] [1791222308.401586500] [upper_planner_node]: planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+[INFO] [1791222308.404434995] [upper_planner_node]: Egocentric MIQP planner ready: rate=1.00Hz pred_dt=0.750s Nmax=7 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791222308.404610488] [upper_planner_node]: upper branch model: cumulative_increment=1 turn_window_at_split=1 turn_target_absolute=1 split_continuity=6.75m r_dpsi=3.000 lambda_turn=0.600
+[INFO] [1791222308.413348201] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=30 path=/planner/lower_reference_path scale=fullscale wheelbase=2.80m rear_offset=1.40m command_scale=0.350rad actuator_model=1 delay=0.00s tau=0.74s backend=disabled virtual=/cmd_control
+"replica_north(control)_off+0.0_yaw+0" "tau0.74_noise2" "delay_near_tightening" "time_limit" cycles=160
+getifaddrs: Operation not permitted
+getifaddrs: Operation not permitted
+[37;1m2026-10-06 02:45:08.498 [31;1m[[37;1mTRANSPORT[31;1m Error] [37mAll whitelist interfaces were filtered out[34;1m -> Function [36mUDPv4Transport[m
+[37;1m2026-10-06 02:45:08.498 [31;1m[[37;1mTRANSPORT_UDP[31;1m Error] [37mError creating socket: Operation not permitted[34;1m -> Function [36minit[m
+[37;1m2026-10-06 02:45:08.498 [31;1m[[37;1mRTPS_PARTICIPANT[31;1m Error] [37mUser transport failed to register.[34;1m -> Function [36mRTPSParticipantImpl[m
+[INFO] [1791222308.509419468] [upper_planner_node]: planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+[INFO] [1791222308.512271803] [upper_planner_node]: Egocentric MIQP planner ready: rate=1.00Hz pred_dt=0.750s Nmax=7 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791222308.512551234] [upper_planner_node]: upper branch model: cumulative_increment=1 turn_window_at_split=1 turn_target_absolute=1 split_continuity=6.75m r_dpsi=3.000 lambda_turn=0.600
+[INFO] [1791222308.521466841] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=30 path=/planner/lower_reference_path scale=fullscale wheelbase=2.80m rear_offset=1.40m command_scale=0.350rad actuator_model=1 delay=0.00s tau=0.74s backend=disabled virtual=/cmd_control
+"replica_north(control)_off+0.0_yaw+0" "tau0.5" "delay_near_tightening" "time_limit" cycles=160
+getifaddrs: Operation not permitted
+getifaddrs: Operation not permitted
+[37;1m2026-10-06 02:45:08.603 [31;1m[[37;1mTRANSPORT[31;1m Error] [37mAll whitelist interfaces were filtered out[34;1m -> Function [36mUDPv4Transport[m
+[37;1m2026-10-06 02:45:08.603 [31;1m[[37;1mTRANSPORT_UDP[31;1m Error] [37mError creating socket: Operation not permitted[34;1m -> Function [36minit[m
+[37;1m2026-10-06 02:45:08.603 [31;1m[[37;1mRTPS_PARTICIPANT[31;1m Error] [37mUser transport failed to register.[34;1m -> Function [36mRTPSParticipantImpl[m
+[INFO] [1791222308.614577065] [upper_planner_node]: planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+[INFO] [1791222308.617368246] [upper_planner_node]: Egocentric MIQP planner ready: rate=1.00Hz pred_dt=0.750s Nmax=7 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791222308.617524251] [upper_planner_node]: upper branch model: cumulative_increment=1 turn_window_at_split=1 turn_target_absolute=1 split_continuity=6.75m r_dpsi=3.000 lambda_turn=0.600
+[INFO] [1791222308.626277229] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=30 path=/planner/lower_reference_path scale=fullscale wheelbase=2.80m rear_offset=1.40m command_scale=0.350rad actuator_model=1 delay=0.00s tau=0.74s backend=disabled virtual=/cmd_control
+"replica_north(control)_off+0.0_yaw+0" "tau1.0" "delay_near_tightening" "time_limit" cycles=160
+getifaddrs: Operation not permitted
+getifaddrs: Operation not permitted
+[37;1m2026-10-06 02:45:08.710 [31;1m[[37;1mTRANSPORT[31;1m Error] [37mAll whitelist interfaces were filtered out[34;1m -> Function [36mUDPv4Transport[m
+[37;1m2026-10-06 02:45:08.711 [31;1m[[37;1mTRANSPORT_UDP[31;1m Error] [37mError creating socket: Operation not permitted[34;1m -> Function [36minit[m
+[37;1m2026-10-06 02:45:08.711 [31;1m[[37;1mRTPS_PARTICIPANT[31;1m Error] [37mUser transport failed to register.[34;1m -> Function [36mRTPSParticipantImpl[m
+[INFO] [1791222308.723484495] [upper_planner_node]: planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+[INFO] [1791222308.726342942] [upper_planner_node]: Egocentric MIQP planner ready: rate=1.00Hz pred_dt=0.750s Nmax=7 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791222308.726504994] [upper_planner_node]: upper branch model: cumulative_increment=1 turn_window_at_split=1 turn_target_absolute=1 split_continuity=6.75m r_dpsi=3.000 lambda_turn=0.600
+[INFO] [1791222308.735389240] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=30 path=/planner/lower_reference_path scale=fullscale wheelbase=2.80m rear_offset=1.40m command_scale=0.350rad actuator_model=1 delay=0.00s tau=0.74s backend=disabled virtual=/cmd_control
+"replica_north(control)_off+0.8_yaw+3" "tau0.74_noise2" "delay_near_tightening" "time_limit" cycles=160
+getifaddrs: Operation not permitted
+getifaddrs: Operation not permitted
+[37;1m2026-10-06 02:45:08.817 [31;1m[[37;1mTRANSPORT[31;1m Error] [37mAll whitelist interfaces were filtered out[34;1m -> Function [36mUDPv4Transport[m
+[37;1m2026-10-06 02:45:08.817 [31;1m[[37;1mTRANSPORT_UDP[31;1m Error] [37mError creating socket: Operation not permitted[34;1m -> Function [36minit[m
+[37;1m2026-10-06 02:45:08.817 [31;1m[[37;1mRTPS_PARTICIPANT[31;1m Error] [37mUser transport failed to register.[34;1m -> Function [36mRTPSParticipantImpl[m
+[INFO] [1791222308.828339972] [upper_planner_node]: planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+[INFO] [1791222308.831109904] [upper_planner_node]: Egocentric MIQP planner ready: rate=1.00Hz pred_dt=0.750s Nmax=7 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791222308.831247636] [upper_planner_node]: upper branch model: cumulative_increment=1 turn_window_at_split=1 turn_target_absolute=1 split_continuity=6.75m r_dpsi=3.000 lambda_turn=0.600
+[INFO] [1791222308.840143434] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=30 path=/planner/lower_reference_path scale=fullscale wheelbase=2.80m rear_offset=1.40m command_scale=0.350rad actuator_model=1 delay=0.00s tau=0.74s backend=disabled virtual=/cmd_control
+"replica_north(control)_off+0.8_yaw+3" "tau0.5" "delay_near_tightening" "time_limit" cycles=160
+getifaddrs: Operation not permitted
+getifaddrs: Operation not permitted
+[37;1m2026-10-06 02:45:08.925 [31;1m[[37;1mTRANSPORT[31;1m Error] [37mAll whitelist interfaces were filtered out[34;1m -> Function [36mUDPv4Transport[m
+[37;1m2026-10-06 02:45:08.925 [31;1m[[37;1mTRANSPORT_UDP[31;1m Error] [37mError creating socket: Operation not permitted[34;1m -> Function [36minit[m
+[37;1m2026-10-06 02:45:08.925 [31;1m[[37;1mRTPS_PARTICIPANT[31;1m Error] [37mUser transport failed to register.[34;1m -> Function [36mRTPSParticipantImpl[m
+[INFO] [1791222308.936546582] [upper_planner_node]: planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+[INFO] [1791222308.939373668] [upper_planner_node]: Egocentric MIQP planner ready: rate=1.00Hz pred_dt=0.750s Nmax=7 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791222308.939634251] [upper_planner_node]: upper branch model: cumulative_increment=1 turn_window_at_split=1 turn_target_absolute=1 split_continuity=6.75m r_dpsi=3.000 lambda_turn=0.600
+[INFO] [1791222308.948486624] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=30 path=/planner/lower_reference_path scale=fullscale wheelbase=2.80m rear_offset=1.40m command_scale=0.350rad actuator_model=1 delay=0.00s tau=0.74s backend=disabled virtual=/cmd_control
+"replica_north(control)_off+0.8_yaw+3" "tau1.0" "delay_near_tightening" "time_limit" cycles=160
+getifaddrs: Operation not permitted
+getifaddrs: Operation not permitted
+[37;1m2026-10-06 02:45:09.034 [31;1m[[37;1mTRANSPORT[31;1m Error] [37mAll whitelist interfaces were filtered out[34;1m -> Function [36mUDPv4Transport[m
+[37;1m2026-10-06 02:45:09.034 [31;1m[[37;1mTRANSPORT_UDP[31;1m Error] [37mError creating socket: Operation not permitted[34;1m -> Function [36minit[m
+[37;1m2026-10-06 02:45:09.034 [31;1m[[37;1mRTPS_PARTICIPANT[31;1m Error] [37mUser transport failed to register.[34;1m -> Function [36mRTPSParticipantImpl[m
+[INFO] [1791222309.047151946] [upper_planner_node]: planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+[INFO] [1791222309.050710797] [upper_planner_node]: Egocentric MIQP planner ready: rate=1.00Hz pred_dt=0.750s Nmax=7 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791222309.050926547] [upper_planner_node]: upper branch model: cumulative_increment=1 turn_window_at_split=1 turn_target_absolute=1 split_continuity=6.75m r_dpsi=3.000 lambda_turn=0.600
+[INFO] [1791222309.062032262] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=30 path=/planner/lower_reference_path scale=fullscale wheelbase=2.80m rear_offset=1.40m command_scale=0.350rad actuator_model=1 delay=0.00s tau=0.74s backend=disabled virtual=/cmd_control
+"replica_north(control)_off-0.8_yaw-3" "tau0.74_noise2" "delay_near_tightening" "time_limit" cycles=160
+getifaddrs: Operation not permitted
+getifaddrs: Operation not permitted
+[37;1m2026-10-06 02:45:09.148 [31;1m[[37;1mTRANSPORT[31;1m Error] [37mAll whitelist interfaces were filtered out[34;1m -> Function [36mUDPv4Transport[m
+[37;1m2026-10-06 02:45:09.148 [31;1m[[37;1mTRANSPORT_UDP[31;1m Error] [37mError creating socket: Operation not permitted[34;1m -> Function [36minit[m
+[37;1m2026-10-06 02:45:09.148 [31;1m[[37;1mRTPS_PARTICIPANT[31;1m Error] [37mUser transport failed to register.[34;1m -> Function [36mRTPSParticipantImpl[m
+[INFO] [1791222309.159958844] [upper_planner_node]: planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+[INFO] [1791222309.162861292] [upper_planner_node]: Egocentric MIQP planner ready: rate=1.00Hz pred_dt=0.750s Nmax=7 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791222309.163006096] [upper_planner_node]: upper branch model: cumulative_increment=1 turn_window_at_split=1 turn_target_absolute=1 split_continuity=6.75m r_dpsi=3.000 lambda_turn=0.600
+[INFO] [1791222309.172080491] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=30 path=/planner/lower_reference_path scale=fullscale wheelbase=2.80m rear_offset=1.40m command_scale=0.350rad actuator_model=1 delay=0.00s tau=0.74s backend=disabled virtual=/cmd_control
+"replica_north(control)_off-0.8_yaw-3" "tau0.5" "delay_near_tightening" "time_limit" cycles=160
+getifaddrs: Operation not permitted
+getifaddrs: Operation not permitted
+[37;1m2026-10-06 02:45:09.254 [31;1m[[37;1mTRANSPORT[31;1m Error] [37mAll whitelist interfaces were filtered out[34;1m -> Function [36mUDPv4Transport[m
+[37;1m2026-10-06 02:45:09.254 [31;1m[[37;1mTRANSPORT_UDP[31;1m Error] [37mError creating socket: Operation not permitted[34;1m -> Function [36minit[m
+[37;1m2026-10-06 02:45:09.254 [31;1m[[37;1mRTPS_PARTICIPANT[31;1m Error] [37mUser transport failed to register.[34;1m -> Function [36mRTPSParticipantImpl[m
+[INFO] [1791222309.265562438] [upper_planner_node]: planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+[INFO] [1791222309.268627227] [upper_planner_node]: Egocentric MIQP planner ready: rate=1.00Hz pred_dt=0.750s Nmax=7 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791222309.268803807] [upper_planner_node]: upper branch model: cumulative_increment=1 turn_window_at_split=1 turn_target_absolute=1 split_continuity=6.75m r_dpsi=3.000 lambda_turn=0.600
+[INFO] [1791222309.277554418] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=30 path=/planner/lower_reference_path scale=fullscale wheelbase=2.80m rear_offset=1.40m command_scale=0.350rad actuator_model=1 delay=0.00s tau=0.74s backend=disabled virtual=/cmd_control
+"replica_north(control)_off-0.8_yaw-3" "tau1.0" "delay_near_tightening" "time_limit" cycles=160
+getifaddrs: Operation not permitted
+getifaddrs: Operation not permitted
+[37;1m2026-10-06 02:45:09.365 [31;1m[[37;1mTRANSPORT[31;1m Error] [37mAll whitelist interfaces were filtered out[34;1m -> Function [36mUDPv4Transport[m
+[37;1m2026-10-06 02:45:09.366 [31;1m[[37;1mTRANSPORT_UDP[31;1m Error] [37mError creating socket: Operation not permitted[34;1m -> Function [36minit[m
+[37;1m2026-10-06 02:45:09.366 [31;1m[[37;1mRTPS_PARTICIPANT[31;1m Error] [37mUser transport failed to register.[34;1m -> Function [36mRTPSParticipantImpl[m
+[INFO] [1791222309.378619262] [upper_planner_node]: planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+[INFO] [1791222309.381665010] [upper_planner_node]: Egocentric MIQP planner ready: rate=1.00Hz pred_dt=0.750s Nmax=7 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791222309.381828151] [upper_planner_node]: upper branch model: cumulative_increment=1 turn_window_at_split=1 turn_target_absolute=1 split_continuity=6.75m r_dpsi=3.000 lambda_turn=0.600
+[INFO] [1791222309.390940659] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=30 path=/planner/lower_reference_path scale=fullscale wheelbase=2.80m rear_offset=1.40m command_scale=0.350rad actuator_model=1 delay=0.00s tau=0.74s backend=disabled virtual=/cmd_control
+"Yright_target_diverging_off+0_yaw+0" "tau0.74_noise2" "delay_near_tightening" "goal_reached" cycles=255
+getifaddrs: Operation not permitted
+getifaddrs: Operation not permitted
+[37;1m2026-10-06 02:45:09.505 [31;1m[[37;1mTRANSPORT[31;1m Error] [37mAll whitelist interfaces were filtered out[34;1m -> Function [36mUDPv4Transport[m
+[37;1m2026-10-06 02:45:09.506 [31;1m[[37;1mTRANSPORT_UDP[31;1m Error] [37mError creating socket: Operation not permitted[34;1m -> Function [36minit[m
+[37;1m2026-10-06 02:45:09.506 [31;1m[[37;1mRTPS_PARTICIPANT[31;1m Error] [37mUser transport failed to register.[34;1m -> Function [36mRTPSParticipantImpl[m
+[INFO] [1791222309.517498945] [upper_planner_node]: planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+[INFO] [1791222309.520422738] [upper_planner_node]: Egocentric MIQP planner ready: rate=1.00Hz pred_dt=0.750s Nmax=7 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791222309.520627960] [upper_planner_node]: upper branch model: cumulative_increment=1 turn_window_at_split=1 turn_target_absolute=1 split_continuity=6.75m r_dpsi=3.000 lambda_turn=0.600
+[INFO] [1791222309.529520910] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=30 path=/planner/lower_reference_path scale=fullscale wheelbase=2.80m rear_offset=1.40m command_scale=0.350rad actuator_model=1 delay=0.00s tau=0.74s backend=disabled virtual=/cmd_control
+"Yright_target_diverging_off+0_yaw+0" "tau0.5" "delay_near_tightening" "goal_reached" cycles=255
+getifaddrs: Operation not permitted
+getifaddrs: Operation not permitted
+[37;1m2026-10-06 02:45:09.642 [31;1m[[37;1mTRANSPORT[31;1m Error] [37mAll whitelist interfaces were filtered out[34;1m -> Function [36mUDPv4Transport[m
+[37;1m2026-10-06 02:45:09.642 [31;1m[[37;1mTRANSPORT_UDP[31;1m Error] [37mError creating socket: Operation not permitted[34;1m -> Function [36minit[m
+[37;1m2026-10-06 02:45:09.642 [31;1m[[37;1mRTPS_PARTICIPANT[31;1m Error] [37mUser transport failed to register.[34;1m -> Function [36mRTPSParticipantImpl[m
+[INFO] [1791222309.653815037] [upper_planner_node]: planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+[INFO] [1791222309.656799472] [upper_planner_node]: Egocentric MIQP planner ready: rate=1.00Hz pred_dt=0.750s Nmax=7 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791222309.657007413] [upper_planner_node]: upper branch model: cumulative_increment=1 turn_window_at_split=1 turn_target_absolute=1 split_continuity=6.75m r_dpsi=3.000 lambda_turn=0.600
+[INFO] [1791222309.666049200] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=30 path=/planner/lower_reference_path scale=fullscale wheelbase=2.80m rear_offset=1.40m command_scale=0.350rad actuator_model=1 delay=0.00s tau=0.74s backend=disabled virtual=/cmd_control
+"Yright_target_diverging_off+0_yaw+0" "tau1.0" "delay_near_tightening" "goal_reached" cycles=256
+getifaddrs: Operation not permitted
+getifaddrs: Operation not permitted
+[37;1m2026-10-06 02:45:09.783 [31;1m[[37;1mTRANSPORT[31;1m Error] [37mAll whitelist interfaces were filtered out[34;1m -> Function [36mUDPv4Transport[m
+[37;1m2026-10-06 02:45:09.784 [31;1m[[37;1mTRANSPORT_UDP[31;1m Error] [37mError creating socket: Operation not permitted[34;1m -> Function [36minit[m
+[37;1m2026-10-06 02:45:09.784 [31;1m[[37;1mRTPS_PARTICIPANT[31;1m Error] [37mUser transport failed to register.[34;1m -> Function [36mRTPSParticipantImpl[m
+[INFO] [1791222309.797154555] [upper_planner_node]: planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+[INFO] [1791222309.800259089] [upper_planner_node]: Egocentric MIQP planner ready: rate=1.00Hz pred_dt=0.750s Nmax=7 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791222309.800527545] [upper_planner_node]: upper branch model: cumulative_increment=1 turn_window_at_split=1 turn_target_absolute=1 split_continuity=6.75m r_dpsi=3.000 lambda_turn=0.600
+[INFO] [1791222309.809939453] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=30 path=/planner/lower_reference_path scale=fullscale wheelbase=2.80m rear_offset=1.40m command_scale=0.350rad actuator_model=1 delay=0.00s tau=0.74s backend=disabled virtual=/cmd_control
+"Yright_target_continuing_off+0_yaw+0" "tau0.74_noise2" "delay_near_tightening" "goal_reached" cycles=256
+getifaddrs: Operation not permitted
+getifaddrs: Operation not permitted
+[37;1m2026-10-06 02:45:09.922 [31;1m[[37;1mTRANSPORT[31;1m Error] [37mAll whitelist interfaces were filtered out[34;1m -> Function [36mUDPv4Transport[m
+[37;1m2026-10-06 02:45:09.923 [31;1m[[37;1mTRANSPORT_UDP[31;1m Error] [37mError creating socket: Operation not permitted[34;1m -> Function [36minit[m
+[37;1m2026-10-06 02:45:09.923 [31;1m[[37;1mRTPS_PARTICIPANT[31;1m Error] [37mUser transport failed to register.[34;1m -> Function [36mRTPSParticipantImpl[m
+[INFO] [1791222309.934270189] [upper_planner_node]: planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+[INFO] [1791222309.937213535] [upper_planner_node]: Egocentric MIQP planner ready: rate=1.00Hz pred_dt=0.750s Nmax=7 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791222309.937402468] [upper_planner_node]: upper branch model: cumulative_increment=1 turn_window_at_split=1 turn_target_absolute=1 split_continuity=6.75m r_dpsi=3.000 lambda_turn=0.600
+[INFO] [1791222309.946539489] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=30 path=/planner/lower_reference_path scale=fullscale wheelbase=2.80m rear_offset=1.40m command_scale=0.350rad actuator_model=1 delay=0.00s tau=0.74s backend=disabled virtual=/cmd_control
+"Yright_target_continuing_off+0_yaw+0" "tau0.5" "delay_near_tightening" "goal_reached" cycles=256
+getifaddrs: Operation not permitted
+getifaddrs: Operation not permitted
+[37;1m2026-10-06 02:45:10.058 [31;1m[[37;1mTRANSPORT[31;1m Error] [37mAll whitelist interfaces were filtered out[34;1m -> Function [36mUDPv4Transport[m
+[37;1m2026-10-06 02:45:10.059 [31;1m[[37;1mTRANSPORT_UDP[31;1m Error] [37mError creating socket: Operation not permitted[34;1m -> Function [36minit[m
+[37;1m2026-10-06 02:45:10.059 [31;1m[[37;1mRTPS_PARTICIPANT[31;1m Error] [37mUser transport failed to register.[34;1m -> Function [36mRTPSParticipantImpl[m
+[INFO] [1791222310.070625867] [upper_planner_node]: planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+[INFO] [1791222310.073797314] [upper_planner_node]: Egocentric MIQP planner ready: rate=1.00Hz pred_dt=0.750s Nmax=7 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791222310.074001256] [upper_planner_node]: upper branch model: cumulative_increment=1 turn_window_at_split=1 turn_target_absolute=1 split_continuity=6.75m r_dpsi=3.000 lambda_turn=0.600
+[INFO] [1791222310.082878046] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=30 path=/planner/lower_reference_path scale=fullscale wheelbase=2.80m rear_offset=1.40m command_scale=0.350rad actuator_model=1 delay=0.00s tau=0.74s backend=disabled virtual=/cmd_control
+"Yright_target_continuing_off+0_yaw+0" "tau1.0" "delay_near_tightening" "goal_reached" cycles=256
+getifaddrs: Operation not permitted
+getifaddrs: Operation not permitted
+[37;1m2026-10-06 02:45:10.198 [31;1m[[37;1mTRANSPORT[31;1m Error] [37mAll whitelist interfaces were filtered out[34;1m -> Function [36mUDPv4Transport[m
+[37;1m2026-10-06 02:45:10.199 [31;1m[[37;1mTRANSPORT_UDP[31;1m Error] [37mError creating socket: Operation not permitted[34;1m -> Function [36minit[m
+[37;1m2026-10-06 02:45:10.199 [31;1m[[37;1mRTPS_PARTICIPANT[31;1m Error] [37mUser transport failed to register.[34;1m -> Function [36mRTPSParticipantImpl[m
+[INFO] [1791222310.211706123] [upper_planner_node]: planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+[INFO] [1791222310.214651228] [upper_planner_node]: Egocentric MIQP planner ready: rate=1.00Hz pred_dt=0.750s Nmax=7 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791222310.214803841] [upper_planner_node]: upper branch model: cumulative_increment=1 turn_window_at_split=1 turn_target_absolute=1 split_continuity=6.75m r_dpsi=3.000 lambda_turn=0.600
+[INFO] [1791222310.223900028] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=30 path=/planner/lower_reference_path scale=fullscale wheelbase=2.80m rear_offset=1.40m command_scale=0.350rad actuator_model=1 delay=0.00s tau=0.74s backend=disabled virtual=/cmd_control
+"Yleft_target_diverging_off+0_yaw+0" "tau0.74_noise2" "delay_near_tightening" "goal_reached" cycles=255
+getifaddrs: Operation not permitted
+getifaddrs: Operation not permitted
+[37;1m2026-10-06 02:45:10.340 [31;1m[[37;1mTRANSPORT[31;1m Error] [37mAll whitelist interfaces were filtered out[34;1m -> Function [36mUDPv4Transport[m
+[37;1m2026-10-06 02:45:10.340 [31;1m[[37;1mTRANSPORT_UDP[31;1m Error] [37mError creating socket: Operation not permitted[34;1m -> Function [36minit[m
+[37;1m2026-10-06 02:45:10.340 [31;1m[[37;1mRTPS_PARTICIPANT[31;1m Error] [37mUser transport failed to register.[34;1m -> Function [36mRTPSParticipantImpl[m
+[INFO] [1791222310.352090872] [upper_planner_node]: planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+[INFO] [1791222310.354918502] [upper_planner_node]: Egocentric MIQP planner ready: rate=1.00Hz pred_dt=0.750s Nmax=7 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791222310.355102955] [upper_planner_node]: upper branch model: cumulative_increment=1 turn_window_at_split=1 turn_target_absolute=1 split_continuity=6.75m r_dpsi=3.000 lambda_turn=0.600
+[INFO] [1791222310.364148069] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=30 path=/planner/lower_reference_path scale=fullscale wheelbase=2.80m rear_offset=1.40m command_scale=0.350rad actuator_model=1 delay=0.00s tau=0.74s backend=disabled virtual=/cmd_control
+"Yleft_target_diverging_off+0_yaw+0" "tau0.5" "delay_near_tightening" "goal_reached" cycles=255
+getifaddrs: Operation not permitted
+getifaddrs: Operation not permitted
+[37;1m2026-10-06 02:45:10.477 [31;1m[[37;1mTRANSPORT[31;1m Error] [37mAll whitelist interfaces were filtered out[34;1m -> Function [36mUDPv4Transport[m
+[37;1m2026-10-06 02:45:10.477 [31;1m[[37;1mTRANSPORT_UDP[31;1m Error] [37mError creating socket: Operation not permitted[34;1m -> Function [36minit[m
+[37;1m2026-10-06 02:45:10.477 [31;1m[[37;1mRTPS_PARTICIPANT[31;1m Error] [37mUser transport failed to register.[34;1m -> Function [36mRTPSParticipantImpl[m
+[INFO] [1791222310.489303693] [upper_planner_node]: planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+[INFO] [1791222310.492295296] [upper_planner_node]: Egocentric MIQP planner ready: rate=1.00Hz pred_dt=0.750s Nmax=7 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791222310.492546918] [upper_planner_node]: upper branch model: cumulative_increment=1 turn_window_at_split=1 turn_target_absolute=1 split_continuity=6.75m r_dpsi=3.000 lambda_turn=0.600
+[INFO] [1791222310.501620034] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=30 path=/planner/lower_reference_path scale=fullscale wheelbase=2.80m rear_offset=1.40m command_scale=0.350rad actuator_model=1 delay=0.00s tau=0.74s backend=disabled virtual=/cmd_control
+"Yleft_target_diverging_off+0_yaw+0" "tau1.0" "delay_near_tightening" "goal_reached" cycles=256
+getifaddrs: Operation not permitted
+getifaddrs: Operation not permitted
+[37;1m2026-10-06 02:45:10.619 [31;1m[[37;1mTRANSPORT[31;1m Error] [37mAll whitelist interfaces were filtered out[34;1m -> Function [36mUDPv4Transport[m
+[37;1m2026-10-06 02:45:10.619 [31;1m[[37;1mTRANSPORT_UDP[31;1m Error] [37mError creating socket: Operation not permitted[34;1m -> Function [36minit[m
+[37;1m2026-10-06 02:45:10.619 [31;1m[[37;1mRTPS_PARTICIPANT[31;1m Error] [37mUser transport failed to register.[34;1m -> Function [36mRTPSParticipantImpl[m
+[INFO] [1791222310.631874678] [upper_planner_node]: planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+[INFO] [1791222310.634870697] [upper_planner_node]: Egocentric MIQP planner ready: rate=1.00Hz pred_dt=0.750s Nmax=7 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791222310.635130416] [upper_planner_node]: upper branch model: cumulative_increment=1 turn_window_at_split=1 turn_target_absolute=1 split_continuity=6.75m r_dpsi=3.000 lambda_turn=0.600
+[INFO] [1791222310.644299918] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=30 path=/planner/lower_reference_path scale=fullscale wheelbase=2.80m rear_offset=1.40m command_scale=0.350rad actuator_model=1 delay=0.00s tau=0.74s backend=disabled virtual=/cmd_control
+"Yleft_target_continuing_off+0_yaw+0" "tau0.74_noise2" "delay_near_tightening" "goal_reached" cycles=256
+getifaddrs: Operation not permitted
+getifaddrs: Operation not permitted
+[37;1m2026-10-06 02:45:10.757 [31;1m[[37;1mTRANSPORT[31;1m Error] [37mAll whitelist interfaces were filtered out[34;1m -> Function [36mUDPv4Transport[m
+[37;1m2026-10-06 02:45:10.757 [31;1m[[37;1mTRANSPORT_UDP[31;1m Error] [37mError creating socket: Operation not permitted[34;1m -> Function [36minit[m
+[37;1m2026-10-06 02:45:10.757 [31;1m[[37;1mRTPS_PARTICIPANT[31;1m Error] [37mUser transport failed to register.[34;1m -> Function [36mRTPSParticipantImpl[m
+[INFO] [1791222310.769580409] [upper_planner_node]: planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+[INFO] [1791222310.772482153] [upper_planner_node]: Egocentric MIQP planner ready: rate=1.00Hz pred_dt=0.750s Nmax=7 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791222310.772657518] [upper_planner_node]: upper branch model: cumulative_increment=1 turn_window_at_split=1 turn_target_absolute=1 split_continuity=6.75m r_dpsi=3.000 lambda_turn=0.600
+[INFO] [1791222310.781715145] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=30 path=/planner/lower_reference_path scale=fullscale wheelbase=2.80m rear_offset=1.40m command_scale=0.350rad actuator_model=1 delay=0.00s tau=0.74s backend=disabled virtual=/cmd_control
+"Yleft_target_continuing_off+0_yaw+0" "tau0.5" "delay_near_tightening" "goal_reached" cycles=256
+getifaddrs: Operation not permitted
+getifaddrs: Operation not permitted
+[37;1m2026-10-06 02:45:10.891 [31;1m[[37;1mTRANSPORT[31;1m Error] [37mAll whitelist interfaces were filtered out[34;1m -> Function [36mUDPv4Transport[m
+[37;1m2026-10-06 02:45:10.892 [31;1m[[37;1mTRANSPORT_UDP[31;1m Error] [37mError creating socket: Operation not permitted[34;1m -> Function [36minit[m
+[37;1m2026-10-06 02:45:10.892 [31;1m[[37;1mRTPS_PARTICIPANT[31;1m Error] [37mUser transport failed to register.[34;1m -> Function [36mRTPSParticipantImpl[m
+[INFO] [1791222310.903195530] [upper_planner_node]: planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+[INFO] [1791222310.906114363] [upper_planner_node]: Egocentric MIQP planner ready: rate=1.00Hz pred_dt=0.750s Nmax=7 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791222310.906299360] [upper_planner_node]: upper branch model: cumulative_increment=1 turn_window_at_split=1 turn_target_absolute=1 split_continuity=6.75m r_dpsi=3.000 lambda_turn=0.600
+[INFO] [1791222310.915187446] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=30 path=/planner/lower_reference_path scale=fullscale wheelbase=2.80m rear_offset=1.40m command_scale=0.350rad actuator_model=1 delay=0.00s tau=0.74s backend=disabled virtual=/cmd_control
+"Yleft_target_continuing_off+0_yaw+0" "tau1.0" "delay_near_tightening" "goal_reached" cycles=256

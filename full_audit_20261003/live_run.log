@@ -1,0 +1,39 @@
+[INFO] [1790975932.990361051] [upper_planner_node]: planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+[INFO] [1790975932.995920864] [upper_planner_node]: Egocentric MIQP planner ready: rate=1.00Hz pred_dt=0.750s Nmax=7 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1790975933.007831234] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=30 path=/planner/lower_reference_path scale=fullscale wheelbase=2.80m rear_offset=1.40m command_scale=0.350rad actuator_model=1 delay=0.00s tau=0.05s backend=disabled virtual=/cmd_control
+[WARN] [1790975933.114710063] [upper_planner_node]: interval_diag step=7 reason=3 ref_body=(24.656,18.225) heading_deg=43.43 center_cell=(78,122) center_value=100 line_free=0 blocked=247 unknown=0 outside=2 longest_run=0 min_run=2 grid_free=3194 zero=3194 positive=13190 unknown=0 topic=/bev/occupancy_grid frame=Vehicle origin=(0.000,-20.000) origin_yaw_deg=0.00 size=128x128 res=0.3125 positive_is_drivable=0 threshold=0 waypoint_bias=0 previous=1
+[WARN] [1790975933.115047481] [upper_planner_node]: no valid preview interval at step=7; usable horizon=6 reason=3
+"live_curve" "fast" "current" "goal_reached" cycles=398
+[INFO] [1790975933.200375588] [upper_planner_node]: planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+[INFO] [1790975933.203708903] [upper_planner_node]: Egocentric MIQP planner ready: rate=1.00Hz pred_dt=0.750s Nmax=7 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1790975933.213723121] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=30 path=/planner/lower_reference_path scale=fullscale wheelbase=2.80m rear_offset=1.40m command_scale=0.350rad actuator_model=1 delay=0.00s tau=0.05s backend=disabled virtual=/cmd_control
+"live_curve" "fast" "matched_model" "goal_reached" cycles=398
+[INFO] [1790975933.393163981] [upper_planner_node]: planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+[INFO] [1790975933.396229448] [upper_planner_node]: Egocentric MIQP planner ready: rate=1.00Hz pred_dt=0.750s Nmax=7 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1790975933.405286102] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=30 path=/planner/lower_reference_path scale=fullscale wheelbase=2.80m rear_offset=1.40m command_scale=0.350rad actuator_model=1 delay=0.00s tau=0.05s backend=disabled virtual=/cmd_control
+[WARN] [1790975933.506921926] [upper_planner_node]: no valid preview interval at step=7; usable horizon=6 reason=3
+"live_curve" "measured_slow" "current" "stale_path_stop" cycles=296
+[INFO] [1790975933.545477570] [upper_planner_node]: planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+[INFO] [1790975933.548623231] [upper_planner_node]: Egocentric MIQP planner ready: rate=1.00Hz pred_dt=0.750s Nmax=7 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1790975933.557907316] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=30 path=/planner/lower_reference_path scale=fullscale wheelbase=2.80m rear_offset=1.40m command_scale=0.350rad actuator_model=1 delay=0.00s tau=0.05s backend=disabled virtual=/cmd_control
+[WARN] [1790975933.661905450] [upper_planner_node]: no valid preview interval at step=7; usable horizon=6 reason=3
+"live_curve" "measured_slow" "matched_model" "goal_reached" cycles=398
+[INFO] [1790975933.749913765] [upper_planner_node]: planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+[INFO] [1790975933.752904926] [upper_planner_node]: Egocentric MIQP planner ready: rate=1.00Hz pred_dt=0.750s Nmax=7 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1790975933.762278933] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=30 path=/planner/lower_reference_path scale=fullscale wheelbase=2.80m rear_offset=1.40m command_scale=0.350rad actuator_model=1 delay=0.00s tau=0.05s backend=disabled virtual=/cmd_control
+[WARN] [1790975933.884865845] [upper_planner_node]: no valid preview interval at step=7; usable horizon=6 reason=3
+"branch_width" "fast" "current" "stale_path_stop" cycles=356
+[INFO] [1790975933.930524964] [upper_planner_node]: planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+[INFO] [1790975933.933704355] [upper_planner_node]: Egocentric MIQP planner ready: rate=1.00Hz pred_dt=0.750s Nmax=7 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1790975933.943107034] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=30 path=/planner/lower_reference_path scale=fullscale wheelbase=2.80m rear_offset=1.40m command_scale=0.350rad actuator_model=1 delay=0.00s tau=0.05s backend=disabled virtual=/cmd_control
+[WARN] [1790975934.066802333] [upper_planner_node]: no valid preview interval at step=7; usable horizon=6 reason=3
+"branch_width" "fast" "matched_model" "stale_path_stop" cycles=356
+[INFO] [1790975934.114201120] [upper_planner_node]: planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+[INFO] [1790975934.117133463] [upper_planner_node]: Egocentric MIQP planner ready: rate=1.00Hz pred_dt=0.750s Nmax=7 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1790975934.126517743] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=30 path=/planner/lower_reference_path scale=fullscale wheelbase=2.80m rear_offset=1.40m command_scale=0.350rad actuator_model=1 delay=0.00s tau=0.05s backend=disabled virtual=/cmd_control
+[WARN] [1790975934.257289349] [upper_planner_node]: no valid preview interval at step=7; usable horizon=6 reason=3
+"branch_width" "measured_slow" "current" "stale_path_stop" cycles=366
+[INFO] [1790975934.297471857] [upper_planner_node]: planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+[INFO] [1790975934.300591342] [upper_planner_node]: Egocentric MIQP planner ready: rate=1.00Hz pred_dt=0.750s Nmax=7 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1790975934.309825569] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=30 path=/planner/lower_reference_path scale=fullscale wheelbase=2.80m rear_offset=1.40m command_scale=0.350rad actuator_model=1 delay=0.00s tau=0.05s backend=disabled virtual=/cmd_control
+"branch_width" "measured_slow" "matched_model" "goal_reached" cycles=400

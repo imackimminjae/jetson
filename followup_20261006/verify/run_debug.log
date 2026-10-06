@@ -1,0 +1,4 @@
+[INFO] [1791214426.481595586] [upper_planner_node]: planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+[INFO] [1791214426.487029038] [upper_planner_node]: Egocentric MIQP planner ready: rate=1.00Hz pred_dt=0.750s Nmax=7 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791214426.498471379] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=30 path=/planner/lower_reference_path scale=fullscale wheelbase=2.80m rear_offset=1.40m command_scale=0.350rad actuator_model=1 delay=0.00s tau=0.74s backend=disabled virtual=/cmd_control
+"recorded_start_off0.0_yaw+0" "measured_slow" "V1_truncate" "time_limit" cycles=340

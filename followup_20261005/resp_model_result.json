@@ -1,0 +1,192 @@
+{
+ "A_0559_tau0.05": {
+  "window": [
+   "05:59:15.000",
+   "06:00:05.000"
+  ],
+  "cmd187_count": 1205,
+  "throttle_active": [
+   "05:59:18.396",
+   "05:59:58.298"
+  ],
+  "active_sec": 39.9,
+  "cmd187_rate_hz": 21.55,
+  "cmd187_max_gap_s": 0.487,
+  "cmd187_gaps_over_0.3s": [
+   [
+    "05:59:53.047",
+    0.487
+   ]
+  ],
+  "ack_count": 1206,
+  "ack_results": {
+   "0": 1206
+  },
+  "hil_act_rate_hz": 21.28,
+  "hil_act_max_gap_s": 0.485,
+  "hil_act_gaps_over_0.3s": [
+   [
+    "05:59:53.052",
+    0.485
+   ]
+  ],
+  "manual_control_count": 1011,
+  "manual_control_rate_hz": 20.37,
+  "manual_control_sample": [
+   1790974778.60394,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   1.0
+  ],
+  "steer_cmd_abs_p50_p95_max_deg": [
+   4.52,
+   17.19,
+   17.19
+  ],
+  "steer_cmd_saturation_frac(|d|>=0.298)": 0.1727,
+  "steer_cmd_distinct_updates": 311,
+  "distinct_update_rate_hz": 7.79,
+  "steer_cmd_sign_reversals": 15,
+  "reversals_per_sec": 0.376,
+  "steer_cmd_step_abs_p50_p95_deg": [
+   0.62,
+   4.56
+  ],
+  "throttle_p50_p95": [
+   0.203,
+   0.35
+  ],
+  "truth_speed_p50_p95_max": [
+   5.159,
+   6.085,
+   6.098
+  ],
+  "truth_yawrate_abs_p95_degps": 23.36,
+  "truth_eff_steer_abs_p95_max_deg": [
+   13.11,
+   14.49
+  ],
+  "truth_eff_steer_zero_crossings": 14,
+  "hil_act_steer_minus_cmd_rmse_deg": 0.495,
+  "hil_act_controls_sample": [
+   0.202,
+   -0.104,
+   0.0,
+   0.0
+  ],
+  "fit_all": {
+   "rmse_deg": 0.763,
+   "tau": 0.775,
+   "delay": 0.0,
+   "gain": 0.992
+  },
+  "fit_first55": {
+   "tau": 0.8,
+   "delay": 0.0,
+   "gain": 1.013,
+   "fit_rmse_deg": 0.14,
+   "val_rmse_last45_deg": 1.112
+  },
+  "model_tau0.05_rmse_deg_all": 6.446,
+  "model_tau0.05_rmse_deg_last45": 8.455,
+  "model_tau0.74_rmse_deg_all": 0.804,
+  "model_tau0.74_rmse_deg_last45": 1.148,
+  "frac_cmd_truth_opposite_sign(|cmd|>3deg)": 0.1238,
+  "ekf_minus_truth_speed_median_rmse": [
+   0.0196,
+   0.0809
+  ]
+ },
+ "B_0639_tau0.74": {
+  "window": [
+   "06:39:12.000",
+   "06:40:12.000"
+  ],
+  "cmd187_count": 1457,
+  "throttle_active": [
+   "06:39:20.944",
+   "06:39:59.343"
+  ],
+  "active_sec": 38.4,
+  "cmd187_rate_hz": 23.26,
+  "cmd187_max_gap_s": 0.07,
+  "cmd187_gaps_over_0.3s": [],
+  "ack_count": 1461,
+  "ack_results": {
+   "0": 1461
+  },
+  "hil_act_rate_hz": 22.05,
+  "hil_act_max_gap_s": 0.076,
+  "hil_act_gaps_over_0.3s": [],
+  "manual_control_count": 1219,
+  "manual_control_rate_hz": 22.02,
+  "manual_control_sample": [
+   1790977180.740171,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   1.0
+  ],
+  "steer_cmd_abs_p50_p95_max_deg": [
+   0.82,
+   9.09,
+   16.01
+  ],
+  "steer_cmd_saturation_frac(|d|>=0.298)": 0.0,
+  "steer_cmd_distinct_updates": 361,
+  "distinct_update_rate_hz": 9.4,
+  "steer_cmd_sign_reversals": 26,
+  "reversals_per_sec": 0.677,
+  "steer_cmd_step_abs_p50_p95_deg": [
+   0.14,
+   1.91
+  ],
+  "throttle_p50_p95": [
+   0.214,
+   0.35
+  ],
+  "truth_speed_p50_p95_max": [
+   5.603,
+   5.808,
+   5.832
+  ],
+  "truth_yawrate_abs_p95_degps": 14.18,
+  "truth_eff_steer_abs_p95_max_deg": [
+   7.06,
+   10.55
+  ],
+  "truth_eff_steer_zero_crossings": 12,
+  "hil_act_steer_minus_cmd_rmse_deg": 0.184,
+  "hil_act_controls_sample": [
+   0.206,
+   0.01,
+   0.0,
+   0.0
+  ],
+  "fit_all": {
+   "rmse_deg": 0.303,
+   "tau": 0.925,
+   "delay": 0.0,
+   "gain": 1.006
+  },
+  "fit_first55": {
+   "tau": 0.75,
+   "delay": 0.0,
+   "gain": 1.047,
+   "fit_rmse_deg": 0.021,
+   "val_rmse_last45_deg": 0.733
+  },
+  "model_tau0.05_rmse_deg_all": 2.236,
+  "model_tau0.05_rmse_deg_last45": 3.228,
+  "model_tau0.74_rmse_deg_all": 0.442,
+  "model_tau0.74_rmse_deg_last45": 0.645,
+  "frac_cmd_truth_opposite_sign(|cmd|>3deg)": 0.0264,
+  "ekf_minus_truth_speed_median_rmse": [
+   0.0028,
+   0.0466
+  ]
+ }
+}
