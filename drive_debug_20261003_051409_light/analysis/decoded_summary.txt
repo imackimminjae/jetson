@@ -1,0 +1,64 @@
+/bev/occupancy_grid count 1437 start/end 05:14:11.032 05:14:55.081 gap median/max 0.028347373008728027 0.11562252044677734
+grid [(0.3125, 128, 128, [0.0, -20.0], [0.0, 0.0, 0.0, 1.0])] gaps>1s []
+/motive/vehicle/odom_map count 1328 start/end 05:14:10.873 05:14:55.102 gap median/max 0.03426480293273926 0.05123758316040039
+/planner/lower_reference_path/with_arclength count 28 start/end 05:14:19.234 05:14:47.234 gap median/max 0.9997677803039551 2.001309394836426
+/debug/upper_branch_event count 33 start/end 05:14:19.234 05:14:51.234 gap median/max 0.9999197721481323 1.0095410346984863
+/debug/lower_mpc_trace count 430 start/end 05:14:10.898 05:14:53.798 gap median/max 0.09998703002929688 0.10323619842529297
+LOWER modes Counter({0.0: 290, 3.0: 140}) speed min/med/max [5.26868275e-03 5.35862650e+00 7.64705381e+00] valid steering saturation 0.09655172413793103
+mode 0.0 count 290 first,last 05:14:19.300 05:14:48.698
+mode 3.0 count 140 first,last 05:14:10.898 05:14:53.798
+UPPER 05:14:19.234 success 7 xy 150.0 -140.0 yaw 118.3 status solved
+UPPER 05:14:20.234 success 7 xy 149.98 -139.87 yaw 118.1 status solved
+UPPER 05:14:21.234 success 7 xy 149.57 -138.97 yaw 118.1 status solved
+UPPER 05:14:22.235 success 7 xy 148.55 -137.1 yaw 118.7 status solved
+UPPER 05:14:23.233 success 7 xy 146.91 -134.32 yaw 119.5 status solved
+UPPER 05:14:24.235 success 7 xy 144.84 -130.68 yaw 118.3 status solved
+UPPER 05:14:25.236 success 7 xy 142.57 -126.23 yaw 115.6 status solved
+UPPER 05:14:26.236 success 7 xy 140.13 -121.27 yaw 115.4 status solved
+UPPER 05:14:27.235 success 7 xy 137.32 -116.22 yaw 118.2 status solved
+UPPER 05:14:28.234 success 7 xy 134.33 -111.15 yaw 118.5 status solved
+UPPER 05:14:29.235 success 7 xy 131.67 -105.89 yaw 114.5 status solved
+UPPER 05:14:30.235 success 7 xy 129.23 -100.57 yaw 113.3 status solved
+UPPER 05:14:31.235 success 7 xy 126.42 -95.51 yaw 117.9 status solved
+UPPER 05:14:32.238 success 7 xy 123.19 -90.74 yaw 122.0 status solved
+UPPER 05:14:33.236 success 7 xy 120.11 -85.87 yaw 118.4 status solved
+UPPER 05:14:34.235 success 7 xy 117.93 -80.48 yaw 108.3 status solved
+UPPER 05:14:35.236 success 7 xy 116.16 -74.89 yaw 106.3 status solved
+UPPER 05:14:36.237 success 7 xy 113.7 -69.58 yaw 113.6 status solved
+UPPER 05:14:37.235 success 7 xy 111.06 -64.43 yaw 113.1 status solved
+UPPER 05:14:38.233 success 7 xy 109.5 -59.01 yaw 101.4 status solved
+UPPER 05:14:39.236 success 7 xy 108.76 -53.35 yaw 96.0 status solved
+UPPER 05:14:40.234 success 7 xy 107.15 -47.84 yaw 105.9 status solved
+UPPER 05:14:41.243 success 7 xy 105.32 -42.45 yaw 102.1 status solved
+UPPER 05:14:42.235 success 7 xy 106.13 -36.79 yaw 74.6 status solved
+UPPER 05:14:43.232 success 7 xy 109.27 -32.0 yaw 52.6 status solved
+UPPER 05:14:44.233 solver_rejected 7 xy 112.51 -27.27 yaw 56.1 status DAQP direct corridor QP infeasible: tried=1
+UPPER 05:14:45.234 success 7 xy 113.86 -21.59 yaw 76.2 status solved
+UPPER 05:14:46.236 success 7 xy 114.65 -16.21 yaw 75.7 status solved
+UPPER 05:14:47.234 success 7 xy 117.28 -11.89 yaw 52.9 status solved
+UPPER 05:14:48.234 solver_rejected 7 xy 121.29 -9.01 yaw 34.7 status DAQP direct corridor QP infeasible: tried=64
+UPPER 05:14:49.234 solver_rejected 7 xy 124.75 -5.63 yaw 43.9 status DAQP direct corridor QP infeasible: tried=1
+UPPER 05:14:50.235 solver_rejected 7 xy 127.62 -2.09 yaw 48.2 status DAQP direct corridor QP infeasible: tried=1
+UPPER 05:14:51.234 solver_rejected 7 xy 130.16 1.08 yaw 49.0 status DAQP direct corridor QP infeasible: tried=1
+WARNINGS
+05:14:10.859 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+05:14:11.298 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+05:14:12.399 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+05:14:13.499 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+05:14:14.598 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+05:14:15.699 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+05:14:16.798 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+05:14:17.800 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+05:14:18.899 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+05:14:44.233 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.187; retaining last published path
+05:14:44.797 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: stale lower path
+05:14:48.234 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=64 solve_ms=2.002; retaining last published path
+05:14:48.800 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: stale lower path
+05:14:49.232 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+05:14:49.799 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: stale lower path
+05:14:50.233 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+05:14:50.235 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.190; retaining last published path
+05:14:50.897 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: stale lower path
+05:14:51.232 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+05:14:51.899 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: stale lower path
+05:14:52.898 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: stale lower path

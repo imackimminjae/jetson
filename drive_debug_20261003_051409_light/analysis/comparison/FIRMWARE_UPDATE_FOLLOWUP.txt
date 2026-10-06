@@ -1,0 +1,46 @@
+2026-10-03: 사용자 제공 펌웨어 변경 내역과 기존 로그 대조
+
+사용자 제공 변경 내역: rest-gate 펌웨어, 원래 read_motors 필터 복원,
+Ackermann 무횡슬립 모델 유지, 입력 timestamp 0.5초 보호, groundtruth 기반 at_rest gate.
+현재 보드의 새 상태 출력을 직접 재확인한 것은 아니다.
+최종 작업 트리 /home/kmj/PX4-baselines/... 는 이 PC에 없으며 최종 패치도 미확보.
+
+기준 커밋 소스 직접 확인:
+https://raw.githubusercontent.com/PX4/PX4-Autopilot/94cb2012792b2ae89f0b147cfee53ee31ae550be/src/modules/simulation/simulator_sih/sih.cpp
+sensor_step(): dt=(now-_last_run)*1e-6, _last_run=now, read_motors(dt).
+read_motors(): _actuator_out_sub.update() 성공 분기 안에서만
+_u[i] += dt/_T_TAU * (u_sp-_u[i]) 계산.
+즉 필터 갱신 빈도는 새 출력 수신 빈도, 계수의 dt는 매 SIH 루프 간격.
+둘의 주기가 다르면 명목 시정수와 벽시계 기준 유효 시정수가 달라진다.
+원본에는 Ackermann 타입 자체가 없으므로 최종 패치에서 해당 분기를 사용하는지도 확인 필요.
+
+저장된 mav.parm: IMU_GYRO_RATEMAX=400, SIH_T_TAU=0.05.
+이 파일은 현재/각 주행 당시 보드 값을 실시간 검증한 결과로 간주하지 않는다.
+400Hz, dt=0.0025 가정 시 갱신 한 번마다 잔차가0.95배.
+등가 시정수=-1/(output_Hz*ln(0.95)).
+출력30Hz면0.650초,35Hz면0.557초,25Hz면0.780초.
+오프라인 계단입력 계산 결과는 original_input_filter_rate_check.json 참조.
+실제 최신 actuator_outputs_sim 갱신율이30~35Hz라는 측정 결과는 아니다.
+ROS 제어주기10Hz 및 HIL telemetry30Hz를 내부 actuator_outputs_sim 주기와 혼동하지 않는다.
+
+기존 로그의 등가 조향 응답: 어제0.033~0.036초, 오늘0.553~0.736초.
+따라서 복원된 원본 필터의 시간 간격/갱신 빈도 불일치가 우선 원인 후보다.
+0.5초 watchdog은 0.5초 순수 지연 필터가 아니므로 fitted tau와 직접 동일시하지 않는다.
+정지 gate는 설명대로면 at_rest만 제한하므로 조향 필터 변경과 별개로 평가한다.
+
+최신 bag에 내부 at_rest/GPS 개별 검사 토픽과 actuator_outputs_sim은 없다.
+로컬 ULog는 수정 전 sess124_log100.ulg만 발견됨.
+최신 ROS/MAVLink에서는 주행 중 수평추정 유효/드리프트 경고 없음까지 확인됨.
+새 rest gate의 이동-감속-정지-재출발 전 구간 통과는 아직 증명할 수 없다.
+
+다음 확인:
+1. 최종 read_motors에서 필터가 새 출력 분기 안인지, dt 출처가 루프 간격인지 확인.
+2. 새 보드 ULog에서 actuator_outputs_sim timestamp 간격과 groundtruth 응답 대조.
+   기존 준비 파일 px4_rest_audit_20261002/logger_topics.txt에 요청한7종 모두 포함.
+3. moving truth >0.05일 때 land/EKF 내부 at_rest, 정지 복귀 지연,
+   개별 check_fail_*, GNSS 융합, xy_valid/v_xy_valid, reset counter를 같은 시간축 비교.
+4. 확인되면 Ackermann에만 수신한 목표값을 보관하고 매 SIH 루프마다 실제 dt로
+   1-exp(-dt/tau) 필터 적분하는 최소 수정안을 검토. 수신 없지만0.5초 미만이면
+   마지막 목표값에 대해 계속 적분하고, timeout/무효 timestamp면 기존 강제0 우선.
+   다른 차량, rest gate, 위치 유지, GPS 검사 기준은 그대로 유지.
+   이는 검토안이며 이번 분석에서 구현/업로드/파라미터 변경하지 않았다.

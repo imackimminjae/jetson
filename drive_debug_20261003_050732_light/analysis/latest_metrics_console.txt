@@ -1,0 +1,205 @@
+{
+  "bag": "/home/imac/ros2_ws/drive_debug_20261003_050732_light",
+  "start": "05:07:33.073",
+  "end": "05:07:57.932",
+  "grid_count": 796,
+  "received_grid_origins": [
+    [
+      0.0,
+      -20.0
+    ]
+  ],
+  "grid_max_gap_s": 0.15457463264465332,
+  "pose_max_gap_s": 0.045186519622802734,
+  "upper_success": 20,
+  "upper_fail": 4,
+  "lower_valid_total": [
+    225,
+    249
+  ],
+  "lower_applied_saturation_count": 66,
+  "lower_error_abs_median_p95_max_m": [
+    0.23708555487214023,
+    1.9066883833550103,
+    2.386624613482385
+  ],
+  "lower_solve_ms_median_p95_max": [
+    0.827745,
+    1.0210396,
+    2.67176
+  ],
+  "truth_speed_median_p95_max_m_s": [
+    5.770615218501403,
+    6.183489300380994,
+    6.198104548973017
+  ],
+  "ekf_velocity_vector_error_median_p95_max_m_s": [
+    0.1381824655822557,
+    0.302521191152357,
+    0.37437476226835237
+  ],
+  "heading_error_median_p95_max_deg": [
+    1.6305983561623794,
+    2.3037707273291432,
+    2.389828105021265
+  ],
+  "estimator_flags": {
+    "895": 124
+  },
+  "horizontal_valid_status_count": 124,
+  "status_count": 124,
+  "stale_intervals": [
+    {
+      "start": "05:07:47.554",
+      "last": "05:07:47.953",
+      "resumed": "05:07:48.053",
+      "samples": 5
+    },
+    {
+      "start": "05:07:53.554",
+      "last": "05:07:54.954",
+      "resumed": "05:07:55.055",
+      "samples": 15
+    },
+    {
+      "start": "05:07:57.554",
+      "last": "05:07:57.854",
+      "resumed": null,
+      "samples": 4
+    }
+  ],
+  "failures": [
+    {
+      "time": "05:07:47.035",
+      "t": 1790971667.0356138,
+      "actual": false,
+      "ratio_08": false,
+      "raw": true,
+      "first_infeasible_prefix": 1,
+      "horizon": 7,
+      "first_step_details": [
+        [
+          1.0,
+          0.0,
+          9.1,
+          3.639999999999999,
+          1.0,
+          1.0,
+          1.0,
+          0.0,
+          0.0,
+          1.0,
+          7.5,
+          11.25
+        ]
+      ],
+      "solve_ms": 0.063685
+    },
+    {
+      "time": "05:07:53.036",
+      "t": 1790971673.0360296,
+      "actual": false,
+      "ratio_08": false,
+      "raw": false,
+      "first_infeasible_prefix": 1,
+      "horizon": 4,
+      "first_step_details": [
+        [
+          1.0,
+          0.0,
+          3.3000000000000007,
+          1.3200000000000003,
+          1.0,
+          0.0,
+          1.0,
+          1.0,
+          0.0,
+          0.0,
+          6.3,
+          9.45
+        ],
+        [
+          1.0,
+          1.0,
+          0.10000000000000069,
+          0.04000000000000209,
+          1.0,
+          1.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          6.3,
+          9.45
+        ],
+        [
+          1.0,
+          2.0,
+          1.1000000000000012,
+          0.4399999999999986,
+          1.0,
+          1.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          6.3,
+          9.45
+        ]
+      ],
+      "solve_ms": 0.195372
+    },
+    {
+      "time": "05:07:54.036",
+      "t": 1790971674.0361445,
+      "actual": false,
+      "ratio_08": false,
+      "raw": true,
+      "first_infeasible_prefix": 1,
+      "horizon": 7,
+      "first_step_details": [
+        [
+          1.0,
+          0.0,
+          5.5,
+          2.1999999999999984,
+          1.0,
+          1.0,
+          1.0,
+          0.0,
+          0.0,
+          1.0,
+          5.5,
+          8.25
+        ]
+      ],
+      "solve_ms": 0.141963
+    },
+    {
+      "time": "05:07:57.036",
+      "t": 1790971677.0363624,
+      "actual": false,
+      "ratio_08": false,
+      "raw": true,
+      "first_infeasible_prefix": 1,
+      "horizon": 7,
+      "first_step_details": [
+        [
+          1.0,
+          0.0,
+          6.6000000000000005,
+          2.64,
+          1.0,
+          1.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          6.500000000000001,
+          9.750000000000002
+        ]
+      ],
+      "solve_ms": 0.066053
+    }
+  ]
+}

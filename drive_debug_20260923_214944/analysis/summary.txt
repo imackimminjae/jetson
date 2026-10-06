@@ -1,0 +1,230 @@
+/bev/occupancy_grid count 57 start/end 21:49:52.672 21:51:24.939 gap median/max 0.4417077302932739 66.67291259765625
+grid [(0.3125, 128, 128, [-6.0, -20.0], [0.0, 0.0, 0.0, 1.0])] gaps>1s [('21:49:52.672', 66.673), ('21:51:21.397', 1.225)]
+/motive/vehicle/odom_map count 2795 start/end 21:49:52.248 21:51:25.380 gap median/max 0.03313553333282471 0.05656862258911133
+/planner/lower_reference_path/with_arclength count 38 start/end 21:50:59.714 21:51:18.212 gap median/max 0.5001001358032227 0.5047616958618164
+/debug/upper_branch_event count 49 start/end 21:50:59.714 21:51:23.714 gap median/max 0.4997684955596924 0.5065841674804688
+/debug/lower_mpc_trace count 905 start/end 21:49:54.901 21:51:25.303 gap median/max 0.09998929500579834 0.10667300224304199
+LOWER modes Counter({3.0: 705, 0.0: 200}) speed min/med/max [0.00557553 0.02559176 3.07995136] valid steering saturation 0.595
+mode 0.0 count 200 first,last 21:50:59.804 21:51:19.704
+mode 3.0 count 705 first,last 21:49:54.900 21:51:25.302
+UPPER 21:50:59.714 success 4 xy 149.69 -140.43 yaw 124.3 status solved
+UPPER 21:51:00.213 success 4 xy 149.7 -140.43 yaw 124.3 status solved
+UPPER 21:51:00.715 success 4 xy 149.72 -140.4 yaw 124.2 status solved
+UPPER 21:51:01.219 success 4 xy 149.73 -140.39 yaw 124.2 status solved
+UPPER 21:51:01.712 success 4 xy 149.72 -140.36 yaw 124.1 status solved
+UPPER 21:51:02.213 success 4 xy 149.67 -140.37 yaw 124.4 status solved
+UPPER 21:51:02.713 success 4 xy 149.57 -140.39 yaw 125.2 status solved
+UPPER 21:51:03.213 success 4 xy 149.42 -140.47 yaw 126.5 status solved
+UPPER 21:51:03.713 success 4 xy 149.23 -140.57 yaw 128.0 status solved
+UPPER 21:51:04.213 success 4 xy 148.99 -140.72 yaw 129.5 status solved
+UPPER 21:51:04.720 success 4 xy 148.71 -140.88 yaw 130.6 status solved
+UPPER 21:51:05.213 success 4 xy 148.38 -141.07 yaw 130.6 status solved
+UPPER 21:51:05.716 success 4 xy 148.0 -141.26 yaw 129.4 status solved
+UPPER 21:51:06.214 success 4 xy 147.57 -141.52 yaw 127.0 status solved
+UPPER 21:51:06.715 success 4 xy 147.09 -141.85 yaw 123.2 status solved
+UPPER 21:51:07.217 success 4 xy 146.55 -142.18 yaw 118.2 status solved
+UPPER 21:51:07.714 success 4 xy 145.95 -142.47 yaw 111.9 status solved
+UPPER 21:51:08.215 success 4 xy 145.28 -142.73 yaw 104.4 status solved
+UPPER 21:51:08.718 success 4 xy 144.55 -142.94 yaw 95.9 status solved
+UPPER 21:51:09.220 success 4 xy 143.75 -143.11 yaw 86.6 status solved
+UPPER 21:51:09.719 success 4 xy 142.9 -143.23 yaw 76.8 status solved
+UPPER 21:51:10.216 success 4 xy 141.98 -143.3 yaw 66.7 status solved
+UPPER 21:51:10.715 success 4 xy 141.03 -143.3 yaw 56.7 status solved
+UPPER 21:51:11.215 success 4 xy 140.04 -143.22 yaw 46.7 status solved
+UPPER 21:51:11.713 success 4 xy 139.03 -143.07 yaw 37.1 status solved
+UPPER 21:51:12.213 success 4 xy 138.01 -142.83 yaw 27.7 status solved
+UPPER 21:51:12.713 success 4 xy 136.99 -142.49 yaw 19.1 status solved
+UPPER 21:51:13.215 success 4 xy 135.99 -141.95 yaw 12.3 status solved
+UPPER 21:51:13.714 success 4 xy 135.0 -141.35 yaw 8.3 status solved
+UPPER 21:51:14.218 success 4 xy 134.04 -140.61 yaw 6.9 status solved
+UPPER 21:51:14.714 success 4 xy 133.09 -139.83 yaw 8.8 status solved
+UPPER 21:51:15.214 success 4 xy 132.13 -139.01 yaw 13.1 status solved
+UPPER 21:51:15.716 success 4 xy 131.11 -138.19 yaw 20.0 status solved
+UPPER 21:51:16.214 success 4 xy 130.02 -137.4 yaw 28.6 status solved
+UPPER 21:51:16.714 success 4 xy 128.82 -136.7 yaw 38.4 status solved
+UPPER 21:51:17.215 success 4 xy 127.52 -136.17 yaw 48.6 status solved
+UPPER 21:51:17.715 success 4 xy 126.17 -135.84 yaw 58.8 status solved
+UPPER 21:51:18.212 success 4 xy 124.79 -135.65 yaw 66.3 status solved
+UPPER 21:51:18.713 solver_rejected 4 xy 123.45 -135.67 yaw 70.4 status DAQP direct corridor QP infeasible: tried=1
+UPPER 21:51:19.213 solver_rejected 4 xy 122.11 -135.88 yaw 70.4 status DAQP direct corridor QP infeasible: tried=1
+UPPER 21:51:19.715 solver_rejected 2 xy 121.01 -136.17 yaw 67.8 status DAQP direct corridor QP infeasible: tried=1
+UPPER 21:51:20.215 solver_rejected 4 xy 119.89 -136.52 yaw 62.7 status DAQP direct corridor QP infeasible: tried=1
+UPPER 21:51:20.714 no_candidate 0 xy 118.81 -136.9 yaw 58.1 status empty valid interval prefix
+UPPER 21:51:21.213 no_candidate 0 xy 117.76 -137.24 yaw 55.2 status empty valid interval prefix
+UPPER 21:51:21.717 no_candidate 0 xy 116.75 -137.5 yaw 54.6 status empty valid interval prefix
+UPPER 21:51:22.217 no_candidate 0 xy 115.79 -137.63 yaw 55.7 status empty valid interval prefix
+UPPER 21:51:22.715 no_candidate 0 xy 114.89 -137.65 yaw 57.4 status empty valid interval prefix
+UPPER 21:51:23.213 no_candidate 0 xy 114.03 -137.57 yaw 59.1 status empty valid interval prefix
+UPPER 21:51:23.714 no_candidate 0 xy 113.19 -137.46 yaw 60.4 status empty valid interval prefix
+WARNINGS
+21:49:53.336 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:49:53.338 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:49:53.338 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:49:53.338 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:49:53.338 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:49:53.338 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:49:53.338 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:49:53.709 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:49:54.829 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:49:54.830 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:49:54.830 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:49:54.830 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:49:54.831 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:49:55.208 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:49:55.501 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:49:56.208 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:49:56.502 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:49:57.208 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:49:57.505 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:49:58.601 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:49:58.709 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:49:59.602 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:49:59.709 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:50:00.602 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:50:00.709 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:50:01.701 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:50:01.709 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:50:02.701 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:50:02.709 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:50:03.801 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:50:04.209 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:50:04.801 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:50:05.209 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:50:05.801 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:50:06.709 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:50:06.801 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:50:07.709 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:50:07.901 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:50:08.709 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:50:08.902 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:50:10.001 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:50:10.209 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:50:11.001 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:50:11.209 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:50:12.002 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:50:12.709 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:50:13.002 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:50:13.709 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:50:14.002 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:50:14.709 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:50:15.102 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:50:15.710 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:50:16.202 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:50:17.203 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:50:17.209 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:50:18.303 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:50:18.709 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:50:19.302 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:50:19.709 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:50:20.402 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:50:20.709 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:50:21.501 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:50:22.209 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:50:22.502 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:50:23.502 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:50:23.709 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:50:24.602 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:50:25.209 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:50:25.602 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:50:26.209 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:50:26.602 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:50:27.702 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:50:27.710 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:50:28.702 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:50:29.210 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:50:29.802 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:50:30.710 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:50:30.803 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:50:31.709 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:50:31.901 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:50:32.902 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:50:33.209 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:50:34.002 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:50:34.209 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:50:35.102 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:50:35.209 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:50:36.102 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:50:36.709 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:50:37.203 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:50:37.709 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:50:38.202 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:50:38.710 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:50:39.303 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:50:39.710 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:50:40.402 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:50:41.210 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:50:41.402 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:50:42.210 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:50:42.403 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:50:43.404 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:50:43.709 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:50:44.503 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:50:44.710 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:50:45.603 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:50:46.209 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:50:46.602 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:50:47.210 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:50:47.604 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:50:48.210 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:50:48.703 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:50:49.210 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:50:49.702 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:50:50.210 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:50:50.703 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:50:51.710 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:50:51.803 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:50:52.710 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:50:52.804 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:50:53.712 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:50:53.903 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:50:54.903 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:50:55.210 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:50:55.904 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:50:56.211 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:50:57.002 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:50:57.711 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:50:58.003 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:50:59.103 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+21:50:59.210 upper_planner_node planner grid is missing, invalid, or stale; retaining the last published path
+21:50:59.711 upper_planner_node horizon_diag configured=10 extent_limit=4 requested=4 usable=4 reserve=1 restore=1 step_m=6.000 previous=0
+21:51:02.211 upper_planner_node horizon_diag configured=10 extent_limit=4 requested=4 usable=4 reserve=1 restore=1 step_m=6.000 previous=1
+21:51:04.212 upper_planner_node horizon_diag configured=10 extent_limit=4 requested=4 usable=4 reserve=1 restore=1 step_m=6.000 previous=1
+21:51:06.214 upper_planner_node horizon_diag configured=10 extent_limit=4 requested=4 usable=4 reserve=1 restore=1 step_m=6.000 previous=1
+21:51:08.715 upper_planner_node horizon_diag configured=10 extent_limit=4 requested=4 usable=4 reserve=1 restore=1 step_m=6.000 previous=1
+21:51:11.211 upper_planner_node horizon_diag configured=10 extent_limit=4 requested=4 usable=4 reserve=1 restore=1 step_m=6.000 previous=1
+21:51:13.713 upper_planner_node horizon_diag configured=10 extent_limit=4 requested=4 usable=4 reserve=1 restore=1 step_m=6.000 previous=1
+21:51:15.713 upper_planner_node horizon_diag configured=10 extent_limit=4 requested=4 usable=4 reserve=1 restore=1 step_m=6.000 previous=1
+21:51:17.095 px4_ekf_bridge PX4: Preflight Fail: horizontal velocity unstable
+21:51:17.104 lower_tracking_mpc_node PX4 STATUSTEXT severity=2 text=Preflight Fail: horizontal velocity unstable
+21:51:18.211 upper_planner_node horizon_diag configured=10 extent_limit=4 requested=4 usable=4 reserve=1 restore=1 step_m=6.000 previous=1
+21:51:18.714 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.286; retaining last published path
+21:51:19.713 upper_planner_node interval_diag step=3 reason=3 ref_body=(3.421,19.467) heading_deg=79.89 center_cell=(30,126) center_value=100 line_free=0 blocked=314 unknown=26 outside=2 longest_run=0 min_run=2 grid_free=4736 zero=4736 positive=10516 unknown=1132 topic=/bev/occupancy_grid frame=Vehicle origin=(-6.000,-20.000) origin_yaw_deg=0.00 size=128x128 res=0.3125 positive_is_drivable=0 threshold=1 waypoint_bias=0 previous=1
+21:51:19.713 upper_planner_node no valid preview interval at step=3; usable horizon=2 reason=3
+21:51:19.715 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.261; retaining last published path
+21:51:19.804 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: stale lower path
+21:51:20.213 upper_planner_node horizon_diag configured=10 extent_limit=4 requested=4 usable=4 reserve=1 restore=1 step_m=6.000 previous=1
+21:51:20.714 upper_planner_node no valid preview interval at step=1; usable horizon=0 reason=3
+21:51:20.714 upper_planner_node no valid preview interval at step=2; usable horizon=0 reason=3
+21:51:20.714 upper_planner_node empty valid interval prefix; retaining the last published path
+21:51:20.904 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: stale lower path
+21:51:21.212 upper_planner_node no valid preview interval at step=1; usable horizon=0 reason=3
+21:51:21.213 upper_planner_node no valid preview interval at step=2; usable horizon=0 reason=3
+21:51:21.717 upper_planner_node interval_diag step=1 reason=3 ref_body=(0.029,6.468) heading_deg=96.51 center_cell=(19,84) center_value=100 line_free=0 blocked=387 unknown=16 outside=1 longest_run=0 min_run=2 grid_free=2560 zero=2560 positive=12692 unknown=1132 topic=/bev/occupancy_grid frame=Vehicle origin=(-6.000,-20.000) origin_yaw_deg=0.00 size=128x128 res=0.3125 positive_is_drivable=0 threshold=1 waypoint_bias=0 previous=1
+21:51:21.718 upper_planner_node no valid preview interval at step=1; usable horizon=0 reason=3
+21:51:21.719 upper_planner_node no valid preview interval at step=2; usable horizon=0 reason=3
+21:51:21.719 upper_planner_node empty valid interval prefix; retaining the last published path
+21:51:22.004 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: stale lower path
+21:51:22.214 upper_planner_node no valid preview interval at step=1; usable horizon=0 reason=3
+21:51:22.215 upper_planner_node no valid preview interval at step=2; usable horizon=0 reason=3
+21:51:22.216 upper_planner_node horizon_diag configured=10 extent_limit=4 requested=4 usable=0 reserve=1 restore=1 step_m=6.000 previous=1
+21:51:22.712 upper_planner_node no valid preview interval at step=1; usable horizon=0 reason=3
+21:51:22.715 upper_planner_node no valid preview interval at step=2; usable horizon=0 reason=3
+21:51:23.004 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: stale lower path
+21:51:23.212 upper_planner_node no valid preview interval at step=1; usable horizon=0 reason=3
+21:51:23.212 upper_planner_node no valid preview interval at step=2; usable horizon=0 reason=3
+21:51:23.213 upper_planner_node empty valid interval prefix; retaining the last published path
+21:51:23.713 upper_planner_node no valid preview interval at step=1; usable horizon=0 reason=3
+21:51:23.713 upper_planner_node interval_diag step=2 reason=3 ref_body=(0.604,13.752) heading_deg=87.28 center_cell=(21,108) center_value=100 line_free=0 blocked=385 unknown=16 outside=1 longest_run=0 min_run=2 grid_free=1514 zero=1514 positive=13738 unknown=1132 topic=/bev/occupancy_grid frame=Vehicle origin=(-6.000,-20.000) origin_yaw_deg=0.00 size=128x128 res=0.3125 positive_is_drivable=0 threshold=1 waypoint_bias=0 previous=1
+21:51:23.713 upper_planner_node no valid preview interval at step=2; usable horizon=0 reason=3
+21:51:24.004 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: stale lower path
+21:51:25.104 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: stale lower path

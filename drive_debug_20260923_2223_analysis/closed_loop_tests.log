@@ -1,0 +1,20 @@
+Running main() from /opt/ros/humble/src/gtest_vendor/src/gtest_main.cc
+Note: Google Test filter = LowerMpc.CurvaturePreviewUsesMeasuredTravelOnOriginalCoordinates:LowerMpc.DelayedCurvedVehicleWithSpeedMismatch
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from LowerMpc
+[ RUN      ] LowerMpc.CurvaturePreviewUsesMeasuredTravelOnOriginalCoordinates
+[INFO] [1790170388.313492787] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=10 path=/planner/lower_reference_path scale=model wheelbase=0.30m actuator_model=0 delay=0.00s tau=0.85s backend=disabled virtual=/cmd_control
+[       OK ] LowerMpc.CurvaturePreviewUsesMeasuredTravelOnOriginalCoordinates (71 ms)
+[ RUN      ] LowerMpc.DelayedCurvedVehicleWithSpeedMismatch
+[INFO] [1790170388.356883519] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=10 path=/planner/lower_reference_path scale=model wheelbase=0.30m actuator_model=0 delay=0.00s tau=0.85s backend=disabled virtual=/cmd_control
+SWAY speed=3 tau=0.85 baseline_rms=2.29099 revised_rms=0.165987 baseline_peak=5.53107 revised_peak=0.527143
+SWAY speed=3 tau=1.3 baseline_rms=5.31956 revised_rms=0.19523 baseline_peak=10.6094 revised_peak=0.534264
+SWAY speed=6 tau=0.85 baseline_rms=4.65695 revised_rms=0.184429 baseline_peak=9.68058 revised_peak=0.527143
+SWAY speed=6 tau=1.3 baseline_rms=9.40891 revised_rms=0.248611 baseline_peak=18.464 revised_peak=0.534264
+[       OK ] LowerMpc.DelayedCurvedVehicleWithSpeedMismatch (504 ms)
+[----------] 2 tests from LowerMpc (575 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (614 ms total)
+[  PASSED  ] 2 tests.

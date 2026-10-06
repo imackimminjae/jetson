@@ -1,0 +1,17 @@
+{
+  "assumption": "no-slip bicycle; published velocity at vehicle center, rear axle offset 1.4m, wheelbase 2.8m; inferred steering is atan(2*tan(course-heading)), sign changed to ROS",
+  "fit_training_window_s": [
+    1,
+    12.0
+  ],
+  "equivalent_gain_tau_s_delay_s": [
+    0.9798552109535654,
+    0.7291223321679992,
+    0.015470688472785266
+  ],
+  "configured_model_rmse_deg_train": 5.426471643335908,
+  "configured_model_rmse_deg_test": 8.486281373502184,
+  "fitted_model_rmse_deg_train": 0.3957281850651509,
+  "fitted_model_rmse_deg_test": 0.5340267039884065,
+  "warning": "Effective response inferred from motion, not direct steering feedback; gain/delay/tau are not uniquely identified firmware values."
+}

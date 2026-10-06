@@ -1,0 +1,49 @@
+{
+  "upper_planner_node": {
+    "preview_interval_soft_ratio": {
+      "type": 3,
+      "double": 0.7,
+      "integer": 0,
+      "bool": false
+    },
+    "upper_preview_steps": {
+      "type": 2,
+      "double": 0.0,
+      "integer": 5,
+      "bool": false
+    }
+  },
+  "lower_tracking_mpc_node": {
+    "lower_rd_steering_rate": {
+      "type": 3,
+      "double": 40.0,
+      "integer": 0,
+      "bool": false
+    },
+    "lower_steering_actuator_delay_sec": {
+      "type": 3,
+      "double": 0.0,
+      "integer": 0,
+      "bool": false
+    },
+    "lower_steering_actuator_time_constant_sec": {
+      "type": 3,
+      "double": 0.05,
+      "integer": 0,
+      "bool": false
+    },
+    "target_speed_mps": {
+      "type": 3,
+      "double": 6.0,
+      "integer": 0,
+      "bool": false
+    },
+    "mavlink_enable": {
+      "type": 1,
+      "double": 0.0,
+      "integer": 0,
+      "bool": false
+    }
+  },
+  "withdrawn_soft_parameter_absent": true
+}

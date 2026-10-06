@@ -1,0 +1,334 @@
+[INFO] [1790169790.512181093] [upper_planner_node]: planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+[INFO] [1790169790.521265628] [upper_planner_node]: Egocentric MIQP planner ready: rate=2.00Hz pred_dt=1.000s Nmax=10 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=34.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1790169790.522127636] [upper_planner_node]: reference path loaded from /navigation/global_path: 6 points frame=map waypoint_bias=disabled
+[WARN] [1790169791.021477548] [upper_planner_node]: planner waiting for pose
+[INFO] [1790169791.521728445] [upper_planner_node]: waypoint pair advanced: [0,1] -> [1,2]; previous reference retained
+[WARN] [1790169791.522758617] [upper_planner_node]: horizon_diag configured=10 extent_limit=4 requested=4 usable=4 reserve=1 restore=1 step_m=6.000 previous=0
+[INFO] [1790169791.523168260] [upper_planner_node]: road turn wp=[prev 1 2] psi_in=-0.09deg psi_out=-1.92deg delta=-1.83deg N=4 plan_v=6.00m/s
+[INFO] [1790169791.524440039] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=0.000104 Jpos=0.000028 Jin=0.000040 Jturn=0.000000 solve_ms=0.298 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169792.021938445] [upper_planner_node]: road turn wp=[prev 1 2] psi_in=-0.07deg psi_out=-1.90deg delta=-1.83deg N=4 plan_v=6.00m/s
+[INFO] [1790169792.022746627] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=0.000148 Jpos=0.000015 Jin=0.000021 Jturn=0.000000 solve_ms=0.134 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169792.522115517] [upper_planner_node]: road turn wp=[prev 1 2] psi_in=-0.07deg psi_out=-1.90deg delta=-1.83deg N=4 plan_v=6.00m/s
+[INFO] [1790169792.523496291] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=0.000171 Jpos=0.000008 Jin=0.000012 Jturn=0.000000 solve_ms=0.249 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169793.022313006] [upper_planner_node]: road turn wp=[prev 1 2] psi_in=-0.04deg psi_out=-1.87deg delta=-1.83deg N=4 plan_v=6.00m/s
+[INFO] [1790169793.023726228] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=0.000184 Jpos=0.000004 Jin=0.000006 Jturn=0.000000 solve_ms=0.242 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169793.522237815] [upper_planner_node]: road turn wp=[prev 1 2] psi_in=-0.04deg psi_out=-1.87deg delta=-1.83deg N=4 plan_v=6.00m/s
+[INFO] [1790169793.523594748] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=0.000191 Jpos=0.000003 Jin=0.000004 Jturn=0.000000 solve_ms=0.260 polished=yes direct_qp=1 sparse=5 dense=42
+[WARN] [1790169794.022603341] [upper_planner_node]: horizon_diag configured=10 extent_limit=4 requested=4 usable=4 reserve=1 restore=1 step_m=6.000 previous=1
+[INFO] [1790169794.023201565] [upper_planner_node]: road turn wp=[prev 1 2] psi_in=-0.07deg psi_out=-1.90deg delta=-1.83deg N=4 plan_v=6.00m/s
+[INFO] [1790169794.024332860] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=0.000195 Jpos=0.000001 Jin=0.000002 Jturn=0.000000 solve_ms=0.293 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169794.522606105] [upper_planner_node]: road turn wp=[prev 1 2] psi_in=-0.05deg psi_out=-1.88deg delta=-1.83deg N=4 plan_v=6.00m/s
+[INFO] [1790169794.524096610] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=0.000197 Jpos=0.000001 Jin=0.000001 Jturn=0.000000 solve_ms=0.262 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169795.022797547] [upper_planner_node]: road turn wp=[prev 1 2] psi_in=+0.03deg psi_out=-1.80deg delta=-1.83deg N=4 plan_v=6.00m/s
+[INFO] [1790169795.024382998] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=0.000197 Jpos=0.000001 Jin=0.000001 Jturn=0.000000 solve_ms=0.257 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169795.523109216] [upper_planner_node]: road turn wp=[prev 1 2] psi_in=-0.00deg psi_out=-1.83deg delta=-1.83deg N=4 plan_v=6.00m/s
+[INFO] [1790169795.524718475] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=0.000197 Jpos=0.000001 Jin=0.000001 Jturn=0.000000 solve_ms=0.255 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169796.022703938] [upper_planner_node]: road turn wp=[prev 1 2] psi_in=-0.01deg psi_out=-1.84deg delta=-1.83deg N=4 plan_v=6.00m/s
+[INFO] [1790169796.025070114] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=0.000197 Jpos=0.000001 Jin=0.000001 Jturn=0.000000 solve_ms=0.251 polished=yes direct_qp=1 sparse=5 dense=42
+[WARN] [1790169796.522321284] [upper_planner_node]: horizon_diag configured=10 extent_limit=4 requested=4 usable=4 reserve=1 restore=1 step_m=6.000 previous=1
+[INFO] [1790169796.522860627] [upper_planner_node]: road turn wp=[prev 1 2] psi_in=-0.91deg psi_out=-2.73deg delta=-1.83deg N=4 plan_v=6.00m/s
+[INFO] [1790169796.523999442] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=0.000197 Jpos=0.000001 Jin=0.000001 Jturn=0.000000 solve_ms=0.242 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169797.022713852] [upper_planner_node]: road turn wp=[prev 1 2] psi_in=-1.92deg psi_out=-3.74deg delta=-1.83deg N=4 plan_v=6.00m/s
+[INFO] [1790169797.025194080] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=0.000197 Jpos=0.000001 Jin=0.000001 Jturn=0.000000 solve_ms=0.306 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169797.522701258] [upper_planner_node]: road turn wp=[prev 1 2] psi_in=-4.17deg psi_out=-6.00deg delta=-1.83deg N=4 plan_v=6.00m/s
+[INFO] [1790169797.524129937] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=0.000198 Jpos=0.000001 Jin=0.000001 Jturn=0.000000 solve_ms=0.289 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169798.022542804] [upper_planner_node]: road turn wp=[prev 1 2] psi_in=-6.69deg psi_out=-8.52deg delta=-1.83deg N=4 plan_v=6.00m/s
+[INFO] [1790169798.024173536] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=0.000198 Jpos=0.000001 Jin=0.000001 Jturn=0.000000 solve_ms=0.248 polished=yes direct_qp=1 sparse=5 dense=42
+[WARN] [1790169798.522357661] [upper_planner_node]: horizon_diag configured=10 extent_limit=4 requested=4 usable=4 reserve=1 restore=1 step_m=6.000 previous=1
+[INFO] [1790169798.522920652] [upper_planner_node]: road turn wp=[prev 1 2] psi_in=-8.22deg psi_out=-10.04deg delta=-1.83deg N=4 plan_v=6.00m/s
+[INFO] [1790169798.524040811] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=0.000198 Jpos=0.000000 Jin=0.000001 Jturn=0.000000 solve_ms=0.248 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169799.022476175] [upper_planner_node]: road turn wp=[prev 1 2] psi_in=-8.95deg psi_out=-10.77deg delta=-1.83deg N=4 plan_v=6.00m/s
+[INFO] [1790169799.024085018] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=0.000198 Jpos=0.000000 Jin=0.000001 Jturn=0.000000 solve_ms=0.256 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169799.522559776] [upper_planner_node]: road turn wp=[prev 1 2] psi_in=-9.25deg psi_out=-11.08deg delta=-1.83deg N=4 plan_v=6.00m/s
+[INFO] [1790169799.524015240] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=0.000198 Jpos=0.000001 Jin=0.000001 Jturn=0.000000 solve_ms=0.255 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169800.022672434] [upper_planner_node]: road turn wp=[prev 1 2] psi_in=-8.36deg psi_out=-10.18deg delta=-1.83deg N=4 plan_v=6.00m/s
+[INFO] [1790169800.024190523] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=0.000196 Jpos=0.000001 Jin=0.000001 Jturn=0.000000 solve_ms=0.291 polished=yes direct_qp=1 sparse=5 dense=42
+[WARN] [1790169800.522381114] [upper_planner_node]: horizon_diag configured=10 extent_limit=4 requested=4 usable=4 reserve=1 restore=1 step_m=6.000 previous=1
+[INFO] [1790169800.522974986] [upper_planner_node]: road turn wp=[prev 1 2] psi_in=-7.70deg psi_out=-9.53deg delta=-1.83deg N=4 plan_v=6.00m/s
+[INFO] [1790169800.524099080] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=0.000193 Jpos=0.000002 Jin=0.000003 Jturn=0.000000 solve_ms=0.288 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169801.022493612] [upper_planner_node]: road turn wp=[prev 1 2] psi_in=-5.76deg psi_out=-7.59deg delta=-1.83deg N=4 plan_v=6.00m/s
+[INFO] [1790169801.024061303] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=0.000188 Jpos=0.000003 Jin=0.000005 Jturn=0.000000 solve_ms=0.255 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169801.522647521] [upper_planner_node]: road turn wp=[prev 1 2] psi_in=-3.95deg psi_out=-5.78deg delta=-1.83deg N=4 plan_v=6.00m/s
+[INFO] [1790169801.524209355] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=0.000178 Jpos=0.000006 Jin=0.000009 Jturn=0.000000 solve_ms=0.300 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169802.022535150] [upper_planner_node]: road turn wp=[prev 1 2] psi_in=-2.41deg psi_out=-4.24deg delta=-1.83deg N=4 plan_v=6.00m/s
+[INFO] [1790169802.024083640] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=0.000163 Jpos=0.000011 Jin=0.000015 Jturn=0.000000 solve_ms=0.257 polished=yes direct_qp=1 sparse=5 dense=42
+[WARN] [1790169802.522627393] [upper_planner_node]: horizon_diag configured=10 extent_limit=4 requested=4 usable=4 reserve=1 restore=1 step_m=6.000 previous=1
+[INFO] [1790169802.523169168] [upper_planner_node]: road turn wp=[prev 1 2] psi_in=-1.07deg psi_out=-2.90deg delta=-1.83deg N=4 plan_v=6.00m/s
+[INFO] [1790169802.524493396] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=0.000142 Jpos=0.000017 Jin=0.000024 Jturn=0.000000 solve_ms=0.262 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169803.022837367] [upper_planner_node]: road turn wp=[prev 1 2] psi_in=-1.03deg psi_out=-2.85deg delta=-1.83deg N=4 plan_v=6.00m/s
+[INFO] [1790169803.024372577] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=0.000168 Jpos=0.000009 Jin=0.000013 Jturn=0.000000 solve_ms=0.293 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169803.522756775] [upper_planner_node]: road turn wp=[prev 1 2] psi_in=-1.03deg psi_out=-2.85deg delta=-1.83deg N=4 plan_v=6.00m/s
+[INFO] [1790169803.524205486] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=0.000184 Jpos=0.000005 Jin=0.000007 Jturn=0.000000 solve_ms=0.299 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169804.022774392] [upper_planner_node]: road turn wp=[prev 1 2] psi_in=-1.03deg psi_out=-2.85deg delta=-1.83deg N=4 plan_v=6.00m/s
+[INFO] [1790169804.024287617] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=0.000192 Jpos=0.000002 Jin=0.000003 Jturn=0.000000 solve_ms=0.295 polished=yes direct_qp=1 sparse=5 dense=42
+[WARN] [1790169804.522665799] [upper_planner_node]: horizon_diag configured=10 extent_limit=4 requested=4 usable=4 reserve=1 restore=1 step_m=6.000 previous=1
+[INFO] [1790169804.523206614] [upper_planner_node]: road turn wp=[prev 1 2] psi_in=-1.03deg psi_out=-2.85deg delta=-1.83deg N=4 plan_v=6.00m/s
+[INFO] [1790169804.524457272] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=0.000196 Jpos=0.000001 Jin=0.000002 Jturn=0.000000 solve_ms=0.297 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169805.022766812] [upper_planner_node]: road turn wp=[prev 1 2] psi_in=-1.03deg psi_out=-2.85deg delta=-1.83deg N=4 plan_v=6.00m/s
+[INFO] [1790169805.024304582] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=0.000198 Jpos=0.000001 Jin=0.000001 Jturn=0.000000 solve_ms=0.312 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169805.522884497] [upper_planner_node]: road turn wp=[prev 1 2] psi_in=-1.03deg psi_out=-2.85deg delta=-1.83deg N=4 plan_v=6.00m/s
+[INFO] [1790169805.524275351] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=0.000199 Jpos=0.000000 Jin=0.000000 Jturn=0.000000 solve_ms=0.283 polished=yes direct_qp=1 sparse=5 dense=42
+[WARN] [1790169806.021928682] [upper_planner_node]: planner pose is stale
+[WARN] [1790169807.022777991] [upper_planner_node]: horizon_diag configured=10 extent_limit=4 requested=4 usable=4 reserve=1 restore=1 step_m=6.000 previous=1
+[INFO] [1790169807.023457177] [upper_planner_node]: road turn wp=[prev 1 2] psi_in=+6.24deg psi_out=+4.41deg delta=-1.83deg N=4 plan_v=6.00m/s
+[INFO] [1790169807.024596184] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=0.060787 Jpos=0.047668 Jin=0.016869 Jturn=0.000000 solve_ms=0.262 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169807.522841660] [upper_planner_node]: road turn wp=[prev 1 2] psi_in=+7.75deg psi_out=+5.93deg delta=-1.83deg N=4 plan_v=6.00m/s
+[INFO] [1790169807.525013687] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=-0.014982 Jpos=0.005258 Jin=0.006255 Jturn=0.000000 solve_ms=0.261 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169808.022915953] [upper_planner_node]: road turn wp=[prev 1 2] psi_in=+7.98deg psi_out=+6.15deg delta=-1.83deg N=4 plan_v=6.00m/s
+[INFO] [1790169808.024393881] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=-0.007592 Jpos=0.002464 Jin=0.003205 Jturn=0.000000 solve_ms=0.252 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169808.522720096] [upper_planner_node]: road turn wp=[prev 1 2] psi_in=+7.34deg psi_out=+5.51deg delta=-1.83deg N=4 plan_v=6.00m/s
+[INFO] [1790169808.524205000] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=-0.003701 Jpos=0.001175 Jin=0.001603 Jturn=0.000000 solve_ms=0.299 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169809.022870296] [upper_planner_node]: road turn wp=[prev 1 2] psi_in=+5.13deg psi_out=+3.30deg delta=-1.83deg N=4 plan_v=6.00m/s
+[INFO] [1790169809.024402050] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=-0.001753 Jpos=0.000574 Jin=0.000802 Jturn=0.000000 solve_ms=0.261 polished=yes direct_qp=1 sparse=5 dense=42
+[WARN] [1790169809.522699848] [upper_planner_node]: horizon_diag configured=10 extent_limit=4 requested=4 usable=4 reserve=1 restore=1 step_m=6.000 previous=1
+[INFO] [1790169809.523227638] [upper_planner_node]: road turn wp=[prev 1 2] psi_in=+2.01deg psi_out=+0.18deg delta=-1.83deg N=4 plan_v=6.00m/s
+[INFO] [1790169809.524358901] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=-0.000805 Jpos=0.000292 Jin=0.000413 Jturn=0.000000 solve_ms=0.255 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169810.022729885] [upper_planner_node]: road turn wp=[prev 1 2] psi_in=-1.98deg psi_out=-3.81deg delta=-1.83deg N=4 plan_v=6.00m/s
+[INFO] [1790169810.024369482] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=-0.000319 Jpos=0.000150 Jin=0.000213 Jturn=0.000000 solve_ms=0.320 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169810.522859190] [upper_planner_node]: road turn wp=[prev 1 2] psi_in=-5.92deg psi_out=-7.75deg delta=-1.83deg N=4 plan_v=6.00m/s
+[INFO] [1790169810.525216694] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=-0.000060 Jpos=0.000075 Jin=0.000107 Jturn=0.000000 solve_ms=0.520 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169811.023021392] [upper_planner_node]: road turn wp=[prev 1 2] psi_in=-9.68deg psi_out=-11.51deg delta=-1.83deg N=4 plan_v=6.00m/s
+[INFO] [1790169811.024581274] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=0.000089 Jpos=0.000032 Jin=0.000045 Jturn=0.000000 solve_ms=0.262 polished=yes direct_qp=1 sparse=5 dense=42
+[WARN] [1790169811.522781503] [upper_planner_node]: horizon_diag configured=10 extent_limit=4 requested=4 usable=4 reserve=1 restore=1 step_m=6.000 previous=1
+[INFO] [1790169811.523369039] [upper_planner_node]: road turn wp=[prev 1 2] psi_in=-12.20deg psi_out=-14.03deg delta=-1.83deg N=4 plan_v=6.00m/s
+[INFO] [1790169811.524478093] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=0.000164 Jpos=0.000010 Jin=0.000015 Jturn=0.000000 solve_ms=0.250 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169812.022872471] [upper_planner_node]: road turn wp=[prev 1 2] psi_in=-13.06deg psi_out=-14.89deg delta=-1.83deg N=4 plan_v=6.00m/s
+[INFO] [1790169812.024723689] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=-0.001653 Jpos=0.000544 Jin=0.000761 Jturn=0.000000 solve_ms=0.251 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169812.522913358] [upper_planner_node]: road turn wp=[prev 1 2] psi_in=-11.41deg psi_out=-13.24deg delta=-1.83deg N=4 plan_v=6.00m/s
+[INFO] [1790169812.524578459] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=-0.001059 Jpos=0.000367 Jin=0.000517 Jturn=0.000000 solve_ms=0.274 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169813.023586199] [upper_planner_node]: road turn wp=[prev 1 2] psi_in=-8.21deg psi_out=-10.04deg delta=-1.83deg N=4 plan_v=6.00m/s
+[INFO] [1790169813.025036990] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=-0.000660 Jpos=0.000249 Jin=0.000353 Jturn=0.000000 solve_ms=0.262 polished=yes direct_qp=1 sparse=5 dense=42
+[WARN] [1790169813.522853274] [upper_planner_node]: horizon_diag configured=10 extent_limit=4 requested=4 usable=4 reserve=1 restore=1 step_m=6.000 previous=1
+[INFO] [1790169813.523518316] [upper_planner_node]: road turn wp=[prev 1 2] psi_in=-4.10deg psi_out=-5.92deg delta=-1.83deg N=4 plan_v=6.00m/s
+[INFO] [1790169813.524730285] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=-0.000385 Jpos=0.000169 Jin=0.000240 Jturn=0.000000 solve_ms=0.261 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169814.022858672] [upper_planner_node]: road turn wp=[prev 1 2] psi_in=-0.02deg psi_out=-1.85deg delta=-1.83deg N=4 plan_v=6.00m/s
+[INFO] [1790169814.024633025] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=-0.000193 Jpos=0.000113 Jin=0.000161 Jturn=0.000000 solve_ms=0.254 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169814.523112847] [upper_planner_node]: road turn wp=[prev 1 2] psi_in=+2.60deg psi_out=+0.77deg delta=-1.83deg N=4 plan_v=6.00m/s
+[INFO] [1790169814.524696122] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=-0.000056 Jpos=0.000074 Jin=0.000105 Jturn=0.000000 solve_ms=0.245 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169815.022946913] [upper_planner_node]: road turn wp=[prev 1 2] psi_in=+3.11deg psi_out=+1.28deg delta=-1.83deg N=4 plan_v=6.00m/s
+[INFO] [1790169815.024471275] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=0.000864 Jpos=0.000349 Jin=0.000587 Jturn=0.000000 solve_ms=0.258 polished=yes direct_qp=1 sparse=5 dense=42
+[WARN] [1790169815.522870839] [upper_planner_node]: horizon_diag configured=10 extent_limit=4 requested=4 usable=4 reserve=1 restore=1 step_m=6.000 previous=1
+[INFO] [1790169815.523446375] [upper_planner_node]: road turn wp=[prev 1 2] psi_in=+1.37deg psi_out=-0.45deg delta=-1.83deg N=4 plan_v=6.00m/s
+[INFO] [1790169815.524728042] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=0.003702 Jpos=0.000532 Jin=0.003253 Jturn=0.000000 solve_ms=0.248 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169816.023061524] [upper_planner_node]: road turn wp=[prev 1 2] psi_in=-2.23deg psi_out=-4.06deg delta=-1.83deg N=4 plan_v=6.00m/s
+[INFO] [1790169816.024521212] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=0.013506 Jpos=0.007760 Jin=0.005546 Jturn=0.000000 solve_ms=0.268 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169816.522963210] [upper_planner_node]: road turn wp=[prev 1 2] psi_in=-7.45deg psi_out=-9.28deg delta=-1.83deg N=4 plan_v=6.00m/s
+[INFO] [1790169816.524438514] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=0.005108 Jpos=0.005046 Jin=0.000983 Jturn=0.000000 solve_ms=0.261 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169817.023073989] [upper_planner_node]: road turn wp=[prev 1 2] psi_in=-12.23deg psi_out=-14.06deg delta=-1.83deg N=4 plan_v=6.00m/s
+[INFO] [1790169817.024570990] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=0.005271 Jpos=0.006349 Jin=0.000808 Jturn=0.000000 solve_ms=0.267 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169817.522929306] [upper_planner_node]: road turn wp=[prev 1 2] psi_in=-14.73deg psi_out=-16.56deg delta=-1.83deg N=4 plan_v=6.00m/s
+[INFO] [1790169817.524413667] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=0.000829 Jpos=0.004122 Jin=0.000018 Jturn=0.000000 solve_ms=0.264 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169818.022463335] [upper_planner_node]: waypoint pair advanced: [1,2] -> [2,3]; previous reference retained
+[WARN] [1790169818.023421409] [upper_planner_node]: horizon_diag configured=10 extent_limit=4 requested=4 usable=4 reserve=1 restore=1 step_m=6.000 previous=1
+[INFO] [1790169818.023704520] [upper_planner_node]: road turn wp=[prev 2 3] psi_in=-16.40deg psi_out=-46.78deg delta=-30.38deg N=4 plan_v=6.00m/s
+[INFO] [1790169818.024824679] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=-0.001824 Jpos=0.001464 Jin=0.000411 Jturn=0.000000 solve_ms=0.262 polished=yes direct_qp=1 sparse=5 dense=41
+[INFO] [1790169818.523237173] [upper_planner_node]: road turn wp=[prev 2 3] psi_in=-13.39deg psi_out=-43.77deg delta=-30.38deg N=4 plan_v=6.00m/s
+[INFO] [1790169818.524720350] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=-0.001654 Jpos=0.000544 Jin=0.000762 Jturn=0.000000 solve_ms=0.251 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169819.023168141] [upper_planner_node]: road turn wp=[prev 2 3] psi_in=-8.42deg psi_out=-38.80deg delta=-30.38deg N=4 plan_v=6.00m/s
+[INFO] [1790169819.025360552] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=-0.001087 Jpos=0.000375 Jin=0.000528 Jturn=0.000000 solve_ms=0.253 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169819.523082724] [upper_planner_node]: road turn wp=[prev 2 3] psi_in=-2.31deg psi_out=-32.68deg delta=-30.38deg N=4 plan_v=6.00m/s
+[INFO] [1790169819.524496779] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=-0.000706 Jpos=0.000263 Jin=0.000372 Jturn=0.000000 solve_ms=0.249 polished=yes direct_qp=1 sparse=5 dense=42
+[WARN] [1790169820.023522698] [upper_planner_node]: horizon_diag configured=10 extent_limit=4 requested=4 usable=4 reserve=1 restore=1 step_m=6.000 previous=1
+[INFO] [1790169820.024112251] [upper_planner_node]: road turn wp=[prev 2 3] psi_in=+2.85deg psi_out=-27.53deg delta=-30.38deg N=4 plan_v=6.00m/s
+[INFO] [1790169820.025160983] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=-0.000427 Jpos=0.000181 Jin=0.000257 Jturn=0.000000 solve_ms=0.237 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169820.522974006] [upper_planner_node]: road turn wp=[prev 2 3] psi_in=+5.57deg psi_out=-24.81deg delta=-30.38deg N=4 plan_v=6.00m/s
+[INFO] [1790169820.525183314] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=0.001618 Jpos=0.000648 Jin=0.001468 Jturn=0.000000 solve_ms=0.257 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169821.023100500] [upper_planner_node]: road turn wp=[prev 2 3] psi_in=+4.93deg psi_out=-25.45deg delta=-30.38deg N=4 plan_v=6.00m/s
+[INFO] [1790169821.024631614] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=0.008473 Jpos=0.001909 Jin=0.006688 Jturn=0.000000 solve_ms=0.271 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169821.522984460] [upper_planner_node]: road turn wp=[prev 2 3] psi_in=+1.01deg psi_out=-29.37deg delta=-30.38deg N=4 plan_v=6.00m/s
+[INFO] [1790169821.524429075] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=0.031456 Jpos=0.014529 Jin=0.016773 Jturn=0.000000 solve_ms=0.258 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169822.023251182] [upper_planner_node]: road turn wp=[prev 2 3] psi_in=-4.47deg psi_out=-34.85deg delta=-30.38deg N=4 plan_v=6.00m/s
+[INFO] [1790169822.024849626] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=0.029318 Jpos=0.014873 Jin=0.014989 Jturn=0.000000 solve_ms=0.278 polished=yes direct_qp=1 sparse=5 dense=42
+[WARN] [1790169822.522855071] [upper_planner_node]: horizon_diag configured=10 extent_limit=4 requested=4 usable=4 reserve=1 restore=1 step_m=6.000 previous=1
+[INFO] [1790169822.523463536] [upper_planner_node]: road turn wp=[prev 2 3] psi_in=-11.66deg psi_out=-42.04deg delta=-30.38deg N=4 plan_v=6.00m/s
+[INFO] [1790169822.524637488] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=0.026511 Jpos=0.016492 Jin=0.011726 Jturn=0.000000 solve_ms=0.267 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169823.023159683] [upper_planner_node]: road turn wp=[prev 2 3] psi_in=-19.32deg psi_out=-49.70deg delta=-30.38deg N=4 plan_v=6.00m/s
+[INFO] [1790169823.024786959] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=0.001828 Jpos=0.007499 Jin=0.002507 Jturn=0.000000 solve_ms=0.269 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169823.523292995] [upper_planner_node]: road turn wp=[prev 2 3] psi_in=-25.45deg psi_out=-55.83deg delta=-30.38deg N=4 plan_v=6.00m/s
+[INFO] [1790169823.524728682] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=-0.005307 Jpos=0.004044 Jin=0.001812 Jturn=0.000000 solve_ms=0.257 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169824.023424803] [upper_planner_node]: road turn wp=[prev 2 3] psi_in=-27.72deg psi_out=-58.09deg delta=-30.38deg N=4 plan_v=6.00m/s
+[INFO] [1790169824.024899595] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=-0.005676 Jpos=0.001814 Jin=0.002416 Jturn=0.000000 solve_ms=0.246 polished=yes direct_qp=1 sparse=5 dense=42
+[WARN] [1790169824.523224378] [upper_planner_node]: horizon_diag configured=10 extent_limit=4 requested=4 usable=4 reserve=1 restore=1 step_m=6.000 previous=1
+[INFO] [1790169824.523771561] [upper_planner_node]: road turn wp=[prev 2 3] psi_in=-25.62deg psi_out=-56.00deg delta=-30.38deg N=4 plan_v=6.00m/s
+[INFO] [1790169824.524851910] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=-0.003861 Jpos=0.001225 Jin=0.001669 Jturn=0.000000 solve_ms=0.247 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169825.023227767] [upper_planner_node]: road turn wp=[prev 2 3] psi_in=-20.84deg psi_out=-51.22deg delta=-30.38deg N=4 plan_v=6.00m/s
+[INFO] [1790169825.024853635] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=-0.002888 Jpos=0.000920 Jin=0.001269 Jturn=0.000000 solve_ms=0.243 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169825.523163154] [upper_planner_node]: road turn wp=[prev 2 3] psi_in=-13.71deg psi_out=-44.09deg delta=-30.38deg N=4 plan_v=6.00m/s
+[INFO] [1790169825.524629466] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=-0.002421 Jpos=0.000777 Jin=0.001077 Jturn=0.000000 solve_ms=0.252 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169826.023261458] [upper_planner_node]: road turn wp=[prev 2 3] psi_in=-6.72deg psi_out=-37.10deg delta=-30.38deg N=4 plan_v=6.00m/s
+[INFO] [1790169826.025148165] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=-0.002018 Jpos=0.000654 Jin=0.000911 Jturn=0.000000 solve_ms=0.246 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169826.523256464] [upper_planner_node]: road turn wp=[prev 2 3] psi_in=+1.46deg psi_out=-28.92deg delta=-30.38deg N=4 plan_v=6.00m/s
+[INFO] [1790169826.524743256] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=-0.001736 Jpos=0.000569 Jin=0.000795 Jturn=0.000000 solve_ms=0.252 polished=yes direct_qp=1 sparse=5 dense=42
+[WARN] [1790169827.023185772] [upper_planner_node]: horizon_diag configured=10 extent_limit=4 requested=4 usable=4 reserve=1 restore=1 step_m=6.000 previous=1
+[INFO] [1790169827.023829085] [upper_planner_node]: road turn wp=[prev 2 3] psi_in=+9.18deg psi_out=-21.20deg delta=-30.38deg N=4 plan_v=6.00m/s
+[INFO] [1790169827.024962108] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=-0.001394 Jpos=0.000466 Jin=0.000655 Jturn=0.000000 solve_ms=0.257 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169827.523373007] [upper_planner_node]: road turn wp=[prev 2 3] psi_in=+14.23deg psi_out=-16.15deg delta=-30.38deg N=4 plan_v=6.00m/s
+[INFO] [1790169827.524826102] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=-0.000944 Jpos=0.000333 Jin=0.000470 Jturn=0.000000 solve_ms=0.252 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169828.023256010] [upper_planner_node]: road turn wp=[prev 2 3] psi_in=+15.36deg psi_out=-15.02deg delta=-30.38deg N=4 plan_v=6.00m/s
+[INFO] [1790169828.024808276] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=-0.000450 Jpos=0.000188 Jin=0.000267 Jturn=0.000000 solve_ms=0.251 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169828.523357196] [upper_planner_node]: road turn wp=[prev 2 3] psi_in=+12.84deg psi_out=-17.54deg delta=-30.38deg N=4 plan_v=6.00m/s
+[INFO] [1790169828.524754162] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=-0.000028 Jpos=0.000066 Jin=0.000094 Jturn=0.000000 solve_ms=0.254 polished=yes direct_qp=1 sparse=5 dense=42
+[WARN] [1790169829.023192198] [upper_planner_node]: horizon_diag configured=10 extent_limit=4 requested=4 usable=4 reserve=1 restore=1 step_m=6.000 previous=1
+[INFO] [1790169829.023963707] [upper_planner_node]: road turn wp=[prev 2 3] psi_in=+7.75deg psi_out=-22.63deg delta=-30.38deg N=4 plan_v=6.00m/s
+[INFO] [1790169829.025158011] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=0.000185 Jpos=0.000004 Jin=0.000006 Jturn=0.000000 solve_ms=0.248 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169829.523353162] [upper_planner_node]: road turn wp=[prev 2 3] psi_in=+1.03deg psi_out=-29.35deg delta=-30.38deg N=4 plan_v=6.00m/s
+[INFO] [1790169829.524776400] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=0.000159 Jpos=0.000012 Jin=0.000017 Jturn=0.000000 solve_ms=0.249 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169830.023495373] [upper_planner_node]: road turn wp=[prev 2 3] psi_in=-6.03deg psi_out=-36.40deg delta=-30.38deg N=4 plan_v=6.00m/s
+[INFO] [1790169830.025009846] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=0.000022 Jpos=0.000051 Jin=0.000073 Jturn=0.000000 solve_ms=0.254 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169830.523362857] [upper_planner_node]: road turn wp=[prev 2 3] psi_in=-11.08deg psi_out=-41.46deg delta=-30.38deg N=4 plan_v=6.00m/s
+[INFO] [1790169830.525196123] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=-0.012188 Jpos=0.019150 Jin=0.001409 Jturn=0.000000 solve_ms=0.583 polished=yes direct_qp=1 sparse=5 dense=41
+[WARN] [1790169831.023437771] [upper_planner_node]: horizon_diag configured=10 extent_limit=4 requested=4 usable=4 reserve=1 restore=1 step_m=6.000 previous=1
+[INFO] [1790169831.024039739] [upper_planner_node]: road turn wp=[prev 2 3] psi_in=-12.31deg psi_out=-42.69deg delta=-30.38deg N=4 plan_v=6.00m/s
+[INFO] [1790169831.025122745] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=-0.009725 Jpos=0.019275 Jin=0.000915 Jturn=0.000000 solve_ms=0.259 polished=yes direct_qp=1 sparse=5 dense=41
+[INFO] [1790169831.523332489] [upper_planner_node]: road turn wp=[prev 2 3] psi_in=-9.44deg psi_out=-39.81deg delta=-30.38deg N=4 plan_v=6.00m/s
+[INFO] [1790169831.524692142] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=-0.011189 Jpos=0.016540 Jin=0.001354 Jturn=0.000000 solve_ms=0.255 polished=yes direct_qp=1 sparse=5 dense=41
+[INFO] [1790169832.023418411] [upper_planner_node]: road turn wp=[prev 2 3] psi_in=-4.72deg psi_out=-35.10deg delta=-30.38deg N=4 plan_v=6.00m/s
+[INFO] [1790169832.024908116] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=-0.011987 Jpos=0.013519 Jin=0.001834 Jturn=0.000000 solve_ms=0.256 polished=yes direct_qp=1 sparse=5 dense=41
+[INFO] [1790169832.523381675] [upper_planner_node]: road turn wp=[prev 2 3] psi_in=+2.22deg psi_out=-28.16deg delta=-30.38deg N=4 plan_v=6.00m/s
+[INFO] [1790169832.524812018] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=-0.013241 Jpos=0.008825 Jin=0.003191 Jturn=0.000000 solve_ms=0.255 polished=yes direct_qp=1 sparse=5 dense=41
+[INFO] [1790169833.023531024] [upper_planner_node]: road turn wp=[prev 2 3] psi_in=+9.96deg psi_out=-20.42deg delta=-30.38deg N=4 plan_v=6.00m/s
+[INFO] [1790169833.025045082] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=-0.012127 Jpos=0.004122 Jin=0.005075 Jturn=0.000000 solve_ms=0.248 polished=yes direct_qp=1 sparse=5 dense=42
+[WARN] [1790169833.523145095] [upper_planner_node]: horizon_diag configured=10 extent_limit=4 requested=4 usable=4 reserve=1 restore=1 step_m=6.000 previous=1
+[INFO] [1790169833.523741879] [upper_planner_node]: road turn wp=[prev 2 3] psi_in=+18.79deg psi_out=-11.59deg delta=-30.38deg N=4 plan_v=6.00m/s
+[INFO] [1790169833.524877750] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=-0.008995 Jpos=0.002958 Jin=0.003783 Jturn=0.000000 solve_ms=0.247 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169834.023540115] [upper_planner_node]: road turn wp=[prev 2 3] psi_in=+25.68deg psi_out=-4.70deg delta=-30.38deg N=4 plan_v=6.00m/s
+[INFO] [1790169834.025903412] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=-0.004146 Jpos=0.006367 Jin=0.000579 Jturn=0.000000 solve_ms=0.258 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169834.522890500] [upper_planner_node]: waypoint pair advanced: [2,3] -> [3,4]; previous reference retained
+[INFO] [1790169834.523868958] [upper_planner_node]: road turn wp=[prev 3 4] psi_in=+0.07deg psi_out=-25.86deg delta=-25.93deg N=4 plan_v=6.00m/s
+[INFO] [1790169834.525048254] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=0.000897 Jpos=0.009836 Jin=0.002392 Jturn=0.000000 solve_ms=0.254 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169835.023585497] [upper_planner_node]: road turn wp=[prev 3 4] psi_in=+0.31deg psi_out=-25.62deg delta=-25.93deg N=4 plan_v=6.00m/s
+[INFO] [1790169835.025083585] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=0.025384 Jpos=0.018716 Jin=0.016063 Jturn=0.000000 solve_ms=0.263 polished=yes direct_qp=1 sparse=5 dense=42
+[WARN] [1790169835.523446423] [upper_planner_node]: horizon_diag configured=10 extent_limit=4 requested=4 usable=4 reserve=1 restore=1 step_m=6.000 previous=1
+[INFO] [1790169835.523972966] [upper_planner_node]: road turn wp=[prev 3 4] psi_in=-2.62deg psi_out=-28.55deg delta=-25.93deg N=4 plan_v=6.00m/s
+[INFO] [1790169835.525053027] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=0.034741 Jpos=0.027673 Jin=0.021381 Jturn=0.000000 solve_ms=0.254 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169836.023619967] [upper_planner_node]: road turn wp=[prev 3 4] psi_in=-8.05deg psi_out=-33.98deg delta=-25.93deg N=4 plan_v=6.00m/s
+[INFO] [1790169836.025200106] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=0.041948 Jpos=0.041127 Jin=0.022515 Jturn=0.000000 solve_ms=0.277 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169836.523493150] [upper_planner_node]: road turn wp=[prev 3 4] psi_in=-15.49deg psi_out=-41.42deg delta=-25.93deg N=4 plan_v=6.00m/s
+[INFO] [1790169836.524855747] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=0.059981 Jpos=0.061710 Jin=0.026999 Jturn=0.000000 solve_ms=0.257 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169837.023529858] [upper_planner_node]: road turn wp=[prev 3 4] psi_in=-23.37deg psi_out=-49.30deg delta=-25.93deg N=4 plan_v=6.00m/s
+[INFO] [1790169837.024984106] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=0.069714 Jpos=0.084092 Jin=0.023100 Jturn=0.000000 solve_ms=0.264 polished=yes direct_qp=1 sparse=5 dense=42
+[WARN] [1790169837.523536838] [upper_planner_node]: horizon_diag configured=10 extent_limit=4 requested=4 usable=4 reserve=1 restore=1 step_m=6.000 previous=1
+[INFO] [1790169837.524105237] [upper_planner_node]: road turn wp=[prev 3 4] psi_in=-31.08deg psi_out=-57.01deg delta=-25.93deg N=4 plan_v=6.00m/s
+[INFO] [1790169837.525295030] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=0.024074 Jpos=0.075447 Jin=0.007861 Jturn=0.000000 solve_ms=0.273 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169838.023674797] [upper_planner_node]: road turn wp=[prev 3 4] psi_in=-39.06deg psi_out=-64.99deg delta=-25.93deg N=4 plan_v=6.00m/s
+[INFO] [1790169838.025120085] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=0.010201 Jpos=0.055188 Jin=0.021013 Jturn=0.000000 solve_ms=0.260 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169838.523729075] [upper_planner_node]: road turn wp=[prev 3 4] psi_in=-44.44deg psi_out=-70.37deg delta=-25.93deg N=4 plan_v=6.00m/s
+[INFO] [1790169838.525132537] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=-0.050774 Jpos=0.033347 Jin=0.019185 Jturn=0.000000 solve_ms=0.262 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169839.023727959] [upper_planner_node]: road turn wp=[prev 3 4] psi_in=-45.57deg psi_out=-71.50deg delta=-25.93deg N=4 plan_v=6.00m/s
+[INFO] [1790169839.025317794] [upper_planner_node]: MIQP solved: N=4 branch=3 obj=-0.447701 Jpos=0.023648 Jin=0.016362 Jturn=0.132734 solve_ms=0.311 polished=yes direct_qp=2 sparse=5 dense=42
+[INFO] [1790169839.523612184] [upper_planner_node]: road turn wp=[prev 3 4] psi_in=-42.28deg psi_out=-68.21deg delta=-25.93deg N=4 plan_v=6.00m/s
+[INFO] [1790169839.525181219] [upper_planner_node]: MIQP solved: N=4 branch=4 obj=-0.565273 Jpos=0.008705 Jin=0.028250 Jturn=0.001733 solve_ms=0.290 polished=yes direct_qp=2 sparse=5 dense=42
+[WARN] [1790169840.023946854] [upper_planner_node]: horizon_diag configured=10 extent_limit=4 requested=4 usable=4 reserve=1 restore=1 step_m=6.000 previous=1
+[INFO] [1790169840.024555607] [upper_planner_node]: road turn wp=[prev 3 4] psi_in=-37.11deg psi_out=-63.04deg delta=-25.93deg N=4 plan_v=6.00m/s
+[INFO] [1790169840.025768152] [upper_planner_node]: MIQP solved: N=4 branch=4 obj=-0.426804 Jpos=0.003131 Jin=0.028910 Jturn=0.106593 solve_ms=0.309 polished=yes direct_qp=2 sparse=5 dense=42
+[INFO] [1790169840.523709253] [upper_planner_node]: road turn wp=[prev 3 4] psi_in=-30.08deg psi_out=-56.01deg delta=-25.93deg N=4 plan_v=6.00m/s
+[INFO] [1790169840.525237262] [upper_planner_node]: MIQP solved: N=4 branch=3 obj=0.403086 Jpos=0.035532 Jin=0.035357 Jturn=0.890641 solve_ms=0.381 polished=yes direct_qp=4 sparse=5 dense=42
+[INFO] [1790169841.023777868] [upper_planner_node]: road turn wp=[prev 3 4] psi_in=-22.18deg psi_out=-48.11deg delta=-25.93deg N=4 plan_v=6.00m/s
+[INFO] [1790169841.025565564] [upper_planner_node]: MIQP solved: N=4 branch=3 obj=-0.184628 Jpos=0.019013 Jin=0.022646 Jturn=0.334339 solve_ms=0.390 polished=yes direct_qp=4 sparse=5 dense=42
+[INFO] [1790169841.523632525] [upper_planner_node]: road turn wp=[prev 3 4] psi_in=-13.25deg psi_out=-39.18deg delta=-25.93deg N=4 plan_v=6.00m/s
+[INFO] [1790169841.525207672] [upper_planner_node]: MIQP solved: N=4 branch=3 obj=-0.307633 Jpos=0.008724 Jin=0.030598 Jturn=0.214060 solve_ms=0.381 polished=yes direct_qp=4 sparse=5 dense=42
+[WARN] [1790169842.024002973] [upper_planner_node]: horizon_diag configured=10 extent_limit=4 requested=4 usable=4 reserve=1 restore=1 step_m=6.000 previous=1
+[INFO] [1790169842.024595565] [upper_planner_node]: road turn wp=[prev 3 4] psi_in=-5.50deg psi_out=-31.44deg delta=-25.93deg N=4 plan_v=6.00m/s
+[INFO] [1790169842.026221081] [upper_planner_node]: MIQP solved: N=4 branch=2 obj=-0.508700 Jpos=0.002066 Jin=0.025740 Jturn=0.057101 solve_ms=0.626 polished=yes direct_qp=8 sparse=5 dense=42
+[INFO] [1790169842.523843039] [upper_planner_node]: road turn wp=[prev 3 4] psi_in=+3.42deg psi_out=-22.51deg delta=-25.93deg N=4 plan_v=6.00m/s
+[INFO] [1790169842.525730578] [upper_planner_node]: MIQP solved: N=4 branch=2 obj=-0.547327 Jpos=0.001208 Jin=0.037278 Jturn=0.011914 solve_ms=0.497 polished=yes direct_qp=8 sparse=5 dense=42
+[INFO] [1790169843.023700417] [upper_planner_node]: road turn wp=[prev 3 4] psi_in=+11.54deg psi_out=-14.39deg delta=-25.93deg N=4 plan_v=6.00m/s
+[INFO] [1790169843.025610357] [upper_planner_node]: MIQP solved: N=4 branch=1 obj=-0.610590 Jpos=0.000640 Jin=0.035357 Jturn=0.131806 solve_ms=0.646 polished=yes direct_qp=16 sparse=5 dense=42
+[INFO] [1790169843.523915949] [upper_planner_node]: road turn wp=[prev 3 4] psi_in=+19.58deg psi_out=-6.35deg delta=-25.93deg N=4 plan_v=6.00m/s
+[INFO] [1790169843.525820513] [upper_planner_node]: MIQP solved: N=4 branch=1 obj=-0.678589 Jpos=0.002090 Jin=0.055798 Jturn=0.052924 solve_ms=0.644 polished=yes direct_qp=16 sparse=5 dense=42
+[INFO] [1790169844.023835794] [upper_planner_node]: road turn wp=[prev 3 4] psi_in=+27.53deg psi_out=+1.60deg delta=-25.93deg N=4 plan_v=6.00m/s
+[INFO] [1790169844.025776039] [upper_planner_node]: MIQP solved: N=4 branch=1 obj=-0.486654 Jpos=0.003251 Jin=0.018228 Jturn=0.278675 solve_ms=0.644 polished=yes direct_qp=16 sparse=5 dense=42
+[WARN] [1790169844.523616499] [upper_planner_node]: horizon_diag configured=10 extent_limit=4 requested=4 usable=4 reserve=1 restore=1 step_m=6.000 previous=1
+[INFO] [1790169844.524144065] [upper_planner_node]: road turn wp=[prev 3 4] psi_in=+34.95deg psi_out=+9.02deg delta=-25.93deg N=4 plan_v=6.00m/s
+[INFO] [1790169844.525298305] [upper_planner_node]: MIQP solved: N=4 branch=4 obj=-0.539526 Jpos=0.001265 Jin=0.022697 Jturn=0.002582 solve_ms=0.322 polished=yes direct_qp=2 sparse=5 dense=42
+[INFO] [1790169845.024107240] [upper_planner_node]: road turn wp=[prev 3 4] psi_in=+39.47deg psi_out=+13.54deg delta=-25.93deg N=4 plan_v=6.00m/s
+[INFO] [1790169845.025677074] [upper_planner_node]: MIQP solved: N=4 branch=3 obj=-0.131534 Jpos=0.000018 Jin=0.025240 Jturn=0.385760 solve_ms=0.313 polished=yes direct_qp=2 sparse=5 dense=42
+[INFO] [1790169845.523994988] [upper_planner_node]: road turn wp=[prev 3 4] psi_in=+40.05deg psi_out=+14.12deg delta=-25.93deg N=4 plan_v=6.00m/s
+[INFO] [1790169845.525569079] [upper_planner_node]: MIQP solved: N=4 branch=2 obj=1.475984 Jpos=0.000994 Jin=0.053309 Jturn=2.001322 solve_ms=0.368 polished=yes direct_qp=4 sparse=5 dense=42
+[INFO] [1790169846.023145917] [upper_planner_node]: waypoint pair advanced: [3,4] -> [4,5]; previous reference retained
+[INFO] [1790169846.024255771] [upper_planner_node]: road turn wp=[prev 4 5] psi_in=+11.04deg psi_out=-35.92deg delta=-46.96deg N=4 plan_v=6.00m/s
+[INFO] [1790169846.025497661] [upper_planner_node]: MIQP solved: N=4 branch=2 obj=2.812043 Jpos=0.018502 Jin=0.090415 Jturn=4.580696 solve_ms=0.318 polished=yes direct_qp=2 sparse=5 dense=42
+[WARN] [1790169846.524156256] [upper_planner_node]: horizon_diag configured=10 extent_limit=4 requested=4 usable=4 reserve=1 restore=1 step_m=6.000 previous=1
+[INFO] [1790169846.524688143] [upper_planner_node]: road turn wp=[prev 4 5] psi_in=+5.48deg psi_out=-41.48deg delta=-46.96deg N=4 plan_v=6.00m/s
+[INFO] [1790169846.525883055] [upper_planner_node]: MIQP solved: N=4 branch=2 obj=2.525669 Jpos=0.019262 Jin=0.084334 Jturn=4.288218 solve_ms=0.311 polished=yes direct_qp=2 sparse=5 dense=42
+[INFO] [1790169847.023887425] [upper_planner_node]: road turn wp=[prev 4 5] psi_in=-1.18deg psi_out=-48.14deg delta=-46.96deg N=4 plan_v=6.00m/s
+[INFO] [1790169847.025644145] [upper_planner_node]: MIQP solved: N=4 branch=2 obj=2.010648 Jpos=0.228724 Jin=0.055167 Jturn=3.702511 solve_ms=0.304 polished=yes direct_qp=2 sparse=5 dense=42
+[INFO] [1790169847.523785479] [upper_planner_node]: road turn wp=[prev 4 5] psi_in=-8.58deg psi_out=-55.54deg delta=-46.96deg N=4 plan_v=6.00m/s
+[INFO] [1790169847.525409587] [upper_planner_node]: MIQP solved: N=4 branch=1 obj=2.239214 Jpos=0.257724 Jin=0.047613 Jturn=4.535803 solve_ms=0.362 polished=yes direct_qp=4 sparse=5 dense=42
+[INFO] [1790169848.023756303] [upper_planner_node]: road turn wp=[prev 4 5] psi_in=-16.45deg psi_out=-63.41deg delta=-46.96deg N=4 plan_v=6.00m/s
+[INFO] [1790169848.025349147] [upper_planner_node]: MIQP solved: N=4 branch=1 obj=0.940942 Jpos=0.235629 Jin=0.013866 Jturn=3.314422 solve_ms=0.358 polished=yes direct_qp=4 sparse=5 dense=41
+[INFO] [1790169848.523870075] [upper_planner_node]: road turn wp=[prev 4 5] psi_in=-24.21deg psi_out=-71.17deg delta=-46.96deg N=4 plan_v=6.00m/s
+[INFO] [1790169848.525401733] [upper_planner_node]: MIQP solved: N=4 branch=1 obj=-0.017435 Jpos=0.163276 Jin=0.001242 Jturn=2.465375 solve_ms=0.380 polished=yes direct_qp=4 sparse=5 dense=41
+[WARN] [1790169849.023737377] [upper_planner_node]: horizon_diag configured=10 extent_limit=4 requested=4 usable=4 reserve=1 restore=1 step_m=6.000 previous=1
+[INFO] [1790169849.024383187] [upper_planner_node]: road turn wp=[prev 4 5] psi_in=-29.63deg psi_out=-76.58deg delta=-46.96deg N=4 plan_v=6.00m/s
+[INFO] [1790169849.025912508] [upper_planner_node]: MIQP solved: N=4 branch=1 obj=-0.714324 Jpos=0.121698 Jin=0.009699 Jturn=1.802769 solve_ms=0.581 polished=yes direct_qp=12 sparse=5 dense=41
+[INFO] [1790169849.523933680] [upper_planner_node]: road turn wp=[prev 4 5] psi_in=-31.02deg psi_out=-77.98deg delta=-46.96deg N=4 plan_v=6.00m/s
+[INFO] [1790169849.525694784] [upper_planner_node]: MIQP solved: N=4 branch=1 obj=-1.434632 Jpos=0.069968 Jin=0.043271 Jturn=1.105859 solve_ms=0.554 polished=yes direct_qp=12 sparse=5 dense=42
+[INFO] [1790169850.023977211] [upper_planner_node]: road turn wp=[prev 4 5] psi_in=-28.75deg psi_out=-75.71deg delta=-46.96deg N=4 plan_v=6.00m/s
+[INFO] [1790169850.025604135] [upper_planner_node]: MIQP solved: N=4 branch=3 obj=-1.038907 Jpos=0.067239 Jin=0.065460 Jturn=0.758482 solve_ms=0.318 polished=yes direct_qp=2 sparse=5 dense=42
+[INFO] [1790169850.524189931] [upper_planner_node]: road turn wp=[prev 4 5] psi_in=-23.14deg psi_out=-70.10deg delta=-46.96deg N=4 plan_v=6.00m/s
+[INFO] [1790169850.525727029] [upper_planner_node]: MIQP solved: N=4 branch=2 obj=-1.708182 Jpos=0.058524 Jin=0.160406 Jturn=0.098485 solve_ms=0.302 polished=yes direct_qp=2 sparse=5 dense=43
+[WARN] [1790169851.023756073] [upper_planner_node]: horizon_diag configured=10 extent_limit=4 requested=4 usable=4 reserve=1 restore=1 step_m=6.000 previous=1
+[INFO] [1790169851.024371834] [upper_planner_node]: road turn wp=[prev 4 5] psi_in=-16.30deg psi_out=-63.26deg delta=-46.96deg N=4 plan_v=6.00m/s
+[INFO] [1790169851.025484761] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=-0.075841 Jpos=0.053733 Jin=0.033118 Jturn=0.000000 solve_ms=0.258 polished=yes direct_qp=1 sparse=5 dense=43
+[INFO] [1790169851.523859799] [upper_planner_node]: road turn wp=[prev 4 5] psi_in=-8.58deg psi_out=-55.54deg delta=-46.96deg N=4 plan_v=6.00m/s
+[INFO] [1790169851.526326202] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=-0.079507 Jpos=0.060902 Jin=0.034071 Jturn=0.000000 solve_ms=0.260 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169852.023973701] [upper_planner_node]: road turn wp=[prev 4 5] psi_in=-0.64deg psi_out=-47.60deg delta=-46.96deg N=4 plan_v=6.00m/s
+[INFO] [1790169852.026001692] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=-0.050291 Jpos=0.049192 Jin=0.011370 Jturn=0.000000 solve_ms=0.758 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169852.523999345] [upper_planner_node]: road turn wp=[prev 4 5] psi_in=+6.50deg psi_out=-40.46deg delta=-46.96deg N=4 plan_v=6.00m/s
+[INFO] [1790169852.525397623] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=-0.052936 Jpos=0.040009 Jin=0.015516 Jturn=0.000000 solve_ms=0.271 polished=yes direct_qp=1 sparse=5 dense=42
+[WARN] [1790169853.024005692] [upper_planner_node]: horizon_diag configured=10 extent_limit=4 requested=4 usable=4 reserve=1 restore=1 step_m=6.000 previous=1
+[INFO] [1790169853.024592428] [upper_planner_node]: road turn wp=[prev 4 5] psi_in=+12.83deg psi_out=-34.13deg delta=-46.96deg N=4 plan_v=6.00m/s
+[INFO] [1790169853.025809549] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=-0.006791 Jpos=0.072911 Jin=0.000452 Jturn=0.000000 solve_ms=0.282 polished=yes direct_qp=1 sparse=5 dense=41
+[INFO] [1790169853.523990632] [upper_planner_node]: road turn wp=[prev 4 5] psi_in=+20.07deg psi_out=-26.89deg delta=-46.96deg N=4 plan_v=6.00m/s
+[INFO] [1790169853.525463664] [upper_planner_node]: MIQP solved: N=4 branch=4 obj=-1.468738 Jpos=0.010140 Jin=0.156019 Jturn=0.224615 solve_ms=0.325 polished=yes direct_qp=2 sparse=5 dense=43
+[INFO] [1790169854.024162552] [upper_planner_node]: road turn wp=[prev 4 5] psi_in=+25.82deg psi_out=-21.14deg delta=-46.96deg N=4 plan_v=6.00m/s
+[INFO] [1790169854.025781092] [upper_planner_node]: MIQP solved: N=4 branch=4 obj=-1.363669 Jpos=0.009054 Jin=0.184318 Jturn=0.294509 solve_ms=0.333 polished=yes direct_qp=2 sparse=5 dense=43
+[INFO] [1790169854.524028193] [upper_planner_node]: road turn wp=[prev 4 5] psi_in=+30.04deg psi_out=-16.92deg delta=-46.96deg N=4 plan_v=6.00m/s
+[INFO] [1790169854.525619308] [upper_planner_node]: MIQP solved: N=4 branch=3 obj=-1.581972 Jpos=0.007296 Jin=0.049293 Jturn=0.205527 solve_ms=0.397 polished=yes direct_qp=4 sparse=5 dense=42
+[WARN] [1790169855.024016716] [upper_planner_node]: horizon_diag configured=10 extent_limit=4 requested=4 usable=4 reserve=1 restore=1 step_m=6.000 previous=1
+[INFO] [1790169855.024605949] [upper_planner_node]: road turn wp=[prev 4 5] psi_in=+30.13deg psi_out=-16.83deg delta=-46.96deg N=4 plan_v=6.00m/s
+[INFO] [1790169855.025871935] [upper_planner_node]: MIQP solved: N=4 branch=3 obj=-0.808785 Jpos=0.007883 Jin=0.020704 Jturn=0.976238 solve_ms=0.377 polished=yes direct_qp=4 sparse=5 dense=42
+[INFO] [1790169855.524027929] [upper_planner_node]: road turn wp=[prev 4 5] psi_in=+29.40deg psi_out=-17.56deg delta=-46.96deg N=4 plan_v=6.00m/s
+[INFO] [1790169855.525777449] [upper_planner_node]: MIQP solved: N=4 branch=2 obj=-0.155927 Jpos=0.013844 Jin=0.061595 Jturn=1.662894 solve_ms=0.497 polished=yes direct_qp=8 sparse=5 dense=42
+[INFO] [1790169856.024111529] [upper_planner_node]: road turn wp=[prev 4 5] psi_in=+30.49deg psi_out=-16.47deg delta=-46.96deg N=4 plan_v=6.00m/s
+[INFO] [1790169856.025893721] [upper_planner_node]: MIQP solved: N=4 branch=2 obj=-0.737992 Jpos=0.009362 Jin=0.046280 Jturn=1.106724 solve_ms=0.518 polished=yes direct_qp=8 sparse=5 dense=42
+[INFO] [1790169856.524111446] [upper_planner_node]: road turn wp=[prev 4 5] psi_in=+34.61deg psi_out=-12.35deg delta=-46.96deg N=4 plan_v=6.00m/s
+[INFO] [1790169856.525791043] [upper_planner_node]: MIQP solved: N=4 branch=2 obj=-0.797949 Jpos=0.004931 Jin=0.014046 Jturn=1.079002 solve_ms=0.478 polished=yes direct_qp=8 sparse=5 dense=42
+[INFO] [1790169857.024136356] [upper_planner_node]: road turn wp=[prev 4 5] psi_in=+40.04deg psi_out=-6.92deg delta=-46.96deg N=4 plan_v=6.00m/s
+[INFO] [1790169857.026098777] [upper_planner_node]: MIQP solved: N=4 branch=1 obj=0.804383 Jpos=0.008047 Jin=0.025353 Jturn=3.268965 solve_ms=0.675 polished=yes direct_qp=16 sparse=5 dense=41
+[WARN] [1790169857.524087312] [upper_planner_node]: horizon_diag configured=10 extent_limit=4 requested=4 usable=4 reserve=1 restore=1 step_m=6.000 previous=1
+[INFO] [1790169857.524599134] [upper_planner_node]: road turn wp=[prev 4 5] psi_in=+44.46deg psi_out=-2.50deg delta=-46.96deg N=4 plan_v=6.00m/s
+[INFO] [1790169857.526197034] [upper_planner_node]: MIQP solved: N=4 branch=1 obj=0.448249 Jpos=0.005721 Jin=0.008900 Jturn=2.926413 solve_ms=0.479 polished=yes direct_qp=8 sparse=5 dense=42
+[INFO] [1790169858.024078238] [upper_planner_node]: road turn wp=[prev 4 5] psi_in=+45.32deg psi_out=-1.64deg delta=-46.96deg N=4 plan_v=6.00m/s
+[INFO] [1790169858.025661097] [upper_planner_node]: MIQP solved: N=4 branch=1 obj=1.243311 Jpos=0.011386 Jin=0.020345 Jturn=3.697976 solve_ms=0.374 polished=yes direct_qp=4 sparse=5 dense=42
+[INFO] [1790169858.524065772] [upper_planner_node]: road turn wp=[prev 4 5] psi_in=+42.62deg psi_out=-4.34deg delta=-46.96deg N=4 plan_v=6.00m/s
+[INFO] [1790169858.525502067] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=0.035191 Jpos=0.026210 Jin=0.013935 Jturn=0.000000 solve_ms=0.285 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169859.024023929] [upper_planner_node]: road turn wp=[prev 4 5] psi_in=+37.31deg psi_out=-9.64deg delta=-46.96deg N=4 plan_v=6.00m/s
+[INFO] [1790169859.025438975] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=0.030398 Jpos=0.029484 Jin=0.008965 Jturn=0.000000 solve_ms=0.286 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169859.524169099] [upper_planner_node]: road turn wp=[prev 4 5] psi_in=+30.90deg psi_out=-16.05deg delta=-46.96deg N=4 plan_v=6.00m/s
+[INFO] [1790169859.525637747] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=0.008143 Jpos=0.022291 Jin=0.000600 Jturn=0.000000 solve_ms=0.302 polished=yes direct_qp=1 sparse=5 dense=42
+[WARN] [1790169860.024035478] [upper_planner_node]: horizon_diag configured=10 extent_limit=4 requested=4 usable=4 reserve=1 restore=1 step_m=6.000 previous=1
+[INFO] [1790169860.024609606] [upper_planner_node]: road turn wp=[prev 4 5] psi_in=+25.84deg psi_out=-21.11deg delta=-46.96deg N=4 plan_v=6.00m/s
+[INFO] [1790169860.025945130] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=-0.004065 Jpos=0.012662 Jin=0.002539 Jturn=0.000000 solve_ms=0.292 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169860.524145097] [upper_planner_node]: road turn wp=[prev 4 5] psi_in=+24.52deg psi_out=-22.44deg delta=-46.96deg N=4 plan_v=6.00m/s
+[INFO] [1790169860.525577232] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=-0.012471 Jpos=0.004255 Jin=0.005217 Jturn=0.000000 solve_ms=0.281 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169861.024188665] [upper_planner_node]: road turn wp=[prev 4 5] psi_in=+26.89deg psi_out=-20.07deg delta=-46.96deg N=4 plan_v=6.00m/s
+[INFO] [1790169861.025692578] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=-0.008635 Jpos=0.002830 Jin=0.003634 Jturn=0.000000 solve_ms=0.292 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169861.524144712] [upper_planner_node]: road turn wp=[prev 4 5] psi_in=+31.86deg psi_out=-15.10deg delta=-46.96deg N=4 plan_v=6.00m/s
+[INFO] [1790169861.525545262] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=-0.005920 Jpos=0.003272 Jin=0.001640 Jturn=0.000000 solve_ms=0.293 polished=yes direct_qp=1 sparse=5 dense=42
+[WARN] [1790169862.024161144] [upper_planner_node]: horizon_diag configured=10 extent_limit=4 requested=4 usable=4 reserve=1 restore=1 step_m=6.000 previous=1
+[INFO] [1790169862.024754632] [upper_planner_node]: road turn wp=[prev 4 5] psi_in=+38.40deg psi_out=-8.55deg delta=-46.96deg N=4 plan_v=6.00m/s
+[INFO] [1790169862.026144782] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=-0.005415 Jpos=0.001728 Jin=0.002308 Jturn=0.000000 solve_ms=0.282 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169862.524263339] [upper_planner_node]: road turn wp=[prev 4 5] psi_in=+46.00deg psi_out=-0.96deg delta=-46.96deg N=4 plan_v=6.00m/s
+[INFO] [1790169862.525967481] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=-0.004327 Jpos=0.001374 Jin=0.001860 Jturn=0.000000 solve_ms=0.296 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169863.024216794] [upper_planner_node]: road turn wp=[prev 4 5] psi_in=+53.83deg psi_out=+6.88deg delta=-46.96deg N=4 plan_v=6.00m/s
+[INFO] [1790169863.025873351] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=-0.002218 Jpos=0.000082 Jin=0.003696 Jturn=0.000000 solve_ms=0.287 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169863.524336366] [upper_planner_node]: road turn wp=[prev 4 5] psi_in=+60.80deg psi_out=+13.84deg delta=-46.96deg N=4 plan_v=6.00m/s
+[INFO] [1790169863.525669298] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=-0.001603 Jpos=0.000529 Jin=0.000741 Jturn=0.000000 solve_ms=0.276 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169864.024113240] [upper_planner_node]: road turn wp=[prev 4 5] psi_in=+67.05deg psi_out=+20.10deg delta=-46.96deg N=4 plan_v=6.00m/s
+[INFO] [1790169864.025669059] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=-0.001152 Jpos=0.000394 Jin=0.000555 Jturn=0.000000 solve_ms=0.372 polished=yes direct_qp=1 sparse=5 dense=42
+[WARN] [1790169864.524197420] [upper_planner_node]: horizon_diag configured=10 extent_limit=4 requested=4 usable=4 reserve=1 restore=1 step_m=6.000 previous=1
+[INFO] [1790169864.524762395] [upper_planner_node]: road turn wp=[prev 4 5] psi_in=+71.66deg psi_out=+24.70deg delta=-46.96deg N=4 plan_v=6.00m/s
+[INFO] [1790169864.525756790] [upper_planner_node]: MIQP solved: N=4 branch=-1 obj=0.001889 Jpos=0.000777 Jin=0.002189 Jturn=0.000000 solve_ms=0.282 polished=yes direct_qp=1 sparse=5 dense=42
+[INFO] [1790169864.852581211] [rclcpp]: signal_handler(SIGINT/SIGTERM)

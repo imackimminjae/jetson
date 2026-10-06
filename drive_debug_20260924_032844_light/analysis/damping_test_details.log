@@ -1,0 +1,317 @@
+Start testing: Sep 24 03:44 KST
+----------------------------------------------------------
+6/19 Testing: test_egocentric_planner_geometry
+6/19 Test: test_egocentric_planner_geometry
+Command: "/usr/bin/python3" "-u" "/opt/ros/humble/share/ament_cmake_test/cmake/run_test.py" "/home/imac/ros2_ws/build/virtual_control/test_results/virtual_control/test_egocentric_planner_geometry.gtest.xml" "--package-name" "virtual_control" "--output-file" "/home/imac/ros2_ws/build/virtual_control/ament_cmake_gtest/test_egocentric_planner_geometry.txt" "--command" "/home/imac/ros2_ws/build/virtual_control/test_egocentric_planner_geometry" "--gtest_output=xml:/home/imac/ros2_ws/build/virtual_control/test_results/virtual_control/test_egocentric_planner_geometry.gtest.xml"
+Directory: /home/imac/ros2_ws/build/virtual_control
+"test_egocentric_planner_geometry" start time: Sep 24 03:44 KST
+Output:
+----------------------------------------------------------
+-- run_test.py: invoking following command in '/home/imac/ros2_ws/build/virtual_control':
+ - /home/imac/ros2_ws/build/virtual_control/test_egocentric_planner_geometry --gtest_output=xml:/home/imac/ros2_ws/build/virtual_control/test_results/virtual_control/test_egocentric_planner_geometry.gtest.xml
+Running main() from /opt/ros/humble/src/gtest_vendor/src/gtest_main.cc
+[==========] Running 19 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 19 tests from EgocentricPlannerGeometry
+[ RUN      ] EgocentricPlannerGeometry.BinaryOccupancyThresholdZeroAndOneAreEquivalent
+[       OK ] EgocentricPlannerGeometry.BinaryOccupancyThresholdZeroAndOneAreEquivalent (0 ms)
+[ RUN      ] EgocentricPlannerGeometry.NominalFallbackRejectsOnlyKnownBlockedReference
+[       OK ] EgocentricPlannerGeometry.NominalFallbackRejectsOnlyKnownBlockedReference (0 ms)
+[ RUN      ] EgocentricPlannerGeometry.ShortenedMatlabHorizonPersists
+[       OK ] EgocentricPlannerGeometry.ShortenedMatlabHorizonPersists (0 ms)
+[ RUN      ] EgocentricPlannerGeometry.FullHorizonRecoveryIsLimitedByCurrentGridNotPreviousPath
+[       OK ] EgocentricPlannerGeometry.FullHorizonRecoveryIsLimitedByCurrentGridNotPreviousPath (0 ms)
+[ RUN      ] EgocentricPlannerGeometry.MissingCurrentStateIntervalKeepsPreviewHorizon
+[       OK ] EgocentricPlannerGeometry.MissingCurrentStateIntervalKeepsPreviewHorizon (0 ms)
+[ RUN      ] EgocentricPlannerGeometry.MissingFutureIntervalKeepsOnlyContiguousPrefix
+[       OK ] EgocentricPlannerGeometry.MissingFutureIntervalKeepsOnlyContiguousPrefix (0 ms)
+[ RUN      ] EgocentricPlannerGeometry.FirstMovingCycleExposesFollowingSegment
+[       OK ] EgocentricPlannerGeometry.FirstMovingCycleExposesFollowingSegment (0 ms)
+[ RUN      ] EgocentricPlannerGeometry.StationaryPoseDoesNotInventMovingDirection
+[       OK ] EgocentricPlannerGeometry.StationaryPoseDoesNotInventMovingDirection (0 ms)
+[ RUN      ] EgocentricPlannerGeometry.RouteEndRemainsFinalForwardPair
+[       OK ] EgocentricPlannerGeometry.RouteEndRemainsFinalForwardPair (0 ms)
+[ RUN      ] EgocentricPlannerGeometry.LateralMissDoesNotAdvanceWaypoint
+[       OK ] EgocentricPlannerGeometry.LateralMissDoesNotAdvanceWaypoint (0 ms)
+[ RUN      ] EgocentricPlannerGeometry.TerminalTargetUsesWp0WhileOneStepAhead
+[       OK ] EgocentricPlannerGeometry.TerminalTargetUsesWp0WhileOneStepAhead (0 ms)
+[ RUN      ] EgocentricPlannerGeometry.TerminalTargetSwitchesToWp1NearWp0
+[       OK ] EgocentricPlannerGeometry.TerminalTargetSwitchesToWp1NearWp0 (0 ms)
+[ RUN      ] EgocentricPlannerGeometry.TerminalSelectionUsesForwardProgressNotEuclideanDistance
+[       OK ] EgocentricPlannerGeometry.TerminalSelectionUsesForwardProgressNotEuclideanDistance (0 ms)
+[ RUN      ] EgocentricPlannerGeometry.PreviousPathAdvancesOnlyByMeasuredProgress
+[       OK ] EgocentricPlannerGeometry.PreviousPathAdvancesOnlyByMeasuredProgress (0 ms)
+[ RUN      ] EgocentricPlannerGeometry.ProgressPrefixHandlesDuplicatesAndTailWithoutJumping
+[       OK ] EgocentricPlannerGeometry.ProgressPrefixHandlesDuplicatesAndTailWithoutJumping (0 ms)
+[ RUN      ] EgocentricPlannerGeometry.PreviewExtentKeepsOneStepInsideBev
+[       OK ] EgocentricPlannerGeometry.PreviewExtentKeepsOneStepInsideBev (0 ms)
+[ RUN      ] EgocentricPlannerGeometry.FifteenMetrePreviewFitsShiftedBevWithoutFullStepReserve
+[       OK ] EgocentricPlannerGeometry.FifteenMetrePreviewFitsShiftedBevWithoutFullStepReserve (0 ms)
+[ RUN      ] EgocentricPlannerGeometry.ZeroReserveStillHonoursExtentAndStepCap
+[       OK ] EgocentricPlannerGeometry.ZeroReserveStillHonoursExtentAndStepCap (0 ms)
+[ RUN      ] EgocentricPlannerGeometry.NegativeReserveCannotExtendPreviewBeyondBev
+[       OK ] EgocentricPlannerGeometry.NegativeReserveCannotExtendPreviewBeyondBev (0 ms)
+[----------] 19 tests from EgocentricPlannerGeometry (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 19 tests from 1 test suite ran. (0 ms total)
+[  PASSED  ] 19 tests.
+-- run_test.py: return code 0
+-- run_test.py: inject classname prefix into gtest result file '/home/imac/ros2_ws/build/virtual_control/test_results/virtual_control/test_egocentric_planner_geometry.gtest.xml'
+-- run_test.py: verify result file '/home/imac/ros2_ws/build/virtual_control/test_results/virtual_control/test_egocentric_planner_geometry.gtest.xml'
+<end of output>
+Test time =   0.20 sec
+----------------------------------------------------------
+Test Passed.
+"test_egocentric_planner_geometry" end time: Sep 24 03:44 KST
+"test_egocentric_planner_geometry" time elapsed: 00:00:00
+----------------------------------------------------------
+
+7/19 Testing: test_interval_centering_state
+7/19 Test: test_interval_centering_state
+Command: "/usr/bin/python3" "-u" "/opt/ros/humble/share/ament_cmake_test/cmake/run_test.py" "/home/imac/ros2_ws/build/virtual_control/test_results/virtual_control/test_interval_centering_state.gtest.xml" "--package-name" "virtual_control" "--output-file" "/home/imac/ros2_ws/build/virtual_control/ament_cmake_gtest/test_interval_centering_state.txt" "--command" "/home/imac/ros2_ws/build/virtual_control/test_interval_centering_state" "--gtest_output=xml:/home/imac/ros2_ws/build/virtual_control/test_results/virtual_control/test_interval_centering_state.gtest.xml"
+Directory: /home/imac/ros2_ws/build/virtual_control
+"test_interval_centering_state" start time: Sep 24 03:44 KST
+Output:
+----------------------------------------------------------
+-- run_test.py: invoking following command in '/home/imac/ros2_ws/build/virtual_control':
+ - /home/imac/ros2_ws/build/virtual_control/test_interval_centering_state --gtest_output=xml:/home/imac/ros2_ws/build/virtual_control/test_results/virtual_control/test_interval_centering_state.gtest.xml
+Running main() from /opt/ros/humble/src/gtest_vendor/src/gtest_main.cc
+[==========] Running 13 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 13 tests from IntervalCenteringState
+[ RUN      ] IntervalCenteringState.FarNarrowRoadImmediatelyReleasesLongEntryIntervals
+[       OK ] IntervalCenteringState.FarNarrowRoadImmediatelyReleasesLongEntryIntervals (0 ms)
+[ RUN      ] IntervalCenteringState.IncludesK0AndSelectsOriginalLength
+[       OK ] IntervalCenteringState.IncludesK0AndSelectsOriginalLength (0 ms)
+[ RUN      ] IntervalCenteringState.OtherBranchesNeitherSupplyCandidateNorFreezeUpdate
+[       OK ] IntervalCenteringState.OtherBranchesNeitherSupplyCandidateNorFreezeUpdate (0 ms)
+[ RUN      ] IntervalCenteringState.RejectsClippedFallbackNonfiniteAndNonpositiveCandidates
+[       OK ] IntervalCenteringState.RejectsClippedFallbackNonfiniteAndNonpositiveCandidates (0 ms)
+[ RUN      ] IntervalCenteringState.AmbiguousContainmentIsExcludedBeforeReliabilityFiltering
+[       OK ] IntervalCenteringState.AmbiguousContainmentIsExcludedBeforeReliabilityFiltering (0 ms)
+[ RUN      ] IntervalCenteringState.MissingCandidateRetainsB
+[       OK ] IntervalCenteringState.MissingCandidateRetainsB (0 ms)
+[ RUN      ] IntervalCenteringState.ExcessiveIncreaseRetainsBAndReportsRejectedCandidate
+[       OK ] IntervalCenteringState.ExcessiveIncreaseRetainsBAndReportsRejectedCandidate (0 ms)
+[ RUN      ] IntervalCenteringState.InclusiveIncreaseAndImmediateDecreaseNeedNoHistory
+[       OK ] IntervalCenteringState.InclusiveIncreaseAndImmediateDecreaseNeedNoHistory (0 ms)
+[ RUN      ] IntervalCenteringState.InvalidBInitializesFromCandidate
+[       OK ] IntervalCenteringState.InvalidBInitializesFromCandidate (0 ms)
+[ RUN      ] IntervalCenteringState.OnOffUsesInclusiveRelativeThresholdAndFixedContraction
+[       OK ] IntervalCenteringState.OnOffUsesInclusiveRelativeThresholdAndFixedContraction (0 ms)
+[ RUN      ] IntervalCenteringState.UninitializedObservedIntervalsAreOffEvenWhenShort
+[       OK ] IntervalCenteringState.UninitializedObservedIntervalsAreOffEvenWhenShort (0 ms)
+[ RUN      ] IntervalCenteringState.TreatmentDoesNotRequireCandidateEligibility
+[       OK ] IntervalCenteringState.TreatmentDoesNotRequireCandidateEligibility (0 ms)
+[ RUN      ] IntervalCenteringState.FallbackHasIndependentNineMetreThreshold
+[       OK ] IntervalCenteringState.FallbackHasIndependentNineMetreThreshold (0 ms)
+[----------] 13 tests from IntervalCenteringState (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 13 tests from 1 test suite ran. (0 ms total)
+[  PASSED  ] 13 tests.
+-- run_test.py: return code 0
+-- run_test.py: inject classname prefix into gtest result file '/home/imac/ros2_ws/build/virtual_control/test_results/virtual_control/test_interval_centering_state.gtest.xml'
+-- run_test.py: verify result file '/home/imac/ros2_ws/build/virtual_control/test_results/virtual_control/test_interval_centering_state.gtest.xml'
+<end of output>
+Test time =   0.20 sec
+----------------------------------------------------------
+Test Passed.
+"test_interval_centering_state" end time: Sep 24 03:44 KST
+"test_interval_centering_state" time elapsed: 00:00:00
+----------------------------------------------------------
+
+8/19 Testing: test_lower_path_generation
+8/19 Test: test_lower_path_generation
+Command: "/usr/bin/python3" "-u" "/opt/ros/humble/share/ament_cmake_test/cmake/run_test.py" "/home/imac/ros2_ws/build/virtual_control/test_results/virtual_control/test_lower_path_generation.gtest.xml" "--package-name" "virtual_control" "--output-file" "/home/imac/ros2_ws/build/virtual_control/ament_cmake_gtest/test_lower_path_generation.txt" "--command" "/home/imac/ros2_ws/build/virtual_control/test_lower_path_generation" "--gtest_output=xml:/home/imac/ros2_ws/build/virtual_control/test_results/virtual_control/test_lower_path_generation.gtest.xml"
+Directory: /home/imac/ros2_ws/build/virtual_control
+"test_lower_path_generation" start time: Sep 24 03:44 KST
+Output:
+----------------------------------------------------------
+-- run_test.py: invoking following command in '/home/imac/ros2_ws/build/virtual_control':
+ - /home/imac/ros2_ws/build/virtual_control/test_lower_path_generation --gtest_output=xml:/home/imac/ros2_ws/build/virtual_control/test_results/virtual_control/test_lower_path_generation.gtest.xml
+Running main() from /opt/ros/humble/src/gtest_vendor/src/gtest_main.cc
+[==========] Running 4 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 3 tests from LowerPathGeneration
+[ RUN      ] LowerPathGeneration.DensifierPublishesOriginalCoordinatesWithSamePathSnapshot
+[INFO] [1790189045.661342527] [upper_planner_node]: planner state input: Odometry topic=/px4/sih/odom_map yaw=quaternion
+[INFO] [1790189045.666780489] [upper_planner_node]: Egocentric MIQP planner ready: rate=2.00Hz pred_dt=1.000s Nmax=7 lower_dt=0.100s target_v=3.000m/s scale=model wheelbase=0.30m length=0.42m bev=1.50m margin=2.00m state=odom grid=/grid_map sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[       OK ] LowerPathGeneration.DensifierPublishesOriginalCoordinatesWithSamePathSnapshot (68 ms)
+[ RUN      ] LowerPathGeneration.StageReportSurvivesMissingInputEarlyReturn
+[INFO] [1790189045.695298727] [upper_planner_node]: planner state input: Odometry topic=/px4/sih/odom_map yaw=quaternion
+[INFO] [1790189045.698261572] [upper_planner_node]: Egocentric MIQP planner ready: rate=2.00Hz pred_dt=1.000s Nmax=7 lower_dt=0.100s target_v=3.000m/s scale=model wheelbase=0.30m length=0.42m bev=1.50m margin=2.00m state=odom grid=/grid_map sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[WARN] [1790189045.698667921] [upper_planner_node]: planner waiting for pose
+[       OK ] LowerPathGeneration.StageReportSurvivesMissingInputEarlyReturn (28 ms)
+[ RUN      ] LowerPathGeneration.RoadCanRequireTurnBeyondRemovedInitialHeadingLimit
+[INFO] [1790189045.721380185] [upper_planner_node]: planner state input: Odometry topic=/px4/sih/odom_map yaw=quaternion
+[INFO] [1790189045.724189489] [upper_planner_node]: Egocentric MIQP planner ready: rate=2.00Hz pred_dt=1.000s Nmax=7 lower_dt=0.100s target_v=3.000m/s scale=model wheelbase=0.30m length=0.42m bev=1.50m margin=2.00m state=odom grid=/grid_map sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[       OK ] LowerPathGeneration.RoadCanRequireTurnBeyondRemovedInitialHeadingLimit (20 ms)
+[----------] 3 tests from LowerPathGeneration (116 ms total)
+
+[----------] 1 test from PlannerStageTimer
+[ RUN      ] PlannerStageTimer.BlockingTimeIsNotChargedAsCpuWork
+[       OK ] PlannerStageTimer.BlockingTimeIsNotChargedAsCpuWork (30 ms)
+[----------] 1 test from PlannerStageTimer (30 ms total)
+
+[----------] Global test environment tear-down
+[==========] 4 tests from 2 test suites ran. (146 ms total)
+[  PASSED  ] 4 tests.
+-- run_test.py: return code 0
+-- run_test.py: inject classname prefix into gtest result file '/home/imac/ros2_ws/build/virtual_control/test_results/virtual_control/test_lower_path_generation.gtest.xml'
+-- run_test.py: verify result file '/home/imac/ros2_ws/build/virtual_control/test_results/virtual_control/test_lower_path_generation.gtest.xml'
+<end of output>
+Test time =   0.50 sec
+----------------------------------------------------------
+Test Passed.
+"test_lower_path_generation" end time: Sep 24 03:44 KST
+"test_lower_path_generation" time elapsed: 00:00:00
+----------------------------------------------------------
+
+9/19 Testing: test_lower_tracking_mpc
+9/19 Test: test_lower_tracking_mpc
+Command: "/usr/bin/python3" "-u" "/opt/ros/humble/share/ament_cmake_test/cmake/run_test.py" "/home/imac/ros2_ws/build/virtual_control/test_results/virtual_control/test_lower_tracking_mpc.gtest.xml" "--package-name" "virtual_control" "--output-file" "/home/imac/ros2_ws/build/virtual_control/ament_cmake_gtest/test_lower_tracking_mpc.txt" "--command" "/home/imac/ros2_ws/build/virtual_control/test_lower_tracking_mpc" "--gtest_output=xml:/home/imac/ros2_ws/build/virtual_control/test_results/virtual_control/test_lower_tracking_mpc.gtest.xml"
+Directory: /home/imac/ros2_ws/build/virtual_control
+"test_lower_tracking_mpc" start time: Sep 24 03:44 KST
+Output:
+----------------------------------------------------------
+-- run_test.py: invoking following command in '/home/imac/ros2_ws/build/virtual_control':
+ - /home/imac/ros2_ws/build/virtual_control/test_lower_tracking_mpc --gtest_output=xml:/home/imac/ros2_ws/build/virtual_control/test_results/virtual_control/test_lower_tracking_mpc.gtest.xml
+Running main() from /opt/ros/humble/src/gtest_vendor/src/gtest_main.cc
+[==========] Running 20 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 4 tests from LowerPath
+[ RUN      ] LowerPath.StraightAndDuplicateCoordinates
+[       OK ] LowerPath.StraightAndDuplicateCoordinates (1 ms)
+[ RUN      ] LowerPath.SignedCircularCurvatureAndUnwrap
+[       OK ] LowerPath.SignedCircularCurvatureAndUnwrap (0 ms)
+[ RUN      ] LowerPath.OriginalInterpolationCoordinatesAtCornerAndShortEnd
+[       OK ] LowerPath.OriginalInterpolationCoordinatesAtCornerAndShortEnd (0 ms)
+[ RUN      ] LowerPath.InvalidInputsAreRejected
+[       OK ] LowerPath.InvalidInputsAreRejected (0 ms)
+[----------] 4 tests from LowerPath (1 ms total)
+
+[----------] 16 tests from LowerMpc
+[ RUN      ] LowerMpc.NearestDensePointAndEndRepeat
+[INFO] [1790189046.157512449] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=10 path=/planner/lower_reference_path scale=model wheelbase=0.30m rear_offset=0.00m command_scale=0.350rad actuator_model=0 delay=0.00s tau=0.85s backend=disabled virtual=/cmd_control
+[       OK ] LowerMpc.NearestDensePointAndEndRepeat (40 ms)
+[ RUN      ] LowerMpc.CondensedPredictionEqualsIndependentStateIteration
+[INFO] [1790189046.180201256] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=10 path=/planner/lower_reference_path scale=model wheelbase=0.30m rear_offset=0.00m command_scale=0.350rad actuator_model=0 delay=0.00s tau=0.85s backend=disabled virtual=/cmd_control
+[       OK ] LowerMpc.CondensedPredictionEqualsIndependentStateIteration (20 ms)
+[ RUN      ] LowerMpc.DelayedNonlinearVehicleRecoversAtRequestedSpeeds
+[INFO] [1790189046.198910962] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=10 path=/planner/lower_reference_path scale=model wheelbase=0.30m rear_offset=0.00m command_scale=0.350rad actuator_model=0 delay=0.00s tau=0.85s backend=disabled virtual=/cmd_control
+[       OK ] LowerMpc.DelayedNonlinearVehicleRecoversAtRequestedSpeeds (431 ms)
+[ RUN      ] LowerMpc.DaqpCostScalingMatchesIndependentUnconstrainedSolution
+[INFO] [1790189046.630714802] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=10 path=/planner/lower_reference_path scale=model wheelbase=0.30m rear_offset=0.00m command_scale=0.350rad actuator_model=0 delay=0.00s tau=0.85s backend=disabled virtual=/cmd_control
+[       OK ] LowerMpc.DaqpCostScalingMatchesIndependentUnconstrainedSolution (20 ms)
+[ RUN      ] LowerMpc.StationaryQpRespectsFirstAndAllSteeringLimits
+[INFO] [1790189046.649846154] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=10 path=/planner/lower_reference_path scale=model wheelbase=0.30m rear_offset=0.00m command_scale=0.350rad actuator_model=0 delay=0.00s tau=0.85s backend=disabled virtual=/cmd_control
+[       OK ] LowerMpc.StationaryQpRespectsFirstAndAllSteeringLimits (19 ms)
+[ RUN      ] LowerMpc.InfeasibleQpFallbackReachesFilteredOutputAndNextCycleHistory
+[INFO] [1790189046.668838813] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=10 path=/planner/lower_reference_path scale=model wheelbase=0.30m rear_offset=0.00m command_scale=0.350rad actuator_model=0 delay=0.00s tau=0.85s backend=disabled virtual=/cmd_control
+[WARN] [1790189046.669562068] [lower_tracking_mpc_node]: lower QP failed; applying error-feedback fallback delta=-0.080000: DAQP lower QP failed
+[       OK ] LowerMpc.InfeasibleQpFallbackReachesFilteredOutputAndNextCycleHistory (26 ms)
+[ RUN      ] LowerMpc.InvalidAndStopInputsNeverUseErrorFeedbackFallback
+[INFO] [1790189046.694274234] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=10 path=/planner/lower_reference_path scale=model wheelbase=0.30m rear_offset=0.00m command_scale=0.350rad actuator_model=0 delay=0.00s tau=0.85s backend=disabled virtual=/cmd_control
+[WARN] [1790189046.694738217] [lower_tracking_mpc_node]: lower control invalid: neutral steering/throttle: original interpolation s
+[INFO] [1790189046.723471566] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[       OK ] LowerMpc.InvalidAndStopInputsNeverUseErrorFeedbackFallback (62 ms)
+[ RUN      ] LowerMpc.AtomicPathValidationAndExternalPolylineMode
+[INFO] [1790189046.761721021] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=10 path=/planner/lower_reference_path scale=model wheelbase=0.30m rear_offset=0.00m command_scale=0.350rad actuator_model=0 delay=0.00s tau=0.85s backend=disabled virtual=/cmd_control
+[WARN] [1790189046.762106889] [lower_tracking_mpc_node]: Rejected lower path: path/s size mismatch
+[WARN] [1790189046.762140394] [lower_tracking_mpc_node]: Rejected lower path: non-finite path/s
+[       OK ] LowerMpc.AtomicPathValidationAndExternalPolylineMode (25 ms)
+[ RUN      ] LowerMpc.CurvaturePreviewUsesMeasuredTravelOnOriginalCoordinates
+[INFO] [1790189046.783613707] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=10 path=/planner/lower_reference_path scale=model wheelbase=0.30m rear_offset=0.00m command_scale=0.350rad actuator_model=0 delay=0.00s tau=0.85s backend=disabled virtual=/cmd_control
+[       OK ] LowerMpc.CurvaturePreviewUsesMeasuredTravelOnOriginalCoordinates (21 ms)
+[ RUN      ] LowerMpc.DelayedCurvedVehicleWithSpeedMismatch
+[INFO] [1790189046.802439737] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=10 path=/planner/lower_reference_path scale=model wheelbase=0.30m rear_offset=0.00m command_scale=0.350rad actuator_model=0 delay=0.00s tau=0.85s backend=disabled virtual=/cmd_control
+SWAY speed=3 tau=0.85 baseline_rms=2.18767 revised_rms=0.166364 baseline_peak=4.42372 revised_peak=0.527171
+SWAY speed=3 tau=1.3 baseline_rms=5.64134 revised_rms=0.191693 baseline_peak=10.8212 revised_peak=0.534294
+SWAY speed=6 tau=0.85 baseline_rms=6.25722 revised_rms=0.190613 baseline_peak=11.8913 revised_peak=0.527171
+SWAY speed=6 tau=1.3 baseline_rms=9.59881 revised_rms=0.238991 baseline_peak=18.423 revised_peak=0.534294
+[       OK ] LowerMpc.DelayedCurvedVehicleWithSpeedMismatch (512 ms)
+[ RUN      ] LowerMpc.CenterPredictionMatchesContinuousMotionIntegration
+[INFO] [1790189047.316141696] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=10 path=/planner/lower_reference_path scale=model wheelbase=0.30m rear_offset=0.00m command_scale=0.350rad actuator_model=0 delay=0.00s tau=0.85s backend=disabled virtual=/cmd_control
+[       OK ] LowerMpc.CenterPredictionMatchesContinuousMotionIntegration (21 ms)
+[ RUN      ] LowerMpc.PhysicalSteeringCalibrationIsSeparateFromPlanningLimit
+[INFO] [1790189047.336564096] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=10 path=/planner/lower_reference_path scale=model wheelbase=0.30m rear_offset=0.00m command_scale=0.350rad actuator_model=0 delay=0.00s tau=0.85s backend=disabled virtual=/cmd_control
+[       OK ] LowerMpc.PhysicalSteeringCalibrationIsSeparateFromPlanningLimit (26 ms)
+[ RUN      ] LowerMpc.FastCenterBicycleTracksBothCurveDirections
+[INFO] [1790189047.361618994] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=10 path=/planner/lower_reference_path scale=model wheelbase=0.30m rear_offset=0.00m command_scale=0.350rad actuator_model=0 delay=0.00s tau=0.85s backend=disabled virtual=/cmd_control
+CENTER speed=3 sign=-1 tau=0.03 rms=0.0764908 peak=0.502748 late_peak=0.0497073
+CENTER speed=3 sign=-1 tau=0.08 rms=0.0787321 peak=0.50561 late_peak=0.0516123
+CENTER speed=3 sign=1 tau=0.03 rms=0.0743304 peak=0.502748 late_peak=0.0459406
+CENTER speed=3 sign=1 tau=0.08 rms=0.0775239 peak=0.50561 late_peak=0.0515503
+CENTER speed=6 sign=-1 tau=0.03 rms=0.0713819 peak=0.505212 late_peak=0.0675594
+CENTER speed=6 sign=-1 tau=0.08 rms=0.0749788 peak=0.511134 late_peak=0.0783454
+CENTER speed=6 sign=1 tau=0.03 rms=0.0727012 peak=0.505212 late_peak=0.0722552
+CENTER speed=6 sign=1 tau=0.08 rms=0.0763075 peak=0.511134 late_peak=0.0800539
+[       OK ] LowerMpc.FastCenterBicycleTracksBothCurveDirections (693 ms)
+[ RUN      ] LowerMpc.SteeringDampingRejectsSmallRepeatedReferenceChanges
+[INFO] [1790189048.056141725] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=10 path=/planner/lower_reference_path scale=model wheelbase=0.30m rear_offset=0.00m command_scale=0.350rad actuator_model=0 delay=0.00s tau=0.85s backend=disabled virtual=/cmd_control
+DAMPING speed=3 variation_before=2.11771 variation_after=1.11102 lateral_rms_before=0.00477463 lateral_rms_after=0.00271455
+DAMPING speed=6 variation_before=2.0439 variation_after=1.16943 lateral_rms_before=0.0120751 lateral_rms_after=0.00793432
+[       OK ] LowerMpc.SteeringDampingRejectsSmallRepeatedReferenceChanges (300 ms)
+[ RUN      ] LowerMpc.CurvatureCannotAffectStatePredictionOrFallback
+[INFO] [1790189048.355768109] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=10 path=/planner/lower_reference_path scale=model wheelbase=0.30m rear_offset=0.00m command_scale=0.350rad actuator_model=0 delay=0.00s tau=0.85s backend=disabled virtual=/cmd_control
+[       OK ] LowerMpc.CurvatureCannotAffectStatePredictionOrFallback (20 ms)
+[ RUN      ] LowerMpc.FutureGeometryRemainsATrackingTargetWithoutCurvatureInput
+[INFO] [1790189048.375001064] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=10 path=/planner/lower_reference_path scale=model wheelbase=0.30m rear_offset=0.00m command_scale=0.350rad actuator_model=0 delay=0.00s tau=0.85s backend=disabled virtual=/cmd_control
+[       OK ] LowerMpc.FutureGeometryRemainsATrackingTargetWithoutCurvatureInput (20 ms)
+[----------] 16 tests from LowerMpc (2256 ms total)
+
+[----------] Global test environment tear-down
+[==========] 20 tests from 2 test suites ran. (2273 ms total)
+[  PASSED  ] 20 tests.
+-- run_test.py: return code 0
+-- run_test.py: inject classname prefix into gtest result file '/home/imac/ros2_ws/build/virtual_control/test_results/virtual_control/test_lower_tracking_mpc.gtest.xml'
+-- run_test.py: verify result file '/home/imac/ros2_ws/build/virtual_control/test_results/virtual_control/test_lower_tracking_mpc.gtest.xml'
+<end of output>
+Test time =   2.63 sec
+----------------------------------------------------------
+Test Passed.
+"test_lower_tracking_mpc" end time: Sep 24 03:44 KST
+"test_lower_tracking_mpc" time elapsed: 00:00:02
+----------------------------------------------------------
+
+10/19 Testing: test_lower_steering_actuator_model
+10/19 Test: test_lower_steering_actuator_model
+Command: "/usr/bin/python3" "-u" "/opt/ros/humble/share/ament_cmake_test/cmake/run_test.py" "/home/imac/ros2_ws/build/virtual_control/test_results/virtual_control/test_lower_steering_actuator_model.gtest.xml" "--package-name" "virtual_control" "--output-file" "/home/imac/ros2_ws/build/virtual_control/ament_cmake_gtest/test_lower_steering_actuator_model.txt" "--command" "/home/imac/ros2_ws/build/virtual_control/test_lower_steering_actuator_model" "--gtest_output=xml:/home/imac/ros2_ws/build/virtual_control/test_results/virtual_control/test_lower_steering_actuator_model.gtest.xml"
+Directory: /home/imac/ros2_ws/build/virtual_control
+"test_lower_steering_actuator_model" start time: Sep 24 03:44 KST
+Output:
+----------------------------------------------------------
+-- run_test.py: invoking following command in '/home/imac/ros2_ws/build/virtual_control':
+ - /home/imac/ros2_ws/build/virtual_control/test_lower_steering_actuator_model --gtest_output=xml:/home/imac/ros2_ws/build/virtual_control/test_results/virtual_control/test_lower_steering_actuator_model.gtest.xml
+Running main() from /opt/ros/humble/src/gtest_vendor/src/gtest_main.cc
+[==========] Running 3 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 3 tests from LowerSteeringActuatorModel
+[ RUN      ] LowerSteeringActuatorModel.IdentifiedParametersDiscretizeToFourDelaySteps
+[       OK ] LowerSteeringActuatorModel.IdentifiedParametersDiscretizeToFourDelaySteps (0 ms)
+[ RUN      ] LowerSteeringActuatorModel.ConstantCommandConvergesToCommand
+[       OK ] LowerSteeringActuatorModel.ConstantCommandConvergesToCommand (0 ms)
+[ RUN      ] LowerSteeringActuatorModel.RejectsInvalidParameters
+[       OK ] LowerSteeringActuatorModel.RejectsInvalidParameters (0 ms)
+[----------] 3 tests from LowerSteeringActuatorModel (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 3 tests from 1 test suite ran. (0 ms total)
+[  PASSED  ] 3 tests.
+-- run_test.py: return code 0
+-- run_test.py: inject classname prefix into gtest result file '/home/imac/ros2_ws/build/virtual_control/test_results/virtual_control/test_lower_steering_actuator_model.gtest.xml'
+-- run_test.py: verify result file '/home/imac/ros2_ws/build/virtual_control/test_results/virtual_control/test_lower_steering_actuator_model.gtest.xml'
+<end of output>
+Test time =   0.22 sec
+----------------------------------------------------------
+Test Passed.
+"test_lower_steering_actuator_model" end time: Sep 24 03:44 KST
+"test_lower_steering_actuator_model" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Sep 24 03:44 KST
+
+gtest =   3.75 sec*proc
+

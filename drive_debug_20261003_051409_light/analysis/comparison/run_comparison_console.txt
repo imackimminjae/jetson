@@ -1,0 +1,191 @@
+{
+  "20261002_041101": {
+    "events": {
+      "success": 38,
+      "solver_rejected": 1
+    },
+    "actual_plan_period_median_max_s": [
+      1.00002121925354,
+      1.000295639038086
+    ],
+    "grid_origins": [
+      [
+        2.95,
+        -20.0
+      ]
+    ],
+    "config": {
+      "upper_planner_rate_hz": 1.0,
+      "upper_r_dpsi": 2.0,
+      "preview_interval_soft_ratio": 0.8,
+      "grid_origin_x_override_enabled": null
+    },
+    "lower_rd": 120.0,
+    "sections": {
+      "all_valid": {
+        "samples": 368,
+        "speed_median": 5.890363098736113,
+        "steering_variation_deg_s": 5.3306117303232226,
+        "steering_saturation_percent": 0.0,
+        "lat_error_abs_p95_m": 0.5730235453606864,
+        "lat_error_abs_max_m": 0.8775979207570574
+      },
+      "same_approach": {
+        "samples": 125,
+        "speed_median": 6.021962121589606,
+        "steering_variation_deg_s": 5.420374680144055,
+        "steering_saturation_percent": 0.0,
+        "lat_error_abs_p95_m": 0.6400824133455191,
+        "lat_error_abs_max_m": 0.8775979207570574
+      }
+    },
+    "estimator_flags_during_valid_control": {
+      "895": 187
+    },
+    "gps_texts": []
+  },
+  "20261002_041646": {
+    "events": {
+      "success": 29,
+      "solver_rejected": 1
+    },
+    "actual_plan_period_median_max_s": [
+      1.000020980834961,
+      1.0002484321594238
+    ],
+    "grid_origins": [
+      [
+        2.95,
+        -20.0
+      ]
+    ],
+    "config": {
+      "upper_planner_rate_hz": 1.0,
+      "upper_r_dpsi": 2.0,
+      "preview_interval_soft_ratio": 0.8,
+      "grid_origin_x_override_enabled": null
+    },
+    "lower_rd": 120.0,
+    "sections": {
+      "all_valid": {
+        "samples": 307,
+        "speed_median": 5.905498916610062,
+        "steering_variation_deg_s": 6.94972916437718,
+        "steering_saturation_percent": 0.6514657980456027,
+        "lat_error_abs_p95_m": 0.7153763771625292,
+        "lat_error_abs_max_m": 1.2602652082243144
+      },
+      "same_approach": {
+        "samples": 121,
+        "speed_median": 6.0287059116553365,
+        "steering_variation_deg_s": 5.66513435230105,
+        "steering_saturation_percent": 0.0,
+        "lat_error_abs_p95_m": 0.5166654993694375,
+        "lat_error_abs_max_m": 0.7603788916982975
+      }
+    },
+    "estimator_flags_during_valid_control": {
+      "895": 155
+    },
+    "gps_texts": []
+  },
+  "20261002_043054": {
+    "events": {
+      "success": 29,
+      "solver_rejected": 7
+    },
+    "actual_plan_period_median_max_s": [
+      1.0000391006469727,
+      1.000572919845581
+    ],
+    "grid_origins": [
+      [
+        2.95,
+        -20.0
+      ]
+    ],
+    "config": {
+      "upper_planner_rate_hz": 1.0,
+      "upper_r_dpsi": 1.5,
+      "preview_interval_soft_ratio": 0.7,
+      "grid_origin_x_override_enabled": null
+    },
+    "lower_rd": 120.0,
+    "sections": {
+      "all_valid": {
+        "samples": 293,
+        "speed_median": 5.880172431581939,
+        "steering_variation_deg_s": 6.510485798993552,
+        "steering_saturation_percent": 0.3412969283276451,
+        "lat_error_abs_p95_m": 0.5635241249019821,
+        "lat_error_abs_max_m": 0.9028654500880893
+      },
+      "same_approach": {
+        "samples": 128,
+        "speed_median": 5.954936987436906,
+        "steering_variation_deg_s": 4.9355945169932065,
+        "steering_saturation_percent": 0.78125,
+        "lat_error_abs_p95_m": 0.48984903533907637,
+        "lat_error_abs_max_m": 0.9028654500880893
+      }
+    },
+    "estimator_flags_during_valid_control": {
+      "895": 155,
+      "1023": 18,
+      "869": 6
+    },
+    "gps_texts": [
+      "Preflight: GPS Horizontal Pos Drift too high",
+      "Preflight: GPS Horizontal Pos Drift too high",
+      "Preflight: GPS Horizontal Pos Drift too high",
+      "Preflight: GPS Horizontal Pos Drift too high",
+      "Preflight: GPS Horizontal Pos Drift too high"
+    ]
+  },
+  "20261003_051409": {
+    "events": {
+      "success": 28,
+      "solver_rejected": 5
+    },
+    "actual_plan_period_median_max_s": [
+      0.9999982118606567,
+      1.0002202987670898
+    ],
+    "grid_origins": [
+      [
+        0.0,
+        -20.0
+      ]
+    ],
+    "config": {
+      "upper_planner_rate_hz": 1.0,
+      "upper_r_dpsi": 2.0,
+      "preview_interval_soft_ratio": 0.7,
+      "grid_origin_x_override_enabled": false
+    },
+    "lower_rd": 240.0,
+    "sections": {
+      "all_valid": {
+        "samples": 290,
+        "speed_median": 5.900208294255772,
+        "steering_variation_deg_s": 6.915257457161206,
+        "steering_saturation_percent": 9.655172413793103,
+        "lat_error_abs_p95_m": 1.193500798962832,
+        "lat_error_abs_max_m": 1.590292285489101
+      },
+      "same_approach": {
+        "samples": 133,
+        "speed_median": 6.018626239267873,
+        "steering_variation_deg_s": 9.18159342884266,
+        "steering_saturation_percent": 6.7669172932330826,
+        "lat_error_abs_p95_m": 1.004704548798552,
+        "lat_error_abs_max_m": 1.5548255714268164
+      }
+    },
+    "estimator_flags_during_valid_control": {
+      "1023": 2,
+      "895": 145
+    },
+    "gps_texts": []
+  }
+}

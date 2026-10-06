@@ -1,0 +1,175 @@
+Start testing: Sep 24 03:17 KST
+----------------------------------------------------------
+1/19 Testing: test_sih_heading_guard
+1/19 Test: test_sih_heading_guard
+Command: "/usr/bin/python3" "-u" "/opt/ros/humble/share/ament_cmake_test/cmake/run_test.py" "/home/imac/ros2_ws/build/virtual_control/test_results/virtual_control/test_sih_heading_guard.xunit.xml" "--package-name" "virtual_control" "--output-file" "/home/imac/ros2_ws/build/virtual_control/ament_cmake_pytest/test_sih_heading_guard.txt" "--command" "/usr/bin/python3" "-u" "-m" "pytest" "/home/imac/ros2_ws/src/virtual_control/test/test_sih_heading_guard.py" "-o" "cache_dir=/home/imac/ros2_ws/build/virtual_control/ament_cmake_pytest/test_sih_heading_guard/.cache" "--junit-xml=/home/imac/ros2_ws/build/virtual_control/test_results/virtual_control/test_sih_heading_guard.xunit.xml" "--junit-prefix=virtual_control"
+Directory: /home/imac/ros2_ws/build/virtual_control
+"test_sih_heading_guard" start time: Sep 24 03:17 KST
+Output:
+----------------------------------------------------------
+-- run_test.py: invoking following command in '/home/imac/ros2_ws/build/virtual_control':
+ - /usr/bin/python3 -u -m pytest /home/imac/ros2_ws/src/virtual_control/test/test_sih_heading_guard.py -o cache_dir=/home/imac/ros2_ws/build/virtual_control/ament_cmake_pytest/test_sih_heading_guard/.cache --junit-xml=/home/imac/ros2_ws/build/virtual_control/test_results/virtual_control/test_sih_heading_guard.xunit.xml --junit-prefix=virtual_control
+============================= test session starts ==============================
+platform linux -- Python 3.10.12, pytest-6.2.5, py-1.10.0, pluggy-0.13.0
+cachedir: build/virtual_control/ament_cmake_pytest/test_sih_heading_guard/.cache
+rootdir: /home/imac/ros2_ws
+plugins: launch-testing-1.0.14, ament-lint-0.12.15, ament-pep257-0.12.15, ament-xmllint-0.12.15, ament-flake8-0.12.15, ament-copyright-0.12.15, launch-testing-ros-0.19.13, colcon-core-0.20.1, cov-3.0.0
+collected 10 items
+
+../../src/virtual_control/test/test_sih_heading_guard.py ..........      [100%]
+
+- generated xml file: /home/imac/ros2_ws/build/virtual_control/test_results/virtual_control/test_sih_heading_guard.xunit.xml -
+============================== 10 passed in 1.04s ==============================
+-- run_test.py: return code 0
+-- run_test.py: verify result file '/home/imac/ros2_ws/build/virtual_control/test_results/virtual_control/test_sih_heading_guard.xunit.xml'
+<end of output>
+Test time =   3.60 sec
+----------------------------------------------------------
+Test Passed.
+"test_sih_heading_guard" end time: Sep 24 03:17 KST
+"test_sih_heading_guard" time elapsed: 00:00:03
+----------------------------------------------------------
+
+9/19 Testing: test_lower_tracking_mpc
+9/19 Test: test_lower_tracking_mpc
+Command: "/usr/bin/python3" "-u" "/opt/ros/humble/share/ament_cmake_test/cmake/run_test.py" "/home/imac/ros2_ws/build/virtual_control/test_results/virtual_control/test_lower_tracking_mpc.gtest.xml" "--package-name" "virtual_control" "--output-file" "/home/imac/ros2_ws/build/virtual_control/ament_cmake_gtest/test_lower_tracking_mpc.txt" "--command" "/home/imac/ros2_ws/build/virtual_control/test_lower_tracking_mpc" "--gtest_output=xml:/home/imac/ros2_ws/build/virtual_control/test_results/virtual_control/test_lower_tracking_mpc.gtest.xml"
+Directory: /home/imac/ros2_ws/build/virtual_control
+"test_lower_tracking_mpc" start time: Sep 24 03:17 KST
+Output:
+----------------------------------------------------------
+-- run_test.py: invoking following command in '/home/imac/ros2_ws/build/virtual_control':
+ - /home/imac/ros2_ws/build/virtual_control/test_lower_tracking_mpc --gtest_output=xml:/home/imac/ros2_ws/build/virtual_control/test_results/virtual_control/test_lower_tracking_mpc.gtest.xml
+Running main() from /opt/ros/humble/src/gtest_vendor/src/gtest_main.cc
+[==========] Running 19 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 4 tests from LowerPath
+[ RUN      ] LowerPath.StraightAndDuplicateCoordinates
+[       OK ] LowerPath.StraightAndDuplicateCoordinates (0 ms)
+[ RUN      ] LowerPath.SignedCircularCurvatureAndUnwrap
+[       OK ] LowerPath.SignedCircularCurvatureAndUnwrap (0 ms)
+[ RUN      ] LowerPath.OriginalInterpolationCoordinatesAtCornerAndShortEnd
+[       OK ] LowerPath.OriginalInterpolationCoordinatesAtCornerAndShortEnd (0 ms)
+[ RUN      ] LowerPath.InvalidInputsAreRejected
+[       OK ] LowerPath.InvalidInputsAreRejected (0 ms)
+[----------] 4 tests from LowerPath (0 ms total)
+
+[----------] 15 tests from LowerMpc
+[ RUN      ] LowerMpc.NearestDensePointAndEndRepeat
+[INFO] [1790187436.135240034] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=10 path=/planner/lower_reference_path scale=model wheelbase=0.30m rear_offset=0.00m command_scale=0.350rad actuator_model=0 delay=0.00s tau=0.85s backend=disabled virtual=/cmd_control
+[       OK ] LowerMpc.NearestDensePointAndEndRepeat (53 ms)
+[ RUN      ] LowerMpc.CondensedPredictionEqualsIndependentStateIteration
+[INFO] [1790187436.160092000] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=10 path=/planner/lower_reference_path scale=model wheelbase=0.30m rear_offset=0.00m command_scale=0.350rad actuator_model=0 delay=0.00s tau=0.85s backend=disabled virtual=/cmd_control
+[       OK ] LowerMpc.CondensedPredictionEqualsIndependentStateIteration (24 ms)
+[ RUN      ] LowerMpc.DelayedNonlinearVehicleRecoversAtRequestedSpeeds
+[INFO] [1790187436.182491627] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=10 path=/planner/lower_reference_path scale=model wheelbase=0.30m rear_offset=0.00m command_scale=0.350rad actuator_model=0 delay=0.00s tau=0.85s backend=disabled virtual=/cmd_control
+[       OK ] LowerMpc.DelayedNonlinearVehicleRecoversAtRequestedSpeeds (449 ms)
+[ RUN      ] LowerMpc.DaqpCostScalingMatchesIndependentUnconstrainedSolution
+[INFO] [1790187436.631798179] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=10 path=/planner/lower_reference_path scale=model wheelbase=0.30m rear_offset=0.00m command_scale=0.350rad actuator_model=0 delay=0.00s tau=0.85s backend=disabled virtual=/cmd_control
+[       OK ] LowerMpc.DaqpCostScalingMatchesIndependentUnconstrainedSolution (21 ms)
+[ RUN      ] LowerMpc.StationaryQpRespectsFirstAndAllSteeringLimits
+[INFO] [1790187436.654340276] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=10 path=/planner/lower_reference_path scale=model wheelbase=0.30m rear_offset=0.00m command_scale=0.350rad actuator_model=0 delay=0.00s tau=0.85s backend=disabled virtual=/cmd_control
+[       OK ] LowerMpc.StationaryQpRespectsFirstAndAllSteeringLimits (24 ms)
+[ RUN      ] LowerMpc.InfeasibleQpFallbackReachesFilteredOutputAndNextCycleHistory
+[INFO] [1790187436.678754947] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=10 path=/planner/lower_reference_path scale=model wheelbase=0.30m rear_offset=0.00m command_scale=0.350rad actuator_model=0 delay=0.00s tau=0.85s backend=disabled virtual=/cmd_control
+[WARN] [1790187436.679606527] [lower_tracking_mpc_node]: lower QP failed; applying error-feedback fallback delta=-0.080000: DAQP lower QP failed
+[       OK ] LowerMpc.InfeasibleQpFallbackReachesFilteredOutputAndNextCycleHistory (31 ms)
+[ RUN      ] LowerMpc.InvalidAndStopInputsNeverUseErrorFeedbackFallback
+[INFO] [1790187436.706858957] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=10 path=/planner/lower_reference_path scale=model wheelbase=0.30m rear_offset=0.00m command_scale=0.350rad actuator_model=0 delay=0.00s tau=0.85s backend=disabled virtual=/cmd_control
+[WARN] [1790187436.707399903] [lower_tracking_mpc_node]: lower control invalid: neutral steering/throttle: original interpolation s
+[INFO] [1790187436.736712466] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[       OK ] LowerMpc.InvalidAndStopInputsNeverUseErrorFeedbackFallback (66 ms)
+[ RUN      ] LowerMpc.AtomicPathValidationAndExternalPolylineMode
+[INFO] [1790187436.779555752] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=10 path=/planner/lower_reference_path scale=model wheelbase=0.30m rear_offset=0.00m command_scale=0.350rad actuator_model=0 delay=0.00s tau=0.85s backend=disabled virtual=/cmd_control
+[WARN] [1790187436.779789552] [lower_tracking_mpc_node]: Rejected lower path: path/s size mismatch
+[WARN] [1790187436.779823601] [lower_tracking_mpc_node]: Rejected lower path: non-finite path/s
+[       OK ] LowerMpc.AtomicPathValidationAndExternalPolylineMode (26 ms)
+[ RUN      ] LowerMpc.CurvaturePreviewUsesMeasuredTravelOnOriginalCoordinates
+[INFO] [1790187436.800488003] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=10 path=/planner/lower_reference_path scale=model wheelbase=0.30m rear_offset=0.00m command_scale=0.350rad actuator_model=0 delay=0.00s tau=0.85s backend=disabled virtual=/cmd_control
+[       OK ] LowerMpc.CurvaturePreviewUsesMeasuredTravelOnOriginalCoordinates (21 ms)
+[ RUN      ] LowerMpc.DelayedCurvedVehicleWithSpeedMismatch
+[INFO] [1790187436.820494783] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=10 path=/planner/lower_reference_path scale=model wheelbase=0.30m rear_offset=0.00m command_scale=0.350rad actuator_model=0 delay=0.00s tau=0.85s backend=disabled virtual=/cmd_control
+SWAY speed=3 tau=0.85 baseline_rms=2.18767 revised_rms=0.166364 baseline_peak=4.42372 revised_peak=0.527171
+SWAY speed=3 tau=1.3 baseline_rms=5.64134 revised_rms=0.191693 baseline_peak=10.8212 revised_peak=0.534294
+SWAY speed=6 tau=0.85 baseline_rms=6.25722 revised_rms=0.190613 baseline_peak=11.8913 revised_peak=0.527171
+SWAY speed=6 tau=1.3 baseline_rms=9.59881 revised_rms=0.238991 baseline_peak=18.423 revised_peak=0.534294
+[       OK ] LowerMpc.DelayedCurvedVehicleWithSpeedMismatch (519 ms)
+[ RUN      ] LowerMpc.CenterPredictionMatchesContinuousMotionIntegration
+[INFO] [1790187437.340644050] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=10 path=/planner/lower_reference_path scale=model wheelbase=0.30m rear_offset=0.00m command_scale=0.350rad actuator_model=0 delay=0.00s tau=0.85s backend=disabled virtual=/cmd_control
+[       OK ] LowerMpc.CenterPredictionMatchesContinuousMotionIntegration (21 ms)
+[ RUN      ] LowerMpc.PhysicalSteeringCalibrationIsSeparateFromPlanningLimit
+[INFO] [1790187437.361303332] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=10 path=/planner/lower_reference_path scale=model wheelbase=0.30m rear_offset=0.00m command_scale=0.350rad actuator_model=0 delay=0.00s tau=0.85s backend=disabled virtual=/cmd_control
+[       OK ] LowerMpc.PhysicalSteeringCalibrationIsSeparateFromPlanningLimit (28 ms)
+[ RUN      ] LowerMpc.FastCenterBicycleTracksBothCurveDirections
+[INFO] [1790187437.388330282] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=10 path=/planner/lower_reference_path scale=model wheelbase=0.30m rear_offset=0.00m command_scale=0.350rad actuator_model=0 delay=0.00s tau=0.85s backend=disabled virtual=/cmd_control
+CENTER speed=3 sign=-1 tau=0.03 rms=0.064295 peak=0.500133 late_peak=0.0389063
+CENTER speed=3 sign=-1 tau=0.08 rms=0.066365 peak=0.504145 late_peak=0.0402599
+CENTER speed=3 sign=1 tau=0.03 rms=0.0628956 peak=0.500133 late_peak=0.0364149
+CENTER speed=3 sign=1 tau=0.08 rms=0.0655833 peak=0.504145 late_peak=0.0395719
+CENTER speed=6 sign=-1 tau=0.03 rms=0.0583896 peak=0.499208 late_peak=0.0507713
+CENTER speed=6 sign=-1 tau=0.08 rms=0.0616193 peak=0.507787 late_peak=0.0572865
+CENTER speed=6 sign=1 tau=0.03 rms=0.059231 peak=0.499208 late_peak=0.0550192
+CENTER speed=6 sign=1 tau=0.08 rms=0.0623899 peak=0.507787 late_peak=0.059429
+[       OK ] LowerMpc.FastCenterBicycleTracksBothCurveDirections (697 ms)
+[ RUN      ] LowerMpc.CurvatureCannotAffectStatePredictionOrFallback
+[INFO] [1790187438.085928224] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=10 path=/planner/lower_reference_path scale=model wheelbase=0.30m rear_offset=0.00m command_scale=0.350rad actuator_model=0 delay=0.00s tau=0.85s backend=disabled virtual=/cmd_control
+[       OK ] LowerMpc.CurvatureCannotAffectStatePredictionOrFallback (22 ms)
+[ RUN      ] LowerMpc.FutureGeometryRemainsATrackingTargetWithoutCurvatureInput
+[INFO] [1790187438.107834491] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=10 path=/planner/lower_reference_path scale=model wheelbase=0.30m rear_offset=0.00m command_scale=0.350rad actuator_model=0 delay=0.00s tau=0.85s backend=disabled virtual=/cmd_control
+[       OK ] LowerMpc.FutureGeometryRemainsATrackingTargetWithoutCurvatureInput (22 ms)
+[----------] 15 tests from LowerMpc (2025 ms total)
+
+[----------] Global test environment tear-down
+[==========] 19 tests from 2 test suites ran. (2044 ms total)
+[  PASSED  ] 19 tests.
+-- run_test.py: return code 0
+-- run_test.py: inject classname prefix into gtest result file '/home/imac/ros2_ws/build/virtual_control/test_results/virtual_control/test_lower_tracking_mpc.gtest.xml'
+-- run_test.py: verify result file '/home/imac/ros2_ws/build/virtual_control/test_results/virtual_control/test_lower_tracking_mpc.gtest.xml'
+<end of output>
+Test time =   2.44 sec
+----------------------------------------------------------
+Test Passed.
+"test_lower_tracking_mpc" end time: Sep 24 03:17 KST
+"test_lower_tracking_mpc" time elapsed: 00:00:02
+----------------------------------------------------------
+
+10/19 Testing: test_lower_steering_actuator_model
+10/19 Test: test_lower_steering_actuator_model
+Command: "/usr/bin/python3" "-u" "/opt/ros/humble/share/ament_cmake_test/cmake/run_test.py" "/home/imac/ros2_ws/build/virtual_control/test_results/virtual_control/test_lower_steering_actuator_model.gtest.xml" "--package-name" "virtual_control" "--output-file" "/home/imac/ros2_ws/build/virtual_control/ament_cmake_gtest/test_lower_steering_actuator_model.txt" "--command" "/home/imac/ros2_ws/build/virtual_control/test_lower_steering_actuator_model" "--gtest_output=xml:/home/imac/ros2_ws/build/virtual_control/test_results/virtual_control/test_lower_steering_actuator_model.gtest.xml"
+Directory: /home/imac/ros2_ws/build/virtual_control
+"test_lower_steering_actuator_model" start time: Sep 24 03:17 KST
+Output:
+----------------------------------------------------------
+-- run_test.py: invoking following command in '/home/imac/ros2_ws/build/virtual_control':
+ - /home/imac/ros2_ws/build/virtual_control/test_lower_steering_actuator_model --gtest_output=xml:/home/imac/ros2_ws/build/virtual_control/test_results/virtual_control/test_lower_steering_actuator_model.gtest.xml
+Running main() from /opt/ros/humble/src/gtest_vendor/src/gtest_main.cc
+[==========] Running 3 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 3 tests from LowerSteeringActuatorModel
+[ RUN      ] LowerSteeringActuatorModel.IdentifiedParametersDiscretizeToFourDelaySteps
+[       OK ] LowerSteeringActuatorModel.IdentifiedParametersDiscretizeToFourDelaySteps (0 ms)
+[ RUN      ] LowerSteeringActuatorModel.ConstantCommandConvergesToCommand
+[       OK ] LowerSteeringActuatorModel.ConstantCommandConvergesToCommand (0 ms)
+[ RUN      ] LowerSteeringActuatorModel.RejectsInvalidParameters
+[       OK ] LowerSteeringActuatorModel.RejectsInvalidParameters (0 ms)
+[----------] 3 tests from LowerSteeringActuatorModel (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 3 tests from 1 test suite ran. (0 ms total)
+[  PASSED  ] 3 tests.
+-- run_test.py: return code 0
+-- run_test.py: inject classname prefix into gtest result file '/home/imac/ros2_ws/build/virtual_control/test_results/virtual_control/test_lower_steering_actuator_model.gtest.xml'
+-- run_test.py: verify result file '/home/imac/ros2_ws/build/virtual_control/test_results/virtual_control/test_lower_steering_actuator_model.gtest.xml'
+<end of output>
+Test time =   0.22 sec
+----------------------------------------------------------
+Test Passed.
+"test_lower_steering_actuator_model" end time: Sep 24 03:17 KST
+"test_lower_steering_actuator_model" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Sep 24 03:17 KST
+
+gtest =   2.66 sec*proc
+
+pytest =   3.60 sec*proc
+
