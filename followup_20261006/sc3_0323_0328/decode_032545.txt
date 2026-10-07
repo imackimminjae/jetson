@@ -1,0 +1,40 @@
+/bev/occupancy_grid count 697 start/end 03:25:47.336 03:26:12.617 gap median/max 0.03196871280670166 0.1486339569091797
+grid [(0.3125, 128, 128, [0.0, -20.0], [0.0, 0.0, 0.0, 1.0])] gaps>1s []
+/motive/vehicle/odom_map count 760 start/end 03:25:47.304 03:26:12.606 gap median/max 0.03420448303222656 0.04748415946960449
+/planner/lower_reference_path/with_arclength count 24 start/end 03:25:49.472 03:26:11.865 gap median/max 1.0001702308654785 1.0044212341308594
+/debug/upper_branch_event count 23 start/end 03:25:49.865 03:26:11.866 gap median/max 0.9998403787612915 1.006091833114624
+/debug/lower_mpc_trace count 248 start/end 03:25:47.856 03:26:12.558 gap median/max 0.1000211238861084 0.10274004936218262
+LOWER modes Counter({0.0: 248}) speed min/med/max [3.12971962 6.05876228 6.74087452] valid steering saturation 0.10080645161290322
+mode 0.0 count 248 first,last 03:25:47.855 03:26:12.558
+UPPER 03:25:49.865 success 7 xy 188.07 205.91 yaw -86.6 status solved
+UPPER 03:25:50.867 success 7 xy 187.94 200.71 yaw -91.3 status solved
+UPPER 03:25:51.865 success 7 xy 187.64 195.04 yaw -92.3 status solved
+UPPER 03:25:52.866 success 7 xy 187.4 189.17 yaw -93.2 status solved
+UPPER 03:25:53.868 success 7 xy 187.29 183.26 yaw -88.6 status solved
+UPPER 03:25:54.869 success 7 xy 189.75 177.78 yaw -62.6 status solved
+UPPER 03:25:55.869 success 7 xy 194.3 173.76 yaw -40.8 status solved
+UPPER 03:25:56.866 success 7 xy 199.22 170.36 yaw -37.2 status solved
+UPPER 03:25:57.871 success 7 xy 203.44 166.3 yaw -45.9 status solved
+UPPER 03:25:58.870 success 7 xy 207.47 162.11 yaw -45.0 status solved
+UPPER 03:25:59.867 success 7 xy 212.2 158.63 yaw -36.2 status solved
+UPPER 03:26:00.867 success 7 xy 217.28 155.62 yaw -30.9 status solved
+UPPER 03:26:01.866 success 7 xy 222.65 153.17 yaw -24.8 status solved
+UPPER 03:26:02.866 success 7 xy 227.76 150.42 yaw -32.8 status solved
+UPPER 03:26:03.865 success 7 xy 231.79 146.14 yaw -47.0 status solved
+UPPER 03:26:04.865 success 7 xy 236.58 142.79 yaw -32.5 status solved
+UPPER 03:26:05.866 success 7 xy 242.13 140.96 yaw -18.6 status solved
+UPPER 03:26:06.865 success 7 xy 247.83 139.87 yaw -11.5 status solved
+UPPER 03:26:07.871 success 7 xy 253.63 140.1 yaw 5.1 status solved
+UPPER 03:26:08.865 success 7 xy 258.58 143.32 yaw 36.6 status solved
+UPPER 03:26:09.868 success 7 xy 261.36 148.43 yaw 62.0 status solved
+UPPER 03:26:10.867 success 7 xy 264.04 153.54 yaw 59.5 status solved
+UPPER 03:26:11.866 success 7 xy 267.68 157.98 yaw 50.8 status solved
+WARNINGS
+03:25:47.284 px4_odom_map_bridge Waiting for valid PX4 source pose on /px4/sih/odom
+03:25:47.833 lower_tracking_mpc_node MAVLink peer unknown; check MAVProxy --out=127.0.0.1:14540
+03:25:49.473 upper_planner_node grid origin experiment: received_x=0.000 effective_x=0.000 shift_x=0.000; cell data unchanged
+03:25:49.670 px4_ekf_bridge Start with the vehicle disarmed and stationary. PX4 EKF parameter changes marked as reboot-required need a Pixhawk reboot before fusion is tested.
+03:25:49.670 px4_ekf_bridge SIH heading check: settling (EKF-SIH=0.29245471887519375 deg); pose output blocked
+03:25:49.671 px4_ekf_bridge SIH heading check: ok (EKF-SIH=0.08447545864830548 deg); pose output enabled
+03:25:53.444 upper_planner_node grid origin experiment: received_x=0.000 effective_x=0.000 shift_x=0.000; cell data unchanged
+03:26:03.450 upper_planner_node grid origin experiment: received_x=0.000 effective_x=0.000 shift_x=0.000; cell data unchanged

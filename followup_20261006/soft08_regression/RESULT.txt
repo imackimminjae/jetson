@@ -1,0 +1,72 @@
+2026-10-06 16시 현재 운영 설정 오프라인 회귀 (soft 0.8 포함) + 계획 주기/위상 분해
+운영 소스·YAML·바이너리 변경 없음(production_sha256_before.txt로 전후 동일 확인). 차량/보드/직렬 출력 없음.
+ROS_DOMAIN_ID=177, ROS_LOCALHOST_ONLY=1.
+
+1. 시험대
+- sim_rate.cpp = verify/sim_prod.cpp 사본 + 3가지 추가:
+  a) plan_period_steps(기본 10 = 1 Hz, 5 = 2 Hz), plan_phase_steps(0..period-1, 계획 시각 위상)
+  b) wp_switch_max_distance_m 덮어쓰기
+  c) memory.last_success=0 초기화. 원본은 -100이라 위상 0이 아니면 첫 스텝에서 stale_path_stop으로
+     즉시 종료되는 하네스 결함이 있었음(위상 0은 영향 없음: 기존 결과와 궤적 동일 재확인).
+- planner_now.o = 현재 운영 tracking_control.cpp(01:22, 수정 없음) 컴파일. 하위는 운영 lower 소스 포함.
+- 설정 기준 파일 config_current.yaml = 16시 운영 YAML 사본. 비교 설정은 덮어쓰기로만 만듦.
+- 재현 확인: V0(soft .7, r_dpsi 3, wp 10/15, rd 120, 1 Hz = 03:31 이전 검증 당시 값)로 synthetic 2장면을
+  돌린 결과가 verify/results_synthetic_prod.jsonl(installed_yaml)과 위치 차이 0.0으로 일치.
+
+현재 운영 YAML과 검증 당시 값의 차이(5개): rate 1→2 Hz, r_dpsi 3→2, wp 10/15→15/20, soft 0.7→0.8, rd 120→150.
+
+2. 결과 A: 위상 스윕 전 회귀 (각 설정 x 5위상, analyzeP.py, summaryP_rows.json)
+                 synthetic  Ysynth  replica  recorded(잡음 J2)  robust
+  V0 (1Hz)          9/10    60/60   30/30     19/30          176/180
+  V0+soft08         9/10    60/60   30/30     23/30          177/180
+  CUR (2Hz,현재)     6/10    60/60   30/30     29/30          166/180
+  CUR_soft07        6/10    60/60   29/30     25/30          162/180
+  CUR_1hz           9/10    60/60   30/30     22/30          175/180
+  CUR_1hz_soft07    8/10    60/60   30/30     19/30          175/180
+  실패는 거의 전부 branch_width(76도 급회전 갈림길) 장면, 일부 robust replica_east(tau 0.5/1.0).
+
+판단 (soft 0.8) - 확정(이 시험대 범위):
+- soft 0.8은 0.7 대비 분기 선택 회귀 없음. 1 Hz/2 Hz 모두 같거나 약간 좋음(잡음 J2 +4, robust +1~4).
+- 비용: scenario1 J2 복제 장면 조향 포화 비율 소폭 증가(2 Hz 1.2%→2.6%, V0 1.8%→3.4%), 명령 p95 +1~3 deg.
+  조향 부호 반전 횟수는 늘지 않음. → soft 0.8 유지 가능.
+
+3. 결과 B: 76도 급회전 갈림길(branch_width) 위상 분해 (27조건 = 시작 횡오프셋 3 x yaw 3 x 차량 tau 3)
+  설정              성공(전체 위상 합)
+  legacy(이전 플래너) 1Hz   7/30  (23%)  [오프셋0/yaw0 장면만]
+  V0  1Hz        170/270 (63%)  위상별 6~27/27
+  V0  2Hz         16/135 (12%)  위상별 0~12/27
+  CUR 1Hz        187/270 (69%)
+  CUR 2Hz         20/135 (15%)
+- 정정: 이전 검증(VERIFY_RESULT, HANDOFF 3절)의 "분기폭 회귀 장면 통과"는 위상 0 한 개 결과. 위상에 따라 6/27까지 떨어짐.
+  즉 76도 급회전 갈래 선택은 원래부터 결정 위치(위상)에 민감. 시작 횡오프셋/yaw 섭동은 결정 위치를 거의 바꾸지 않아
+  27조건이 위상 다양성을 대신하지 못했음.
+- 2 Hz는 위상과 무관하게 급회전 갈림길 성공률을 크게 낮춤(63~69% → 12~15%). soft/r_dpsi/wp/rd 차이(V0 vs CUR)는 1 Hz에서 작음.
+- 반대로 2 Hz는 잡음 J2(동쪽 50도 갈래) 29/30 vs 1 Hz 22/30, 횡오차 p95 0.22 vs 0.44 m로 좋음 → 상충.
+
+4. 2 Hz 실패 메커니즘 (V0 2Hz, 오프셋0/yaw0/tau0.74 사례 - 강한 가설, 한 사례 상세 확인)
+- t=25.5: 급회전 갈래가 먼 단면 k6에서 처음 보이고 선택됨. 계획 첫 구간 방향 43 deg vs 차량 yaw 57 deg
+  (바깥=오른쪽으로 14 deg 먼저 벌린 뒤 좌회전하는 계획).
+- 하위가 이를 추종해 -10~-14 deg 우조향, yaw 57→40 deg.
+- t=26.0: 갈래 후보 소실(모든 단면 후보 1개). 이후 갈래가 다시 보여도 선택 0(직진 지선) 유지 → 지선 진입, 도로 이탈.
+- 1 Hz 위상 0 성공 사례: 갈래가 k7에서 처음 보일 때(더 가까움) 직진 유지 계획 → 다음 주기 k6/k7 연속 선택 → 정상 회전.
+- 해석: 결정 주기가 잦을수록 "먼 거리 조기 선택 → 바깥 벌림 → 다음 주기 갈래 소실/선택 번복" 경로가 생길 기회가 많아짐.
+  근본 원인은 주기 자체보다 갈래 선택이 주기 간 유지되지 않는 것(선택 번복)으로 판단.
+- 실주행 데이터: 바깥 벌림 계획(첫 구간 반대 방향 >=8 deg, 이후 회전 >=30 deg)은 주행당 0~2회로 드묾(1/2 Hz 모두).
+  04:23~04:25 재부팅 후 실패 3주행 모두 1~2회 포함(k1 분기). 그러나 runs_0419_0426에서 정상 주행은 오히려
+  넓은 바깥 진입이었으므로 "바깥 벌림 = 실패"로 일반화할 수 없음. 미검증.
+
+5. 권고
+- soft 0.8: 유지(회귀 없음).
+- 계획 주기: 하네스에서는 2 Hz가 76도 급회전 갈림길(scenario3 마지막 갈림길과 같은 유형)에 명확히 불리.
+  scenario3 위주로 주행한다면 1 Hz 복귀가 오프라인 근거상 유리. 단 실주행 표본(2 Hz 3/4, 1 Hz 5/12, 1 Hz 실패 다수가
+  재부팅 후 첫 갈림길 유형)과는 아직 일치 확인 안 됨. 운영 변경은 사용자 판단.
+- 근본 대책 후보: 갈래 선택 유지(직전 주기 선택 갈래와 연속인 후보 우선/전환 비용) + 위상 스윕을 기본 지표로 검증.
+  이 장면(branch_width 위상 스윕)과 잡음 J2(recorded)를 동시 개선 여부의 판정 기준으로 사용 권장.
+- 이후 오프라인 검증은 반드시 plan_phase_steps 스윕 포함(단일 위상 결과는 우연일 수 있음).
+
+파일
+- sim_rate.cpp, build.py, build_sim_only.py, make_inputs.py(input_*.json), make_sharp.py(input_sharp.json),
+  input_phase.json, input_legacy_phase.json, inputP_*.json(위상 스윕 회귀)
+- analyze.py / analyzeP.py, summary_rows.json(단일 위상), summaryP_rows.json(위상 스윕), summary_sharp_phase_rows.json
+- 원시 결과 jsonl은 디스크 여유(약 3 GB) 때문에 위상 스윕분 삭제. results_sharp.jsonl(위상 0, 메커니즘 사례 포함)은 보존.
+  재현: source install/setup.bash 후 ./sim_rate INPUT OUTPUT (약 1~4분).

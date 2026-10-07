@@ -1,0 +1,10 @@
+synthetic/h7 {'correct': 2, 'total': 2, 'upper_failures': 0, 'bad_cases': []}
+synthetic/h6 {'correct': 2, 'total': 2, 'upper_failures': 0, 'bad_cases': []}
+replica/h7 {'correct': 6, 'total': 6, 'upper_failures': 0, 'bad_cases': []}
+replica/h6 {'correct': 6, 'total': 6, 'upper_failures': 0, 'bad_cases': []}
+ysynthetic/h7 {'correct': 12, 'total': 12, 'upper_failures': 0, 'bad_cases': []}
+ysynthetic/h6 {'correct': 12, 'total': 12, 'upper_failures': 0, 'bad_cases': []}
+robust/h7 {'correct': 35, 'total': 36, 'upper_failures': 12, 'bad_cases': [{'scene': 'branch_width', 'plant': 'tau1.0', 'outcome': 'left_road_stop', 'final_xy': [133.33878111688193, 144.5268447845462]}]}
+robust/h6 {'correct': 35, 'total': 36, 'upper_failures': 8, 'bad_cases': [{'scene': 'branch_width', 'plant': 'tau1.0', 'outcome': 'left_road_stop', 'final_xy': [132.78521845400354, 144.2768092076823]}]}
+METRICS {'group': 'synthetic', 'scene': 'live_curve', 'plant': 'measured_slow', 'common_progress': [11.54393196259422, 231.61956009402112], 'h7': {'correct': True, 'outcome': 'goal_reached', 'samples': 357, 'sat_fraction': 0.0, 'steering_highpass_rms_deg': 1.2499506106667155, 'local_lateral_p95_m': 0.12620555891749524, 'speed_median_mps': 6.0, 'sign_changes_above_1deg': 5}, 'h6': {'correct': True, 'outcome': 'goal_reached', 'samples': 354, 'sat_fraction': 0.0, 'steering_highpass_rms_deg': 0.5399566665015254, 'local_lateral_p95_m': 0.12478091708603056, 'speed_median_mps': 6.0, 'sign_changes_above_1deg': 6}}
+METRICS {'group': 'synthetic', 'scene': 'branch_width', 'plant': 'measured_slow', 'common_progress': [11.54393196259422, 231.61956009402112], 'h7': {'correct': True, 'outcome': 'goal_reached', 'samples': 358, 'sat_fraction': 0.036312849162011177, 'steering_highpass_rms_deg': 0.9106972953647712, 'local_lateral_p95_m': 0.16647626761498435, 'speed_median_mps': 6.0, 'sign_changes_above_1deg': 8}, 'h6': {'correct': True, 'outcome': 'goal_reached', 'samples': 358, 'sat_fraction': 0.04748603351955307, 'steering_highpass_rms_deg': 1.076770856951066, 'local_lateral_p95_m': 0.20457763280889069, 'speed_median_mps': 6.0, 'sign_changes_above_1deg': 7}}

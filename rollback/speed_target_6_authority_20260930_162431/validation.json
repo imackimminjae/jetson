@@ -1,0 +1,25 @@
+{
+  "changes": [
+    [
+      "lower_tracking_mpc_node",
+      "max_virtual_throttle",
+      0.09,
+      0.35
+    ],
+    [
+      "lower_tracking_mpc_node",
+      "speed_integral_limit",
+      0.5,
+      30.0
+    ],
+    [
+      "lower_tracking_mpc_node",
+      "mavlink_throttle_max_norm",
+      0.09,
+      0.35
+    ]
+  ],
+  "targets_mps": 6,
+  "installed_config": "/home/imac/ros2_ws/src/virtual_control/config/tracking_control_split.yaml",
+  "checked": "YAML parse, exact changed keys, target and output limits"
+}

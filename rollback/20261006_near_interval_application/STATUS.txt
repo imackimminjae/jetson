@@ -1,0 +1,7 @@
+2026-10-06: HELD per user instruction: 오분기 생기면 일단 보류
+All three near-interval modification candidates remain unapplied.
+Scenario3 fixed-pose replay showed an incorrect final branch and five failed planning cycles for each candidate.
+Source, header, YAML, both saved tests, and installed upper-planner executable match the pre-application snapshot.
+No applied manifest exists because no controller change was made. No build or live restart performed.
+The previously added recorder topic /debug/bev_source_timing remains unchanged.
+Experimental evidence: followup_20261006/interval_consistency/RESULT.txt

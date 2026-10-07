@@ -1,0 +1,132 @@
+--- before/src/virtual_control/config/tracking_control_split.yaml
++++ after/src/virtual_control/config/tracking_control_split.yaml
+@@ -204,6 +204,11 @@
+ 
+     global_path_topic: "/navigation/global_path"
+     grid_map_topic: "/bev/occupancy_grid"
++    # Experiment: interpret the received image's first column from vehicle x=0.
++    # Does not generate unseen cells or change the original published grid.
++    # Disable and restart the planner to restore the received origin (2.95m).
++    grid_origin_x_override_enabled: true
++    grid_origin_x_override_m: 0.0
+     upper_sparse_path_topic: "/planner/upper_path_sparse"
+     lower_reference_path_topic: "/planner/lower_reference_path"
+     goal_reached_topic: "/planner/goal_reached"
+--- before/src/virtual_control/include/virtual_control/tracking_control.hpp
++++ after/src/virtual_control/include/virtual_control/tracking_control.hpp
+@@ -362,6 +362,8 @@
+   bool grid_positive_is_drivable_{true};
+   std::string expected_grid_frame_id_{"base_link"};
+   bool require_grid_frame_match_{true};
++  bool grid_origin_x_override_enabled_{false};
++  double grid_origin_x_override_m_{0.0};
+ 
+   // Vehicle-state input and pose transformation.
+   std::string state_input_type_{"odom"};
+--- before/src/virtual_control/test/test_lower_path_generation.cpp
++++ after/src/virtual_control/test/test_lower_path_generation.cpp
+@@ -10,6 +10,17 @@
+ {
+   static void cancel(SdMapUpperPlannerNode & node) {node.planner_timer_->cancel();}
+   static void step(SdMapUpperPlannerNode & node) {node.plannerLoop();}
++  static void receiveGrid(
++    SdMapUpperPlannerNode & node, const nav_msgs::msg::OccupancyGrid::SharedPtr & msg)
++  {
++    node.gridMapCallback(msg);
++  }
++  static auto gridOrigin(const SdMapUpperPlannerNode & node) {return node.grid_.origin_body;}
++  static bool sampleGrid(
++    const SdMapUpperPlannerNode & node, const Eigen::Vector2d & point, int8_t & value)
++  {
++    return node.sampleGridValue(point, node.grid_, value);
++  }
+   static auto solveRoad(SdMapUpperPlannerNode & node, double minimum_y)
+   {
+     SdMapUpperPlannerNode::PreviewConstraintData preview;
+@@ -35,6 +46,40 @@
+   }
+ };
+ }  // namespace imac_ctrl
++
++TEST(LowerPathGeneration, GridOriginTrialChangesCellCoordinatesOnlyWhenEnabled)
++{
++  rclcpp::init(0, nullptr);
++  for (const bool enabled : {false, true}) {
++    rclcpp::NodeOptions options;
++    options.parameter_overrides({
++      rclcpp::Parameter("grid_origin_x_override_enabled", enabled),
++      rclcpp::Parameter("grid_origin_x_override_m", 0.0)});
++    auto node = std::make_shared<imac_ctrl::SdMapUpperPlannerNode>(options);
++    using Access = imac_ctrl::LowerPathGenerationTestAccess;
++    Access::cancel(*node);
++    auto grid = std::make_shared<nav_msgs::msg::OccupancyGrid>();
++    grid->header.frame_id = "base_link";
++    grid->info.resolution = 1.0;
++    grid->info.width = 4;
++    grid->info.height = 4;
++    grid->info.origin.position.x = 2.95;
++    grid->info.origin.position.y = -2.0;
++    grid->info.origin.orientation.w = 1.0;
++    for (int i = 0; i < 16; ++i) {grid->data.push_back(static_cast<int8_t>(i));}
++    Access::receiveGrid(*node, grid);
++    EXPECT_DOUBLE_EQ(Access::gridOrigin(*node).x(), enabled ? 0.0 : 2.95);
++    EXPECT_DOUBLE_EQ(Access::gridOrigin(*node).y(), -2.0);
++    int8_t value = -1;
++    EXPECT_EQ(Access::sampleGrid(*node, {0.5, -1.5}, value), enabled);
++    EXPECT_TRUE(Access::sampleGrid(*node, {enabled ? 0.5 : 3.45, -1.5}, value));
++    EXPECT_EQ(value, 0);
++    EXPECT_FALSE(Access::sampleGrid(*node, {enabled ? 4.1 : 7.05, -1.5}, value));
++    EXPECT_DOUBLE_EQ(grid->info.origin.position.x, 2.95);
++    EXPECT_EQ(grid->data[15], 15);
++  }
++  rclcpp::shutdown();
++}
+ 
+ TEST(LowerPathGeneration, DensifierPublishesOriginalCoordinatesWithSamePathSnapshot)
+ {
+--- before/src/virtual_control/src/tracking_control.cpp
++++ after/src/virtual_control/src/tracking_control.cpp
+@@ -349,6 +349,8 @@
+   declare_parameter<double>("waypoint_yaw_bias_rad", waypoint_yaw_bias_rad_);
+   declare_parameter<double>("input_timeout_sec", input_timeout_sec_);
+   declare_parameter<bool>("require_grid_map", require_grid_map_);
++  declare_parameter<bool>("grid_origin_x_override_enabled", grid_origin_x_override_enabled_);
++  declare_parameter<double>("grid_origin_x_override_m", grid_origin_x_override_m_);
+ 
+   declare_parameter<bool>("use_csv_global_path", use_csv_global_path_);
+   declare_parameter<std::string>("csv_global_path_file", csv_global_path_file_);
+@@ -447,6 +449,8 @@
+   get_parameter("waypoint_yaw_bias_rad", waypoint_yaw_bias_rad_);
+   get_parameter("input_timeout_sec", input_timeout_sec_);
+   get_parameter("require_grid_map", require_grid_map_);
++  get_parameter("grid_origin_x_override_enabled", grid_origin_x_override_enabled_);
++  get_parameter("grid_origin_x_override_m", grid_origin_x_override_m_);
+ 
+   get_parameter("use_csv_global_path", use_csv_global_path_);
+   get_parameter("csv_global_path_file", csv_global_path_file_);
+@@ -604,6 +608,9 @@
+   }
+   if (grid_value_threshold_ < 0 || grid_value_threshold_ > 100) {
+     fail("grid_value_threshold must be in [0, 100]");
++  }
++  if (grid_origin_x_override_enabled_ && !std::isfinite(grid_origin_x_override_m_)) {
++    fail("grid_origin_x_override_m must be finite when the override is enabled");
+   }
+   if (require_grid_frame_match_ && normalizedFrameId(expected_grid_frame_id_).empty()) {
+     fail("expected_grid_frame_id must be nonempty when require_grid_frame_match is true");
+@@ -863,6 +870,15 @@
+   next.height = static_cast<int>(msg->info.height);
+   next.origin_body = Eigen::Vector2d(
+     msg->info.origin.position.x, msg->info.origin.position.y);
++  if (grid_origin_x_override_enabled_) {
++    next.origin_body.x() = grid_origin_x_override_m_;
++    RCLCPP_WARN_THROTTLE(
++      get_logger(), *get_clock(), 10000,
++      "grid origin experiment: received_x=%.3f effective_x=%.3f shift_x=%.3f; "
++      "cell data unchanged",
++      msg->info.origin.position.x, next.origin_body.x(),
++      next.origin_body.x() - msg->info.origin.position.x);
++  }
+   next.origin_yaw_rad = quaternionYaw(msg->info.origin.orientation);
+   next.frame_id = msg->header.frame_id;
+   next.data.assign(msg->data.begin(), msg->data.end());

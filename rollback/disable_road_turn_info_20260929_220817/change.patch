@@ -1,0 +1,21 @@
+--- before/tracking_control.cpp
++++ after/tracking_control.cpp
+@@ -2979,16 +2979,8 @@
+     return;
+   }
+ 
+-  RCLCPP_INFO(
+-    get_logger(),
+-    "road turn wp=[%s%d %d] psi_in=%+.2fdeg psi_out=%+.2fdeg "
+-    "delta=%+.2fdeg N=%d plan_v=%.2fm/s",
+-    has_previous_waypoint ? "prev " : "ego ", wp0_idx, wp1_idx,
+-    radToDeg(constraints.road_segment_heading_rad[0]),
+-    radToDeg(constraints.road_segment_heading_rad[1]),
+-    radToDeg(constraints.delta_psi_road_rad), constraints.N_pred,
+-    planning_speed_mps);
+-
++  // Road-turn diagnostics remain available in upper_trace. Avoid synchronous
++  // per-cycle logging before solving; retain the timing marker for comparison.
+   stages.timer.mark("road_turn_log");
+   const UpperSolveResult solve = solveUpperMiqp(constraints, planning_speed_mps);
+   stages.timer.mark("solve_upper_full_call");

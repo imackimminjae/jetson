@@ -1,0 +1,70 @@
+{
+  "synthetic/h7": {
+    "correct": 2,
+    "total": 2,
+    "upper_failures": 0,
+    "bad_cases": []
+  },
+  "synthetic/h6": {
+    "correct": 2,
+    "total": 2,
+    "upper_failures": 0,
+    "bad_cases": []
+  },
+  "replica/h7": {
+    "correct": 6,
+    "total": 6,
+    "upper_failures": 0,
+    "bad_cases": []
+  },
+  "replica/h6": {
+    "correct": 6,
+    "total": 6,
+    "upper_failures": 0,
+    "bad_cases": []
+  },
+  "ysynthetic/h7": {
+    "correct": 12,
+    "total": 12,
+    "upper_failures": 0,
+    "bad_cases": []
+  },
+  "ysynthetic/h6": {
+    "correct": 12,
+    "total": 12,
+    "upper_failures": 0,
+    "bad_cases": []
+  },
+  "robust/h7": {
+    "correct": 35,
+    "total": 36,
+    "upper_failures": 12,
+    "bad_cases": [
+      {
+        "scene": "branch_width",
+        "plant": "tau1.0",
+        "outcome": "left_road_stop",
+        "final_xy": [
+          133.33878111688193,
+          144.5268447845462
+        ]
+      }
+    ]
+  },
+  "robust/h6": {
+    "correct": 35,
+    "total": 36,
+    "upper_failures": 8,
+    "bad_cases": [
+      {
+        "scene": "branch_width",
+        "plant": "tau1.0",
+        "outcome": "left_road_stop",
+        "final_xy": [
+          132.78521845400354,
+          144.2768092076823
+        ]
+      }
+    ]
+  }
+}

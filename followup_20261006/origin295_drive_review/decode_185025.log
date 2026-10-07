@@ -1,0 +1,105 @@
+/bev/occupancy_grid count 637 start/end 18:50:26.028 18:51:01.248 gap median/max 0.05541062355041504 0.3584113121032715
+grid [(0.3125, 128, 128, [2.95, -20.0], [0.0, 0.0, 0.0, 1.0])] gaps>1s []
+/motive/vehicle/odom_map count 974 start/end 18:50:28.828 18:51:01.254 gap median/max 0.03401494026184082 0.05126333236694336
+/planner/lower_reference_path/with_arclength count 47 start/end 18:50:28.864 18:50:55.888 gap median/max 0.500135064125061 2.9996249675750732
+/debug/upper_branch_event count 65 start/end 18:50:28.884 18:51:00.884 gap median/max 0.500033974647522 0.5032298564910889
+/debug/lower_mpc_trace count 343 start/end 18:50:27.067 18:51:01.268 gap median/max 0.09995627403259277 0.4182753562927246
+LOWER modes Counter({0.0: 279, 3.0: 64}) speed min/med/max [0.74523192 5.22242277 7.02071374] valid steering saturation 0.2078853046594982
+mode 0.0 count 279 first,last 18:50:27.066 18:50:57.368
+mode 3.0 count 64 first,last 18:50:45.468 18:51:01.268
+UPPER 18:50:28.884 success 7 xy 186.8 211.46 yaw -87.3 status solved
+UPPER 18:50:29.384 success 7 xy 186.85 209.96 yaw -86.8 status solved
+UPPER 18:50:29.885 success 7 xy 186.89 208.17 yaw -87.3 status solved
+UPPER 18:50:30.384 success 7 xy 186.84 206.1 yaw -89.2 status solved
+UPPER 18:50:30.885 success 7 xy 186.73 203.88 yaw -91.1 status solved
+UPPER 18:50:31.383 success 7 xy 186.53 201.44 yaw -92.7 status solved
+UPPER 18:50:31.883 success 7 xy 186.38 198.81 yaw -91.9 status solved
+UPPER 18:50:32.385 success 7 xy 186.41 196.05 yaw -88.8 status solved
+UPPER 18:50:32.884 success 7 xy 186.62 193.09 yaw -85.8 status solved
+UPPER 18:50:33.385 success 7 xy 186.9 190.19 yaw -84.2 status solved
+UPPER 18:50:33.886 success 7 xy 187.27 187.17 yaw -82.9 status solved
+UPPER 18:50:34.385 success 7 xy 187.78 184.1 yaw -80.4 status solved
+UPPER 18:50:34.885 success 7 xy 188.55 181.15 yaw -76.0 status solved
+UPPER 18:50:35.386 success 7 xy 189.69 178.25 yaw -69.7 status solved
+UPPER 18:50:35.887 success 7 xy 191.36 175.48 yaw -60.9 status solved
+UPPER 18:50:36.388 success 7 xy 193.48 173.19 yaw -49.9 status solved
+UPPER 18:50:36.891 success 7 xy 196.08 171.32 yaw -39.0 status solved
+UPPER 18:50:37.388 success 7 xy 198.91 169.78 yaw -31.7 status solved
+UPPER 18:50:37.886 success 7 xy 201.64 168.39 yaw -29.2 status solved
+UPPER 18:50:38.384 success 7 xy 204.3 166.83 yaw -31.5 status solved
+UPPER 18:50:38.886 success 7 xy 206.84 164.96 yaw -36.3 status solved
+UPPER 18:50:39.385 success 7 xy 209.01 162.86 yaw -43.6 status solved
+UPPER 18:50:39.884 success 7 xy 210.87 160.36 yaw -52.2 status solved
+UPPER 18:50:40.385 success 7 xy 212.48 157.64 yaw -57.9 status solved
+UPPER 18:50:40.886 success 7 xy 214.18 155.13 yaw -55.8 status solved
+UPPER 18:50:41.384 success 7 xy 216.35 152.91 yaw -47.2 status solved
+UPPER 18:50:41.884 success 7 xy 219.12 151.25 yaw -34.2 status solved
+UPPER 18:50:42.385 success 7 xy 222.15 150.47 yaw -18.8 status solved
+UPPER 18:50:42.886 success 7 xy 225.34 150.4 yaw -5.7 status solved
+UPPER 18:50:43.385 success 7 xy 228.5 150.8 yaw 2.7 status solved
+UPPER 18:50:43.885 success 7 xy 231.5 150.96 yaw 0.3 status solved
+UPPER 18:50:44.386 solver_rejected 7 xy 234.5 150.41 yaw -10.6 status DAQP direct corridor QP infeasible: tried=1
+UPPER 18:50:44.884 solver_rejected 7 xy 237.31 148.99 yaw -25.3 status DAQP direct corridor QP infeasible: tried=3
+UPPER 18:50:45.386 solver_rejected 7 xy 239.51 146.91 yaw -41.0 status DAQP direct corridor QP infeasible: tried=6
+UPPER 18:50:45.886 solver_rejected 7 xy 241.37 144.46 yaw -50.7 status DAQP direct corridor QP infeasible: tried=2
+UPPER 18:50:46.385 success 7 xy 243.0 141.93 yaw -56.3 status solved
+UPPER 18:50:46.885 success 7 xy 244.43 139.55 yaw -58.7 status solved
+UPPER 18:50:47.386 success 7 xy 245.99 137.3 yaw -56.4 status solved
+UPPER 18:50:47.884 success 7 xy 247.74 135.4 yaw -50.1 status solved
+UPPER 18:50:48.385 success 7 xy 249.84 133.92 yaw -39.6 status solved
+UPPER 18:50:48.884 success 7 xy 252.31 133.0 yaw -26.5 status solved
+UPPER 18:50:49.385 success 7 xy 254.79 132.74 yaw -12.6 status solved
+UPPER 18:50:49.885 success 7 xy 257.31 133.02 yaw 0.0 status solved
+UPPER 18:50:50.385 success 7 xy 259.75 133.71 yaw 9.9 status solved
+UPPER 18:50:50.887 success 7 xy 262.04 134.44 yaw 13.4 status solved
+UPPER 18:50:51.390 solver_rejected 5 xy 264.44 134.85 yaw 8.4 status DAQP direct corridor QP infeasible: tried=1
+UPPER 18:50:51.886 solver_rejected 3 xy 266.95 134.76 yaw -1.3 status DAQP direct corridor QP infeasible: tried=1
+UPPER 18:50:52.384 solver_rejected 7 xy 269.29 134.11 yaw -13.4 status DAQP direct corridor QP infeasible: tried=1
+UPPER 18:50:52.886 solver_rejected 7 xy 271.53 133.03 yaw -23.6 status DAQP direct corridor QP infeasible: tried=2
+UPPER 18:50:53.384 solver_rejected 7 xy 273.67 131.79 yaw -29.2 status DAQP direct corridor QP infeasible: tried=1
+UPPER 18:50:53.887 success 7 xy 275.61 130.6 yaw -31.9 status solved
+UPPER 18:50:54.384 success 7 xy 277.45 129.39 yaw -34.4 status solved
+UPPER 18:50:54.884 success 7 xy 279.1 127.92 yaw -41.3 status solved
+UPPER 18:50:55.385 success 7 xy 280.44 126.25 yaw -49.5 status solved
+UPPER 18:50:55.888 success 6 xy 281.73 124.42 yaw -54.1 status solved
+UPPER 18:50:56.384 solver_rejected 7 xy 283.19 122.63 yaw -52.5 status DAQP direct corridor QP infeasible: tried=1
+UPPER 18:50:56.885 solver_rejected 7 xy 284.95 121.12 yaw -44.9 status DAQP direct corridor QP infeasible: tried=1
+UPPER 18:50:57.385 solver_rejected 7 xy 287.06 119.94 yaw -34.6 status DAQP direct corridor QP infeasible: tried=1
+UPPER 18:50:57.884 solver_rejected 7 xy 289.44 119.09 yaw -25.6 status DAQP direct corridor QP infeasible: tried=1
+UPPER 18:50:58.384 solver_rejected 7 xy 291.71 118.44 yaw -20.8 status DAQP direct corridor QP infeasible: tried=1
+UPPER 18:50:58.885 solver_rejected 7 xy 293.95 117.85 yaw -18.4 status DAQP direct corridor QP infeasible: tried=1
+UPPER 18:50:59.384 solver_rejected 7 xy 296.11 117.31 yaw -17.3 status DAQP direct corridor QP infeasible: tried=1
+UPPER 18:50:59.885 solver_rejected 7 xy 298.09 116.82 yaw -16.7 status DAQP direct corridor QP infeasible: tried=1
+UPPER 18:51:00.384 solver_rejected 7 xy 299.99 116.35 yaw -16.5 status DAQP direct corridor QP infeasible: tried=1
+UPPER 18:51:00.884 solver_rejected 7 xy 301.79 115.91 yaw -16.3 status DAQP direct corridor QP infeasible: tried=1
+WARNINGS
+18:50:26.994 lower_tracking_mpc_node MAVLink peer unknown; check MAVProxy --out=127.0.0.1:14540
+18:50:26.995 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: waiting for pose
+18:50:26.995 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: waiting for pose
+18:50:26.995 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: waiting for pose
+18:50:44.385 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.353; retaining last published path
+18:50:45.386 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=6 solve_ms=0.681; retaining last published path
+18:50:45.468 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: stale lower path
+18:50:51.385 upper_planner_node interval_diag step=6 reason=3 ref_body=(24.503,-11.406) heading_deg=-23.00 center_cell=(68,27) center_value=100 line_free=0 blocked=435 unknown=0 outside=1 longest_run=0 min_run=2 grid_free=670 zero=670 positive=15714 unknown=0 topic=/bev/occupancy_grid frame=Vehicle origin=(2.950,-20.000) origin_yaw_deg=0.00 size=128x128 res=0.3125 positive_is_drivable=0 threshold=1 waypoint_bias=0 previous=1
+18:50:51.385 upper_planner_node no valid preview interval at step=6; usable horizon=5 reason=3
+18:50:51.385 upper_planner_node no valid preview interval at step=7; usable horizon=5 reason=3
+18:50:51.386 upper_planner_node horizon_diag configured=7 extent_limit=7 requested=7 usable=5 reserve=1 restore=1 step_m=4.500 previous=1
+18:50:51.390 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=1.575; retaining last published path
+18:50:51.883 upper_planner_node no valid preview interval at step=4; usable horizon=3 reason=3
+18:50:51.883 upper_planner_node no valid preview interval at step=5; usable horizon=3 reason=3
+18:50:51.884 upper_planner_node no valid preview interval at step=6; usable horizon=3 reason=3
+18:50:51.886 upper_planner_node no valid preview interval at step=7; usable horizon=3 reason=3
+18:50:52.467 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: stale lower path
+18:50:52.886 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=2 solve_ms=0.527; retaining last published path
+18:50:53.468 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: stale lower path
+18:50:55.884 upper_planner_node interval_diag step=7 reason=3 ref_body=(28.068,13.289) heading_deg=29.14 center_cell=(80,106) center_value=100 line_free=0 blocked=382 unknown=0 outside=2 longest_run=0 min_run=2 grid_free=1568 zero=1568 positive=14816 unknown=0 topic=/bev/occupancy_grid frame=Vehicle origin=(2.950,-20.000) origin_yaw_deg=0.00 size=128x128 res=0.3125 positive_is_drivable=0 threshold=1 waypoint_bias=0 previous=1
+18:50:55.885 upper_planner_node no valid preview interval at step=7; usable horizon=6 reason=3
+18:50:55.885 upper_planner_node horizon_diag configured=7 extent_limit=7 requested=7 usable=6 reserve=1 restore=1 step_m=4.500 previous=1
+18:50:56.386 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.370; retaining last published path
+18:50:57.386 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.355; retaining last published path
+18:50:57.468 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: stale lower path
+18:50:58.468 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: stale lower path
+18:50:58.885 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.372; retaining last published path
+18:50:59.469 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: stale lower path
+18:51:00.385 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.345; retaining last published path
+18:51:00.468 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: stale lower path

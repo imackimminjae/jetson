@@ -1,0 +1,33 @@
+/bev/occupancy_grid count 384 start/end 04:23:07.716 04:23:21.812 gap median/max 0.03188729286193848 0.14552521705627441
+grid [(0.3125, 128, 128, [0.0, -20.0], [0.0, 0.0, 0.0, 1.0])] gaps>1s []
+/motive/vehicle/odom_map count 412 start/end 04:23:08.123 04:23:21.817 gap median/max 0.03389573097229004 0.04660201072692871
+/planner/lower_reference_path/with_arclength count 11 start/end 04:23:09.304 04:23:20.678 gap median/max 0.9994446039199829 3.0048396587371826
+/debug/upper_branch_event count 13 start/end 04:23:09.678 04:23:21.676 gap median/max 0.9996733665466309 1.0072405338287354
+/debug/lower_mpc_trace count 112 start/end 04:23:10.670 04:23:21.771 gap median/max 0.1000511646270752 0.10282564163208008
+LOWER modes Counter({0.0: 97, 3.0: 15}) speed min/med/max [4.76707728 6.14370203 6.94563066] valid steering saturation 0.25773195876288657
+mode 0.0 count 97 first,last 04:23:10.670 04:23:21.770
+mode 3.0 count 15 first,last 04:23:18.269 04:23:19.669
+UPPER 04:23:09.678 success 7 xy 188.17 208.04 yaw -86.1 status solved
+UPPER 04:23:10.677 success 7 xy 188.16 202.82 yaw -90.4 status solved
+UPPER 04:23:11.678 success 7 xy 187.9 197.06 yaw -92.9 status solved
+UPPER 04:23:12.677 success 7 xy 187.71 191.03 yaw -91.0 status solved
+UPPER 04:23:13.678 success 7 xy 188.18 184.87 yaw -85.6 status solved
+UPPER 04:23:14.679 success 7 xy 189.38 178.76 yaw -77.6 status solved
+UPPER 04:23:15.679 success 7 xy 192.5 173.39 yaw -55.8 status solved
+UPPER 04:23:16.677 success 7 xy 197.19 169.27 yaw -46.3 status solved
+UPPER 04:23:17.684 solver_rejected 7 xy 200.11 163.82 yaw -65.4 status DAQP direct corridor QP infeasible: tried=160
+UPPER 04:23:18.682 solver_rejected 7 xy 203.47 158.75 yaw -53.4 status DAQP direct corridor QP infeasible: tried=64
+UPPER 04:23:19.682 success 7 xy 207.44 154.67 yaw -47.6 status solved
+UPPER 04:23:20.679 success 7 xy 211.43 151.49 yaw -36.8 status solved
+UPPER 04:23:21.676 solver_rejected 7 xy 216.19 150.33 yaw -13.7 status DAQP direct corridor QP infeasible: tried=4
+WARNINGS
+04:23:07.584 px4_ekf_bridge SIH heading check: settling (EKF-SIH=0.44699355342566804 deg); pose output blocked
+04:23:07.584 px4_ekf_bridge SIH heading check: ok (EKF-SIH=0.5245913325861861 deg); pose output enabled
+04:23:08.129 px4_odom_map_bridge Waiting for valid PX4 source pose on /px4/sih/odom
+04:23:09.288 upper_planner_node grid origin experiment: received_x=0.000 effective_x=0.000 shift_x=0.000; cell data unchanged
+04:23:10.587 lower_tracking_mpc_node MAVLink peer unknown; check MAVProxy --out=127.0.0.1:14540
+04:23:12.809 upper_planner_node grid origin experiment: received_x=0.000 effective_x=0.000 shift_x=0.000; cell data unchanged
+04:23:17.685 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=160 solve_ms=6.947; retaining last published path
+04:23:18.269 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: stale lower path
+04:23:19.269 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: stale lower path
+04:23:21.676 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=4 solve_ms=0.248; retaining last published path

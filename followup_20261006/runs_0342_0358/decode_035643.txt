@@ -1,0 +1,57 @@
+/bev/occupancy_grid count 671 start/end 03:56:45.181 03:57:09.042 gap median/max 0.03209578990936279 0.12204837799072266
+grid [(0.3125, 128, 128, [0.0, -20.0], [0.0, 0.0, 0.0, 1.0])] gaps>1s []
+/motive/vehicle/odom_map count 716 start/end 03:56:45.209 03:57:09.040 gap median/max 0.03406572341918945 0.044653892517089844
+/planner/lower_reference_path/with_arclength count 20 start/end 03:56:45.181 03:57:04.052 gap median/max 1.0001986026763916 1.003937005996704
+/debug/upper_branch_event count 24 start/end 03:56:46.052 03:57:09.053 gap median/max 0.999842643737793 1.0058538913726807
+/debug/lower_mpc_trace count 239 start/end 03:56:45.196 03:57:08.997 gap median/max 0.09996914863586426 0.10309195518493652
+LOWER modes Counter({0.0: 204, 3.0: 35}) speed min/med/max [2.85179303 5.87373573 7.12561539] valid steering saturation 0.14215686274509803
+mode 0.0 count 204 first,last 03:56:45.196 03:57:05.497
+mode 3.0 count 35 first,last 03:57:05.596 03:57:08.996
+UPPER 03:56:46.052 success 7 xy 187.63 210.21 yaw -80.5 status solved
+UPPER 03:56:47.053 success 7 xy 187.96 205.82 yaw -85.4 status solved
+UPPER 03:56:48.053 success 7 xy 187.71 200.65 yaw -92.5 status solved
+UPPER 03:56:49.052 success 7 xy 187.19 195.02 yaw -94.0 status solved
+UPPER 03:56:50.053 success 7 xy 187.31 189.17 yaw -87.0 status solved
+UPPER 03:56:51.055 success 7 xy 189.11 183.43 yaw -69.3 status solved
+UPPER 03:56:52.056 success 7 xy 192.58 178.43 yaw -55.4 status solved
+UPPER 03:56:53.053 success 7 xy 196.31 173.73 yaw -51.7 status solved
+UPPER 03:56:54.057 success 7 xy 200.41 169.29 yaw -47.4 status solved
+UPPER 03:56:55.057 success 7 xy 204.86 165.22 yaw -42.6 status solved
+UPPER 03:56:56.055 success 7 xy 209.54 161.32 yaw -41.8 status solved
+UPPER 03:56:57.052 success 7 xy 214.03 157.2 yaw -42.8 status solved
+UPPER 03:56:58.052 success 7 xy 219.28 154.06 yaw -29.2 status solved
+UPPER 03:56:59.055 success 7 xy 224.99 152.05 yaw -22.0 status solved
+UPPER 03:57:00.052 success 7 xy 230.02 148.79 yaw -39.1 status solved
+UPPER 03:57:01.054 success 7 xy 233.64 143.93 yaw -53.4 status solved
+UPPER 03:57:02.053 success 7 xy 238.5 140.33 yaw -32.9 status solved
+UPPER 03:57:03.053 success 7 xy 244.43 139.36 yaw -10.5 status solved
+UPPER 03:57:04.052 success 7 xy 250.16 138.09 yaw -15.6 status solved
+UPPER 03:57:05.058 solver_rejected 5 xy 256.13 137.72 yaw -0.1 status DAQP direct corridor QP infeasible: tried=48
+UPPER 03:57:06.057 solver_rejected 7 xy 261.55 140.56 yaw 29.5 status DAQP direct corridor QP infeasible: tried=1
+UPPER 03:57:07.052 solver_rejected 6 xy 265.81 144.28 yaw 39.3 status DAQP direct corridor QP infeasible: tried=1
+UPPER 03:57:08.051 solver_rejected 6 xy 269.49 147.66 yaw 41.3 status DAQP direct corridor QP infeasible: tried=1
+UPPER 03:57:09.053 solver_rejected 5 xy 272.74 150.65 yaw 41.8 status DAQP direct corridor QP infeasible: tried=1
+WARNINGS
+03:56:45.186 px4_odom_map_bridge Waiting for valid PX4 source pose on /px4/sih/odom
+03:56:50.231 upper_planner_node grid origin experiment: received_x=0.000 effective_x=0.000 shift_x=0.000; cell data unchanged
+03:57:00.232 upper_planner_node grid origin experiment: received_x=0.000 effective_x=0.000 shift_x=0.000; cell data unchanged
+03:57:05.052 upper_planner_node interval_diag step=6 reason=3 ref_body=(20.409,17.193) heading_deg=32.80 center_cell=(65,119) center_value=100 line_free=0 blocked=265 unknown=130 outside=2 longest_run=0 min_run=2 grid_free=3898 zero=3898 positive=9246 unknown=3240 topic=/bev/occupancy_grid frame=Vehicle origin=(0.000,-20.000) origin_yaw_deg=0.00 size=128x128 res=0.3125 positive_is_drivable=0 threshold=1 waypoint_bias=0 previous=1
+03:57:05.052 upper_planner_node no valid preview interval at step=6; usable horizon=5 reason=3
+03:57:05.052 upper_planner_node no valid preview interval at step=7; usable horizon=5 reason=3
+03:57:05.054 upper_planner_node horizon_diag configured=7 extent_limit=7 requested=7 usable=5 reserve=1 restore=1 step_m=4.500 previous=1
+03:57:05.059 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=48 solve_ms=1.854; retaining last published path
+03:57:05.597 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: stale lower path
+03:57:06.051 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+03:57:06.596 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: stale lower path
+03:57:07.050 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+03:57:07.051 upper_planner_node interval_diag step=7 reason=3 ref_body=(29.665,-4.728) heading_deg=-19.00 center_cell=(94,48) center_value=100 line_free=0 blocked=258 unknown=166 outside=1 longest_run=0 min_run=2 grid_free=3070 zero=3070 positive=10074 unknown=3240 topic=/bev/occupancy_grid frame=Vehicle origin=(0.000,-20.000) origin_yaw_deg=0.00 size=128x128 res=0.3125 positive_is_drivable=0 threshold=1 waypoint_bias=0 previous=1
+03:57:07.051 upper_planner_node no valid preview interval at step=7; usable horizon=6 reason=3
+03:57:07.052 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.367; retaining last published path
+03:57:07.597 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: stale lower path
+03:57:08.049 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+03:57:08.050 upper_planner_node no valid preview interval at step=7; usable horizon=6 reason=3
+03:57:08.050 upper_planner_node horizon_diag configured=7 extent_limit=7 requested=7 usable=6 reserve=1 restore=1 step_m=4.500 previous=1
+03:57:08.598 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: stale lower path
+03:57:09.052 upper_planner_node no valid preview interval at step=6; usable horizon=5 reason=3
+03:57:09.053 upper_planner_node no valid preview interval at step=7; usable horizon=5 reason=3
+03:57:09.054 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.355; retaining last published path

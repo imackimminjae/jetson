@@ -1,0 +1,11 @@
+--- current_snapshot.yaml
++++ offline_candidate_r3.yaml
+@@ -163,7 +163,7 @@
+     upper_r_dv: 1.0
+     # 2026-10-06: 3.0 with the cumulative increment model (was 1.5 with the legacy model).
+     # It now penalizes curvature deviation from the reference. Restore 1.5 if the model flag is off.
+-    upper_r_dpsi: 2.0
++    upper_r_dpsi: 3.0
+     normalize_upper_input_cost: false
+     turn_preview_steps: 2
+     turn_weight_growth: 2.0

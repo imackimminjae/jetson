@@ -1,0 +1,721 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_____________ test_main9_observation_state_and_interval_processing _____________
+
+tmp_path = PosixPath('/tmp/pytest-of-imac/pytest-1/test_main9_observation_state_a0')
+
+    def test_main9_observation_state_and_interval_processing(tmp_path):
+        import rclpy
+        from geometry_msgs.msg import PoseStamped
+        from nav_msgs.msg import OccupancyGrid, Odometry, Path as PathMsg
+        from rclpy.qos import DurabilityPolicy, QoSProfile
+        from std_msgs.msg import Float64MultiArray
+    
+        assert os.environ.get('ROS_DOMAIN_ID') not in (None, '0', '1')
+        executable = Path(__file__).resolve().parents[3] / 'build/virtual_control/upper_planner_node'
+        assert executable.is_file()
+        rclpy.init()
+        node = rclpy.create_node('main9_interval_test')
+        qos = QoSProfile(depth=1, durability=DurabilityPolicy.TRANSIENT_LOCAL)
+        path_pub = node.create_publisher(PathMsg, '/main9_test/path', qos)
+        grid_pub = node.create_publisher(OccupancyGrid, '/main9_test/grid', 10)
+        odom_pub = node.create_publisher(Odometry, '/main9_test/odom', 10)
+        states, details, legacy = [], [], []
+        state_columns = []
+    
+        def receive_state(msg):
+            state_columns[:] = msg.layout.dim[0].label.split(',')
+            states.append(list(msg.data))
+    
+        node.create_subscription(Float64MultiArray, '/debug/upper_interval_centering_state',
+                                 receive_state, 10)
+        node.create_subscription(Float64MultiArray, '/debug/upper_interval_info',
+                                 lambda msg: details.append(list(msg.data)), 10)
+        node.create_subscription(Float64MultiArray, '/debug/upper_constraint_intervals',
+                                 lambda msg: legacy.append(list(msg.data)), 10)
+        path = PathMsg()
+        path.header.frame_id = 'map'
+        for x in (0.0, 40.0, 80.0):
+            pose = PoseStamped()
+            pose.pose.position.x = x
+            pose.pose.orientation.w = 1.0
+            path.poses.append(pose)
+        odom = Odometry()
+        odom.header.frame_id = 'map'
+        odom.pose.pose.orientation.w = 1.0
+        odom.twist.twist.linear.x = 1.5
+        current_grid = None
+        process = None
+        log_stream = None
+        logfile = None
+    
+        def grid_for(specs):
+            grid = OccupancyGrid()
+            grid.header.frame_id = 'base_link'
+            grid.info.resolution = 0.1
+            grid.info.width = 180
+            grid.info.height = 200
+            grid.info.origin.position.x = -1.0
+            grid.info.origin.position.y = -10.0
+            grid.info.origin.orientation.w = 1.0
+            data = []
+            for gy in range(200):
+                y = -10.0 + (gy + 0.5) * 0.1
+                for gx in range(180):
+                    x = -1.0 + (gx + 0.5) * 0.1
+                    k = min(5, max(0, math.floor((x + 1.5) / 3.0)))
+                    spec = specs[k]
+                    if spec is None:
+                        value = -1
+                    elif spec == 'unknown_boundary':
+                        value = 100 if abs(y) < 2.0 else -1
+                    elif isinstance(spec, list):
+                        value = 100 if any(lo < y < hi for lo, hi in spec) else 0
+                    else:
+                        value = 100 if abs(y) < spec / 2 else 0
+                    data.append(value)
+            grid.data = data
+            return grid
+    
+        def stop():
+            nonlocal process, log_stream
+            if process is not None:
+                if process.poll() is None:
+                    process.send_signal(signal.SIGINT)
+                    try:
+                        process.wait(timeout=5)
+                    except subprocess.TimeoutExpired:
+                        process.kill()
+                        process.wait()
+                process = None
+            if log_stream is not None:
+                log_stream.close()
+                log_stream = None
+    
+        def start(name, specs):
+            nonlocal process, log_stream, logfile, current_grid
+            stop()
+            until = time.monotonic() + 0.3
+            while time.monotonic() < until:
+                rclpy.spin_once(node, timeout_sec=0.02)
+            states.clear()
+            details.clear()
+            legacy.clear()
+            current_grid = grid_for(specs)
+            params = {
+                'scale_mode': 'fullscale', 'upper_preview_steps': 5,
+                'upper_prediction_dt_sec': 2.0, 'target_speed_mps': 1.5,
+                'upper_planner_rate_hz': 5.0, 'preview_limit_to_grid_extent': False,
+                'preview_restore_full_horizon': True, 'input_timeout_sec': 0.5,
+                'global_path_topic': '/main9_test/path', 'grid_map_topic': '/main9_test/grid',
+                'odom_topic': '/main9_test/odom', 'preview_interval_debug': True,
+            }
+            args = [str(executable), '--ros-args']
+            for key, value in params.items():
+                text = str(value).lower() if isinstance(value, bool) else str(value)
+                args += ['-p', f'{key}:={text}']
+            logfile = tmp_path / f'{name}.log'
+            log_stream = logfile.open('w')
+            process = subprocess.Popen(args, stdout=log_stream, stderr=subprocess.STDOUT)
+    
+        def wait_for(predicate, timeout=12, publish_grid=True):
+            deadline = time.monotonic() + timeout
+            while time.monotonic() < deadline:
+                assert process.poll() is None, logfile.read_text()
+                stamp = node.get_clock().now().to_msg()
+                path.header.stamp = odom.header.stamp = stamp
+                path_pub.publish(path)
+                odom_pub.publish(odom)
+                if publish_grid:
+                    current_grid.header.stamp = stamp
+                    grid_pub.publish(current_grid)
+                rclpy.spin_once(node, timeout_sec=0.03)
+                if predicate():
+                    return
+            pytest.fail(f'Condition timed out. States: {states[-8:]}\n{logfile.read_text()}')
+    
+        def rows():
+            return [details[-1][i:i+12] for i in range(0, len(details[-1]), 12)]
+    
+        try:
+            start('far_narrow_road', [10, 10, 10, 10, 10, 4.9])
+            wait_for(lambda: states and details and states[-1][2] > 0)
+            assert state_columns == ['stamp', 'B_before', 'B', 'threshold', 'candidate',
+                                     'candidate_step', 'candidate_interval']
+            assert len(states[-1]) == 7
+            baseline = states[-1][2]
+            assert baseline == pytest.approx(4.8, abs=0.11)
+            assert states[-1][3] == pytest.approx(1.5 * baseline)
+            assert states[-1][5:7] == [5.0, 0.0]
+            assert all(bool(row[4]) == (int(row[0]) == 5) for row in rows())
+            assert all(row[5:7] == [1.0, 1.0] for row in rows())
+            for row in rows():
+                assert row[3] == pytest.approx(row[2] * 0.4 if row[4] else row[2] - 4.0)
+    
+            # Wide-only observations cannot grow B past the previous 1.5*B limit.
+            current_grid = grid_for([10]*6)
+            start_index = len(states)
+            wait_for(lambda: len([s for s in states[start_index:] if s[4] > 9]) >= 3)
+            assert all(s[2] == pytest.approx(baseline)
+                       for s in states[start_index:] if s[4] > 9)
+    
+            # A shorter non-reference branch does not win or freeze B. Extract the
+            # full preview even beyond a blocked stage; preserve the solver prefix.
+            current_grid = grid_for([8, 8, 8, 0, 8, [(-2, 2), (5, 6)]])
+            start_index = len(states)
+>           wait_for(lambda: any(s[5:7] == [5.0, 0.0] and s[4] < 4.1
+                                 for s in states[start_index:]) and
+                     details and any(r[0] == 5 and r[1] == 1 for r in rows()) and
+                     legacy and max(legacy[-1][0::7]) == 2)
+
+src/virtual_control/test/test_interval_centering_ros.py:176: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+predicate = <function test_main9_observation_state_and_interval_processing.<locals>.<lambda> at 0xffff927cc160>
+timeout = 12, publish_grid = True
+
+    def wait_for(predicate, timeout=12, publish_grid=True):
+        deadline = time.monotonic() + timeout
+        while time.monotonic() < deadline:
+            assert process.poll() is None, logfile.read_text()
+            stamp = node.get_clock().now().to_msg()
+            path.header.stamp = odom.header.stamp = stamp
+            path_pub.publish(path)
+            odom_pub.publish(odom)
+            if publish_grid:
+                current_grid.header.stamp = stamp
+                grid_pub.publish(current_grid)
+            rclpy.spin_once(node, timeout_sec=0.03)
+            if predicate():
+                return
+>       pytest.fail(f'Condition timed out. States: {states[-8:]}\n{logfile.read_text()}')
+E       Failed: Condition timed out. States: [[1790970491.966342, 4.800000000000001, 4.800000000000001, 7.200000000000001, 7.9, 0.0, 0.0], [1790970492.1664283, 4.800000000000001, 4.800000000000001, 7.200000000000001, 7.9, 0.0, 0.0], [1790970492.3663442, 4.800000000000001, 4.800000000000001, 7.200000000000001, 7.9, 0.0, 0.0], [1790970492.5665588, 4.800000000000001, 4.800000000000001, 7.200000000000001, 7.9, 0.0, 0.0], [1790970492.7664359, 4.800000000000001, 4.800000000000001, 7.200000000000001, 7.9, 0.0, 0.0], [1790970492.9663746, 4.800000000000001, 4.800000000000001, 7.200000000000001, 7.9, 0.0, 0.0], [1790970493.1664088, 4.800000000000001, 4.800000000000001, 7.200000000000001, 7.9, 0.0, 0.0], [1790970493.3666854, 4.800000000000001, 4.800000000000001, 7.200000000000001, 7.9, 0.0, 0.0]]
+E       [INFO] [1790970480.557340904] [upper_planner_node]: planner state input: Odometry topic=/main9_test/odom yaw=quaternion
+E       [INFO] [1790970480.564189847] [upper_planner_node]: Egocentric MIQP planner ready: rate=5.00Hz pred_dt=2.000s Nmax=5 lower_dt=0.100s target_v=1.500m/s scale=fullscale wheelbase=2.80m length=4.70m bev=20.00m margin=2.00m state=odom grid=/main9_test/grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+E       [INFO] [1790970480.564997949] [upper_planner_node]: reference path loaded from /main9_test/path: 3 points frame=map waypoint_bias=disabled
+E       [INFO] [1790970480.764445623] [upper_planner_node]: waypoint pair advanced: [0,1] -> [1,2]; previous reference retained
+E       [INFO] [1790970480.765058604] [upper_planner_node]: interval_scale B_before=0.000 candidate_B=4.800 B=4.800 threshold_1_5B=7.200 candidate_step=5 candidate_interval=0
+E       [INFO] [1790970480.765157429] [upper_planner_node]: interval step=0 candidate=0 raw=9.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970480.765207897] [upper_planner_node]: interval step=1 candidate=0 raw=9.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970480.765245757] [upper_planner_node]: interval step=2 candidate=0 raw=9.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970480.765277951] [upper_planner_node]: interval step=3 candidate=0 raw=9.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970480.765309186] [upper_planner_node]: interval step=4 candidate=0 raw=9.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970480.765341253] [upper_planner_node]: interval step=5 candidate=0 raw=4.800 centering=ON inset_start=1.440 inset_end=1.440
+E       [INFO] [1790970480.964610864] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=9.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970480.964757309] [upper_planner_node]: interval step=0 candidate=0 raw=9.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970480.964813186] [upper_planner_node]: interval step=1 candidate=0 raw=9.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970480.964854341] [upper_planner_node]: interval step=2 candidate=0 raw=9.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970480.964889320] [upper_planner_node]: interval step=3 candidate=0 raw=9.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970480.964923915] [upper_planner_node]: interval step=4 candidate=0 raw=9.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970480.964957870] [upper_planner_node]: interval step=5 candidate=0 raw=9.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970481.164840480] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=9.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970481.165473911] [upper_planner_node]: interval step=0 candidate=0 raw=9.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970481.165577472] [upper_planner_node]: interval step=1 candidate=0 raw=9.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970481.165624228] [upper_planner_node]: interval step=2 candidate=0 raw=9.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970481.165664967] [upper_planner_node]: interval step=3 candidate=0 raw=9.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970481.165700842] [upper_planner_node]: interval step=4 candidate=0 raw=9.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970481.165734637] [upper_planner_node]: interval step=5 candidate=0 raw=9.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970481.364592363] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=9.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970481.364725175] [upper_planner_node]: interval step=0 candidate=0 raw=9.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970481.364780219] [upper_planner_node]: interval step=1 candidate=0 raw=9.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970481.365133818] [upper_planner_node]: interval step=2 candidate=0 raw=9.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970481.365176894] [upper_planner_node]: interval step=3 candidate=0 raw=9.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970481.365214081] [upper_planner_node]: interval step=4 candidate=0 raw=9.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970481.365246916] [upper_planner_node]: interval step=5 candidate=0 raw=9.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [WARN] [1790970481.564738360] [upper_planner_node]: interval_diag step=3 reason=3 ref_body=(9.000,0.000) heading_deg=0.00 center_cell=(99,99) center_value=0 line_free=0 blocked=201 unknown=0 outside=1 longest_run=0 min_run=2 grid_free=10950 zero=25050 positive=10950 unknown=0 topic=/main9_test/grid frame=base_link origin=(-1.000,-10.000) origin_yaw_deg=0.00 size=180x200 res=0.1000 positive_is_drivable=1 threshold=0 waypoint_bias=0 previous=1
+E       [WARN] [1790970481.564897798] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+E       [INFO] [1790970481.564995311] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=7.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970481.565046643] [upper_planner_node]: interval step=0 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970481.565088759] [upper_planner_node]: interval step=1 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970481.565123898] [upper_planner_node]: interval step=2 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970481.565157533] [upper_planner_node]: interval step=4 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970481.565189983] [upper_planner_node]: interval step=5 candidate=0 raw=3.900 centering=ON inset_start=1.170 inset_end=1.170
+E       [INFO] [1790970481.565226915] [upper_planner_node]: interval step=5 candidate=1 raw=0.900 centering=ON inset_start=0.270 inset_end=0.270
+E       [WARN] [1790970481.565270502] [upper_planner_node]: horizon_diag configured=5 extent_limit=5 requested=5 usable=2 reserve=1 restore=1 step_m=3.000 previous=1
+E       [WARN] [1790970481.764695189] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+E       [INFO] [1790970481.764844354] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=7.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970481.764909864] [upper_planner_node]: interval step=0 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970481.764952332] [upper_planner_node]: interval step=1 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970481.764987823] [upper_planner_node]: interval step=2 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970481.765019249] [upper_planner_node]: interval step=4 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970481.765053012] [upper_planner_node]: interval step=5 candidate=0 raw=3.900 centering=ON inset_start=1.170 inset_end=1.170
+E       [INFO] [1790970481.765084791] [upper_planner_node]: interval step=5 candidate=1 raw=0.900 centering=ON inset_start=0.270 inset_end=0.270
+E       [WARN] [1790970481.964768828] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+E       [INFO] [1790970481.965009841] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=7.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970481.965086776] [upper_planner_node]: interval step=0 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970481.965134556] [upper_planner_node]: interval step=1 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970481.965171551] [upper_planner_node]: interval step=2 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970481.965378001] [upper_planner_node]: interval step=4 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970481.965416244] [upper_planner_node]: interval step=5 candidate=0 raw=3.900 centering=ON inset_start=1.170 inset_end=1.170
+E       [INFO] [1790970481.965449687] [upper_planner_node]: interval step=5 candidate=1 raw=0.900 centering=ON inset_start=0.270 inset_end=0.270
+E       [WARN] [1790970482.164900186] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+E       [INFO] [1790970482.165465227] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=7.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970482.165602583] [upper_planner_node]: interval step=0 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970482.165656123] [upper_planner_node]: interval step=1 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970482.165694687] [upper_planner_node]: interval step=2 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970482.165729858] [upper_planner_node]: interval step=4 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970482.165763557] [upper_planner_node]: interval step=5 candidate=0 raw=3.900 centering=ON inset_start=1.170 inset_end=1.170
+E       [INFO] [1790970482.165796295] [upper_planner_node]: interval step=5 candidate=1 raw=0.900 centering=ON inset_start=0.270 inset_end=0.270
+E       [WARN] [1790970482.364894416] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+E       [INFO] [1790970482.365281682] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=7.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970482.365384891] [upper_planner_node]: interval step=0 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970482.365439775] [upper_planner_node]: interval step=1 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970482.365481635] [upper_planner_node]: interval step=2 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970482.365553641] [upper_planner_node]: interval step=4 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970482.365605486] [upper_planner_node]: interval step=5 candidate=0 raw=3.900 centering=ON inset_start=1.170 inset_end=1.170
+E       [INFO] [1790970482.365647729] [upper_planner_node]: interval step=5 candidate=1 raw=0.900 centering=ON inset_start=0.270 inset_end=0.270
+E       [WARN] [1790970482.564898567] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+E       [INFO] [1790970482.565291817] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=7.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970482.565381233] [upper_planner_node]: interval step=0 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970482.565429237] [upper_planner_node]: interval step=1 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970482.565467960] [upper_planner_node]: interval step=2 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970482.565536350] [upper_planner_node]: interval step=4 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970482.565596291] [upper_planner_node]: interval step=5 candidate=0 raw=3.900 centering=ON inset_start=1.170 inset_end=1.170
+E       [INFO] [1790970482.565644328] [upper_planner_node]: interval step=5 candidate=1 raw=0.900 centering=ON inset_start=0.270 inset_end=0.270
+E       [WARN] [1790970482.764853946] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+E       [INFO] [1790970482.765114160] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=7.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970482.765198520] [upper_planner_node]: interval step=0 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970482.765436588] [upper_planner_node]: interval step=1 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970482.765477616] [upper_planner_node]: interval step=2 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970482.765548918] [upper_planner_node]: interval step=4 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970482.765604827] [upper_planner_node]: interval step=5 candidate=0 raw=3.900 centering=ON inset_start=1.170 inset_end=1.170
+E       [INFO] [1790970482.765644862] [upper_planner_node]: interval step=5 candidate=1 raw=0.900 centering=ON inset_start=0.270 inset_end=0.270
+E       [WARN] [1790970482.964850448] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+E       [INFO] [1790970482.965091301] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=7.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970482.965170988] [upper_planner_node]: interval step=0 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970482.965217968] [upper_planner_node]: interval step=1 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970482.965254195] [upper_planner_node]: interval step=2 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970482.965287222] [upper_planner_node]: interval step=4 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970482.965321849] [upper_planner_node]: interval step=5 candidate=0 raw=3.900 centering=ON inset_start=1.170 inset_end=1.170
+E       [INFO] [1790970482.965357084] [upper_planner_node]: interval step=5 candidate=1 raw=0.900 centering=ON inset_start=0.270 inset_end=0.270
+E       [WARN] [1790970483.164877915] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+E       [INFO] [1790970483.165188662] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=7.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970483.165277469] [upper_planner_node]: interval step=0 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970483.165328642] [upper_planner_node]: interval step=1 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970483.165398024] [upper_planner_node]: interval step=2 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970483.165439883] [upper_planner_node]: interval step=4 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970483.165475535] [upper_planner_node]: interval step=5 candidate=0 raw=3.900 centering=ON inset_start=1.170 inset_end=1.170
+E       [INFO] [1790970483.165537972] [upper_planner_node]: interval step=5 candidate=1 raw=0.900 centering=ON inset_start=0.270 inset_end=0.270
+E       [WARN] [1790970483.364890728] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+E       [INFO] [1790970483.365113500] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=7.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970483.365182146] [upper_planner_node]: interval step=0 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970483.365222757] [upper_planner_node]: interval step=1 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970483.365254376] [upper_planner_node]: interval step=2 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970483.365283210] [upper_planner_node]: interval step=4 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970483.365313037] [upper_planner_node]: interval step=5 candidate=0 raw=3.900 centering=ON inset_start=1.170 inset_end=1.170
+E       [INFO] [1790970483.365344976] [upper_planner_node]: interval step=5 candidate=1 raw=0.900 centering=ON inset_start=0.270 inset_end=0.270
+E       [WARN] [1790970483.565146379] [upper_planner_node]: interval_diag step=3 reason=3 ref_body=(9.000,0.000) heading_deg=0.00 center_cell=(99,99) center_value=0 line_free=0 blocked=201 unknown=0 outside=1 longest_run=0 min_run=2 grid_free=10950 zero=25050 positive=10950 unknown=0 topic=/main9_test/grid frame=base_link origin=(-1.000,-10.000) origin_yaw_deg=0.00 size=180x200 res=0.1000 positive_is_drivable=1 threshold=0 waypoint_bias=0 previous=0
+E       [WARN] [1790970483.565841479] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+E       [INFO] [1790970483.565978771] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=7.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970483.566040729] [upper_planner_node]: interval step=0 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970483.566091773] [upper_planner_node]: interval step=1 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970483.566125376] [upper_planner_node]: interval step=2 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970483.566159203] [upper_planner_node]: interval step=4 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970483.566192454] [upper_planner_node]: interval step=5 candidate=0 raw=3.900 centering=ON inset_start=1.170 inset_end=1.170
+E       [INFO] [1790970483.566225577] [upper_planner_node]: interval step=5 candidate=1 raw=0.900 centering=ON inset_start=0.270 inset_end=0.270
+E       [WARN] [1790970483.566300815] [upper_planner_node]: horizon_diag configured=5 extent_limit=5 requested=5 usable=2 reserve=1 restore=1 step_m=3.000 previous=0
+E       [WARN] [1790970483.764977577] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+E       [INFO] [1790970483.765294340] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=7.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970483.765372331] [upper_planner_node]: interval step=0 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970483.765419119] [upper_planner_node]: interval step=1 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970483.765455826] [upper_planner_node]: interval step=2 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970483.765499190] [upper_planner_node]: interval step=4 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970483.765575069] [upper_planner_node]: interval step=5 candidate=0 raw=3.900 centering=ON inset_start=1.170 inset_end=1.170
+E       [INFO] [1790970483.765610208] [upper_planner_node]: interval step=5 candidate=1 raw=0.900 centering=ON inset_start=0.270 inset_end=0.270
+E       [WARN] [1790970483.964970549] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+E       [INFO] [1790970483.965258446] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=7.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970483.965343541] [upper_planner_node]: interval step=0 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970483.965389881] [upper_planner_node]: interval step=1 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970483.965428605] [upper_planner_node]: interval step=2 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970483.965462464] [upper_planner_node]: interval step=4 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970483.965499011] [upper_planner_node]: interval step=5 candidate=0 raw=3.900 centering=ON inset_start=1.170 inset_end=1.170
+E       [INFO] [1790970483.965572329] [upper_planner_node]: interval step=5 candidate=1 raw=0.900 centering=ON inset_start=0.270 inset_end=0.270
+E       [WARN] [1790970484.165024695] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+E       [INFO] [1790970484.165429883] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=7.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970484.165758327] [upper_planner_node]: interval step=0 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970484.165822429] [upper_planner_node]: interval step=1 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970484.165865888] [upper_planner_node]: interval step=2 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970484.165904068] [upper_planner_node]: interval step=4 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970484.165958312] [upper_planner_node]: interval step=5 candidate=0 raw=3.900 centering=ON inset_start=1.170 inset_end=1.170
+E       [INFO] [1790970484.165990347] [upper_planner_node]: interval step=5 candidate=1 raw=0.900 centering=ON inset_start=0.270 inset_end=0.270
+E       [WARN] [1790970484.365004152] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+E       [INFO] [1790970484.365302194] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=7.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970484.365375192] [upper_planner_node]: interval step=0 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970484.365418012] [upper_planner_node]: interval step=1 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970484.365454911] [upper_planner_node]: interval step=2 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970484.365487490] [upper_planner_node]: interval step=4 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970484.365557288] [upper_planner_node]: interval step=5 candidate=0 raw=3.900 centering=ON inset_start=1.170 inset_end=1.170
+E       [INFO] [1790970484.365605804] [upper_planner_node]: interval step=5 candidate=1 raw=0.900 centering=ON inset_start=0.270 inset_end=0.270
+E       [WARN] [1790970484.565014491] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+E       [INFO] [1790970484.565284242] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=7.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970484.565349016] [upper_planner_node]: interval step=0 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970484.565392700] [upper_planner_node]: interval step=1 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970484.565443904] [upper_planner_node]: interval step=2 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970484.565486660] [upper_planner_node]: interval step=4 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970484.565564427] [upper_planner_node]: interval step=5 candidate=0 raw=3.900 centering=ON inset_start=1.170 inset_end=1.170
+E       [INFO] [1790970484.565612399] [upper_planner_node]: interval step=5 candidate=1 raw=0.900 centering=ON inset_start=0.270 inset_end=0.270
+E       [WARN] [1790970484.765048736] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+E       [INFO] [1790970484.765298550] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=7.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970484.765361659] [upper_planner_node]: interval step=0 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970484.765405055] [upper_planner_node]: interval step=1 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970484.765439714] [upper_planner_node]: interval step=2 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970484.765475013] [upper_planner_node]: interval step=4 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970484.765547467] [upper_planner_node]: interval step=5 candidate=0 raw=3.900 centering=ON inset_start=1.170 inset_end=1.170
+E       [INFO] [1790970484.765800705] [upper_planner_node]: interval step=5 candidate=1 raw=0.900 centering=ON inset_start=0.270 inset_end=0.270
+E       [WARN] [1790970484.965070724] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+E       [INFO] [1790970484.965342556] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=7.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970484.965408066] [upper_planner_node]: interval step=0 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970484.965444677] [upper_planner_node]: interval step=1 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970484.965472135] [upper_planner_node]: interval step=2 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970484.965496009] [upper_planner_node]: interval step=4 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970484.965548526] [upper_planner_node]: interval step=5 candidate=0 raw=3.900 centering=ON inset_start=1.170 inset_end=1.170
+E       [INFO] [1790970484.965573712] [upper_planner_node]: interval step=5 candidate=1 raw=0.900 centering=ON inset_start=0.270 inset_end=0.270
+E       [WARN] [1790970485.165094490] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+E       [INFO] [1790970485.165429079] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=7.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970485.165542369] [upper_planner_node]: interval step=0 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970485.165614503] [upper_planner_node]: interval step=1 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970485.165678797] [upper_planner_node]: interval step=2 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970485.165724529] [upper_planner_node]: interval step=4 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970485.165763444] [upper_planner_node]: interval step=5 candidate=0 raw=3.900 centering=ON inset_start=1.170 inset_end=1.170
+E       [INFO] [1790970485.165798743] [upper_planner_node]: interval step=5 candidate=1 raw=0.900 centering=ON inset_start=0.270 inset_end=0.270
+E       [WARN] [1790970485.365120244] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+E       [INFO] [1790970485.365413741] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=7.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970485.365484275] [upper_planner_node]: interval step=0 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970485.365561594] [upper_planner_node]: interval step=1 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970485.365606654] [upper_planner_node]: interval step=2 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970485.365642849] [upper_planner_node]: interval step=4 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970485.365680228] [upper_planner_node]: interval step=5 candidate=0 raw=3.900 centering=ON inset_start=1.170 inset_end=1.170
+E       [INFO] [1790970485.365713287] [upper_planner_node]: interval step=5 candidate=1 raw=0.900 centering=ON inset_start=0.270 inset_end=0.270
+E       [WARN] [1790970485.565113995] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+E       [INFO] [1790970485.565312508] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=7.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970485.565398052] [upper_planner_node]: interval step=0 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970485.565444520] [upper_planner_node]: interval step=1 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970485.565478891] [upper_planner_node]: interval step=2 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970485.565632344] [upper_planner_node]: interval step=4 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970485.565674300] [upper_planner_node]: interval step=5 candidate=0 raw=3.900 centering=ON inset_start=1.170 inset_end=1.170
+E       [INFO] [1790970485.565707871] [upper_planner_node]: interval step=5 candidate=1 raw=0.900 centering=ON inset_start=0.270 inset_end=0.270
+E       [WARN] [1790970485.765045053] [upper_planner_node]: interval_diag step=3 reason=3 ref_body=(9.000,0.000) heading_deg=0.00 center_cell=(99,99) center_value=0 line_free=0 blocked=201 unknown=0 outside=1 longest_run=0 min_run=2 grid_free=10950 zero=25050 positive=10950 unknown=0 topic=/main9_test/grid frame=base_link origin=(-1.000,-10.000) origin_yaw_deg=0.00 size=180x200 res=0.1000 positive_is_drivable=1 threshold=0 waypoint_bias=0 previous=0
+E       [WARN] [1790970485.765227501] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+E       [INFO] [1790970485.765326741] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=7.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970485.765383034] [upper_planner_node]: interval step=0 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970485.765425726] [upper_planner_node]: interval step=1 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970485.765461345] [upper_planner_node]: interval step=2 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970485.765495748] [upper_planner_node]: interval step=4 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970485.765561002] [upper_planner_node]: interval step=5 candidate=0 raw=3.900 centering=ON inset_start=1.170 inset_end=1.170
+E       [INFO] [1790970485.765600205] [upper_planner_node]: interval step=5 candidate=1 raw=0.900 centering=ON inset_start=0.270 inset_end=0.270
+E       [WARN] [1790970485.765643153] [upper_planner_node]: horizon_diag configured=5 extent_limit=5 requested=5 usable=2 reserve=1 restore=1 step_m=3.000 previous=0
+E       [WARN] [1790970485.965030579] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+E       [INFO] [1790970485.965196706] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=7.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970485.965257223] [upper_planner_node]: interval step=0 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970485.965300203] [upper_planner_node]: interval step=1 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970485.965335694] [upper_planner_node]: interval step=2 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970485.965369329] [upper_planner_node]: interval step=4 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970485.965403348] [upper_planner_node]: interval step=5 candidate=0 raw=3.900 centering=ON inset_start=1.170 inset_end=1.170
+E       [INFO] [1790970485.965434998] [upper_planner_node]: interval step=5 candidate=1 raw=0.900 centering=ON inset_start=0.270 inset_end=0.270
+E       [WARN] [1790970486.165108675] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+E       [INFO] [1790970486.165437471] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=7.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970486.165643025] [upper_planner_node]: interval step=0 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970486.165704759] [upper_planner_node]: interval step=1 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970486.165743258] [upper_planner_node]: interval step=2 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970486.165778525] [upper_planner_node]: interval step=4 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970486.165860292] [upper_planner_node]: interval step=5 candidate=0 raw=3.900 centering=ON inset_start=1.170 inset_end=1.170
+E       [INFO] [1790970486.165895271] [upper_planner_node]: interval step=5 candidate=1 raw=0.900 centering=ON inset_start=0.270 inset_end=0.270
+E       [WARN] [1790970486.365085230] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+E       [INFO] [1790970486.365269662] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=7.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970486.365330371] [upper_planner_node]: interval step=0 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970486.365372679] [upper_planner_node]: interval step=1 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970486.365406186] [upper_planner_node]: interval step=2 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970486.365439181] [upper_planner_node]: interval step=4 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970486.365469999] [upper_planner_node]: interval step=5 candidate=0 raw=3.900 centering=ON inset_start=1.170 inset_end=1.170
+E       [INFO] [1790970486.365525172] [upper_planner_node]: interval step=5 candidate=1 raw=0.900 centering=ON inset_start=0.270 inset_end=0.270
+E       [WARN] [1790970486.565093660] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+E       [INFO] [1790970486.565257450] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=7.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970486.565323920] [upper_planner_node]: interval step=0 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970486.565368596] [upper_planner_node]: interval step=1 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970486.565405655] [upper_planner_node]: interval step=2 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970486.565439450] [upper_planner_node]: interval step=4 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970486.565473213] [upper_planner_node]: interval step=5 candidate=0 raw=3.900 centering=ON inset_start=1.170 inset_end=1.170
+E       [INFO] [1790970486.565528194] [upper_planner_node]: interval step=5 candidate=1 raw=0.900 centering=ON inset_start=0.270 inset_end=0.270
+E       [WARN] [1790970486.765121515] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+E       [INFO] [1790970486.765284826] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=7.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970486.765342335] [upper_planner_node]: interval step=0 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970486.765383362] [upper_planner_node]: interval step=1 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970486.765418437] [upper_planner_node]: interval step=2 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970486.765452168] [upper_planner_node]: interval step=4 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970486.765486411] [upper_planner_node]: interval step=5 candidate=0 raw=3.900 centering=ON inset_start=1.170 inset_end=1.170
+E       [INFO] [1790970486.765649593] [upper_planner_node]: interval step=5 candidate=1 raw=0.900 centering=ON inset_start=0.270 inset_end=0.270
+E       [WARN] [1790970486.965130201] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+E       [INFO] [1790970486.965282342] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=7.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970486.965346604] [upper_planner_node]: interval step=0 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970486.965397456] [upper_planner_node]: interval step=1 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970486.965476279] [upper_planner_node]: interval step=2 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970486.965538941] [upper_planner_node]: interval step=4 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970486.965583809] [upper_planner_node]: interval step=5 candidate=0 raw=3.900 centering=ON inset_start=1.170 inset_end=1.170
+E       [INFO] [1790970486.965634629] [upper_planner_node]: interval step=5 candidate=1 raw=0.900 centering=ON inset_start=0.270 inset_end=0.270
+E       [WARN] [1790970487.165226528] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+E       [INFO] [1790970487.165550172] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=7.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970487.165660166] [upper_planner_node]: interval step=0 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970487.165726956] [upper_planner_node]: interval step=1 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970487.165773648] [upper_planner_node]: interval step=2 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970487.165812019] [upper_planner_node]: interval step=4 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970487.165848854] [upper_planner_node]: interval step=5 candidate=0 raw=3.900 centering=ON inset_start=1.170 inset_end=1.170
+E       [INFO] [1790970487.165883193] [upper_planner_node]: interval step=5 candidate=1 raw=0.900 centering=ON inset_start=0.270 inset_end=0.270
+E       [WARN] [1790970487.365226530] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+E       [INFO] [1790970487.365529917] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=7.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970487.365641094] [upper_planner_node]: interval step=0 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970487.365697451] [upper_planner_node]: interval step=1 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970487.365735311] [upper_planner_node]: interval step=2 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970487.365770834] [upper_planner_node]: interval step=4 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970487.365804917] [upper_planner_node]: interval step=5 candidate=0 raw=3.900 centering=ON inset_start=1.170 inset_end=1.170
+E       [INFO] [1790970487.365837368] [upper_planner_node]: interval step=5 candidate=1 raw=0.900 centering=ON inset_start=0.270 inset_end=0.270
+E       [WARN] [1790970487.565231973] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+E       [INFO] [1790970487.565467034] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=7.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970487.565583012] [upper_planner_node]: interval step=0 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970487.565636872] [upper_planner_node]: interval step=1 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970487.565673388] [upper_planner_node]: interval step=2 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970487.565804855] [upper_planner_node]: interval step=4 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970487.565840826] [upper_planner_node]: interval step=5 candidate=0 raw=3.900 centering=ON inset_start=1.170 inset_end=1.170
+E       [INFO] [1790970487.565873149] [upper_planner_node]: interval step=5 candidate=1 raw=0.900 centering=ON inset_start=0.270 inset_end=0.270
+E       [WARN] [1790970487.765235912] [upper_planner_node]: interval_diag step=3 reason=3 ref_body=(9.000,0.000) heading_deg=0.00 center_cell=(99,99) center_value=0 line_free=0 blocked=201 unknown=0 outside=1 longest_run=0 min_run=2 grid_free=10950 zero=25050 positive=10950 unknown=0 topic=/main9_test/grid frame=base_link origin=(-1.000,-10.000) origin_yaw_deg=0.00 size=180x200 res=0.1000 positive_is_drivable=1 threshold=0 waypoint_bias=0 previous=0
+E       [WARN] [1790970487.765499167] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+E       [INFO] [1790970487.765638283] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=7.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970487.765690383] [upper_planner_node]: interval step=0 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970487.765733363] [upper_planner_node]: interval step=1 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970487.765766326] [upper_planner_node]: interval step=2 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970487.765801049] [upper_planner_node]: interval step=4 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970487.765833148] [upper_planner_node]: interval step=5 candidate=0 raw=3.900 centering=ON inset_start=1.170 inset_end=1.170
+E       [INFO] [1790970487.765868671] [upper_planner_node]: interval step=5 candidate=1 raw=0.900 centering=ON inset_start=0.270 inset_end=0.270
+E       [WARN] [1790970487.765911171] [upper_planner_node]: horizon_diag configured=5 extent_limit=5 requested=5 usable=2 reserve=1 restore=1 step_m=3.000 previous=0
+E       [WARN] [1790970487.965273773] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+E       [INFO] [1790970487.965495009] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=7.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970487.965610027] [upper_planner_node]: interval step=0 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970487.965657135] [upper_planner_node]: interval step=1 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970487.965690610] [upper_planner_node]: interval step=2 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970487.965720500] [upper_planner_node]: interval step=4 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970487.965749623] [upper_planner_node]: interval step=5 candidate=0 raw=3.900 centering=ON inset_start=1.170 inset_end=1.170
+E       [INFO] [1790970487.965779769] [upper_planner_node]: interval step=5 candidate=1 raw=0.900 centering=ON inset_start=0.270 inset_end=0.270
+E       [WARN] [1790970488.165275105] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+E       [INFO] [1790970488.165589821] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=7.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970488.165695654] [upper_planner_node]: interval step=0 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970488.165754443] [upper_planner_node]: interval step=1 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970488.165797999] [upper_planner_node]: interval step=2 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970488.165835954] [upper_planner_node]: interval step=4 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970488.165972510] [upper_planner_node]: interval step=5 candidate=0 raw=3.900 centering=ON inset_start=1.170 inset_end=1.170
+E       [INFO] [1790970488.166010561] [upper_planner_node]: interval step=5 candidate=1 raw=0.900 centering=ON inset_start=0.270 inset_end=0.270
+E       [WARN] [1790970488.365370049] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+E       [INFO] [1790970488.365678876] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=7.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970488.365779908] [upper_planner_node]: interval step=0 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970488.365907792] [upper_planner_node]: interval step=1 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970488.365945331] [upper_planner_node]: interval step=2 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970488.365980150] [upper_planner_node]: interval step=4 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970488.366011769] [upper_planner_node]: interval step=5 candidate=0 raw=3.900 centering=ON inset_start=1.170 inset_end=1.170
+E       [INFO] [1790970488.366043163] [upper_planner_node]: interval step=5 candidate=1 raw=0.900 centering=ON inset_start=0.270 inset_end=0.270
+E       [WARN] [1790970488.565321332] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+E       [INFO] [1790970488.565591563] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=7.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970488.565696212] [upper_planner_node]: interval step=0 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970488.565752633] [upper_planner_node]: interval step=1 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970488.565791645] [upper_planner_node]: interval step=2 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970488.565825856] [upper_planner_node]: interval step=4 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970488.565858243] [upper_planner_node]: interval step=5 candidate=0 raw=3.900 centering=ON inset_start=1.170 inset_end=1.170
+E       [INFO] [1790970488.565891814] [upper_planner_node]: interval step=5 candidate=1 raw=0.900 centering=ON inset_start=0.270 inset_end=0.270
+E       [WARN] [1790970488.765355822] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+E       [INFO] [1790970488.765604964] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=7.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970488.765706509] [upper_planner_node]: interval step=0 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970488.765758641] [upper_planner_node]: interval step=1 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970488.765797973] [upper_planner_node]: interval step=2 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970488.765831928] [upper_planner_node]: interval step=4 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970488.765864218] [upper_planner_node]: interval step=5 candidate=0 raw=3.900 centering=ON inset_start=1.170 inset_end=1.170
+E       [INFO] [1790970488.765896797] [upper_planner_node]: interval step=5 candidate=1 raw=0.900 centering=ON inset_start=0.270 inset_end=0.270
+E       [WARN] [1790970488.965359942] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+E       [INFO] [1790970488.965603451] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=7.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970488.965703044] [upper_planner_node]: interval step=0 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970488.965753640] [upper_planner_node]: interval step=1 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970488.965874547] [upper_planner_node]: interval step=2 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970488.965913142] [upper_planner_node]: interval step=4 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970488.965946233] [upper_planner_node]: interval step=5 candidate=0 raw=3.900 centering=ON inset_start=1.170 inset_end=1.170
+E       [INFO] [1790970488.965979036] [upper_planner_node]: interval step=5 candidate=1 raw=0.900 centering=ON inset_start=0.270 inset_end=0.270
+E       [WARN] [1790970489.165375888] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+E       [INFO] [1790970489.165642791] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=7.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970489.165748496] [upper_planner_node]: interval step=0 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970489.165799541] [upper_planner_node]: interval step=1 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970489.165838872] [upper_planner_node]: interval step=2 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970489.165871707] [upper_planner_node]: interval step=4 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970489.165902334] [upper_planner_node]: interval step=5 candidate=0 raw=3.900 centering=ON inset_start=1.170 inset_end=1.170
+E       [INFO] [1790970489.165935136] [upper_planner_node]: interval step=5 candidate=1 raw=0.900 centering=ON inset_start=0.270 inset_end=0.270
+E       [WARN] [1790970489.365599407] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+E       [INFO] [1790970489.365971920] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=7.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970489.366076153] [upper_planner_node]: interval step=0 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970489.366134686] [upper_planner_node]: interval step=1 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970489.366181954] [upper_planner_node]: interval step=2 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970489.366223942] [upper_planner_node]: interval step=4 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970489.366260425] [upper_planner_node]: interval step=5 candidate=0 raw=3.900 centering=ON inset_start=1.170 inset_end=1.170
+E       [INFO] [1790970489.366300333] [upper_planner_node]: interval step=5 candidate=1 raw=0.900 centering=ON inset_start=0.270 inset_end=0.270
+E       [WARN] [1790970489.565443342] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+E       [INFO] [1790970489.565738856] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=7.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970489.565818735] [upper_planner_node]: interval step=0 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970489.565867283] [upper_planner_node]: interval step=1 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970489.565904854] [upper_planner_node]: interval step=2 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970489.565943866] [upper_planner_node]: interval step=4 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970489.565978813] [upper_planner_node]: interval step=5 candidate=0 raw=3.900 centering=ON inset_start=1.170 inset_end=1.170
+E       [INFO] [1790970489.566013568] [upper_planner_node]: interval step=5 candidate=1 raw=0.900 centering=ON inset_start=0.270 inset_end=0.270
+E       [WARN] [1790970489.765413144] [upper_planner_node]: interval_diag step=3 reason=3 ref_body=(9.000,0.000) heading_deg=0.00 center_cell=(99,99) center_value=0 line_free=0 blocked=201 unknown=0 outside=1 longest_run=0 min_run=2 grid_free=10950 zero=25050 positive=10950 unknown=0 topic=/main9_test/grid frame=base_link origin=(-1.000,-10.000) origin_yaw_deg=0.00 size=180x200 res=0.1000 positive_is_drivable=1 threshold=0 waypoint_bias=0 previous=0
+E       [WARN] [1790970489.765811738] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+E       [INFO] [1790970489.765922532] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=7.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970489.766012268] [upper_planner_node]: interval step=0 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970489.766058224] [upper_planner_node]: interval step=1 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970489.766097811] [upper_planner_node]: interval step=2 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970489.766132054] [upper_planner_node]: interval step=4 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970489.766163513] [upper_planner_node]: interval step=5 candidate=0 raw=3.900 centering=ON inset_start=1.170 inset_end=1.170
+E       [INFO] [1790970489.766198108] [upper_planner_node]: interval step=5 candidate=1 raw=0.900 centering=ON inset_start=0.270 inset_end=0.270
+E       [WARN] [1790970489.766242688] [upper_planner_node]: horizon_diag configured=5 extent_limit=5 requested=5 usable=2 reserve=1 restore=1 step_m=3.000 previous=0
+E       [WARN] [1790970489.965604212] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+E       [INFO] [1790970489.966108000] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=7.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970489.966206409] [upper_planner_node]: interval step=0 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970489.966285648] [upper_planner_node]: interval step=1 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970489.966329108] [upper_planner_node]: interval step=2 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970489.966367671] [upper_planner_node]: interval step=4 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970489.966400570] [upper_planner_node]: interval step=5 candidate=0 raw=3.900 centering=ON inset_start=1.170 inset_end=1.170
+E       [INFO] [1790970489.966434813] [upper_planner_node]: interval step=5 candidate=1 raw=0.900 centering=ON inset_start=0.270 inset_end=0.270
+E       [WARN] [1790970490.165759423] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+E       [INFO] [1790970490.166344914] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=7.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970490.166456764] [upper_planner_node]: interval step=0 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970490.166515297] [upper_planner_node]: interval step=1 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970490.166554565] [upper_planner_node]: interval step=2 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970490.166594536] [upper_planner_node]: interval step=4 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970490.166629739] [upper_planner_node]: interval step=5 candidate=0 raw=3.900 centering=ON inset_start=1.170 inset_end=1.170
+E       [INFO] [1790970490.166664782] [upper_planner_node]: interval step=5 candidate=1 raw=0.900 centering=ON inset_start=0.270 inset_end=0.270
+E       [WARN] [1790970490.366470270] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+E       [INFO] [1790970490.367150266] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=7.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970490.367460533] [upper_planner_node]: interval step=0 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970490.367523898] [upper_planner_node]: interval step=1 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970490.367568894] [upper_planner_node]: interval step=2 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970490.367609762] [upper_planner_node]: interval step=4 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970490.367645861] [upper_planner_node]: interval step=5 candidate=0 raw=3.900 centering=ON inset_start=1.170 inset_end=1.170
+E       [INFO] [1790970490.367734381] [upper_planner_node]: interval step=5 candidate=1 raw=0.900 centering=ON inset_start=0.270 inset_end=0.270
+E       [WARN] [1790970490.565524268] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+E       [INFO] [1790970490.565889740] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=7.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970490.565973492] [upper_planner_node]: interval step=0 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970490.566024440] [upper_planner_node]: interval step=1 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970490.566066268] [upper_planner_node]: interval step=2 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970490.566100799] [upper_planner_node]: interval step=4 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970490.566132994] [upper_planner_node]: interval step=5 candidate=0 raw=3.900 centering=ON inset_start=1.170 inset_end=1.170
+E       [INFO] [1790970490.566165572] [upper_planner_node]: interval step=5 candidate=1 raw=0.900 centering=ON inset_start=0.270 inset_end=0.270
+E       [WARN] [1790970490.765631959] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+E       [INFO] [1790970490.766038682] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=7.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970490.766140163] [upper_planner_node]: interval step=0 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970490.766198056] [upper_planner_node]: interval step=1 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970490.766239660] [upper_planner_node]: interval step=2 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970490.766276559] [upper_planner_node]: interval step=4 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970490.766312274] [upper_planner_node]: interval step=5 candidate=0 raw=3.900 centering=ON inset_start=1.170 inset_end=1.170
+E       [INFO] [1790970490.766348437] [upper_planner_node]: interval step=5 candidate=1 raw=0.900 centering=ON inset_start=0.270 inset_end=0.270
+E       [WARN] [1790970490.965646905] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+E       [INFO] [1790970490.966018681] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=7.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970490.966111105] [upper_planner_node]: interval step=0 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970490.966161030] [upper_planner_node]: interval step=1 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970490.966198345] [upper_planner_node]: interval step=2 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970490.966236588] [upper_planner_node]: interval step=4 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970490.966271856] [upper_planner_node]: interval step=5 candidate=0 raw=3.900 centering=ON inset_start=1.170 inset_end=1.170
+E       [INFO] [1790970490.966304946] [upper_planner_node]: interval step=5 candidate=1 raw=0.900 centering=ON inset_start=0.270 inset_end=0.270
+E       [WARN] [1790970491.165617672] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+E       [INFO] [1790970491.165980168] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=7.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970491.166080433] [upper_planner_node]: interval step=0 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970491.166137366] [upper_planner_node]: interval step=1 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970491.166308325] [upper_planner_node]: interval step=2 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970491.166347432] [upper_planner_node]: interval step=4 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970491.167590997] [upper_planner_node]: interval step=5 candidate=0 raw=3.900 centering=ON inset_start=1.170 inset_end=1.170
+E       [INFO] [1790970491.167653114] [upper_planner_node]: interval step=5 candidate=1 raw=0.900 centering=ON inset_start=0.270 inset_end=0.270
+E       [WARN] [1790970491.365617214] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+E       [INFO] [1790970491.365895222] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=7.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970491.365970876] [upper_planner_node]: interval step=0 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970491.366016288] [upper_planner_node]: interval step=1 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970491.366050883] [upper_planner_node]: interval step=2 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970491.366084710] [upper_planner_node]: interval step=4 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970491.366119273] [upper_planner_node]: interval step=5 candidate=0 raw=3.900 centering=ON inset_start=1.170 inset_end=1.170
+E       [INFO] [1790970491.366153676] [upper_planner_node]: interval step=5 candidate=1 raw=0.900 centering=ON inset_start=0.270 inset_end=0.270
+E       [WARN] [1790970491.565629588] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+E       [INFO] [1790970491.565864521] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=7.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970491.565953808] [upper_planner_node]: interval step=0 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970491.566004309] [upper_planner_node]: interval step=1 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970491.566043128] [upper_planner_node]: interval step=2 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970491.566079131] [upper_planner_node]: interval step=4 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970491.566111038] [upper_planner_node]: interval step=5 candidate=0 raw=3.900 centering=ON inset_start=1.170 inset_end=1.170
+E       [INFO] [1790970491.566142017] [upper_planner_node]: interval step=5 candidate=1 raw=0.900 centering=ON inset_start=0.270 inset_end=0.270
+E       [WARN] [1790970491.765640746] [upper_planner_node]: interval_diag step=3 reason=3 ref_body=(9.000,0.000) heading_deg=0.00 center_cell=(99,99) center_value=0 line_free=0 blocked=201 unknown=0 outside=1 longest_run=0 min_run=2 grid_free=10950 zero=25050 positive=10950 unknown=0 topic=/main9_test/grid frame=base_link origin=(-1.000,-10.000) origin_yaw_deg=0.00 size=180x200 res=0.1000 positive_is_drivable=1 threshold=0 waypoint_bias=0 previous=0
+E       [WARN] [1790970491.765869822] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+E       [INFO] [1790970491.765982856] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=7.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970491.766039117] [upper_planner_node]: interval step=0 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970491.766082641] [upper_planner_node]: interval step=1 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970491.766116820] [upper_planner_node]: interval step=2 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970491.766149367] [upper_planner_node]: interval step=4 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970491.766182522] [upper_planner_node]: interval step=5 candidate=0 raw=3.900 centering=ON inset_start=1.170 inset_end=1.170
+E       [INFO] [1790970491.766328967] [upper_planner_node]: interval step=5 candidate=1 raw=0.900 centering=ON inset_start=0.270 inset_end=0.270
+E       [WARN] [1790970491.766446833] [upper_planner_node]: horizon_diag configured=5 extent_limit=5 requested=5 usable=2 reserve=1 restore=1 step_m=3.000 previous=0
+E       [WARN] [1790970491.965652161] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+E       [INFO] [1790970491.965866772] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=7.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970491.965954587] [upper_planner_node]: interval step=0 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970491.966005120] [upper_planner_node]: interval step=1 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970491.966042787] [upper_planner_node]: interval step=2 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970491.966075238] [upper_planner_node]: interval step=4 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970491.966107177] [upper_planner_node]: interval step=5 candidate=0 raw=3.900 centering=ON inset_start=1.170 inset_end=1.170
+E       [INFO] [1790970491.966139596] [upper_planner_node]: interval step=5 candidate=1 raw=0.900 centering=ON inset_start=0.270 inset_end=0.270
+E       [WARN] [1790970492.165674089] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+E       [INFO] [1790970492.165948385] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=7.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970492.166037097] [upper_planner_node]: interval step=0 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970492.166093038] [upper_planner_node]: interval step=1 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970492.166129745] [upper_planner_node]: interval step=2 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970492.166161908] [upper_planner_node]: interval step=4 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970492.166194006] [upper_planner_node]: interval step=5 candidate=0 raw=3.900 centering=ON inset_start=1.170 inset_end=1.170
+E       [INFO] [1790970492.166227193] [upper_planner_node]: interval step=5 candidate=1 raw=0.900 centering=ON inset_start=0.270 inset_end=0.270
+E       [WARN] [1790970492.365665330] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+E       [INFO] [1790970492.365890854] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=7.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970492.365970189] [upper_planner_node]: interval step=0 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970492.366019249] [upper_planner_node]: interval step=1 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970492.366055284] [upper_planner_node]: interval step=2 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970492.366085879] [upper_planner_node]: interval step=4 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970492.366117338] [upper_planner_node]: interval step=5 candidate=0 raw=3.900 centering=ON inset_start=1.170 inset_end=1.170
+E       [INFO] [1790970492.366151293] [upper_planner_node]: interval step=5 candidate=1 raw=0.900 centering=ON inset_start=0.270 inset_end=0.270
+E       [WARN] [1790970492.565703647] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+E       [INFO] [1790970492.565926963] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=7.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970492.566007834] [upper_planner_node]: interval step=0 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970492.566164488] [upper_planner_node]: interval step=1 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970492.566202059] [upper_planner_node]: interval step=2 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970492.566291347] [upper_planner_node]: interval step=4 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970492.566327510] [upper_planner_node]: interval step=5 candidate=0 raw=3.900 centering=ON inset_start=1.170 inset_end=1.170
+E       [INFO] [1790970492.566360729] [upper_planner_node]: interval step=5 candidate=1 raw=0.900 centering=ON inset_start=0.270 inset_end=0.270
+E       [WARN] [1790970492.765719466] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+E       [INFO] [1790970492.765952991] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=7.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970492.766037734] [upper_planner_node]: interval step=0 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970492.766092235] [upper_planner_node]: interval step=1 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970492.766131054] [upper_planner_node]: interval step=2 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970492.766165841] [upper_planner_node]: interval step=4 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970492.766197172] [upper_planner_node]: interval step=5 candidate=0 raw=3.900 centering=ON inset_start=1.170 inset_end=1.170
+E       [INFO] [1790970492.766229047] [upper_planner_node]: interval step=5 candidate=1 raw=0.900 centering=ON inset_start=0.270 inset_end=0.270
+E       [WARN] [1790970492.965720564] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+E       [INFO] [1790970492.965920422] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=7.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970492.965995180] [upper_planner_node]: interval step=0 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970492.966039280] [upper_planner_node]: interval step=1 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970492.966076916] [upper_planner_node]: interval step=2 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970492.966112503] [upper_planner_node]: interval step=4 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970492.966147130] [upper_planner_node]: interval step=5 candidate=0 raw=3.900 centering=ON inset_start=1.170 inset_end=1.170
+E       [INFO] [1790970492.966178588] [upper_planner_node]: interval step=5 candidate=1 raw=0.900 centering=ON inset_start=0.270 inset_end=0.270
+E       [WARN] [1790970493.165729327] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+E       [INFO] [1790970493.165987046] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=7.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970493.166062061] [upper_planner_node]: interval step=0 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970493.166107921] [upper_planner_node]: interval step=1 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970493.166144116] [upper_planner_node]: interval step=2 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970493.166176119] [upper_planner_node]: interval step=4 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970493.166206297] [upper_planner_node]: interval step=5 candidate=0 raw=3.900 centering=ON inset_start=1.170 inset_end=1.170
+E       [INFO] [1790970493.166237820] [upper_planner_node]: interval step=5 candidate=1 raw=0.900 centering=ON inset_start=0.270 inset_end=0.270
+E       [WARN] [1790970493.365808532] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+E       [INFO] [1790970493.366166196] [upper_planner_node]: interval_scale B_before=4.800 candidate_B=7.900 B=4.800 threshold_1_5B=7.200 candidate_step=0 candidate_interval=0
+E       [INFO] [1790970493.366316801] [upper_planner_node]: interval step=0 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970493.366365157] [upper_planner_node]: interval step=1 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970493.366401032] [upper_planner_node]: interval step=2 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970493.366434699] [upper_planner_node]: interval step=4 candidate=0 raw=7.900 centering=OFF inset_start=2.000 inset_end=2.000
+E       [INFO] [1790970493.366465198] [upper_planner_node]: interval step=5 candidate=0 raw=3.900 centering=ON inset_start=1.170 inset_end=1.170
+E       [INFO] [1790970493.366496337] [upper_planner_node]: interval step=5 candidate=1 raw=0.900 centering=ON inset_start=0.270 inset_end=0.270
+
+src/virtual_control/test/test_interval_centering_ros.py:145: Failed
+=========================== short test summary info ============================
+FAILED src/virtual_control/test/test_interval_centering_ros.py::test_main9_observation_state_and_interval_processing
+1 failed in 14.86s

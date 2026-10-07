@@ -1,0 +1,33 @@
+{
+  "hardware_output_disabled": true,
+  "ros_domain": 177,
+  "numerical_tests_only": true,
+  "dds_transport_unavailable_in_sandbox": true,
+  "parameter_overrides_for_tau": false,
+  "metrics": [
+    {
+      "scene": "live_curve",
+      "outcome": "goal_reached",
+      "lower_invalid": 0,
+      "upper_failures": 0,
+      "reference_error_p95_m": 0.1382478147009334,
+      "saturation_percent": 0.5025125628140703
+    },
+    {
+      "scene": "branch_width",
+      "outcome": "goal_reached",
+      "lower_invalid": 0,
+      "upper_failures": 0,
+      "reference_error_p95_m": 0.20097475462550313,
+      "saturation_percent": 0.0
+    },
+    {
+      "scene": "fixed_curve",
+      "outcome": "goal_reached",
+      "lower_invalid": 0,
+      "upper_failures": 0,
+      "reference_error_p95_m": 0.040285126791601844,
+      "saturation_percent": 0.0
+    }
+  ]
+}

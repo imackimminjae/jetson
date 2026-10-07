@@ -1,0 +1,114 @@
+from pathlib import Path
+import json,csv,hashlib
+from collections import Counter
+h=Path(__file__).resolve().parent;s=json.loads((h/'summary.json').read_text());p=json.loads((h/'patterns.json').read_text());sources=json.loads((h/'sources.json').read_text());runs=json.loads((h/'pattern_runs.json').read_text())
+counts=Counter()
+with (h/'all_frames.csv').open() as f:
+ for r in csv.DictReader(f):counts[r['bag']]+=1
+assert all(counts[r['bag']]==r['frames'] for r in s)
+assert sum(counts.values())==37870
+assert all(not r['source_changed'] for r in sources)
+assert len(runs)==39 and all(len(r['pattern_counts'])==1 for r in s)
+assert all(v['bbox_holes']==0 for v in p.values())
+checks=dict(bags=len(s),frames=sum(counts.values()),csv_counts_match_summaries=True,source_files_changed=0,mask_pattern_changes_within_each_bag=0,frames_with_internal_unknown_holes=0,unique_metadata_and_mask_patterns=len(p),all_grid_header_stamps_zero=all(r['zero_header_stamps']==r['frames'] for r in s))
+(h/'validation.json').write_text(json.dumps(checks,indent=2)+'\n')
+text='''2026-10-06 그리드맵 관측 범위: 전체 기록 프레임 전수 조사
+
+결론
+작업공간에 남아 있는 drive_debug_* 원본 ROSbag 39개에서 /bev/occupancy_grid
+37,870프레임을 전부 직접 역직렬화했다. 계획 시점에 선택된 BEV만 조사한 것이 아니다.
+10월 자료는 모든 시점에 전방 끝 33.125m로 동일했고 예외가 없다.
+9월 자료는 원점/격자 내 관측 창이 다른 별도 설정이며 전방 끝은 항상33.0625m다.
+
+범위별 결과 (원본 OccupancyGrid의 Vehicle 좌표, 셀 바깥 경계 기준)
+기간/범위                 bag 수    프레임 수     전방 끝(m)
+2026-10-03..10-06             34      29,454       33.125 전부 동일
+  그중10-06                  29      24,589       33.125 전부 동일
+  그중최근비교7bag             7       5,556       33.125 전부 동일
+2026-09-23..09-24              5       8,416       33.0625 전부 동일
+합계                         39      37,870
+최근비교7bag:014143/014303/044738/045314/050536/050627/055105.
+기간별 부분집합은 합계에 중복해서 더하지 않는다.
+저장되지 않은 주행이나 삭제된 bag, 별도 isaac_replay/합성시험 자료는 이 주행 기록
+전수조사의 범위가 아니다. 현재 운영 토픽에 접속하거나 새 기록/주행을 시작하지 않았다.
+
+유효 범위 정의
+'관측값 있음'은 메시지 셀 값>=0, 미관측은<0으로 판정했다.
+도로(0)뿐 아니라 비도로 값도 관측된 셀에 포함한다.
+따라서 전방33m 전부가 주행 가능하거나 그 위치의 영상 분할이 정확하다는 뜻은 아니다.
+차량 중심의 안전 주행거리/정지가능거리/실제 카메라 신뢰거리로 해석하지 않는다.
+일반 차량 Pose의 orientation.z=yaw 관례와 무관하게, 이 조사에서는 원본 Grid의
+origin quaternion을 확인했다. 전체가(0,0,0,1), frame_id=Vehicle로 좌표축 정렬 상태다.
+
+10월 자료의 모든 프레임
+- 전체 격자:128x128, 해상도0.3125m, 전체40x40m.
+- 원점:(0,-20), 전체범위 x=[0,40), y=[-20,20).
+- 관측 셀 열:0..105(106열), 행:3..126(124행).
+- 관측 경계:x=[0,33.125), y=[-19.0625,19.6875).
+- 관측 폭:전방33.125m x 좌우38.75m.
+- 관측13,144셀 / 미관측3,240셀.
+- 앞쪽 끝22열(6.875m)이 전부미관측. 좌우에도 합계4행(1.25m) 미관측 여백.
+- 관측 영역 내부의 미관측 구멍:0. 중앙선(y=0)의 연속 관측 끝도항상33.125m.
+- 경계뿐 아니라 known/unknown 마스크 전체가29,454프레임에서 동일하다.
+
+9월 자료의 모든 프레임
+- 전체 격자/해상도 동일. 원점(-6,-20), 전체x=[-6,34).
+- 관측 열:2..124(123열), 행:3..126(124행).
+- 관측 경계:x=[-5.375,33.0625), y=[-19.0625,19.6875).
+- 전체 관측 길이38.4375m 중 뒤쪽5.375m, 앞쪽33.0625m.
+- 관측15,252셀 / 미관측1,132셀. 내부 미관측 구멍0.
+- 8,416프레임에서 이 마스크가항상 동일.
+- 당시 snapshot의 bev_forward_m=34.0. 현재설정40.0과 섞어 해석하지 않는다.
+  위수치는원본메시지좌표이고 과거실행바이너리의추가보정전체를재현한것은아니다.
+
+동일하지 않은 것: 도로 모양과 주행 가능 셀의 끝
+관측 창은 고정이지만 그 안의0/비도로 구분은 시간에 따라 바뀐다.
+예:050627에서0인셀이있는최대전방위치는29.6875..33.125m,
+055105에서는33.125m, 최근7bag전체는11.25..33.125m로범위가다르다.
+이 값은 어느횡방향에서든도로셀이존재하는가에대한최대값이며,
+중앙선의연속주행거리나선택갈래의접근가능성을뜻하지않는다.
+
+k7 해석에대한영향
+현재플래너의최대N계산은BEV전체크기40m를사용한다.
+0.75s*6m/s=4.5m, 예비1단계 규칙은 floor(40/4.5)-1=7.
+관측전방끝33.125m에같은규칙을적용하면 floor(33.125/4.5)-1=6.
+직선명목기준k7=31.5m로관측끝여유1.625m, k6=27m로6.125m.
+다만단면추출은미관측셀을비주행처리하므로플래너가미관측을그대로도로로쓴다는뜻은아니다.
+또한계획거리와차량x방향거리는회전중같지않으며, 이것만으로문제k7의원인이
+카메라끝잘림이라고확정할수는없다. 앞선참조/단면변화분석과구분해야한다.
+이번전수조사만으로horizon6을운영에적용하지않았다.
+
+방법/무결성
+- 각db3를SQLite mode=ro로열고읽기트랜잭션에서메시지전체를순회.
+- SQL전체개수와실제해석개수일치, CSV프레임수와bag별요약수일치.
+- 캐시pickle을사용하지않고원본ROS메시지직접해석.
+- 원본파일size/mtime변경0개. 조사한메시지ID/수신시각/원본직렬화바이트의순서포함SHA256보존.
+- 모든header.stamp가0이므로각시점표시는bag수신시각(KST).
+  카메라촬영시각의정합을검증한것은아니다.
+- 운영소스/설정/프로세스/직렬/ARM/하드웨어변경없음.
+
+파일
+all_frames.csv:37,870개모든시점의범위/셀개수/패턴/중앙선연속범위
+summary.json:bag별집계
+patterns.json:2개관측창의정확한메타데이터/범위/마스크해시
+pattern_runs.json:각관측창의시작/끝수신시각. 각bag안에서는변경없음.
+exceptions_from_33m_reference.csv:33.125m현재패턴과다른9월8,416프레임.
+  이는9월설정의일관된차이이며시간가변이상프레임목록이라는뜻이아니다.
+sources.json:원본상태/메시지스트림해시
+validation.json:완전성검증
+
+bag별전수결과
+'''
+for row in s:
+ key=next(iter(row['pattern_counts']));v=p[key];xmin,xmax,ymin,ymax=v['known_extent_grid_axes_m']
+ text+=f"{row['bag']}: {row['frames']}frames, x=[{xmin},{xmax}), y=[{ymin},{ymax}), pattern changes=0\n"
+text+='''
+재실행(새결과는이폴더안에만저장)
+source /home/imac/ros2_ws/install/setup.bash
+python3 /home/imac/ros2_ws/followup_20261006/grid_extent_audit/audit.py
+python3 /home/imac/ros2_ws/followup_20261006/grid_extent_audit/report.py
+'''
+(h/'RESULT.txt').write_text(text)
+files=[q for q in h.iterdir() if q.is_file() and q.name!='artifacts_sha256.json']
+(h/'artifacts_sha256.json').write_text(json.dumps({q.name:hashlib.sha256(q.read_bytes()).hexdigest() for q in sorted(files)},indent=2)+'\n')
+print(json.dumps(checks,indent=2))

@@ -1,0 +1,34 @@
+--- previous_1Hz_harness.cpp
++++ horizon6_2Hz_harness.cpp
+@@ -1,4 +1,5 @@
+-extern double experiment_near_weight;
++extern double experiment_soft_max_width_m;
++extern double experiment_force_B;
+ // Standalone numerical harness. No spinning, command publication, or hardware I/O.
+ #define VIRTUAL_CONTROL_LOWER_MPC_NO_MAIN
+ #include "/home/imac/ros2_ws/src/virtual_control/src/lower_tracking_mpc_node.cpp"
+@@ -31,13 +32,14 @@
+ struct LowerPathGenerationTestAccess {
+  using Node=SdMapUpperPlannerNode;
+  struct Memory {Points previous;LowerPathGeometry path;Node::IntervalCenteringState interval;int wp=0;double last_success=-100;};
+- static void setup(Node&n,const J&c){experiment_near_weight=c.value("near_weight",0.0);n.planner_timer_->cancel();if(c.contains("legacy")&&c["legacy"].get<bool>()){n.upper_cumulative_increment_model_=false;n.branch_turn_window_at_split_=false;n.branch_turn_target_absolute_=false;n.upper_r_dpsi_=1.5;}if(c.contains("soft_ratio"))n.preview_interval_soft_ratio_=c["soft_ratio"].get<double>();if(c.contains("lambda_relative_turn"))n.lambda_relative_turn_=c["lambda_relative_turn"].get<double>();if(c.contains("upper_r_dpsi"))n.upper_r_dpsi_=c["upper_r_dpsi"].get<double>();
++ static void setup(Node&n,const J&c){experiment_soft_max_width_m=0.0;experiment_force_B=-1.0;n.upper_preview_steps_=c.value("upper_preview_steps",n.upper_preview_steps_);n.planner_timer_->cancel();if(c.contains("legacy")&&c["legacy"].get<bool>()){n.upper_cumulative_increment_model_=false;n.branch_turn_window_at_split_=false;n.branch_turn_target_absolute_=false;n.upper_r_dpsi_=1.5;}if(c.contains("soft_ratio"))n.preview_interval_soft_ratio_=c["soft_ratio"].get<double>();if(c.contains("lambda_relative_turn"))n.lambda_relative_turn_=c["lambda_relative_turn"].get<double>();if(c.contains("upper_r_dpsi"))n.upper_r_dpsi_=c["upper_r_dpsi"].get<double>();
+   n.lambda_relative_turn_=c.value("lambda_relative_turn",n.lambda_relative_turn_);
+   n.upper_r_dpsi_=c.value("upper_r_dpsi",n.upper_r_dpsi_);
+   n.terminal_position_weight_multiplier_=c.value("terminal_position_weight_multiplier",n.terminal_position_weight_multiplier_);
+   n.waypoint_switch_eps_m_=c.value("wp_switch_eps",n.waypoint_switch_eps_m_);
+   n.preview_min_segment_samples_=c.value("preview_min_segment_samples",n.preview_min_segment_samples_);
+  }
++ static int plannerTicks(Node&n){return std::max(1,static_cast<int>(std::lround(10.0/n.upper_planner_rate_hz_)));}
+  static J plan(Node&n,Memory&m,const World&w,const V&position,double yaw,double speed,double t){
+   Node::GridMapSnapshot g;g.valid=true;g.frame_id="Vehicle";g.width=g.height=128;g.resolution=.3125;g.origin_body=V(0,-20);g.data.resize(128*128);
+   auto R=rotation(yaw);for(int y=0;y<128;++y)for(int x=0;x<128;++x)g.data[y*128+x]=w.cell(position+R*(g.origin_body+g.resolution*V(x+.5,y+.5)));
+@@ -96,7 +98,7 @@
+   if(mode=="replay"){const auto&profile=w.scene["speed_profile"];while(speed_index+1<profile.size()&&profile[speed_index+1][0].get<double>()<=t+.0001)++speed_index;v=profile[speed_index][1];}
+   double measured_yaw=yaw+plant["yaw_noise_deg"].get<double>()*M_PI/180*sin(1.3*t);
+   bool changed=false;
+-  if(mode=="live"&&step%10==0){auto result=UA::plan(*upper,memory,w,xy,measured_yaw,v,t);changed=result["valid"];plans.push_back(result);if(changed)original=memory.path;}
++  if(mode=="live"&&step%UA::plannerTicks(*upper)==0){auto result=UA::plan(*upper,memory,w,xy,measured_yaw,v,t);changed=result["valid"];plans.push_back(result);if(changed)original=memory.path;}
+   if(mode=="replay"){
+    const auto&refs=w.scene["references"];
+    while(reference_index<refs.size()&&refs[reference_index]["t"].get<double>()<=t+.0001){const auto&r=refs[reference_index++];auto q=pts(r["xy"]);auto ss=r["s"].get<std::vector<double>>();original=imac_ctrl::prepareLowerPath(q,&ss);memory.last_success=t;changed=true;}

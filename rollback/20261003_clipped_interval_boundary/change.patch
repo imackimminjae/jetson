@@ -1,0 +1,243 @@
+--- before/src/virtual_control/include/virtual_control/tracking_control.hpp
++++ after/src/virtual_control/include/virtual_control/tracking_control.hpp
+@@ -71,7 +71,8 @@
+   {
+     bool centering_on{false};
+     double threshold{std::numeric_limits<double>::quiet_NaN()};
+-    double inset{0.0};
++    double start_inset{0.0};
++    double end_inset{0.0};
+   };
+ 
+   // Pure helpers used only inside this planner. B is the sole retained state.
+--- before/src/virtual_control/test/test_interval_centering_ros.py
++++ after/src/virtual_control/test/test_interval_centering_ros.py
+@@ -162,6 +162,15 @@
+         for row in rows():
+             assert row[3] == pytest.approx(row[2] * 0.4 if row[4] else row[2] - 4.0)
+ 
++        # An initialized B must not make a truncated run eligible for centering.
++        # One side is an observed road boundary, the other ends at the grid edge.
++        current_grid = grid_for([[(-30, 2)]]*6)
++        wait_for(lambda: details and all(r[7] == 1 and r[5:7] == [0.0, 1.0]
++                                        for r in rows()))
++        assert states[-1][2] == pytest.approx(baseline)
++        assert all(r[4] == 0 and math.isnan(r[11]) for r in rows())
++        assert all(r[3] == pytest.approx(r[2] - min(2.0, 0.45*r[2])) for r in rows())
++
+         # Wide-only observations cannot grow B past the previous 1.5*B limit.
+         current_grid = grid_for([10]*6)
+         start_index = len(states)
+@@ -214,7 +223,8 @@
+             assert states[-1][2] == 0
+             assert all(r[4] == 0 and math.isnan(r[11]) for r in rows())
+             for row in rows():
+-                assert row[3] == pytest.approx(row[2] - 2*min(2.0, 0.45*row[2]))
++                assert row[3] == pytest.approx(
++                    row[2] - (row[5] + row[6])*min(2.0, 0.45*row[2]))
+             if name != 'reference_outside':
+                 assert all(r[7] == 1 for r in rows())
+             else:
+--- before/src/virtual_control/test/test_interval_centering_state.cpp
++++ after/src/virtual_control/test/test_interval_centering_state.cpp
+@@ -64,7 +64,7 @@
+         const auto decision = centering::treatment(interval, info.state, {}, 0.7, 2.0, 9.0);
+         EXPECT_NEAR(decision.threshold, 7.2, 1e-12);
+         EXPECT_EQ(decision.centering_on, interval.length <= 7.2);
+-        EXPECT_NEAR(decision.inset, decision.centering_on ? 0.3 * interval.length : 2.0, 1e-12);
++        EXPECT_NEAR(decision.start_inset, decision.centering_on ? 0.3 * interval.length : 2.0, 1e-12);
+       }
+     }
+   }
+@@ -164,11 +164,13 @@
+ {
+   const auto on = centering::treatment(observed(6.0), {4.0}, {}, 0.7, 2.0, 9.0);
+   EXPECT_TRUE(on.centering_on);
++  EXPECT_DOUBLE_EQ(on.start_inset, on.end_inset);
+   EXPECT_DOUBLE_EQ(on.threshold, 6.0);
+-  EXPECT_NEAR(6.0 - 2.0 * on.inset, 2.4, 1e-12);
++  EXPECT_NEAR(6.0 - 2.0 * on.start_inset, 2.4, 1e-12);
+   const auto off = centering::treatment(observed(6.01), {4.0}, {}, 0.7, 2.0, 9.0);
+   EXPECT_FALSE(off.centering_on);
+-  EXPECT_DOUBLE_EQ(off.inset, 2.0);
++  EXPECT_DOUBLE_EQ(off.start_inset, 2.0);
++  EXPECT_DOUBLE_EQ(off.end_inset, 2.0);
+ }
+ 
+ TEST(IntervalCenteringState, UninitializedObservedIntervalsAreOffEvenWhenShort)
+@@ -176,28 +178,42 @@
+   const auto off = centering::treatment(observed(1.0), {}, {}, 0.7, 2.0, 9.0);
+   EXPECT_FALSE(off.centering_on);
+   EXPECT_TRUE(std::isnan(off.threshold));
+-  EXPECT_DOUBLE_EQ(off.inset, 0.45);
+-  EXPECT_NEAR(1.0 - 2.0 * off.inset, 0.1, 1e-12);
+-}
+-
+-TEST(IntervalCenteringState, TreatmentDoesNotRequireCandidateEligibility)
+-{
+-  auto clipped = observed(4.0, false);
+-  clipped.start_boundary_observed = false;
+-  const auto on = centering::treatment(clipped, {4.0}, {}, 0.7, 2.0, 9.0);
+-  EXPECT_TRUE(on.centering_on);
+-  EXPECT_NEAR(on.inset, 1.2, 1e-12);
++  EXPECT_DOUBLE_EQ(off.start_inset, 0.45);
++  EXPECT_NEAR(1.0 - 2.0 * off.start_inset, 0.1, 1e-12);
++}
++
++TEST(IntervalCenteringState, ClippedIntervalsUseOnlyObservedBoundaryMargins)
++{
++  for (const auto state : {centering::State{}, centering::State{4.0}}) {
++    for (const bool start_observed : {false, true}) {
++      for (const bool end_observed : {false, true}) {
++        if (start_observed && end_observed) {continue;}
++        auto clipped = observed(4.0, false);
++        clipped.start_boundary_observed = start_observed;
++        clipped.end_boundary_observed = end_observed;
++        const auto decision = centering::treatment(clipped, state, {}, 0.7, 2.0, 9.0);
++        EXPECT_FALSE(decision.centering_on);
++        EXPECT_TRUE(std::isnan(decision.threshold));
++        EXPECT_DOUBLE_EQ(decision.start_inset, start_observed ? 1.8 : 0.0);
++        EXPECT_DOUBLE_EQ(decision.end_inset, end_observed ? 1.8 : 0.0);
++        EXPECT_GT(clipped.length - decision.start_inset - decision.end_inset, 0.0);
++      }
++    }
++  }
+ }
+ 
+ TEST(IntervalCenteringState, FallbackHasIndependentNineMetreThreshold)
+ {
+   auto fallback = observed(4.5);
+   fallback.nominal_fallback = true;
++  fallback.start_boundary_observed = false;
++  fallback.end_boundary_observed = false;
+   for (const centering::State state : {centering::State{}, centering::State{1.0}}) {
+     const auto decision = centering::treatment(fallback, state, {}, 0.7, 2.0, 9.0);
+     EXPECT_TRUE(decision.centering_on);
++    EXPECT_DOUBLE_EQ(decision.start_inset, decision.end_inset);
+     EXPECT_DOUBLE_EQ(decision.threshold, 9.0);
+-    EXPECT_NEAR(4.5 - 2.0 * decision.inset, 1.8, 1e-12);
++    EXPECT_NEAR(4.5 - 2.0 * decision.start_inset, 1.8, 1e-12);
+   }
+   fallback.length = 9.0;
+   EXPECT_TRUE(centering::treatment(fallback, {}, {}, 0.7, 2.0, 9.0).centering_on);
+@@ -205,3 +221,18 @@
+   EXPECT_FALSE(centering::treatment(fallback, {}, {}, 0.7, 2.0, 9.0).centering_on);
+   EXPECT_FALSE(centering::treatment(observed(4.5), {1.0}, {}, 0.7, 2.0, 9.0).centering_on);
+ }
++
++TEST(IntervalCenteringState, RecordedClippedFirstStepKeepsItsMapEdgeEndpoint)
++{
++  auto interval = observed(4.22696511059541, false);
++  interval.end_boundary_observed = false;
++  const auto decision = centering::treatment(interval, {7.1}, {}, 0.7, 2.0, 9.0);
++  EXPECT_FALSE(decision.centering_on);
++  EXPECT_DOUBLE_EQ(decision.end_inset, 0.0);
++  EXPECT_NEAR(decision.start_inset, 1.9021342997679345, 1e-12);
++  EXPECT_NEAR(interval.length - decision.start_inset - decision.end_inset,
++    2.3248308108274753, 1e-12);
++  const auto update = centering::update({7.1}, {{interval}});
++  EXPECT_DOUBLE_EQ(update.state.reference_length, 7.1);
++  EXPECT_EQ(update.candidate_step, -1);
++}
+--- before/src/virtual_control/docs/main9_interval_centering.md
++++ after/src/virtual_control/docs/main9_interval_centering.md
+@@ -27,12 +27,24 @@
+ or candidate B > 1.5*B; otherwise B is replaced immediately. B is the only retained
+ algorithm state. Missing or stale required grid data leaves B unchanged.
+ 
+-Observed intervals are ON iff B exists and L <= 1.5*B. ON keeps the central
+-`(2*soft_ratio - 1)` fraction: the split profile uses 0.8, retaining 60%.
++Fully observed intervals are ON iff B exists and L <= 1.5*B. ON keeps the central
++`(2*soft_ratio - 1)` fraction: 0.7 retains 40%, and 0.8 retains 60%.
+ The ratio is configurable in `(0.5, 1.0]`; the node default remains 0.7 (40%).
+ OFF insets each endpoint by min(2.0 m, 0.45*L) in the split profile,
+ including when B is unavailable. OFF can therefore be narrower than ON on short
+ intervals. B is an observed length scale, not a physical road-width estimate.
++
++Intervals clipped by the grid extent or unknown samples never use central
++contraction, even when B is available. Each observed road boundary gets
++`min(boundary_margin, 0.45*L)` of inset; each unobserved boundary stays at its
++original endpoint. This does not extend the free interval into unobserved space.
++The decision threshold is NaN for this case because the relative-width test is
++not applicable. Clipped intervals still do not update B.
++
++An asymmetric boundary margin can move the permitted interval away from the
++vehicle. This change therefore does not guarantee that a previously infeasible
++first step becomes feasible; real road margins and vehicle limits still apply.
++Grid origin and coordinate alignment are unchanged.
+ 
+ Nominal fallback remains enabled with width 4.5 m and an independent 9 m
+ centering threshold. Fallback never supplies a B candidate. The existing rule
+@@ -41,7 +53,7 @@
+ ## Diagnostics
+ 
+ `/debug/upper_constraint_intervals` retains its existing seven-column format and
+-covers the solver's usable prefix. Treatment 0 means ON, treatment 1 means OFF.
++covers the solver's usable prefix. Treatment 0 means ON, treatment 1 means boundary margins (possibly one-sided or zero for clipped intervals).
+ 
+ `/debug/upper_interval_info` contains 12 columns per raw interval across the full
+ requested preview. The layout labels name the columns:
+@@ -65,7 +77,7 @@
+ 
+ Verbose centering logs (`preview_interval_debug`) report only previous/candidate/
+ applied B, 1.5*B, the selected step and interval, and each interval's original
+-length and ON/OFF decision.
++length, ON/OFF decision, and separate start/end insets.
+ 
+ ## Verification
+ 
+--- before/src/virtual_control/src/tracking_control.cpp
++++ after/src/virtual_control/src/tracking_control.cpp
+@@ -250,6 +250,18 @@
+   double boundary_margin, double fallback_max_centering_length)
+ {
+   IntervalTreatment result;
++  // A truncated free run does not measure the full road width. Keep its
++  // unobserved endpoints at the original observation limit, and apply the
++  // existing boundary margin only at an actually observed road boundary.
++  // Never extend an interval into unknown cells or outside the grid.
++  if (!interval.nominal_fallback &&
++    (!interval.start_boundary_observed || !interval.end_boundary_observed))
++  {
++    const double margin = std::min(boundary_margin, 0.45 * interval.length);
++    result.start_inset = interval.start_boundary_observed ? margin : 0.0;
++    result.end_inset = interval.end_boundary_observed ? margin : 0.0;
++    return result;
++  }
+   // Fallback keeps its independent threshold; all observed stages share 1.5*B.
+   if (interval.nominal_fallback) {
+     result.threshold = fallback_max_centering_length;
+@@ -257,8 +269,9 @@
+     result.threshold = settings.relative_length_factor * state.reference_length;
+   }
+   result.centering_on = std::isfinite(result.threshold) && interval.length <= result.threshold;
+-  result.inset = result.centering_on ? (1.0 - soft_ratio) * interval.length :
++  result.start_inset = result.centering_on ? (1.0 - soft_ratio) * interval.length :
+     std::min(boundary_margin, 0.45 * interval.length);
++  result.end_inset = result.start_inset;
+   return result;
+ }
+ 
+@@ -1529,8 +1542,8 @@
+       const Eigen::Vector2d p1 = output.pMk[step][candidate];
+       const double raw_length = info.observation.length;
+       const Eigen::Vector2d direction = (p1 - p0) / raw_length;
+-      const Eigen::Vector2d processed_start = p0 + info.treatment.inset * direction;
+-      const Eigen::Vector2d processed_end = p1 - info.treatment.inset * direction;
++      const Eigen::Vector2d processed_start = p0 + info.treatment.start_inset * direction;
++      const Eigen::Vector2d processed_end = p1 - info.treatment.end_inset * direction;
+       info.processed_length = (processed_end - processed_start).norm();
+       if (!finitePoint(processed_start) || !finitePoint(processed_end) ||
+         !std::isfinite(info.processed_length) || info.processed_length <= 1e-8)
+@@ -1547,8 +1560,9 @@
+       if (preview_interval_debug_) {
+         RCLCPP_INFO(
+           get_logger(),
+-          "interval step=%d candidate=%zu raw=%.3f centering=%s",
+-          k, candidate, raw_length, info.treatment.centering_on ? "ON" : "OFF");
++          "interval step=%d candidate=%zu raw=%.3f centering=%s inset_start=%.3f inset_end=%.3f",
++          k, candidate, raw_length, info.treatment.centering_on ? "ON" : "OFF",
++          info.treatment.start_inset, info.treatment.end_inset);
+       }
+       ++retained;
+     }

@@ -1,0 +1,20 @@
+--- production/tracking_control.cpp
++++ offline/tracking_control_trial.cpp
+@@ -189,6 +189,7 @@
+ 
+ }  // namespace
+ 
++double experiment_soft_max_width_m = 0.0;  // Offline only; zero disables the cap.
+ namespace imac_ctrl
+ {
+ 
+@@ -255,6 +256,9 @@
+     result.threshold = fallback_max_centering_length;
+   } else if (hasIntervalReference(state)) {
+     result.threshold = settings.relative_length_factor * state.reference_length;
++    if (experiment_soft_max_width_m > 0.0) {
++      result.threshold = std::min(result.threshold, experiment_soft_max_width_m);
++    }
+   }
+   result.centering_on = std::isfinite(result.threshold) && interval.length <= result.threshold;
+   result.inset = result.centering_on ? (1.0 - soft_ratio) * interval.length :

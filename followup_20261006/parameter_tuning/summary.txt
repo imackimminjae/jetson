@@ -1,0 +1,55 @@
+UPPER baseline S1 {'failures': 1, 'near_p95_m': 5.238359905120744, 'heading_p95_deg': 31.603602872056165}
+UPPER baseline S2 {'failures': 0, 'near_p95_m': 1.7212922922923373, 'heading_p95_deg': 13.733710886373458}
+UPPER rdpsi_2.5 S1 {'failures': 1, 'near_p95_m': 5.104508977972637, 'heading_p95_deg': 30.641974501908734}
+UPPER rdpsi_2.5 S2 {'failures': 0, 'near_p95_m': 6.642810482379948, 'heading_p95_deg': 37.35421565869625}
+UPPER rdpsi_3.5 S1 {'failures': 1, 'near_p95_m': 5.309674990987773, 'heading_p95_deg': 32.37147597890298}
+UPPER rdpsi_3.5 S2 {'failures': 0, 'near_p95_m': 1.6932192283722212, 'heading_p95_deg': 12.508924361473039}
+UPPER rdpsi_4.5 S1 {'failures': 18, 'near_p95_m': 4.2366038445424925, 'heading_p95_deg': 40.902423525659216}
+UPPER rdpsi_4.5 S2 {'failures': 5, 'near_p95_m': 7.504859112203258, 'heading_p95_deg': 41.443954416089966}
+UPPER rdpsi_6 S1 {'failures': 1, 'near_p95_m': 4.814130050485353, 'heading_p95_deg': 30.969213070749195}
+UPPER rdpsi_6 S2 {'failures': 5, 'near_p95_m': 7.356450587540443, 'heading_p95_deg': 41.90298996969014}
+UPPER terminal_100 S1 {'failures': 1, 'near_p95_m': 5.231808991249846, 'heading_p95_deg': 31.581474445966226}
+UPPER terminal_100 S2 {'failures': 0, 'near_p95_m': 1.727413801956616, 'heading_p95_deg': 13.757837544868922}
+UPPER terminal_300 S1 {'failures': 1, 'near_p95_m': 5.252127656241285, 'heading_p95_deg': 31.773867940014085}
+UPPER terminal_300 S2 {'failures': 0, 'near_p95_m': 1.7088096746786454, 'heading_p95_deg': 13.640997402458948}
+LOWER {'scene': 'SC3_S1_fixed_plans_no_road_validation', 'plant': 'tau0.74', 'config': 'baseline', 'outcome': 'time_limit', 'steering_highpass_rms_deg': 4.716285646906245, 'tracking_p95_m': 1.7702188700199781, 'tracking_max_m': 2.2276222831485057, 'saturation_percent': 16.738197424892704}
+LOWER {'scene': 'SC3_S1_fixed_plans_no_road_validation', 'plant': 'tau0.74', 'config': 'lower_rd180', 'outcome': 'time_limit', 'steering_highpass_rms_deg': 4.525043365415856, 'tracking_p95_m': 1.6971415044842322, 'tracking_max_m': 2.1381311480744176, 'saturation_percent': 15.879828326180256}
+LOWER {'scene': 'SC3_S1_fixed_plans_no_road_validation', 'plant': 'tau0.74', 'config': 'lower_rd240', 'outcome': 'time_limit', 'steering_highpass_rms_deg': 4.42218398104826, 'tracking_p95_m': 1.733942182731099, 'tracking_max_m': 2.087856291988166, 'saturation_percent': 15.450643776824036}
+LOWER {'scene': 'SC3_S1_fixed_plans_no_road_validation', 'plant': 'tau0.5', 'config': 'baseline', 'outcome': 'time_limit', 'steering_highpass_rms_deg': 4.643259258406254, 'tracking_p95_m': 2.1443782026779985, 'tracking_max_m': 2.734232970779257, 'saturation_percent': 16.30901287553648}
+LOWER {'scene': 'SC3_S1_fixed_plans_no_road_validation', 'plant': 'tau0.5', 'config': 'lower_rd180', 'outcome': 'time_limit', 'steering_highpass_rms_deg': 4.500218034379642, 'tracking_p95_m': 2.22095879926493, 'tracking_max_m': 2.808214407557755, 'saturation_percent': 15.879828326180256}
+LOWER {'scene': 'SC3_S1_fixed_plans_no_road_validation', 'plant': 'tau0.5', 'config': 'lower_rd240', 'outcome': 'time_limit', 'steering_highpass_rms_deg': 4.411206830913058, 'tracking_p95_m': 2.2531920919262602, 'tracking_max_m': 2.8561961697026637, 'saturation_percent': 15.450643776824036}
+LOWER {'scene': 'SC3_S1_fixed_plans_no_road_validation', 'plant': 'tau1.0', 'config': 'baseline', 'outcome': 'time_limit', 'steering_highpass_rms_deg': 4.688998723713403, 'tracking_p95_m': 1.9003720309080891, 'tracking_max_m': 2.178630529654784, 'saturation_percent': 15.450643776824036}
+LOWER {'scene': 'SC3_S1_fixed_plans_no_road_validation', 'plant': 'tau1.0', 'config': 'lower_rd180', 'outcome': 'time_limit', 'steering_highpass_rms_deg': 4.408908434188123, 'tracking_p95_m': 1.8456429192338226, 'tracking_max_m': 2.0510600874425293, 'saturation_percent': 14.592274678111588}
+LOWER {'scene': 'SC3_S1_fixed_plans_no_road_validation', 'plant': 'tau1.0', 'config': 'lower_rd240', 'outcome': 'time_limit', 'steering_highpass_rms_deg': 4.291423776889008, 'tracking_p95_m': 1.9291047967749237, 'tracking_max_m': 2.195752458193461, 'saturation_percent': 15.879828326180256}
+LOWER {'scene': 'SC3_S2_fixed_plans_no_road_validation', 'plant': 'tau0.74', 'config': 'baseline', 'outcome': 'time_limit', 'steering_highpass_rms_deg': 2.8303061579257, 'tracking_p95_m': 1.1335369160801958, 'tracking_max_m': 1.987633304690837, 'saturation_percent': 3.6363636363636362}
+LOWER {'scene': 'SC3_S2_fixed_plans_no_road_validation', 'plant': 'tau0.74', 'config': 'lower_rd180', 'outcome': 'time_limit', 'steering_highpass_rms_deg': 2.5500084783355317, 'tracking_p95_m': 1.1763068154912728, 'tracking_max_m': 2.0616442291791097, 'saturation_percent': 2.272727272727273}
+LOWER {'scene': 'SC3_S2_fixed_plans_no_road_validation', 'plant': 'tau0.74', 'config': 'lower_rd240', 'outcome': 'time_limit', 'steering_highpass_rms_deg': 2.3295141798203662, 'tracking_p95_m': 1.2032824764580874, 'tracking_max_m': 2.091711459527845, 'saturation_percent': 2.272727272727273}
+LOWER {'scene': 'SC3_S2_fixed_plans_no_road_validation', 'plant': 'tau0.5', 'config': 'baseline', 'outcome': 'time_limit', 'steering_highpass_rms_deg': 2.968246045884304, 'tracking_p95_m': 1.0447799458222196, 'tracking_max_m': 1.6304697290690233, 'saturation_percent': 2.272727272727273}
+LOWER {'scene': 'SC3_S2_fixed_plans_no_road_validation', 'plant': 'tau0.5', 'config': 'lower_rd180', 'outcome': 'time_limit', 'steering_highpass_rms_deg': 2.6218251280557756, 'tracking_p95_m': 1.038841451825323, 'tracking_max_m': 1.6583910827104364, 'saturation_percent': 2.272727272727273}
+LOWER {'scene': 'SC3_S2_fixed_plans_no_road_validation', 'plant': 'tau0.5', 'config': 'lower_rd240', 'outcome': 'time_limit', 'steering_highpass_rms_deg': 2.4057257878543097, 'tracking_p95_m': 1.0379648212520136, 'tracking_max_m': 1.6812543336004546, 'saturation_percent': 2.272727272727273}
+LOWER {'scene': 'SC3_S2_fixed_plans_no_road_validation', 'plant': 'tau1.0', 'config': 'baseline', 'outcome': 'time_limit', 'steering_highpass_rms_deg': 2.641260504238908, 'tracking_p95_m': 1.4693864460001302, 'tracking_max_m': 2.5460674541574404, 'saturation_percent': 5.0}
+LOWER {'scene': 'SC3_S2_fixed_plans_no_road_validation', 'plant': 'tau1.0', 'config': 'lower_rd180', 'outcome': 'time_limit', 'steering_highpass_rms_deg': 2.472587490872396, 'tracking_p95_m': 1.4939726649689018, 'tracking_max_m': 2.562363455485756, 'saturation_percent': 3.6363636363636362}
+LOWER {'scene': 'SC3_S2_fixed_plans_no_road_validation', 'plant': 'tau1.0', 'config': 'lower_rd240', 'outcome': 'time_limit', 'steering_highpass_rms_deg': 2.323847909111542, 'tracking_p95_m': 1.5087606906084512, 'tracking_max_m': 2.610032319057725, 'saturation_percent': 1.8181818181818181}
+LOWER {'scene': 'SC3_S1_fixed_plans_no_road_validation', 'plant': 'tau0.74', 'config': 'lower_rd150', 'outcome': 'time_limit', 'steering_highpass_rms_deg': 4.612498992789682, 'tracking_p95_m': 1.7268286385287714, 'tracking_max_m': 2.166471813654867, 'saturation_percent': 16.30901287553648}
+LOWER {'scene': 'SC3_S1_fixed_plans_no_road_validation', 'plant': 'tau0.5', 'config': 'lower_rd150', 'outcome': 'time_limit', 'steering_highpass_rms_deg': 4.562042027636169, 'tracking_p95_m': 2.195004700680118, 'tracking_max_m': 2.7799861400753696, 'saturation_percent': 15.879828326180256}
+LOWER {'scene': 'SC3_S1_fixed_plans_no_road_validation', 'plant': 'tau1.0', 'config': 'lower_rd150', 'outcome': 'time_limit', 'steering_highpass_rms_deg': 4.525468664641104, 'tracking_p95_m': 1.851959346537847, 'tracking_max_m': 2.101885384022938, 'saturation_percent': 15.450643776824036}
+LOWER {'scene': 'SC3_S2_fixed_plans_no_road_validation', 'plant': 'tau0.74', 'config': 'lower_rd150', 'outcome': 'time_limit', 'steering_highpass_rms_deg': 2.6670658890844985, 'tracking_p95_m': 1.154891400082297, 'tracking_max_m': 2.0269469542779945, 'saturation_percent': 2.272727272727273}
+LOWER {'scene': 'SC3_S2_fixed_plans_no_road_validation', 'plant': 'tau0.5', 'config': 'lower_rd150', 'outcome': 'time_limit', 'steering_highpass_rms_deg': 2.7709754025577626, 'tracking_p95_m': 1.0416358350066857, 'tracking_max_m': 1.6449238818540404, 'saturation_percent': 2.272727272727273}
+LOWER {'scene': 'SC3_S2_fixed_plans_no_road_validation', 'plant': 'tau1.0', 'config': 'lower_rd150', 'outcome': 'time_limit', 'steering_highpass_rms_deg': 2.5472396987738226, 'tracking_p95_m': 1.4894967086725106, 'tracking_max_m': 2.5525060589121584, 'saturation_percent': 4.090909090909091}
+CLOSED synthetic/baseline {'total': 2, 'correct': 2, 'failures': 0, 'bad': []}
+CLOSED synthetic/lower_rd180 {'total': 2, 'correct': 1, 'failures': 5, 'bad': [{'scene': 'branch_width', 'plant': 'measured_slow', 'outcome': 'left_road_stop'}]}
+CLOSED synthetic/lower_rd240 {'total': 2, 'correct': 2, 'failures': 0, 'bad': []}
+CLOSED synthetic/lower_rd150 {'total': 2, 'correct': 2, 'failures': 0, 'bad': []}
+CLOSED replica/baseline {'total': 6, 'correct': 6, 'failures': 0, 'bad': []}
+CLOSED replica/lower_rd180 {'total': 6, 'correct': 6, 'failures': 0, 'bad': []}
+CLOSED replica/lower_rd240 {'total': 6, 'correct': 6, 'failures': 0, 'bad': []}
+CLOSED replica/lower_rd150 {'total': 6, 'correct': 6, 'failures': 0, 'bad': []}
+CLOSED ysynthetic/baseline {'total': 12, 'correct': 12, 'failures': 0, 'bad': []}
+CLOSED ysynthetic/lower_rd180 {'total': 12, 'correct': 12, 'failures': 0, 'bad': []}
+CLOSED ysynthetic/lower_rd240 {'total': 12, 'correct': 12, 'failures': 0, 'bad': []}
+CLOSED ysynthetic/lower_rd150 {'total': 12, 'correct': 12, 'failures': 0, 'bad': []}
+CLOSED robust/baseline {'total': 36, 'correct': 36, 'failures': 0, 'bad': []}
+CLOSED robust/lower_rd180 {'total': 36, 'correct': 36, 'failures': 0, 'bad': []}
+CLOSED robust/lower_rd240 {'total': 36, 'correct': 35, 'failures': 5, 'bad': [{'scene': 'branch_width', 'plant': 'tau1.0', 'outcome': 'left_road_stop'}]}
+CLOSED robust/lower_rd150 {'total': 36, 'correct': 36, 'failures': 0, 'bad': []}
+Baseline reproduced: {'replay': 114, 'closed_loop': 56}

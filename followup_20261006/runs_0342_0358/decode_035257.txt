@@ -1,0 +1,67 @@
+/bev/occupancy_grid count 1005 start/end 03:52:58.671 03:53:34.700 gap median/max 0.03107297420501709 0.14019083976745605
+grid [(0.3125, 128, 128, [0.0, -20.0], [0.0, 0.0, 0.0, 1.0])] gaps>1s []
+/motive/vehicle/odom_map count 1086 start/end 03:52:58.597 03:53:34.747 gap median/max 0.03414440155029297 0.04199576377868652
+/planner/lower_reference_path/with_arclength count 35 start/end 03:52:58.595 03:53:34.214 gap median/max 1.00015127658844 2.9963772296905518
+/debug/upper_branch_event count 36 start/end 03:52:59.213 03:53:34.215 gap median/max 0.9996192455291748 1.0048282146453857
+/debug/lower_mpc_trace count 362 start/end 03:52:58.601 03:53:34.701 gap median/max 0.10001397132873535 0.1041867733001709
+LOWER modes Counter({0.0: 347, 3.0: 15}) speed min/med/max [0.07199217 5.90970993 6.76693972] valid steering saturation 0.043227665706051875
+mode 0.0 count 347 first,last 03:52:58.599 03:53:34.700
+mode 3.0 count 15 first,last 03:53:26.800 03:53:28.199
+UPPER 03:52:59.213 success 7 xy 149.96 -139.77 yaw 118.3 status solved
+UPPER 03:53:00.212 success 7 xy 149.46 -138.69 yaw 118.3 status solved
+UPPER 03:53:01.212 success 7 xy 148.37 -136.64 yaw 119.0 status solved
+UPPER 03:53:02.210 success 7 xy 146.7 -133.67 yaw 119.6 status solved
+UPPER 03:53:03.210 success 7 xy 144.6 -129.86 yaw 119.0 status solved
+UPPER 03:53:04.213 success 7 xy 142.19 -125.36 yaw 118.3 status solved
+UPPER 03:53:05.212 success 7 xy 139.56 -120.42 yaw 118.2 status solved
+UPPER 03:53:06.214 success 7 xy 136.8 -115.27 yaw 118.1 status solved
+UPPER 03:53:07.212 success 7 xy 134.03 -110.07 yaw 117.6 status solved
+UPPER 03:53:08.213 success 7 xy 131.24 -104.8 yaw 117.4 status solved
+UPPER 03:53:09.212 success 7 xy 128.41 -99.52 yaw 117.6 status solved
+UPPER 03:53:10.212 success 7 xy 125.52 -94.29 yaw 118.1 status solved
+UPPER 03:53:11.212 success 7 xy 122.59 -89.07 yaw 118.3 status solved
+UPPER 03:53:12.212 success 7 xy 119.76 -83.82 yaw 117.1 status solved
+UPPER 03:53:13.215 success 7 xy 117.19 -78.47 yaw 114.0 status solved
+UPPER 03:53:14.215 success 7 xy 114.97 -72.99 yaw 110.7 status solved
+UPPER 03:53:15.214 success 7 xy 112.9 -67.47 yaw 109.4 status solved
+UPPER 03:53:16.214 success 7 xy 110.85 -61.98 yaw 109.5 status solved
+UPPER 03:53:17.217 success 7 xy 108.8 -56.58 yaw 109.4 status solved
+UPPER 03:53:18.212 success 7 xy 106.86 -51.23 yaw 109.2 status solved
+UPPER 03:53:19.213 success 7 xy 105.1 -45.84 yaw 105.0 status solved
+UPPER 03:53:20.217 success 7 xy 105.41 -40.11 yaw 81.4 status solved
+UPPER 03:53:21.214 success 7 xy 108.15 -35.06 yaw 60.8 status solved
+UPPER 03:53:22.213 success 7 xy 109.86 -29.64 yaw 73.6 status solved
+UPPER 03:53:23.212 success 7 xy 111.06 -24.16 yaw 73.9 status solved
+UPPER 03:53:24.213 success 7 xy 113.38 -19.05 yaw 63.3 status solved
+UPPER 03:53:25.216 success 7 xy 116.35 -14.19 yaw 57.4 status solved
+UPPER 03:53:26.216 solver_rejected 7 xy 119.93 -9.82 yaw 47.1 status DAQP direct corridor QP infeasible: tried=48
+UPPER 03:53:27.215 solver_rejected 6 xy 124.78 -6.86 yaw 28.7 status DAQP direct corridor QP infeasible: tried=4
+UPPER 03:53:28.211 success 7 xy 129.76 -4.75 yaw 22.1 status solved
+UPPER 03:53:29.216 success 7 xy 134.46 -3.4 yaw 12.1 status solved
+UPPER 03:53:30.213 success 7 xy 139.13 -3.75 yaw -5.7 status solved
+UPPER 03:53:31.215 success 7 xy 143.73 -4.11 yaw -3.3 status solved
+UPPER 03:53:32.213 success 7 xy 148.3 -3.03 yaw 12.2 status solved
+UPPER 03:53:33.211 success 7 xy 152.96 -1.71 yaw 13.4 status solved
+UPPER 03:53:34.215 success 7 xy 157.54 -1.04 yaw 6.6 status solved
+WARNINGS
+03:52:58.592 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: waiting for pose
+03:52:58.596 px4_ekf_bridge Start with the vehicle disarmed and stationary. PX4 EKF parameter changes marked as reboot-required need a Pixhawk reboot before fusion is tested.
+03:52:58.601 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: waiting for pose
+03:52:58.602 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: waiting for pose
+03:52:58.603 px4_odom_map_bridge Waiting for valid PX4 source pose on /px4/sih/odom
+03:52:58.605 upper_planner_node grid origin experiment: received_x=0.000 effective_x=0.000 shift_x=0.000; cell data unchanged
+03:52:58.605 upper_planner_node planner waiting for global path
+03:52:58.608 px4_ekf_bridge SIH heading check: missing_or_stale_attitude (EKF-SIH=None deg); pose output blocked
+03:52:58.608 px4_ekf_bridge SIH heading check: settling (EKF-SIH=0.6397336353494847 deg); pose output blocked
+03:52:58.619 px4_ekf_bridge SIH heading check: ok (EKF-SIH=0.544633496440812 deg); pose output enabled
+03:53:04.422 upper_planner_node grid origin experiment: received_x=0.000 effective_x=0.000 shift_x=0.000; cell data unchanged
+03:53:14.439 upper_planner_node grid origin experiment: received_x=0.000 effective_x=0.000 shift_x=0.000; cell data unchanged
+03:53:24.453 upper_planner_node grid origin experiment: received_x=0.000 effective_x=0.000 shift_x=0.000; cell data unchanged
+03:53:26.216 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=48 solve_ms=3.542; retaining last published path
+03:53:26.800 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: stale lower path
+03:53:27.211 upper_planner_node interval_diag step=7 reason=3 ref_body=(31.156,-3.822) heading_deg=-5.05 center_cell=(99,51) center_value=100 line_free=0 blocked=376 unknown=25 outside=2 longest_run=0 min_run=2 grid_free=1991 zero=1991 positive=11153 unknown=3240 topic=/bev/occupancy_grid frame=Vehicle origin=(0.000,-20.000) origin_yaw_deg=0.00 size=128x128 res=0.3125 positive_is_drivable=0 threshold=1 waypoint_bias=0 previous=1
+03:53:27.212 upper_planner_node no valid preview interval at step=7; usable horizon=6 reason=3
+03:53:27.212 upper_planner_node horizon_diag configured=7 extent_limit=7 requested=7 usable=6 reserve=1 restore=1 step_m=4.500 previous=1
+03:53:27.800 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: stale lower path
+03:53:28.210 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+03:53:34.493 upper_planner_node grid origin experiment: received_x=0.000 effective_x=0.000 shift_x=0.000; cell data unchanged

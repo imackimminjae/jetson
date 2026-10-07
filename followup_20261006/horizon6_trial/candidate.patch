@@ -1,0 +1,11 @@
+--- current_snapshot.yaml
++++ offline_horizon6.yaml
+@@ -137,7 +137,7 @@
+     upper_planner_rate_hz: 2.0
+     # 6.0 m/s * 0.75 s = 4.5 m; seven steps cover 31.5 m.
+     upper_prediction_dt_sec: 0.75
+-    upper_preview_steps: 7
++    upper_preview_steps: 6
+     preview_limit_to_grid_extent: true
+     # Reserve one complete step inside the received extent. At x_max=40 m,
+     # floor(40/4.5)-1=7 steps, leaving 8.5 m to the forward boundary.

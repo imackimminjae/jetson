@@ -1,0 +1,35 @@
+Running main() from /opt/ros/humble/src/gtest_vendor/src/gtest_main.cc
+[==========] Running 13 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 13 tests from IntervalCenteringState
+[ RUN      ] IntervalCenteringState.FarNarrowRoadImmediatelyReleasesLongEntryIntervals
+[       OK ] IntervalCenteringState.FarNarrowRoadImmediatelyReleasesLongEntryIntervals (0 ms)
+[ RUN      ] IntervalCenteringState.IncludesK0AndSelectsOriginalLength
+[       OK ] IntervalCenteringState.IncludesK0AndSelectsOriginalLength (0 ms)
+[ RUN      ] IntervalCenteringState.OtherBranchesNeitherSupplyCandidateNorFreezeUpdate
+[       OK ] IntervalCenteringState.OtherBranchesNeitherSupplyCandidateNorFreezeUpdate (0 ms)
+[ RUN      ] IntervalCenteringState.RejectsClippedFallbackNonfiniteAndNonpositiveCandidates
+[       OK ] IntervalCenteringState.RejectsClippedFallbackNonfiniteAndNonpositiveCandidates (0 ms)
+[ RUN      ] IntervalCenteringState.AmbiguousContainmentIsExcludedBeforeReliabilityFiltering
+[       OK ] IntervalCenteringState.AmbiguousContainmentIsExcludedBeforeReliabilityFiltering (0 ms)
+[ RUN      ] IntervalCenteringState.MissingCandidateRetainsB
+[       OK ] IntervalCenteringState.MissingCandidateRetainsB (0 ms)
+[ RUN      ] IntervalCenteringState.ExcessiveIncreaseRetainsBAndReportsRejectedCandidate
+[       OK ] IntervalCenteringState.ExcessiveIncreaseRetainsBAndReportsRejectedCandidate (0 ms)
+[ RUN      ] IntervalCenteringState.InclusiveIncreaseAndImmediateDecreaseNeedNoHistory
+[       OK ] IntervalCenteringState.InclusiveIncreaseAndImmediateDecreaseNeedNoHistory (0 ms)
+[ RUN      ] IntervalCenteringState.InvalidBInitializesFromCandidate
+[       OK ] IntervalCenteringState.InvalidBInitializesFromCandidate (0 ms)
+[ RUN      ] IntervalCenteringState.OnOffUsesInclusiveRelativeThresholdAndFixedContraction
+[       OK ] IntervalCenteringState.OnOffUsesInclusiveRelativeThresholdAndFixedContraction (0 ms)
+[ RUN      ] IntervalCenteringState.UninitializedObservedIntervalsAreOffEvenWhenShort
+[       OK ] IntervalCenteringState.UninitializedObservedIntervalsAreOffEvenWhenShort (0 ms)
+[ RUN      ] IntervalCenteringState.TreatmentDoesNotRequireCandidateEligibility
+[       OK ] IntervalCenteringState.TreatmentDoesNotRequireCandidateEligibility (0 ms)
+[ RUN      ] IntervalCenteringState.FallbackHasIndependentNineMetreThreshold
+[       OK ] IntervalCenteringState.FallbackHasIndependentNineMetreThreshold (0 ms)
+[----------] 13 tests from IntervalCenteringState (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 13 tests from 1 test suite ran. (1 ms total)
+[  PASSED  ] 13 tests.

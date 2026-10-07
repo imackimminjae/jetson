@@ -1,0 +1,11 @@
+PX4 SIH 자기장 보정 변경 롤백
+
+변경 전 MBE_ENABLE=1, 변경 후 MBE_ENABLE=0.
+롤백은 차량 정지 및 disarmed 상태에서 PX4 NSH 콘솔로 실행:
+param set MBE_ENABLE 1
+param save
+reboot
+
+현재 SIH 환경에서는 온라인 자기장 bias 문제가 재발할 수 있음.
+이 파일은 롤백 안내이며 롤백을 실행한 것이 아님.
+전체 변경 전 파라미터: parameters_before.parm.

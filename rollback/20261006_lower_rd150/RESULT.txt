@@ -1,0 +1,4 @@
+Applied only lower_rd_steering_rate 120 -> 150. No source/binary change or restart.
+Evidence: /home/imac/ros2_ws/followup_20261006/parameter_tuning/RESULT.txt
+56/56 offline closed-loop conditions passed; modest fixed-plan steering RMS improvement.
+Restore: python3 /home/imac/ros2_ws/rollback/20261006_lower_rd150/restore.py --restore

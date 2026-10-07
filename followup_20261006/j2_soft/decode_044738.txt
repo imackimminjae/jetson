@@ -1,0 +1,32 @@
+/bev/occupancy_grid count 524 start/end 04:47:39.505 04:47:59.075 gap median/max 0.03271055221557617 0.12368106842041016
+grid [(0.3125, 128, 128, [0.0, -20.0], [0.0, 0.0, 0.0, 1.0])] gaps>1s []
+/motive/vehicle/odom_map count 530 start/end 04:47:41.427 04:47:59.056 gap median/max 0.03373908996582031 0.047763824462890625
+/planner/lower_reference_path/with_arclength count 21 start/end 04:47:39.595 04:47:59.072 gap median/max 0.9997652769088745 1.0056114196777344
+/debug/upper_branch_event count 20 start/end 04:47:40.072 04:47:59.072 gap median/max 0.9992978572845459 1.005993366241455
+/debug/lower_mpc_trace count 180 start/end 04:47:41.178 04:47:59.079 gap median/max 0.09996533393859863 0.10424089431762695
+LOWER modes Counter({0.0: 180}) speed min/med/max [5.49350006 6.16177871 7.37572411] valid steering saturation 0.14444444444444443
+mode 0.0 count 180 first,last 04:47:41.177 04:47:59.079
+UPPER 04:47:40.072 success 7 xy 186.81 186.9 yaw -90.0 status solved
+UPPER 04:47:41.071 success 7 xy 188.72 181.23 yaw -66.2 status solved
+UPPER 04:47:42.073 success 7 xy 193.04 176.93 yaw -44.3 status solved
+UPPER 04:47:43.073 success 7 xy 197.48 172.95 yaw -44.2 status solved
+UPPER 04:47:44.072 success 7 xy 201.32 168.53 yaw -50.3 status solved
+UPPER 04:47:45.078 success 7 xy 205.32 164.25 yaw -44.6 status solved
+UPPER 04:47:46.075 success 7 xy 210.14 160.88 yaw -35.2 status solved
+UPPER 04:47:47.073 success 7 xy 215.02 157.72 yaw -33.9 status solved
+UPPER 04:47:48.072 success 7 xy 220.05 154.8 yaw -29.8 status solved
+UPPER 04:47:49.071 success 7 xy 225.3 152.23 yaw -27.6 status solved
+UPPER 04:47:50.072 success 7 xy 229.91 148.73 yaw -42.8 status solved
+UPPER 04:47:51.071 success 7 xy 233.37 144.02 yaw -52.4 status solved
+UPPER 04:47:52.072 success 7 xy 238.11 140.63 yaw -31.3 status solved
+UPPER 04:47:53.071 success 7 xy 243.99 139.64 yaw -10.0 status solved
+UPPER 04:47:54.073 success 7 xy 249.65 138.28 yaw -19.6 status solved
+UPPER 04:47:55.072 success 7 xy 254.29 134.79 yaw -39.5 status solved
+UPPER 04:47:56.071 success 7 xy 259.26 131.82 yaw -27.0 status solved
+UPPER 04:47:57.073 success 7 xy 265.06 131.0 yaw -9.0 status solved
+UPPER 04:47:58.072 success 7 xy 270.62 129.81 yaw -16.1 status solved
+UPPER 04:47:59.072 success 7 xy 275.94 127.87 yaw -21.6 status solved
+WARNINGS
+04:47:39.552 upper_planner_node grid origin experiment: received_x=0.000 effective_x=0.000 shift_x=0.000; cell data unchanged
+04:47:40.366 upper_planner_node grid origin experiment: received_x=0.000 effective_x=0.000 shift_x=0.000; cell data unchanged
+04:47:50.390 upper_planner_node grid origin experiment: received_x=0.000 effective_x=0.000 shift_x=0.000; cell data unchanged

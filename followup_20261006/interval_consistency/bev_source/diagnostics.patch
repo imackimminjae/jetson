@@ -1,0 +1,145 @@
+--- rgb_to_occupancy.cpp
++++ rgb_to_occupancy.cpp
+@@ -2,6 +2,7 @@
+ #include <sensor_msgs/msg/image.hpp>
+ #include <sensor_msgs/msg/camera_info.hpp>
+ #include <nav_msgs/msg/occupancy_grid.hpp>
++#include <std_msgs/msg/float64_multi_array.hpp>
+ 
+ #include <tf2_ros/transform_listener.h>
+ #include <tf2_ros/buffer.h>
+@@ -43,6 +44,7 @@
+     declare_parameter<std::string>("bev_road_topic", "/bev/road_mask");
+ 
+     declare_parameter<bool>("publish_bev_images", false);
++    declare_parameter<bool>("publish_bev_source_diagnostics", true);
+ 
+     // OccupancyGrid publish
+     declare_parameter<bool>("publish_occupancy_grid", true);
+@@ -126,6 +128,11 @@
+     declare_parameter<int>("process_every_n_frames", 1);
+     declare_parameter<std::string>("save_dir", "/tmp/bev_captures");
+     declare_parameter<std::string>("save_key", "s");
++
++    if (get_parameter("publish_bev_source_diagnostics").as_bool()) {
++      source_diagnostics_pub_ = create_publisher<std_msgs::msg::Float64MultiArray>(
++        "/debug/bev_source_timing", rclcpp::QoS(10).best_effort());
++    }
+ 
+     // ---- read params ----
+     rgb_topic_ = get_parameter("rgb_topic").as_string();
+@@ -472,6 +479,7 @@
+       return false;
+     }
+ 
++    source_tf_stamp_sec_ = rclcpp::Time(tf.header.stamp).seconds();
+     const cv::Matx44d T_cam_base = transformToMatrix(tf);
+ 
+     const std::array<cv::Vec4d, 4> corners_base_h = {
+@@ -763,7 +771,7 @@
+       grid.info.resolution);
+   }
+ 
+-  static cv::Mat keepLargestComponentBinary255(const cv::Mat & binary255)
++  cv::Mat keepLargestComponentBinary255(const cv::Mat & binary255)
+   {
+     cv::Mat labels;
+     cv::Mat stats;
+@@ -779,15 +787,24 @@
+ 
+     int best = -1;
+     int best_area = 0;
++    source_components_ = n - 1;
++    source_total_area_ = 0;
++    source_second_area_ = 0;
+ 
+     for (int i = 1; i < n; ++i) {
+       const int area = stats.at<int>(i, cv::CC_STAT_AREA);
++      source_total_area_ += area;
+       if (area > best_area) {
++        source_second_area_ = best_area;
+         best_area = area;
+         best = i;
++      } else if (area > source_second_area_) {
++        source_second_area_ = area;
+       }
+     }
+ 
++    source_selected_area_ = best_area;
++    source_selected_label_ = best;
+     cv::Mat out = cv::Mat::zeros(binary255.size(), CV_8UC1);
+ 
+     if (best > 0) {
+@@ -866,6 +883,8 @@
+ 
+   void onImage(const sensor_msgs::msg::Image::SharedPtr msg)
+   {
++    const auto source_started = std::chrono::steady_clock::now();
++    const double source_callback_ros_sec = now().seconds();
+     ++image_rx_count_;
+ 
+     if (process_every_n_frames_ > 1 &&
+@@ -960,6 +979,8 @@
+       cv::BORDER_CONSTANT,
+       cv::Scalar(0));
+ 
++    source_components_ = source_total_area_ = source_selected_area_ =
++      source_second_area_ = source_selected_label_ = -1;
+     cv::Mat road_clean = buildRoadMaskForCurrentIsaacEnv(bev_rgb, valid);
+ 
+     cv::Mat road_mask(bev_h_, bev_w_, CV_8UC1, cv::Scalar(nonroad_value_));
+@@ -977,6 +998,38 @@
+ 
+     if (publish_occupancy_grid_) {
+       publishOccupancyGrid(msg->header.stamp, road_mask, valid);
++    }
++
++    if (source_diagnostics_pub_) {
++      std_msgs::msg::Float64MultiArray diagnostic;
++      diagnostic.layout.dim.resize(1);
++      diagnostic.layout.dim[0].label =
++        "image_seq,image_stamp_sec,callback_ros_sec,after_grid_publish_ros_sec,"
++        "work_ms_to_grid,tf_stamp_sec,components,total_area_px,selected_area_px,"
++        "second_area_px,selected_label,keep_largest,road_gray_max,white_line_gray_min,"
++        "morph_ksize,zero_grid_stamp,use_latest_tf,process_every_n_frames,use_sim_time,"
++        "grid_enabled,roi_x_min,roi_x_max,roi_y_min,roi_y_max,bev_resolution,ground_z,"
++        "occupancy_width,occupancy_height,rotate_ccw90,flip_lr,invalid_as_unknown";
++      bool source_use_sim_time = false;
++      get_parameter_or("use_sim_time", source_use_sim_time, false);
++      diagnostic.data = {
++        static_cast<double>(image_rx_count_), rclcpp::Time(msg->header.stamp).seconds(),
++        source_callback_ros_sec, now().seconds(),
++        std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - source_started).count(),
++        source_tf_stamp_sec_, static_cast<double>(source_components_),
++        static_cast<double>(source_total_area_), static_cast<double>(source_selected_area_),
++        static_cast<double>(source_second_area_), static_cast<double>(source_selected_label_),
++        keep_largest_component_ ? 1.0 : 0.0, static_cast<double>(road_gray_max_),
++        static_cast<double>(white_line_gray_min_), static_cast<double>(morph_ksize_),
++        occupancy_grid_zero_stamp_ ? 1.0 : 0.0, use_latest_tf_ ? 1.0 : 0.0,
++        static_cast<double>(process_every_n_frames_), source_use_sim_time ? 1.0 : 0.0,
++        publish_occupancy_grid_ ? 1.0 : 0.0, x_min_, x_max_, y_min_, y_max_, res_, ground_z_,
++        static_cast<double>(occupancy_grid_width_), static_cast<double>(occupancy_grid_height_),
++        occupancy_rotate_ccw_90_ ? 1.0 : 0.0, occupancy_flip_lr_ ? 1.0 : 0.0,
++        occupancy_invalid_as_unknown_ ? 1.0 : 0.0};
++      diagnostic.layout.dim[0].size = diagnostic.data.size();
++      diagnostic.layout.dim[0].stride = diagnostic.data.size();
++      source_diagnostics_pub_->publish(diagnostic);
+     }
+ 
+     if (publish_resized_) {
+@@ -1113,6 +1166,15 @@
+   rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr pub_valid_resized_;
+   rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr pub_road_resized_;
+ 
++  // Diagnostic state only; never used by image or occupancy decisions.
++  rclcpp::Publisher<std_msgs::msg::Float64MultiArray>::SharedPtr source_diagnostics_pub_;
++  double source_tf_stamp_sec_{0.0};
++  int source_components_{-1};
++  int source_total_area_{-1};
++  int source_selected_area_{-1};
++  int source_second_area_{-1};
++  int source_selected_label_{-1};
++
+   tf2_ros::Buffer tf_buffer_;
+   std::unique_ptr<tf2_ros::TransformListener> tf_listener_;
+ };

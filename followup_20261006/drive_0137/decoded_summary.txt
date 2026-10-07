@@ -1,0 +1,61 @@
+/bev/occupancy_grid count 1148 start/end 01:37:18.526 01:37:57.720 gap median/max 0.030756235122680664 0.14336156845092773
+grid [(0.3125, 128, 128, [0.0, -20.0], [0.0, 0.0, 0.0, 1.0])] gaps>1s []
+/motive/vehicle/odom_map count 1177 start/end 01:37:18.525 01:37:57.724 gap median/max 0.034001946449279785 0.052969932556152344
+/planner/lower_reference_path/with_arclength count 36 start/end 01:37:20.148 01:37:55.221 gap median/max 1.0003776550292969 1.9961814880371094
+/debug/upper_branch_event count 36 start/end 01:37:20.219 01:37:55.221 gap median/max 1.000290870666504 1.004206895828247
+/debug/lower_mpc_trace count 362 start/end 01:37:18.998 01:37:57.698 gap median/max 0.10000491142272949 2.789792537689209
+LOWER modes Counter({0.0: 341, 4.0: 15, 3.0: 6}) speed min/med/max [1.35627827 5.97187314 7.12052905] valid steering saturation 0.03225806451612903
+mode 0.0 count 341 first,last 01:37:18.997 01:37:56.199
+mode 3.0 count 6 first,last 01:37:45.797 01:37:53.088
+mode 4.0 count 15 first,last 01:37:56.300 01:37:57.697
+UPPER 01:37:20.219 success 7 xy 148.61 -137.07 yaw 119.0 status solved
+UPPER 01:37:21.218 success 7 xy 147.05 -134.27 yaw 119.8 status solved
+UPPER 01:37:22.222 success 7 xy 145.04 -130.61 yaw 119.3 status solved
+UPPER 01:37:23.220 success 7 xy 142.69 -126.2 yaw 118.6 status solved
+UPPER 01:37:24.221 success 7 xy 140.06 -121.26 yaw 118.5 status solved
+UPPER 01:37:25.222 success 7 xy 137.26 -116.06 yaw 118.3 status solved
+UPPER 01:37:26.223 success 7 xy 134.45 -110.81 yaw 117.8 status solved
+UPPER 01:37:27.221 success 7 xy 131.62 -105.52 yaw 117.3 status solved
+UPPER 01:37:28.221 success 7 xy 128.78 -100.23 yaw 117.1 status solved
+UPPER 01:37:29.220 success 7 xy 125.86 -94.96 yaw 117.4 status solved
+UPPER 01:37:30.220 success 7 xy 122.84 -89.69 yaw 118.1 status solved
+UPPER 01:37:31.219 success 7 xy 119.85 -84.46 yaw 117.1 status solved
+UPPER 01:37:32.220 success 7 xy 117.22 -79.11 yaw 113.1 status solved
+UPPER 01:37:33.221 success 7 xy 115.0 -73.6 yaw 109.4 status solved
+UPPER 01:37:34.221 success 7 xy 112.92 -68.03 yaw 107.9 status solved
+UPPER 01:37:35.220 success 7 xy 110.89 -62.42 yaw 107.5 status solved
+UPPER 01:37:36.220 success 7 xy 108.85 -56.81 yaw 106.9 status solved
+UPPER 01:37:37.224 success 7 xy 106.92 -51.12 yaw 106.5 status solved
+UPPER 01:37:38.225 success 7 xy 105.21 -45.34 yaw 101.4 status solved
+UPPER 01:37:39.227 success 7 xy 105.68 -39.31 yaw 77.4 status solved
+UPPER 01:37:40.219 success 7 xy 108.49 -33.78 yaw 60.5 status solved
+UPPER 01:37:41.221 success 7 xy 110.66 -27.96 yaw 69.4 status solved
+UPPER 01:37:42.221 success 7 xy 112.09 -21.97 yaw 71.5 status solved
+UPPER 01:37:43.221 success 7 xy 114.59 -16.42 yaw 61.2 status solved
+UPPER 01:37:44.224 success 7 xy 118.09 -11.41 yaw 49.8 status solved
+UPPER 01:37:45.219 solver_rejected 7 xy 123.15 -8.03 yaw 26.0 status DAQP direct corridor QP infeasible: tried=2
+UPPER 01:37:46.222 success 7 xy 129.22 -7.05 yaw 6.0 status solved
+UPPER 01:37:47.221 success 7 xy 134.95 -6.21 yaw 8.0 status solved
+UPPER 01:37:48.221 success 7 xy 139.98 -4.48 yaw 16.0 status solved
+UPPER 01:37:49.222 success 7 xy 144.74 -3.14 yaw 12.2 status solved
+UPPER 01:37:50.220 success 7 xy 149.53 -2.48 yaw 5.7 status solved
+UPPER 01:37:51.220 success 7 xy 154.32 -2.11 yaw 2.8 status solved
+UPPER 01:37:52.221 success 7 xy 158.62 -1.72 yaw 3.0 status solved
+UPPER 01:37:53.222 success 7 xy 162.43 -1.37 yaw 3.2 status solved
+UPPER 01:37:54.221 success 7 xy 166.06 -1.32 yaw -1.1 status solved
+UPPER 01:37:55.221 success 7 xy 170.06 -1.67 yaw -5.3 status solved
+WARNINGS
+01:37:18.501 px4_odom_map_bridge Waiting for valid PX4 source pose on /px4/sih/odom
+01:37:18.501 px4_odom_map_bridge Waiting for valid PX4 source pose on /px4/sih/odom
+01:37:18.945 lower_tracking_mpc_node MAVLink peer unknown; check MAVProxy --out=127.0.0.1:14540
+01:37:18.945 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: waiting for pose
+01:37:18.945 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+01:37:19.891 px4_ekf_bridge Start with the vehicle disarmed and stationary. PX4 EKF parameter changes marked as reboot-required need a Pixhawk reboot before fusion is tested.
+01:37:19.892 px4_ekf_bridge SIH heading check: missing_or_stale_sih (EKF-SIH=None deg); pose output blocked
+01:37:19.892 px4_ekf_bridge SIH heading check: settling (EKF-SIH=0.08816413410998299 deg); pose output blocked
+01:37:19.892 px4_ekf_bridge SIH heading check: ok (EKF-SIH=0.08250873747721243 deg); pose output enabled
+01:37:45.219 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=2 solve_ms=0.193; retaining last published path
+01:37:45.798 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: stale lower path
+01:37:53.088 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: stale pose
+01:37:53.098 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+01:37:56.300 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event

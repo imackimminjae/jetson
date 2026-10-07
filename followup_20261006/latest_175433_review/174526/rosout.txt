@@ -1,0 +1,251 @@
+17:45:27.448 rosbag2_recorder Press SPACE for pausing/resuming
+17:45:27.449 rosbag2_recorder Listening for topics...
+17:45:27.449 rosbag2_recorder Event publisher thread: Starting
+17:45:27.449 rosbag2_recorder Subscribed to topic '/rosout'
+17:45:27.449 rosbag2_recorder Recording...
+17:45:27.486 rosbag2_recorder Subscribed to topic '/bev/occupancy_grid'
+17:45:27.494 rosbag2_recorder Subscribed to topic '/planner/goal_reached'
+17:45:27.499 rosbag2_recorder Subscribed to topic '/debug/upper_branch_event'
+17:45:27.505 rosbag2_recorder Subscribed to topic '/debug/upper_interval_info'
+17:45:27.510 rosbag2_recorder Subscribed to topic '/debug/upper_constraint_intervals'
+17:45:27.517 rosbag2_recorder Subscribed to topic '/planner/lower_reference_path/with_arclength'
+17:45:27.521 rosbag2_recorder Subscribed to topic '/debug/upper_interval_centering_state'
+17:45:27.529 rosbag2_recorder Subscribed to topic '/debug/upper_miqp_trace'
+17:45:27.538 upper_planner_node planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+17:45:27.538 upper_planner_node Egocentric MIQP planner ready: rate=2.00Hz pred_dt=0.750s Nmax=7 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+17:45:27.538 upper_planner_node upper branch model: cumulative_increment=1 turn_window_at_split=1 turn_target_absolute=1 split_continuity=6.75m r_dpsi=2.000 lambda_turn=0.600
+17:45:27.538 upper_planner_node reference path loaded from /navigation/global_path: 8 points frame=map waypoint_bias=disabled
+17:45:27.538 upper_planner_node grid origin experiment: received_x=2.950 effective_x=0.000 shift_x=-2.950; cell data unchanged
+17:45:27.538 upper_planner_node planner waiting for pose
+17:45:27.538 upper_planner_node planner waiting for pose
+17:45:27.538 upper_planner_node planner waiting for pose
+17:45:27.538 rosbag2_recorder Subscribed to topic '/debug/upper_solver_timing'
+17:45:27.546 rosbag2_recorder Subscribed to topic '/debug/upper_stage_timing'
+17:45:27.552 rosbag2_recorder Subscribed to topic '/planner/upper_path_sparse'
+17:45:27.603 px4_ekf_bridge PX4 EKF bridge configured: input=disabled odom=/px4/ekf_odom yaw_scalar_pose=/px4/sih/odom connection=udpin:0.0.0.0:14541 @ 921600, EV=50.0 Hz (vision_position_estimate), ENU(+X east,+Y north,+Z up) <-> NED/FRD
+17:45:27.603 px4_ekf_bridge Start with the vehicle disarmed and stationary. PX4 EKF parameter changes marked as reboot-required need a Pixhawk reboot before fusion is tested.
+17:45:27.603 px4_ekf_bridge Opening MAVLink connection udpin:0.0.0.0:14541 (baud=921600)
+17:45:27.608 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[2.95, 42.95] y[-20.00, 20.00] res=0.3125
+17:45:27.608 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[2.95, 42.95] y[-20.00, 20.00] res=0.3125
+17:45:27.608 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[2.95, 42.95] y[-20.00, 20.00] res=0.3125
+17:45:27.608 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[2.95, 42.95] y[-20.00, 20.00] res=0.3125
+17:45:27.627 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[2.95, 42.95] y[-20.00, 20.00] res=0.3125
+17:45:27.663 rosbag2_recorder Subscribed to topic '/px4_ekf_bridge/status'
+17:45:27.671 rosbag2_recorder Subscribed to topic '/px4/ekf_odom'
+17:45:27.762 lower_tracking_mpc_node MAVLink UDP bound at 0.0.0.0:14540; waiting for MAVProxy --out peer
+17:45:27.762 lower_tracking_mpc_node LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=30 path=/planner/lower_reference_path scale=fullscale wheelbase=2.80m rear_offset=1.40m command_scale=0.350rad actuator_model=1 delay=0.00s tau=0.74s backend=mavlink_udp virtual=/cmd_control
+17:45:27.762 lower_tracking_mpc_node MAVLink peer unknown; check MAVProxy --out=127.0.0.1:14540
+17:45:27.762 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: waiting for pose
+17:45:27.762 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: waiting for pose
+17:45:27.762 lower_tracking_mpc_node MAVLink peer unknown; check MAVProxy --out=127.0.0.1:14540
+17:45:27.762 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: waiting for pose
+17:45:27.762 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: waiting for pose
+17:45:27.779 rosbag2_recorder Subscribed to topic '/control/applied_cmd'
+17:45:27.787 rosbag2_recorder Subscribed to topic '/debug/lower_mpc_trace'
+17:45:27.862 knu_global_path_publisher KNU scenario3: 8 waypoints -> /navigation/global_path, frame=map
+17:45:27.900 rosbag2_recorder Subscribed to topic '/navigation/global_path'
+17:45:28.246 lower_tracking_mpc_node MAVLink peer unknown; check MAVProxy --out=127.0.0.1:14540
+17:45:28.346 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: waiting for pose
+17:45:28.535 rosbag2_recorder Subscribed to topic '/motive/vehicle/odom_map'
+17:45:28.555 px4_odom_map_bridge PX4 odom map bridge ready: input=/px4/sih/odom (yaw scalar z) odom=/motive/vehicle/odom_map pose=/motive/vehicle/pose route=scenario3 target=(187.000, 220.000, 0.000) target_yaw=-1.570796 rad odom_yaw=orientation.z scalar
+17:45:28.555 px4_odom_map_bridge Waiting for valid PX4 source pose on /px4/sih/odom
+17:45:28.555 px4_odom_map_bridge Waiting for valid PX4 source pose on /px4/sih/odom
+17:45:28.555 px4_odom_map_bridge Waiting for valid PX4 source pose on /px4/sih/odom
+17:45:28.555 px4_odom_map_bridge Waiting for valid PX4 source pose on /px4/sih/odom
+17:45:28.555 px4_odom_map_bridge Waiting for valid PX4 source pose on /px4/sih/odom
+17:45:29.440 upper_planner_node planner waiting for pose
+17:45:29.446 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: waiting for pose
+17:45:29.610 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[2.95, 42.95] y[-20.00, 20.00] res=0.3125
+17:45:29.723 px4_odom_map_bridge Waiting for valid PX4 source pose on /px4/sih/odom
+17:45:30.246 lower_tracking_mpc_node MAVLink peer unknown; check MAVProxy --out=127.0.0.1:14540
+17:45:30.546 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: waiting for pose
+17:45:31.441 upper_planner_node planner waiting for pose
+17:45:31.547 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: waiting for pose
+17:45:31.631 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[2.95, 42.95] y[-20.00, 20.00] res=0.3125
+17:45:31.823 px4_odom_map_bridge Waiting for valid PX4 source pose on /px4/sih/odom
+17:45:32.246 lower_tracking_mpc_node MAVLink peer unknown; check MAVProxy --out=127.0.0.1:14540
+17:45:32.646 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: waiting for pose
+17:45:32.772 upper_planner_node grid origin experiment: received_x=2.950 effective_x=0.000 shift_x=-2.950; cell data unchanged
+17:45:33.646 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: waiting for pose
+17:45:33.680 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[2.95, 42.95] y[-20.00, 20.00] res=0.3125
+17:45:33.923 px4_odom_map_bridge Waiting for valid PX4 source pose on /px4/sih/odom
+17:45:33.940 upper_planner_node planner waiting for pose
+17:45:34.246 lower_tracking_mpc_node MAVLink peer unknown; check MAVProxy --out=127.0.0.1:14540
+17:45:34.646 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: waiting for pose
+17:45:35.646 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: waiting for pose
+17:45:35.675 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[2.95, 42.95] y[-20.00, 20.00] res=0.3125
+17:45:35.940 upper_planner_node planner waiting for pose
+17:45:36.023 px4_odom_map_bridge Waiting for valid PX4 source pose on /px4/sih/odom
+17:45:36.246 lower_tracking_mpc_node MAVLink peer unknown; check MAVProxy --out=127.0.0.1:14540
+17:45:36.746 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: waiting for pose
+17:45:37.722 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[2.95, 42.95] y[-20.00, 20.00] res=0.3125
+17:45:37.746 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: waiting for pose
+17:45:37.941 upper_planner_node planner waiting for pose
+17:45:38.123 px4_odom_map_bridge Waiting for valid PX4 source pose on /px4/sih/odom
+17:45:38.296 lower_tracking_mpc_node MAVLink peer unknown; check MAVProxy --out=127.0.0.1:14540
+17:45:38.847 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: waiting for pose
+17:45:39.775 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[2.95, 42.95] y[-20.00, 20.00] res=0.3125
+17:45:39.846 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: waiting for pose
+17:45:39.941 upper_planner_node planner waiting for pose
+17:45:40.224 px4_odom_map_bridge Waiting for valid PX4 source pose on /px4/sih/odom
+17:45:40.296 lower_tracking_mpc_node MAVLink peer unknown; check MAVProxy --out=127.0.0.1:14540
+17:45:40.946 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: waiting for pose
+17:45:41.732 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[2.95, 42.95] y[-20.00, 20.00] res=0.3125
+17:45:41.941 upper_planner_node planner waiting for pose
+17:45:41.947 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: waiting for pose
+17:45:42.296 lower_tracking_mpc_node MAVLink peer unknown; check MAVProxy --out=127.0.0.1:14540
+17:45:42.323 px4_odom_map_bridge Waiting for valid PX4 source pose on /px4/sih/odom
+17:45:42.781 upper_planner_node grid origin experiment: received_x=2.950 effective_x=0.000 shift_x=-2.950; cell data unchanged
+17:45:42.946 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: waiting for pose
+17:45:43.746 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[2.95, 42.95] y[-20.00, 20.00] res=0.3125
+17:45:43.941 upper_planner_node planner waiting for pose
+17:45:44.047 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: waiting for pose
+17:45:44.296 lower_tracking_mpc_node MAVLink peer unknown; check MAVProxy --out=127.0.0.1:14540
+17:45:44.424 px4_odom_map_bridge Waiting for valid PX4 source pose on /px4/sih/odom
+17:45:45.146 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: waiting for pose
+17:45:45.773 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[2.95, 42.95] y[-20.00, 20.00] res=0.3125
+17:45:45.941 upper_planner_node planner waiting for pose
+17:45:46.147 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: waiting for pose
+17:45:46.296 lower_tracking_mpc_node MAVLink peer unknown; check MAVProxy --out=127.0.0.1:14540
+17:45:46.524 px4_odom_map_bridge Waiting for valid PX4 source pose on /px4/sih/odom
+17:45:47.146 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: waiting for pose
+17:45:47.787 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[2.95, 42.95] y[-20.00, 20.00] res=0.3125
+17:45:47.941 upper_planner_node planner waiting for pose
+17:45:48.246 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: waiting for pose
+17:45:48.296 lower_tracking_mpc_node MAVLink peer unknown; check MAVProxy --out=127.0.0.1:14540
+17:45:48.623 px4_odom_map_bridge Waiting for valid PX4 source pose on /px4/sih/odom
+17:45:49.247 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: waiting for pose
+17:45:49.941 upper_planner_node planner waiting for pose
+17:45:50.001 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[2.95, 42.95] y[-20.00, 20.00] res=0.3125
+17:45:50.297 lower_tracking_mpc_node MAVLink peer unknown; check MAVProxy --out=127.0.0.1:14540
+17:45:50.347 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: waiting for pose
+17:45:50.724 px4_odom_map_bridge Waiting for valid PX4 source pose on /px4/sih/odom
+17:45:51.347 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: waiting for pose
+17:45:51.941 upper_planner_node planner waiting for pose
+17:45:52.061 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[2.95, 42.95] y[-20.00, 20.00] res=0.3125
+17:45:52.296 lower_tracking_mpc_node MAVLink peer unknown; check MAVProxy --out=127.0.0.1:14540
+17:45:52.347 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: waiting for pose
+17:45:52.822 upper_planner_node grid origin experiment: received_x=2.950 effective_x=0.000 shift_x=-2.950; cell data unchanged
+17:45:52.824 px4_odom_map_bridge Waiting for valid PX4 source pose on /px4/sih/odom
+17:45:53.347 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: waiting for pose
+17:45:53.941 upper_planner_node planner waiting for pose
+17:45:54.107 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[2.95, 42.95] y[-20.00, 20.00] res=0.3125
+17:45:54.297 lower_tracking_mpc_node MAVLink peer unknown; check MAVProxy --out=127.0.0.1:14540
+17:45:54.448 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: waiting for pose
+17:45:54.924 px4_odom_map_bridge Waiting for valid PX4 source pose on /px4/sih/odom
+17:45:55.547 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: waiting for pose
+17:45:55.941 upper_planner_node planner waiting for pose
+17:45:56.162 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[2.95, 42.95] y[-20.00, 20.00] res=0.3125
+17:45:56.297 lower_tracking_mpc_node MAVLink peer unknown; check MAVProxy --out=127.0.0.1:14540
+17:45:56.547 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: waiting for pose
+17:45:57.024 px4_odom_map_bridge Waiting for valid PX4 source pose on /px4/sih/odom
+17:45:57.647 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: waiting for pose
+17:45:57.941 upper_planner_node planner waiting for pose
+17:45:58.153 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[2.95, 42.95] y[-20.00, 20.00] res=0.3125
+17:45:58.347 lower_tracking_mpc_node MAVLink peer unknown; check MAVProxy --out=127.0.0.1:14540
+17:45:58.647 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: waiting for pose
+17:45:59.124 px4_odom_map_bridge Waiting for valid PX4 source pose on /px4/sih/odom
+17:45:59.647 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: waiting for pose
+17:45:59.941 upper_planner_node planner waiting for pose
+17:46:00.199 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[2.95, 42.95] y[-20.00, 20.00] res=0.3125
+17:46:00.347 lower_tracking_mpc_node MAVLink peer unknown; check MAVProxy --out=127.0.0.1:14540
+17:46:00.647 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: waiting for pose
+17:46:01.224 px4_odom_map_bridge Waiting for valid PX4 source pose on /px4/sih/odom
+17:46:01.747 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: waiting for pose
+17:46:01.941 upper_planner_node planner waiting for pose
+17:46:02.260 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[2.95, 42.95] y[-20.00, 20.00] res=0.3125
+17:46:02.347 lower_tracking_mpc_node MAVLink peer unknown; check MAVProxy --out=127.0.0.1:14540
+17:46:02.508 px4_ekf_bridge SIH heading check: missing_or_stale_sih (EKF-SIH=None deg); pose output blocked
+17:46:02.538 px4_ekf_bridge SIH heading check: settling (EKF-SIH=0.07281013671745327 deg); pose output blocked
+17:46:02.593 px4_ekf_bridge PX4 heartbeat detected: target=1:1
+17:46:02.597 lower_tracking_mpc_node MAVLink peer detected: 127.0.0.1:37019
+17:46:02.747 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: waiting for pose
+17:46:02.797 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:46:02.817 px4_ekf_bridge Requested PX4 LOCAL_POSITION_NED at 30.0 Hz
+17:46:02.818 px4_ekf_bridge Requested PX4 ATTITUDE at 30.0 Hz
+17:46:02.820 px4_ekf_bridge Requested PX4 HIL_STATE_QUATERNION at 30.0 Hz
+17:46:02.888 upper_planner_node grid origin experiment: received_x=2.950 effective_x=0.000 shift_x=-2.950; cell data unchanged
+17:46:03.324 px4_odom_map_bridge Waiting for valid PX4 source pose on /px4/sih/odom
+17:46:03.847 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:46:03.848 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: waiting for pose
+17:46:03.943 upper_planner_node planner waiting for pose
+17:46:04.287 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[2.95, 42.95] y[-20.00, 20.00] res=0.3125
+17:46:04.573 px4_ekf_bridge SIH heading check: ok (EKF-SIH=-0.6999384695141603 deg); pose output enabled
+17:46:04.576 px4_odom_map_bridge Map alignment initialized once: source=(0.152424, 0.043570, -0.150726, yaw=1.583013) yaw_delta=3.129376 input_frame='map' (treated as PX4 local)
+17:46:04.897 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:46:04.941 upper_planner_node waypoint pair advanced: [0,1] -> [1,2]; previous reference retained
+17:46:05.898 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:46:06.302 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[2.95, 42.95] y[-20.00, 20.00] res=0.3125
+17:46:06.948 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:46:07.998 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:46:08.343 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[2.95, 42.95] y[-20.00, 20.00] res=0.3125
+17:46:08.997 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:46:09.998 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:46:10.391 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[2.95, 42.95] y[-20.00, 20.00] res=0.3125
+17:46:10.941 upper_planner_node waypoint pair advanced: [1,2] -> [2,3]; previous reference retained
+17:46:11.048 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:46:12.098 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:46:12.443 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[2.95, 42.95] y[-20.00, 20.00] res=0.3125
+17:46:12.924 upper_planner_node grid origin experiment: received_x=2.950 effective_x=0.000 shift_x=-2.950; cell data unchanged
+17:46:13.098 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:46:14.149 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:46:14.445 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[2.95, 42.95] y[-20.00, 20.00] res=0.3125
+17:46:14.942 upper_planner_node waypoint pair advanced: [2,3] -> [3,4]; previous reference retained
+17:46:14.944 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=4 solve_ms=0.539; retaining last published path
+17:46:15.148 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:46:15.942 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+17:46:15.945 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=8 solve_ms=0.805; retaining last published path
+17:46:15.948 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: stale lower path
+17:46:16.198 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:46:16.464 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[2.95, 42.95] y[-20.00, 20.00] res=0.3125
+17:46:17.198 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:46:18.197 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:46:18.516 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[2.95, 42.95] y[-20.00, 20.00] res=0.3125
+17:46:19.197 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:46:19.441 upper_planner_node waypoint pair advanced: [3,4] -> [4,5]; previous reference retained
+17:46:20.198 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:46:20.498 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[2.95, 42.95] y[-20.00, 20.00] res=0.3125
+17:46:21.199 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:46:22.248 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:46:22.524 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[2.95, 42.95] y[-20.00, 20.00] res=0.3125
+17:46:22.963 upper_planner_node grid origin experiment: received_x=2.950 effective_x=0.000 shift_x=-2.950; cell data unchanged
+17:46:23.299 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:46:24.298 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:46:24.442 upper_planner_node waypoint pair advanced: [4,5] -> [5,6]; previous reference retained
+17:46:24.529 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[2.95, 42.95] y[-20.00, 20.00] res=0.3125
+17:46:25.348 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:46:26.397 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:46:26.572 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[2.95, 42.95] y[-20.00, 20.00] res=0.3125
+17:46:27.398 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:46:28.398 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:46:28.443 upper_planner_node waypoint pair advanced: [5,6] -> [6,7]; previous reference retained
+17:46:28.590 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[2.95, 42.95] y[-20.00, 20.00] res=0.3125
+17:46:29.398 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:46:30.398 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:46:30.444 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.149; retaining last published path
+17:46:30.669 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[2.95, 42.95] y[-20.00, 20.00] res=0.3125
+17:46:31.398 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:46:32.398 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:46:32.625 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[2.95, 42.95] y[-20.00, 20.00] res=0.3125
+17:46:32.967 upper_planner_node grid origin experiment: received_x=2.950 effective_x=0.000 shift_x=-2.950; cell data unchanged
+17:46:33.398 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:46:34.448 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:46:34.630 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[2.95, 42.95] y[-20.00, 20.00] res=0.3125
+17:46:35.442 upper_planner_node interval_diag step=7 reason=3 ref_body=(31.493,0.280) heading_deg=1.20 center_cell=(100,64) center_value=100 line_free=0 blocked=401 unknown=0 outside=1 longest_run=0 min_run=2 grid_free=1703 zero=1703 positive=14681 unknown=0 topic=/bev/occupancy_grid frame=Vehicle origin=(0.000,-20.000) origin_yaw_deg=0.00 size=128x128 res=0.3125 positive_is_drivable=0 threshold=1 waypoint_bias=0 previous=1
+17:46:35.443 upper_planner_node no valid preview interval at step=7; usable horizon=6 reason=3
+17:46:35.443 upper_planner_node horizon_diag configured=7 extent_limit=7 requested=7 usable=6 reserve=1 restore=1 step_m=4.500 previous=1
+17:46:35.449 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:46:35.944 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.379; retaining last published path
+17:46:36.448 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:46:36.672 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[2.95, 42.95] y[-20.00, 20.00] res=0.3125
+17:46:36.948 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: stale lower path
+17:46:37.444 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.405; retaining last published path
+17:46:37.498 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:46:37.948 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: stale lower path
+17:46:38.498 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:46:38.655 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[2.95, 42.95] y[-20.00, 20.00] res=0.3125
+17:46:38.949 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: stale lower path
+17:46:39.549 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:46:40.049 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: stale lower path
+17:46:40.599 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:46:40.689 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[2.95, 42.95] y[-20.00, 20.00] res=0.3125

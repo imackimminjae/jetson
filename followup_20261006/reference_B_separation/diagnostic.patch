@@ -1,0 +1,29 @@
+--- production
++++ offline
+@@ -189,6 +189,8 @@
+ 
+ }  // namespace
+ 
++double experiment_force_B = -1.0; // Diagnostic only: replace updated B, before treatment.
++double experiment_soft_max_width_m = 0.0;  // Offline only; zero disables the cap.
+ namespace imac_ctrl
+ {
+ 
+@@ -240,6 +242,7 @@
+   {
+     info.state.reference_length = info.candidate_length;
+   }
++  if (experiment_force_B > 0.0) {info.state.reference_length = experiment_force_B;}
+   return info;
+ }
+ 
+@@ -255,6 +258,9 @@
+     result.threshold = fallback_max_centering_length;
+   } else if (hasIntervalReference(state)) {
+     result.threshold = settings.relative_length_factor * state.reference_length;
++    if (experiment_soft_max_width_m > 0.0) {
++      result.threshold = std::min(result.threshold, experiment_soft_max_width_m);
++    }
+   }
+   result.centering_on = std::isfinite(result.threshold) && interval.length <= result.threshold;
+   result.inset = result.centering_on ? (1.0 - soft_ratio) * interval.length :

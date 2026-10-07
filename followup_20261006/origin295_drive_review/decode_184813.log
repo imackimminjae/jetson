@@ -1,0 +1,119 @@
+/bev/occupancy_grid count 905 start/end 18:48:14.010 18:48:48.038 gap median/max 0.027403950691223145 0.20344138145446777
+grid [(0.3125, 128, 128, [2.95, -20.0], [0.0, 0.0, 0.0, 1.0])] gaps>1s []
+/motive/vehicle/odom_map count 1027 start/end 18:48:13.833 18:48:48.030 gap median/max 0.03408098220825195 0.04461383819580078
+/planner/lower_reference_path/with_arclength count 41 start/end 18:48:13.834 18:48:33.733 gap median/max 0.5001248121261597 0.5064334869384766
+/debug/upper_branch_event count 48 start/end 18:48:14.229 18:48:37.729 gap median/max 0.5001411437988281 0.5088627338409424
+/debug/lower_mpc_trace count 342 start/end 18:48:13.904 18:48:48.005 gap median/max 0.10001015663146973 0.1487407684326172
+LOWER modes Counter({0.0: 214, 3.0: 128}) speed min/med/max [1.53521262 5.89369923 6.90214258] valid steering saturation 0.08878504672897196
+mode 0.0 count 214 first,last 18:48:13.904 18:48:35.206
+mode 3.0 count 128 first,last 18:48:35.305 18:48:48.005
+UPPER 18:48:14.229 success 6 xy 186.97 217.78 yaw -88.1 status solved
+UPPER 18:48:14.727 success 6 xy 187.08 216.56 yaw -86.0 status solved
+UPPER 18:48:15.229 success 6 xy 187.27 215.06 yaw -83.8 status solved
+UPPER 18:48:15.726 success 6 xy 187.53 213.32 yaw -82.4 status solved
+UPPER 18:48:16.227 success 6 xy 187.79 211.33 yaw -82.4 status solved
+UPPER 18:48:16.727 success 6 xy 188.01 209.12 yaw -84.0 status solved
+UPPER 18:48:17.228 success 6 xy 188.09 206.69 yaw -87.1 status solved
+UPPER 18:48:17.727 success 6 xy 187.99 204.08 yaw -91.2 status solved
+UPPER 18:48:18.226 success 6 xy 187.68 201.32 yaw -95.2 status solved
+UPPER 18:48:18.728 success 6 xy 187.22 198.46 yaw -98.2 status solved
+UPPER 18:48:19.228 success 6 xy 186.74 195.49 yaw -98.8 status solved
+UPPER 18:48:19.727 success 6 xy 186.26 192.48 yaw -99.2 status solved
+UPPER 18:48:20.228 success 6 xy 185.87 189.41 yaw -97.1 status solved
+UPPER 18:48:20.727 success 6 xy 186.05 186.28 yaw -88.1 status solved
+UPPER 18:48:21.228 success 6 xy 187.07 183.24 yaw -74.4 status solved
+UPPER 18:48:21.728 success 6 xy 188.85 180.53 yaw -60.8 status solved
+UPPER 18:48:22.228 success 6 xy 191.13 178.19 yaw -49.3 status solved
+UPPER 18:48:22.729 success 6 xy 193.65 176.17 yaw -42.3 status solved
+UPPER 18:48:23.229 success 6 xy 196.33 174.09 yaw -39.7 status solved
+UPPER 18:48:23.728 success 6 xy 198.68 172.24 yaw -39.9 status solved
+UPPER 18:48:24.227 success 6 xy 200.99 170.06 yaw -43.5 status solved
+UPPER 18:48:24.728 success 6 xy 203.04 167.64 yaw -49.4 status solved
+UPPER 18:48:25.232 success 6 xy 204.81 165.01 yaw -55.0 status solved
+UPPER 18:48:25.735 success 6 xy 206.54 162.39 yaw -56.0 status solved
+UPPER 18:48:26.229 success 6 xy 208.53 159.94 yaw -51.4 status solved
+UPPER 18:48:26.729 success 6 xy 210.89 157.85 yaw -43.6 status solved
+UPPER 18:48:27.227 success 6 xy 213.76 156.09 yaw -33.4 status solved
+UPPER 18:48:27.728 success 6 xy 216.59 155.11 yaw -22.9 status solved
+UPPER 18:48:28.228 success 6 xy 219.71 154.51 yaw -14.3 status solved
+UPPER 18:48:28.727 success 6 xy 222.8 154.0 yaw -12.7 status solved
+UPPER 18:48:29.229 success 6 xy 225.75 153.0 yaw -19.4 status solved
+UPPER 18:48:29.726 success 6 xy 228.37 151.32 yaw -31.9 status solved
+UPPER 18:48:30.235 success 6 xy 230.46 149.0 yaw -45.4 status solved
+UPPER 18:48:30.728 success 6 xy 232.28 146.51 yaw -51.7 status solved
+UPPER 18:48:31.229 success 6 xy 234.29 144.23 yaw -48.4 status solved
+UPPER 18:48:31.727 success 6 xy 236.67 142.36 yaw -40.5 status solved
+UPPER 18:48:32.227 success 6 xy 239.33 140.92 yaw -31.3 status solved
+UPPER 18:48:32.727 success 6 xy 242.2 139.95 yaw -22.5 status solved
+UPPER 18:48:33.228 success 6 xy 245.19 139.33 yaw -14.9 status solved
+UPPER 18:48:33.734 success 6 xy 248.18 138.89 yaw -11.6 status solved
+UPPER 18:48:34.232 solver_rejected 4 xy 251.2 138.63 yaw -6.8 status DAQP direct corridor QP infeasible: tried=2
+UPPER 18:48:34.730 solver_rejected 2 xy 254.24 138.68 yaw -1.8 status DAQP direct corridor QP infeasible: tried=2
+UPPER 18:48:35.230 solver_rejected 2 xy 257.24 139.22 yaw 7.7 status DAQP direct corridor QP infeasible: tried=2
+UPPER 18:48:35.730 no_candidate 0 xy 260.05 140.42 yaw 18.6 status empty valid interval prefix
+UPPER 18:48:36.229 no_candidate 0 xy 262.65 141.77 yaw 24.3 status empty valid interval prefix
+UPPER 18:48:36.730 solver_rejected 1 xy 265.05 143.17 yaw 27.2 status DAQP direct corridor QP infeasible: tried=1
+UPPER 18:48:37.232 solver_rejected 1 xy 267.3 144.48 yaw 28.7 status DAQP direct corridor QP infeasible: tried=1
+UPPER 18:48:37.729 solver_rejected 1 xy 269.39 145.76 yaw 29.5 status DAQP direct corridor QP infeasible: tried=1
+WARNINGS
+18:48:13.847 upper_planner_node planner waiting for pose
+18:48:13.910 lower_tracking_mpc_node MAVLink peer unknown; check MAVProxy --out=127.0.0.1:14540
+18:48:13.910 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+18:48:13.911 px4_ekf_bridge SIH heading check: ok (EKF-SIH=0.3785849855767203 deg); pose output enabled
+18:48:34.229 upper_planner_node interval_diag step=5 reason=3 ref_body=(14.753,13.697) heading_deg=52.29 center_cell=(37,107) center_value=100 line_free=0 blocked=460 unknown=0 outside=1 longest_run=0 min_run=2 grid_free=3292 zero=3292 positive=13092 unknown=0 topic=/bev/occupancy_grid frame=Vehicle origin=(2.950,-20.000) origin_yaw_deg=0.00 size=128x128 res=0.3125 positive_is_drivable=0 threshold=1 waypoint_bias=0 previous=1
+18:48:34.229 upper_planner_node no valid preview interval at step=5; usable horizon=4 reason=3
+18:48:34.229 upper_planner_node no valid preview interval at step=6; usable horizon=4 reason=3
+18:48:34.229 upper_planner_node horizon_diag configured=6 extent_limit=6 requested=6 usable=4 reserve=1 restore=1 step_m=4.500 previous=1
+18:48:34.232 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=2 solve_ms=0.364; retaining last published path
+18:48:34.726 upper_planner_node no valid preview interval at step=3; usable horizon=2 reason=3
+18:48:34.727 upper_planner_node no valid preview interval at step=4; usable horizon=2 reason=3
+18:48:34.729 upper_planner_node no valid preview interval at step=5; usable horizon=2 reason=3
+18:48:34.730 upper_planner_node no valid preview interval at step=6; usable horizon=2 reason=3
+18:48:35.226 upper_planner_node no valid preview interval at step=3; usable horizon=2 reason=3
+18:48:35.226 upper_planner_node no valid preview interval at step=4; usable horizon=2 reason=3
+18:48:35.229 upper_planner_node no valid preview interval at step=5; usable horizon=2 reason=3
+18:48:35.230 upper_planner_node no valid preview interval at step=6; usable horizon=2 reason=3
+18:48:35.304 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: stale lower path
+18:48:35.726 upper_planner_node no valid preview interval at step=1; usable horizon=0 reason=3
+18:48:35.726 upper_planner_node no valid preview interval at step=2; usable horizon=0 reason=3
+18:48:35.726 upper_planner_node no valid preview interval at step=3; usable horizon=0 reason=3
+18:48:35.729 upper_planner_node no valid preview interval at step=4; usable horizon=0 reason=3
+18:48:35.730 upper_planner_node no valid preview interval at step=5; usable horizon=0 reason=3
+18:48:35.730 upper_planner_node no valid preview interval at step=6; usable horizon=0 reason=3
+18:48:35.730 upper_planner_node empty valid interval prefix; retaining the last published path
+18:48:36.226 upper_planner_node no valid preview interval at step=1; usable horizon=0 reason=3
+18:48:36.226 upper_planner_node no valid preview interval at step=2; usable horizon=0 reason=3
+18:48:36.228 upper_planner_node no valid preview interval at step=3; usable horizon=0 reason=3
+18:48:36.228 upper_planner_node interval_diag step=4 reason=3 ref_body=(14.620,10.937) heading_deg=31.57 center_cell=(37,98) center_value=100 line_free=0 blocked=469 unknown=0 outside=2 longest_run=0 min_run=2 grid_free=0 zero=0 positive=16384 unknown=0 topic=/bev/occupancy_grid frame=Vehicle origin=(2.950,-20.000) origin_yaw_deg=0.00 size=128x128 res=0.3125 positive_is_drivable=0 threshold=1 waypoint_bias=0 previous=1
+18:48:36.228 upper_planner_node no valid preview interval at step=4; usable horizon=0 reason=3
+18:48:36.228 upper_planner_node no valid preview interval at step=5; usable horizon=0 reason=3
+18:48:36.228 upper_planner_node no valid preview interval at step=6; usable horizon=0 reason=3
+18:48:36.305 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: stale lower path
+18:48:36.727 upper_planner_node no valid preview interval at step=2; usable horizon=1 reason=3
+18:48:36.729 upper_planner_node no valid preview interval at step=3; usable horizon=1 reason=3
+18:48:36.729 upper_planner_node no valid preview interval at step=4; usable horizon=1 reason=3
+18:48:36.729 upper_planner_node no valid preview interval at step=5; usable horizon=1 reason=3
+18:48:36.729 upper_planner_node no valid preview interval at step=6; usable horizon=1 reason=3
+18:48:36.729 upper_planner_node horizon_diag configured=6 extent_limit=6 requested=6 usable=1 reserve=1 restore=1 step_m=4.500 previous=1
+18:48:36.731 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.229; retaining last published path
+18:48:37.227 upper_planner_node no valid preview interval at step=2; usable horizon=1 reason=3
+18:48:37.228 upper_planner_node no valid preview interval at step=3; usable horizon=1 reason=3
+18:48:37.228 upper_planner_node no valid preview interval at step=4; usable horizon=1 reason=3
+18:48:37.229 upper_planner_node no valid preview interval at step=5; usable horizon=1 reason=3
+18:48:37.230 upper_planner_node no valid preview interval at step=6; usable horizon=1 reason=3
+18:48:37.304 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: stale lower path
+18:48:37.726 upper_planner_node no valid preview interval at step=2; usable horizon=1 reason=3
+18:48:37.726 upper_planner_node no valid preview interval at step=3; usable horizon=1 reason=3
+18:48:37.727 upper_planner_node no valid preview interval at step=4; usable horizon=1 reason=3
+18:48:37.727 upper_planner_node no valid preview interval at step=5; usable horizon=1 reason=3
+18:48:37.727 upper_planner_node no valid preview interval at step=6; usable horizon=1 reason=3
+18:48:38.305 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: stale lower path
+18:48:39.405 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: stale lower path
+18:48:40.405 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: stale lower path
+18:48:41.506 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: stale lower path
+18:48:42.505 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: stale lower path
+18:48:43.605 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: stale lower path
+18:48:44.606 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: stale lower path
+18:48:45.609 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: stale lower path
+18:48:46.706 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: stale lower path
+18:48:47.805 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: stale lower path

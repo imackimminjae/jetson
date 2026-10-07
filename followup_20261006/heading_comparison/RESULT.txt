@@ -1,0 +1,61 @@
+EKF / SIH heading comparison, prepared 2026-10-06 (KST)
+
+Scope
+20 saved driving windows from 2026-10-03 through 2026-10-06 03:32,
+plus three older diagnostic captures. This is the available preserved
+extract coverage, not a claim to cover every historical drive.
+No live tlog, hardware, ROS node, controller source or configuration was changed.
+
+Definition and pairing
+Error = wrap(EKF NED yaw - SIH NED yaw) in degrees, in [-180, 180].
+EKF: MAVLink ATTITUDE.yaw. SIH: HIL_STATE_QUATERNION quaternion [w,x,y,z].
+These native MAVLink quaternions are distinct from the project's ROS messages
+that sometimes encode scalar yaw in orientation.z.
+No fitted heading offset or fitted time lag is removed.
+SIH heading is unwrapped and interpolated onto ATTITUDE receive timestamps.
+Extrapolation, SIH brackets wider than 150 ms and nearest sample distance
+greater than 75 ms are excluded. HIL_STATE internal time_usec is zero in
+these extracts: receive-time pairing cannot eliminate transport delay.
+Largest run-specific 95th-percentile nearest sample distance is 20.44 ms.
+Only source (1,1) is used when source metadata is present. Nonfinite values,
+invalid quaternion norms and duplicate timestamps are excluded.
+The October 2 capture contains already-paired values; its pairing distance
+is filtered to <=75 ms and its error sign is checked against the two headings.
+
+Drive statistics
+Start/end: first/last positive throttle COMMAND_LONG 187 in each group.
+Groups are separated by >8 seconds and require >=20 commands and >3 seconds.
+Within each window, statistics use SIH horizontal speed >0.5 m/s.
+Prestart stationary statistics use the preceding 5 seconds with speed <0.3 m/s.
+Dates in figures are actual first positive throttle times, not bag/launch times.
+Timeline panels include the preceding 5 seconds and use a common vertical scale.
+Different routes, speeds and configurations are included; these are not
+matched-scenario controller performance comparisons.
+
+Observed facts
+- October 5 first run after reboot (23:41 launch, 23:42:31 throttle start):
+  stationary prestart median -7.57 deg; moving minimum about -12.07 deg;
+  moving absolute-error P95 11.99 deg, then heading discrepancy converges.
+- Other 19 driving windows: absolute-error P95 ranges from 0.97 to 3.38 deg.
+- October 6 01:41 and 01:43 prestart stationary medians are -0.82 and
+  -1.36 deg; moving medians are +0.15 and +0.65 deg. Earlier startup readings
+  and these moving statistics describe different intervals.
+- Older separate captures: September 23 before reboot median +96.54 deg;
+  after reboot median +0.78 deg; October 2 stationary median -10.91 deg.
+  The older diagnostic figure explicitly uses different vertical scales.
+These observations do not establish the cause of the estimator discrepancy
+or attribute steering oscillation to heading error.
+
+Artifacts
+01_heading_summary.png: comparable statistics for the 20 moving windows.
+02_heading_timelines.png: all 20 run timelines with the same error scale.
+03_first_run_detail.png: EKF/SIH headings, difference and speed for October 5.
+04_older_diagnostics.png: three older diagnostic captures, shown separately.
+heading_comparison_all.pdf: the four figures as a four-page document.
+heading_metrics.csv, summary.json: numerical results and source metadata.
+aligned_series.npz: paired series for the six driving source extracts.
+inputs_manifest.json: original source paths and hashes of immutable snapshots.
+make_figures.py: reproducible offline plotting and numerical checks.
+
+Reproduce from this directory:
+MPLCONFIGDIR=/tmp/ekf_sih_heading_mpl python3 make_figures.py

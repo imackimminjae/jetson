@@ -1,0 +1,58 @@
+/bev/occupancy_grid count 1120 start/end 03:51:54.120 03:52:33.661 gap median/max 0.0311892032623291 0.12537574768066406
+grid [(0.3125, 128, 128, [0.0, -20.0], [0.0, 0.0, 0.0, 1.0])] gaps>1s []
+/motive/vehicle/odom_map count 1187 start/end 03:51:54.113 03:52:33.650 gap median/max 0.03417825698852539 0.04414796829223633
+/planner/lower_reference_path/with_arclength count 37 start/end 03:51:54.105 03:52:30.475 gap median/max 1.0001665353775024 1.9957702159881592
+/debug/upper_branch_event count 37 start/end 03:51:54.474 03:52:30.475 gap median/max 1.0003288984298706 1.0073089599609375
+/debug/lower_mpc_trace count 375 start/end 03:51:54.148 03:52:33.650 gap median/max 0.09999334812164307 2.238210916519165
+LOWER modes Counter({0.0: 360, 4.0: 9, 3.0: 6}) speed min/med/max [0.13550066 5.85459187 6.46282752] valid steering saturation 0.027777777777777776
+mode 0.0 count 360 first,last 03:51:54.148 03:52:30.549
+mode 3.0 count 6 first,last 03:52:22.050 03:52:32.788
+mode 4.0 count 9 first,last 03:52:32.850 03:52:33.649
+UPPER 03:51:54.474 success 7 xy 150.03 -139.89 yaw 117.5 status solved
+UPPER 03:51:55.475 success 7 xy 149.69 -139.09 yaw 117.4 status solved
+UPPER 03:51:56.474 success 7 xy 148.79 -137.33 yaw 118.2 status solved
+UPPER 03:51:57.475 success 7 xy 147.28 -134.65 yaw 119.7 status solved
+UPPER 03:51:58.474 success 7 xy 145.28 -131.11 yaw 119.6 status solved
+UPPER 03:51:59.474 success 7 xy 142.97 -126.79 yaw 118.3 status solved
+UPPER 03:52:00.474 success 7 xy 140.35 -121.88 yaw 118.2 status solved
+UPPER 03:52:01.474 success 7 xy 137.47 -116.61 yaw 118.3 status solved
+UPPER 03:52:02.474 success 7 xy 134.52 -111.16 yaw 117.7 status solved
+UPPER 03:52:03.476 success 7 xy 131.62 -105.72 yaw 117.0 status solved
+UPPER 03:52:04.473 success 7 xy 128.72 -100.3 yaw 116.8 status solved
+UPPER 03:52:05.474 success 7 xy 125.75 -94.9 yaw 117.2 status solved
+UPPER 03:52:06.474 success 7 xy 122.73 -89.53 yaw 117.3 status solved
+UPPER 03:52:07.474 success 7 xy 119.77 -84.16 yaw 116.2 status solved
+UPPER 03:52:08.476 success 7 xy 117.12 -78.71 yaw 112.8 status solved
+UPPER 03:52:09.477 success 7 xy 114.88 -73.1 yaw 109.0 status solved
+UPPER 03:52:10.475 success 7 xy 112.79 -67.34 yaw 107.4 status solved
+UPPER 03:52:11.475 success 7 xy 110.71 -61.6 yaw 107.3 status solved
+UPPER 03:52:12.477 success 7 xy 108.63 -55.97 yaw 107.6 status solved
+UPPER 03:52:13.479 success 7 xy 106.5 -50.35 yaw 108.5 status solved
+UPPER 03:52:14.477 success 7 xy 104.25 -44.71 yaw 108.0 status solved
+UPPER 03:52:15.485 success 7 xy 103.73 -38.68 yaw 87.0 status solved
+UPPER 03:52:16.475 success 7 xy 106.29 -33.05 yaw 60.5 status solved
+UPPER 03:52:17.475 success 7 xy 108.75 -27.43 yaw 67.3 status solved
+UPPER 03:52:18.475 success 7 xy 110.07 -21.42 yaw 73.3 status solved
+UPPER 03:52:19.478 success 7 xy 112.86 -15.99 yaw 56.6 status solved
+UPPER 03:52:20.479 success 7 xy 117.12 -11.47 yaw 42.7 status solved
+UPPER 03:52:21.475 solver_rejected 7 xy 122.42 -8.2 yaw 25.2 status DAQP direct corridor QP infeasible: tried=1
+UPPER 03:52:22.476 success 7 xy 128.53 -7.02 yaw 7.6 status solved
+UPPER 03:52:23.475 success 7 xy 134.31 -6.15 yaw 7.8 status solved
+UPPER 03:52:24.477 success 7 xy 139.5 -4.54 yaw 14.3 status solved
+UPPER 03:52:25.475 success 7 xy 144.47 -3.3 yaw 10.3 status solved
+UPPER 03:52:26.475 success 7 xy 149.45 -2.68 yaw 4.6 status solved
+UPPER 03:52:27.474 success 7 xy 154.43 -2.27 yaw 2.7 status solved
+UPPER 03:52:28.475 success 7 xy 159.45 -1.88 yaw 2.3 status solved
+UPPER 03:52:29.476 success 7 xy 164.56 -1.59 yaw 0.8 status solved
+UPPER 03:52:30.475 success 7 xy 169.76 -1.49 yaw -1.2 status solved
+WARNINGS
+03:51:54.105 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: waiting for pose
+03:51:54.105 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: waiting for pose
+03:51:59.637 upper_planner_node grid origin experiment: received_x=0.000 effective_x=0.000 shift_x=0.000; cell data unchanged
+03:52:09.668 upper_planner_node grid origin experiment: received_x=0.000 effective_x=0.000 shift_x=0.000; cell data unchanged
+03:52:19.669 upper_planner_node grid origin experiment: received_x=0.000 effective_x=0.000 shift_x=0.000; cell data unchanged
+03:52:21.475 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.352; retaining last published path
+03:52:22.050 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: stale lower path
+03:52:29.697 upper_planner_node grid origin experiment: received_x=0.000 effective_x=0.000 shift_x=0.000; cell data unchanged
+03:52:32.788 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: stale pose
+03:52:32.851 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event

@@ -1,0 +1,74 @@
+/bev/occupancy_grid count 759 start/end 03:27:44.692 03:28:11.775 gap median/max 0.0325855016708374 0.16823244094848633
+grid [(0.3125, 128, 128, [0.0, -20.0], [0.0, 0.0, 0.0, 1.0])] gaps>1s []
+/motive/vehicle/odom_map count 817 start/end 03:27:44.604 03:28:11.800 gap median/max 0.03405499458312988 0.045386314392089844
+/planner/lower_reference_path/with_arclength count 22 start/end 03:27:44.642 03:28:05.466 gap median/max 1.0003392696380615 1.0049412250518799
+/debug/upper_branch_event count 27 start/end 03:27:45.463 03:28:11.465 gap median/max 1.0002210140228271 1.005279779434204
+/debug/lower_mpc_trace count 274 start/end 03:27:44.497 03:28:11.798 gap median/max 0.10000181198120117 0.1038351058959961
+LOWER modes Counter({0.0: 225, 3.0: 49}) speed min/med/max [1.22283264 6.09736327 7.10345044] valid steering saturation 0.1111111111111111
+mode 0.0 count 225 first,last 03:27:44.496 03:28:06.897
+mode 3.0 count 49 first,last 03:28:06.997 03:28:11.797
+UPPER 03:27:45.463 success 7 xy 186.95 216.76 yaw -86.8 status solved
+UPPER 03:27:46.463 success 7 xy 187.37 213.9 yaw -81.5 status solved
+UPPER 03:27:47.463 success 7 xy 187.96 210.09 yaw -81.0 status solved
+UPPER 03:27:48.465 success 7 xy 188.15 205.33 yaw -88.1 status solved
+UPPER 03:27:49.466 success 7 xy 187.64 199.9 yaw -94.9 status solved
+UPPER 03:27:50.466 success 7 xy 186.69 194.07 yaw -99.8 status solved
+UPPER 03:27:51.465 success 7 xy 185.49 188.23 yaw -100.4 status solved
+UPPER 03:27:52.465 success 7 xy 185.89 182.24 yaw -82.2 status solved
+UPPER 03:27:53.465 success 7 xy 189.38 177.2 yaw -52.0 status solved
+UPPER 03:27:54.467 success 7 xy 194.38 173.55 yaw -36.3 status solved
+UPPER 03:27:55.465 success 7 xy 199.37 170.11 yaw -36.7 status solved
+UPPER 03:27:56.470 success 7 xy 203.74 165.9 yaw -45.6 status solved
+UPPER 03:27:57.470 success 7 xy 207.87 161.62 yaw -44.7 status solved
+UPPER 03:27:58.464 success 7 xy 212.75 158.0 yaw -36.4 status solved
+UPPER 03:27:59.465 success 7 xy 217.87 154.93 yaw -31.2 status solved
+UPPER 03:28:00.466 success 7 xy 223.34 152.36 yaw -25.8 status solved
+UPPER 03:28:01.466 success 7 xy 228.59 149.51 yaw -32.6 status solved
+UPPER 03:28:02.466 success 7 xy 233.07 145.57 yaw -42.2 status solved
+UPPER 03:28:03.464 success 7 xy 237.93 142.14 yaw -33.6 status solved
+UPPER 03:28:04.466 success 7 xy 243.41 139.81 yaw -24.3 status solved
+UPPER 03:28:05.467 success 7 xy 249.0 137.95 yaw -19.0 status solved
+UPPER 03:28:06.465 solver_rejected 6 xy 254.83 137.86 yaw 2.2 status DAQP direct corridor QP infeasible: tried=32
+UPPER 03:28:07.466 solver_rejected 7 xy 259.94 140.86 yaw 32.0 status DAQP direct corridor QP infeasible: tried=1
+UPPER 03:28:08.464 solver_rejected 6 xy 263.85 144.78 yaw 43.1 status DAQP direct corridor QP infeasible: tried=1
+UPPER 03:28:09.466 solver_rejected 5 xy 267.2 148.35 yaw 45.7 status DAQP direct corridor QP infeasible: tried=1
+UPPER 03:28:10.463 solver_rejected 5 xy 270.14 151.53 yaw 46.3 status DAQP direct corridor QP infeasible: tried=2
+UPPER 03:28:11.465 solver_rejected 4 xy 272.77 154.36 yaw 46.4 status DAQP direct corridor QP infeasible: tried=1
+WARNINGS
+03:27:44.478 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: waiting for pose
+03:27:44.478 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: waiting for pose
+03:27:44.576 px4_ekf_bridge Start with the vehicle disarmed and stationary. PX4 EKF parameter changes marked as reboot-required need a Pixhawk reboot before fusion is tested.
+03:27:44.576 px4_ekf_bridge SIH heading check: missing_or_stale_sih (EKF-SIH=None deg); pose output blocked
+03:27:44.576 px4_ekf_bridge SIH heading check: settling (EKF-SIH=-0.2614475128141699 deg); pose output blocked
+03:27:44.577 px4_ekf_bridge SIH heading check: ok (EKF-SIH=-0.2869992504991876 deg); pose output enabled
+03:27:44.580 px4_odom_map_bridge Waiting for valid PX4 source pose on /px4/sih/odom
+03:27:44.596 upper_planner_node grid origin experiment: received_x=0.000 effective_x=0.000 shift_x=0.000; cell data unchanged
+03:27:44.596 upper_planner_node planner waiting for pose
+03:27:48.642 upper_planner_node grid origin experiment: received_x=0.000 effective_x=0.000 shift_x=0.000; cell data unchanged
+03:27:58.688 upper_planner_node grid origin experiment: received_x=0.000 effective_x=0.000 shift_x=0.000; cell data unchanged
+03:28:06.462 upper_planner_node interval_diag step=7 reason=3 ref_body=(25.575,17.636) heading_deg=29.17 center_cell=(81,120) center_value=100 line_free=0 blocked=178 unknown=145 outside=2 longest_run=0 min_run=2 grid_free=4497 zero=4497 positive=8647 unknown=3240 topic=/bev/occupancy_grid frame=Vehicle origin=(0.000,-20.000) origin_yaw_deg=0.00 size=128x128 res=0.3125 positive_is_drivable=0 threshold=1 waypoint_bias=0 previous=1
+03:28:06.462 upper_planner_node no valid preview interval at step=7; usable horizon=6 reason=3
+03:28:06.463 upper_planner_node horizon_diag configured=7 extent_limit=7 requested=7 usable=6 reserve=1 restore=1 step_m=4.500 previous=1
+03:28:06.465 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=32 solve_ms=1.591; retaining last published path
+03:28:06.998 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: stale lower path
+03:28:07.464 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+03:28:07.467 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.349; retaining last published path
+03:28:08.098 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: stale lower path
+03:28:08.462 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+03:28:08.463 upper_planner_node interval_diag step=7 reason=3 ref_body=(27.777,-11.067) heading_deg=-31.35 center_cell=(88,28) center_value=100 line_free=0 blocked=197 unknown=143 outside=1 longest_run=0 min_run=2 grid_free=2991 zero=2991 positive=10153 unknown=3240 topic=/bev/occupancy_grid frame=Vehicle origin=(0.000,-20.000) origin_yaw_deg=0.00 size=128x128 res=0.3125 positive_is_drivable=0 threshold=1 waypoint_bias=0 previous=1
+03:28:08.463 upper_planner_node no valid preview interval at step=7; usable horizon=6 reason=3
+03:28:08.463 upper_planner_node horizon_diag configured=7 extent_limit=7 requested=7 usable=6 reserve=1 restore=1 step_m=4.500 previous=1
+03:28:08.722 upper_planner_node grid origin experiment: received_x=0.000 effective_x=0.000 shift_x=0.000; cell data unchanged
+03:28:09.098 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: stale lower path
+03:28:09.463 upper_planner_node no valid preview interval at step=6; usable horizon=5 reason=3
+03:28:09.464 upper_planner_node no valid preview interval at step=7; usable horizon=5 reason=3
+03:28:09.466 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.305; retaining last published path
+03:28:10.198 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: stale lower path
+03:28:10.462 upper_planner_node no valid preview interval at step=6; usable horizon=5 reason=3
+03:28:10.462 upper_planner_node no valid preview interval at step=7; usable horizon=5 reason=3
+03:28:11.198 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: stale lower path
+03:28:11.463 upper_planner_node interval_diag step=5 reason=3 ref_body=(16.881,-15.065) heading_deg=-35.70 center_cell=(54,15) center_value=100 line_free=0 blocked=328 unknown=129 outside=1 longest_run=0 min_run=2 grid_free=2372 zero=2372 positive=10772 unknown=3240 topic=/bev/occupancy_grid frame=Vehicle origin=(0.000,-20.000) origin_yaw_deg=0.00 size=128x128 res=0.3125 positive_is_drivable=0 threshold=1 waypoint_bias=0 previous=1
+03:28:11.464 upper_planner_node no valid preview interval at step=5; usable horizon=4 reason=3
+03:28:11.464 upper_planner_node no valid preview interval at step=6; usable horizon=4 reason=3
+03:28:11.465 upper_planner_node horizon_diag configured=7 extent_limit=7 requested=7 usable=4 reserve=1 restore=1 step_m=4.500 previous=1
+03:28:11.466 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.260; retaining last published path

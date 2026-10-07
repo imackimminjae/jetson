@@ -1,0 +1,40 @@
+/bev/occupancy_grid count 707 start/end 03:26:52.561 03:27:17.662 gap median/max 0.03219044208526611 0.10830044746398926
+grid [(0.3125, 128, 128, [0.0, -20.0], [0.0, 0.0, 0.0, 1.0])] gaps>1s []
+/motive/vehicle/odom_map count 760 start/end 03:26:52.412 03:27:17.704 gap median/max 0.03419685363769531 0.05012989044189453
+/planner/lower_reference_path/with_arclength count 27 start/end 03:26:52.393 03:27:17.661 gap median/max 1.0002564191818237 1.0041882991790771
+/debug/upper_branch_event count 26 start/end 03:26:52.658 03:27:17.661 gap median/max 1.0002038478851318 1.0042545795440674
+/debug/lower_mpc_trace count 253 start/end 03:26:52.461 03:27:17.661 gap median/max 0.09999287128448486 0.10309910774230957
+LOWER modes Counter({0.0: 253}) speed min/med/max [2.1568932  6.08905835 7.03585412] valid steering saturation 0.03162055335968379
+mode 0.0 count 253 first,last 03:26:52.459 03:27:17.660
+UPPER 03:26:52.658 success 7 xy 186.99 217.48 yaw -86.9 status solved
+UPPER 03:26:53.662 success 7 xy 187.37 214.61 yaw -81.8 status solved
+UPPER 03:26:54.659 success 7 xy 187.89 210.7 yaw -81.9 status solved
+UPPER 03:26:55.659 success 7 xy 188.09 205.93 yaw -87.0 status solved
+UPPER 03:26:56.657 success 7 xy 187.98 200.53 yaw -90.5 status solved
+UPPER 03:26:57.658 success 7 xy 187.66 194.66 yaw -92.3 status solved
+UPPER 03:26:58.661 success 7 xy 187.43 188.52 yaw -91.3 status solved
+UPPER 03:26:59.659 success 7 xy 188.2 182.45 yaw -79.2 status solved
+UPPER 03:27:00.660 success 7 xy 191.24 177.01 yaw -59.0 status solved
+UPPER 03:27:01.661 success 7 xy 195.61 172.51 yaw -44.3 status solved
+UPPER 03:27:02.662 success 7 xy 200.71 168.84 yaw -36.4 status solved
+UPPER 03:27:03.659 success 7 xy 205.47 164.88 yaw -41.6 status solved
+UPPER 03:27:04.661 success 7 xy 210.0 160.63 yaw -42.5 status solved
+UPPER 03:27:05.660 success 7 xy 214.99 156.92 yaw -35.7 status solved
+UPPER 03:27:06.659 success 7 xy 220.45 154.04 yaw -27.4 status solved
+UPPER 03:27:07.659 success 7 xy 226.12 151.57 yaw -25.1 status solved
+UPPER 03:27:08.659 success 7 xy 231.21 148.12 yaw -38.9 status solved
+UPPER 03:27:09.658 success 7 xy 235.19 143.48 yaw -47.7 status solved
+UPPER 03:27:10.658 success 7 xy 240.5 140.49 yaw -25.8 status solved
+UPPER 03:27:11.661 success 7 xy 246.45 139.36 yaw -12.4 status solved
+UPPER 03:27:12.657 success 7 xy 252.23 137.51 yaw -22.5 status solved
+UPPER 03:27:13.659 success 7 xy 257.59 134.79 yaw -25.8 status solved
+UPPER 03:27:14.659 success 7 xy 263.2 132.55 yaw -23.6 status solved
+UPPER 03:27:15.659 success 7 xy 268.58 129.86 yaw -27.4 status solved
+UPPER 03:27:16.660 success 7 xy 274.14 127.67 yaw -21.2 status solved
+UPPER 03:27:17.661 success 7 xy 279.86 125.89 yaw -18.8 status solved
+WARNINGS
+03:26:52.393 lower_tracking_mpc_node MAVLink peer unknown; check MAVProxy --out=127.0.0.1:14540
+03:26:52.397 upper_planner_node grid origin experiment: received_x=0.000 effective_x=0.000 shift_x=0.000; cell data unchanged
+03:26:52.397 px4_odom_map_bridge Waiting for valid PX4 source pose on /px4/sih/odom
+03:26:58.982 upper_planner_node grid origin experiment: received_x=0.000 effective_x=0.000 shift_x=0.000; cell data unchanged
+03:27:08.995 upper_planner_node grid origin experiment: received_x=0.000 effective_x=0.000 shift_x=0.000; cell data unchanged

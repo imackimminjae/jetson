@@ -1,0 +1,17 @@
+Running main() from /opt/ros/humble/src/gtest_vendor/src/gtest_main.cc
+Note: Google Test filter = LowerPathGeneration.GridOriginTrialChangesCellCoordinatesOnlyWhenEnabled
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from LowerPathGeneration
+[ RUN      ] LowerPathGeneration.GridOriginTrialChangesCellCoordinatesOnlyWhenEnabled
+[INFO] [1790970849.845648132] [upper_planner_node]: planner state input: Odometry topic=/px4/sih/odom_map yaw=quaternion
+[INFO] [1790970849.851494406] [upper_planner_node]: Egocentric MIQP planner ready: rate=2.00Hz pred_dt=1.000s Nmax=7 lower_dt=0.100s target_v=3.000m/s scale=model wheelbase=0.30m length=0.42m bev=1.50m margin=2.00m state=odom grid=/grid_map sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1790970849.870058543] [upper_planner_node]: planner state input: Odometry topic=/px4/sih/odom_map yaw=quaternion
+[INFO] [1790970849.872914082] [upper_planner_node]: Egocentric MIQP planner ready: rate=2.00Hz pred_dt=1.000s Nmax=7 lower_dt=0.100s target_v=3.000m/s scale=model wheelbase=0.30m length=0.42m bev=1.50m margin=2.00m state=odom grid=/grid_map sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[WARN] [1790970849.873025406] [upper_planner_node]: grid origin experiment: received_x=2.950 effective_x=0.000 shift_x=-2.950; cell data unchanged
+[       OK ] LowerPathGeneration.GridOriginTrialChangesCellCoordinatesOnlyWhenEnabled (116 ms)
+[----------] 1 test from LowerPathGeneration (116 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (117 ms total)
+[  PASSED  ] 1 test.

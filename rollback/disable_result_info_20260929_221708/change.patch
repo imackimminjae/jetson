@@ -1,0 +1,20 @@
+--- before/tracking_control.cpp
++++ after/tracking_control.cpp
+@@ -3046,15 +3046,8 @@
+   publishBranchEvent(cycle_stamp, timing.sequence, planning_revision, pose, wp0_idx, wp1_idx,
+     &constraints, &solve, "success", solve.status, true);
+   stages.timer.mark("branch_event_publish");
+-  RCLCPP_INFO(
+-    get_logger(),
+-    "MIQP solved: N=%d branch=%d obj=%.6f Jpos=%.6f Jin=%.6f Jturn=%.6f "
+-    "solve_ms=%.3f polished=%s direct_qp=%d sparse=%zu dense=%zu",
+-    constraints.N_pred, solve.branch_step, solve.objective,
+-    solve.position_cost, solve.input_cost, solve.turn_cost,
+-    solve.solve_time_ms, solve.polished ? "yes" : "no",
+-    solve.direct_corridor_combinations,
+-    sparse_world.size(), dense_world.size());
++  // Solver diagnostics are published above. Avoid synchronous per-cycle result
++  // logging, which can delay the next plan; retain the timing marker.
+   stages.timer.mark("result_log");
+ }
+ 

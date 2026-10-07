@@ -1,0 +1,1626 @@
+[
+  {
+    "group": "synthetic",
+    "scene": "live_curve",
+    "plant": "measured_slow",
+    "common_progress": [
+      11.54393196259422,
+      231.61956009402112
+    ],
+    "h7": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 357,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 1.2499506106667155,
+      "local_lateral_p95_m": 0.12620555891749524,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 5
+    },
+    "h6": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 354,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 0.5399566665015254,
+      "local_lateral_p95_m": 0.12478091708603056,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 6
+    }
+  },
+  {
+    "group": "synthetic",
+    "scene": "branch_width",
+    "plant": "measured_slow",
+    "common_progress": [
+      11.54393196259422,
+      231.61956009402112
+    ],
+    "h7": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 358,
+      "sat_fraction": 0.036312849162011177,
+      "steering_highpass_rms_deg": 0.9106972953647712,
+      "local_lateral_p95_m": 0.16647626761498435,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 8
+    },
+    "h6": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 358,
+      "sat_fraction": 0.04748603351955307,
+      "steering_highpass_rms_deg": 1.076770856951066,
+      "local_lateral_p95_m": 0.20457763280889069,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 7
+    }
+  },
+  {
+    "group": "replica",
+    "scene": "replica_east(scenario1)_off+0.0_yaw+0",
+    "plant": "measured_slow",
+    "common_progress": [
+      23.32008761274314,
+      92.98981064266108
+    ],
+    "h7": {
+      "correct": true,
+      "outcome": "time_limit",
+      "samples": 120,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 1.4311750704667299,
+      "local_lateral_p95_m": 0.226541457758494,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 3
+    },
+    "h6": {
+      "correct": true,
+      "outcome": "time_limit",
+      "samples": 119,
+      "sat_fraction": 0.07563025210084033,
+      "steering_highpass_rms_deg": 2.060167830997412,
+      "local_lateral_p95_m": 0.24675197239772692,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 4
+    }
+  },
+  {
+    "group": "replica",
+    "scene": "replica_east(scenario1)_off+0.8_yaw+3",
+    "plant": "measured_slow",
+    "common_progress": [
+      22.823915535876267,
+      91.00681118287937
+    ],
+    "h7": {
+      "correct": true,
+      "outcome": "time_limit",
+      "samples": 120,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 2.3334768378564448,
+      "local_lateral_p95_m": 0.22553036281893257,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 4
+    },
+    "h6": {
+      "correct": true,
+      "outcome": "time_limit",
+      "samples": 117,
+      "sat_fraction": 0.05128205128205128,
+      "steering_highpass_rms_deg": 1.9888264724169713,
+      "local_lateral_p95_m": 0.210871305903558,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 4
+    }
+  },
+  {
+    "group": "replica",
+    "scene": "replica_east(scenario1)_off-0.8_yaw-3",
+    "plant": "measured_slow",
+    "common_progress": [
+      23.816259689610018,
+      93.48556050760651
+    ],
+    "h7": {
+      "correct": true,
+      "outcome": "time_limit",
+      "samples": 120,
+      "sat_fraction": 0.06666666666666667,
+      "steering_highpass_rms_deg": 3.1129329087094857,
+      "local_lateral_p95_m": 0.2935026092358058,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 6
+    },
+    "h6": {
+      "correct": true,
+      "outcome": "time_limit",
+      "samples": 119,
+      "sat_fraction": 0.058823529411764705,
+      "steering_highpass_rms_deg": 2.1578797626438484,
+      "local_lateral_p95_m": 0.2157746091887093,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 4
+    }
+  },
+  {
+    "group": "replica",
+    "scene": "replica_north(control)_off+0.0_yaw+0",
+    "plant": "measured_slow",
+    "common_progress": [
+      23.32008761274314,
+      96.0354839773665
+    ],
+    "h7": {
+      "correct": true,
+      "outcome": "time_limit",
+      "samples": 120,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 0.5582126406192125,
+      "local_lateral_p95_m": 0.054117592950685627,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 4
+    },
+    "h6": {
+      "correct": true,
+      "outcome": "time_limit",
+      "samples": 120,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 1.7733580254957446,
+      "local_lateral_p95_m": 0.1121682169435525,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 6
+    }
+  },
+  {
+    "group": "replica",
+    "scene": "replica_north(control)_off+0.8_yaw+3",
+    "plant": "measured_slow",
+    "common_progress": [
+      22.823915535876267,
+      95.04557938039206
+    ],
+    "h7": {
+      "correct": true,
+      "outcome": "time_limit",
+      "samples": 120,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 0.43716687257371784,
+      "local_lateral_p95_m": 0.058928688477454146,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 3
+    },
+    "h6": {
+      "correct": true,
+      "outcome": "time_limit",
+      "samples": 120,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 1.1949820031734257,
+      "local_lateral_p95_m": 0.09635497721678273,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 6
+    }
+  },
+  {
+    "group": "replica",
+    "scene": "replica_north(control)_off-0.8_yaw-3",
+    "plant": "measured_slow",
+    "common_progress": [
+      23.816259689610018,
+      96.0354839773665
+    ],
+    "h7": {
+      "correct": true,
+      "outcome": "time_limit",
+      "samples": 120,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 0.7461333607118021,
+      "local_lateral_p95_m": 0.06570393896461886,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 4
+    },
+    "h6": {
+      "correct": true,
+      "outcome": "time_limit",
+      "samples": 120,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 1.697297958856714,
+      "local_lateral_p95_m": 0.11627712035684283,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 6
+    }
+  },
+  {
+    "group": "ysynthetic",
+    "scene": "Yright_target_diverging_off+0_yaw+0",
+    "plant": "measured_slow",
+    "common_progress": [
+      11.5,
+      139.91071138100506
+    ],
+    "h7": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 215,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 0.7345913115654439,
+      "local_lateral_p95_m": 0.09024148344620767,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 4
+    },
+    "h6": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 214,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 1.1090492746130267,
+      "local_lateral_p95_m": 0.07109956269001269,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 4
+    }
+  },
+  {
+    "group": "ysynthetic",
+    "scene": "Yright_target_diverging_off+1_yaw+3",
+    "plant": "measured_slow",
+    "common_progress": [
+      11.5,
+      139.4113982165358
+    ],
+    "h7": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 214,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 0.6757479139385515,
+      "local_lateral_p95_m": 0.08545103355954299,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 4
+    },
+    "h6": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 214,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 0.8343308710112363,
+      "local_lateral_p95_m": 0.08700358724220707,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 3
+    }
+  },
+  {
+    "group": "ysynthetic",
+    "scene": "Yright_target_diverging_off-1_yaw-3",
+    "plant": "measured_slow",
+    "common_progress": [
+      11.5,
+      139.91071138100506
+    ],
+    "h7": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 215,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 1.3771409264591263,
+      "local_lateral_p95_m": 0.16265806329409935,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 5
+    },
+    "h6": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 214,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 0.8154870160500822,
+      "local_lateral_p95_m": 0.07468347845048665,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 3
+    }
+  },
+  {
+    "group": "ysynthetic",
+    "scene": "Yright_target_continuing_off+0_yaw+0",
+    "plant": "measured_slow",
+    "common_progress": [
+      11.5,
+      140.9042705821315
+    ],
+    "h7": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 216,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 0.2372135002006484,
+      "local_lateral_p95_m": 0.028441907673990872,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 1
+    },
+    "h6": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 216,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 0.2755887205643029,
+      "local_lateral_p95_m": 0.025104258621988184,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 0
+    }
+  },
+  {
+    "group": "ysynthetic",
+    "scene": "Yright_target_continuing_off+1_yaw+3",
+    "plant": "measured_slow",
+    "common_progress": [
+      11.5,
+      140.9042705821315
+    ],
+    "h7": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 216,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 0.30964382755493913,
+      "local_lateral_p95_m": 0.03293892709238681,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 3
+    },
+    "h6": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 216,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 0.27507731009363395,
+      "local_lateral_p95_m": 0.02619332433080365,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 0
+    }
+  },
+  {
+    "group": "ysynthetic",
+    "scene": "Yright_target_continuing_off-1_yaw-3",
+    "plant": "measured_slow",
+    "common_progress": [
+      11.5,
+      140.9042705821315
+    ],
+    "h7": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 216,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 0.2620273728386769,
+      "local_lateral_p95_m": 0.028441316345433114,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 2
+    },
+    "h6": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 216,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 0.28134238619961843,
+      "local_lateral_p95_m": 0.02484991891823203,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 0
+    }
+  },
+  {
+    "group": "ysynthetic",
+    "scene": "Yleft_target_diverging_off+0_yaw+0",
+    "plant": "measured_slow",
+    "common_progress": [
+      11.5,
+      139.91071138100506
+    ],
+    "h7": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 215,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 0.7256919725099198,
+      "local_lateral_p95_m": 0.08933731918495923,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 4
+    },
+    "h6": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 214,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 0.7328047361853677,
+      "local_lateral_p95_m": 0.07139218065777936,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 4
+    }
+  },
+  {
+    "group": "ysynthetic",
+    "scene": "Yleft_target_diverging_off+1_yaw+3",
+    "plant": "measured_slow",
+    "common_progress": [
+      11.5,
+      139.91071138100506
+    ],
+    "h7": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 215,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 1.1885254639091103,
+      "local_lateral_p95_m": 0.14544617126076742,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 4
+    },
+    "h6": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 214,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 1.1004769483845374,
+      "local_lateral_p95_m": 0.07092285355435096,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 6
+    }
+  },
+  {
+    "group": "ysynthetic",
+    "scene": "Yleft_target_diverging_off-1_yaw-3",
+    "plant": "measured_slow",
+    "common_progress": [
+      11.5,
+      139.91071138100506
+    ],
+    "h7": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 215,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 0.9610072242017786,
+      "local_lateral_p95_m": 0.07752439790829853,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 5
+    },
+    "h6": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 214,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 0.7034719252050978,
+      "local_lateral_p95_m": 0.0672083554337676,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 4
+    }
+  },
+  {
+    "group": "ysynthetic",
+    "scene": "Yleft_target_continuing_off+0_yaw+0",
+    "plant": "measured_slow",
+    "common_progress": [
+      11.5,
+      140.9042705821315
+    ],
+    "h7": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 216,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 0.26426894074231566,
+      "local_lateral_p95_m": 0.028704809667340413,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 2
+    },
+    "h6": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 216,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 0.5083618282084642,
+      "local_lateral_p95_m": 0.03569661100293654,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 1
+    }
+  },
+  {
+    "group": "ysynthetic",
+    "scene": "Yleft_target_continuing_off+1_yaw+3",
+    "plant": "measured_slow",
+    "common_progress": [
+      11.5,
+      140.9042705821315
+    ],
+    "h7": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 216,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 0.25738211759639285,
+      "local_lateral_p95_m": 0.02825296781077033,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 2
+    },
+    "h6": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 216,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 0.2874201319103472,
+      "local_lateral_p95_m": 0.026501437352896097,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 0
+    }
+  },
+  {
+    "group": "ysynthetic",
+    "scene": "Yleft_target_continuing_off-1_yaw-3",
+    "plant": "measured_slow",
+    "common_progress": [
+      11.5,
+      140.9042705821315
+    ],
+    "h7": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 216,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 0.28865242291883786,
+      "local_lateral_p95_m": 0.030475144265942423,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 2
+    },
+    "h6": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 216,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 0.26776941339532234,
+      "local_lateral_p95_m": 0.02821003669982678,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 0
+    }
+  },
+  {
+    "group": "robust",
+    "scene": "live_curve",
+    "plant": "tau0.74_noise2",
+    "common_progress": [
+      11.54393196259422,
+      231.61956009402112
+    ],
+    "h7": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 355,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 0.6122653746999575,
+      "local_lateral_p95_m": 0.15337191561223928,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 8
+    },
+    "h6": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 355,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 0.6749854184357341,
+      "local_lateral_p95_m": 0.17384615737937928,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 10
+    }
+  },
+  {
+    "group": "robust",
+    "scene": "live_curve",
+    "plant": "tau0.5",
+    "common_progress": [
+      11.740453258711634,
+      231.81168021385582
+    ],
+    "h7": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 354,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 0.5924835870699664,
+      "local_lateral_p95_m": 0.12021618782989654,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 2
+    },
+    "h6": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 355,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 1.3561944088838718,
+      "local_lateral_p95_m": 0.15605244083974681,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 4
+    }
+  },
+  {
+    "group": "robust",
+    "scene": "live_curve",
+    "plant": "tau1.0",
+    "common_progress": [
+      11.54393196259422,
+      231.61956009402112
+    ],
+    "h7": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 356,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 0.5724073301164646,
+      "local_lateral_p95_m": 0.15054709592114762,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 8
+    },
+    "h6": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 355,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 0.5072584427318162,
+      "local_lateral_p95_m": 0.1594154074606651,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 9
+    }
+  },
+  {
+    "group": "robust",
+    "scene": "branch_width",
+    "plant": "tau0.74_noise2",
+    "common_progress": [
+      11.54393196259422,
+      231.61956009402112
+    ],
+    "h7": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 363,
+      "sat_fraction": 0.05509641873278237,
+      "steering_highpass_rms_deg": 1.5442038543453676,
+      "local_lateral_p95_m": 0.3508085424757342,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 15
+    },
+    "h6": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 358,
+      "sat_fraction": 0.04748603351955307,
+      "steering_highpass_rms_deg": 1.1613819570250428,
+      "local_lateral_p95_m": 0.2563452933152022,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 12
+    }
+  },
+  {
+    "group": "robust",
+    "scene": "branch_width",
+    "plant": "tau0.5",
+    "common_progress": [
+      11.740453258711634,
+      231.81168021385582
+    ],
+    "h7": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 361,
+      "sat_fraction": 0.04709141274238227,
+      "steering_highpass_rms_deg": 1.2282685756156304,
+      "local_lateral_p95_m": 0.2871135583515027,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 6
+    },
+    "h6": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 357,
+      "sat_fraction": 0.025210084033613446,
+      "steering_highpass_rms_deg": 1.155999233770997,
+      "local_lateral_p95_m": 0.17124222311290657,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 4
+    }
+  },
+  {
+    "group": "robust",
+    "scene": "branch_width",
+    "plant": "tau1.0",
+    "common_progress": [
+      11.54393196259422,
+      187.455882164704
+    ],
+    "h7": {
+      "correct": false,
+      "outcome": "left_road_stop",
+      "samples": 354,
+      "sat_fraction": 0.06779661016949153,
+      "steering_highpass_rms_deg": 2.527424125980645,
+      "local_lateral_p95_m": 0.6425777821498168,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 11
+    },
+    "h6": {
+      "correct": false,
+      "outcome": "left_road_stop",
+      "samples": 349,
+      "sat_fraction": 0.017191977077363897,
+      "steering_highpass_rms_deg": 2.5710654806834037,
+      "local_lateral_p95_m": 0.40348877322543547,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 13
+    }
+  },
+  {
+    "group": "robust",
+    "scene": "replica_east(scenario1)_off+0.0_yaw+0",
+    "plant": "tau0.74_noise2",
+    "common_progress": [
+      23.32008761274314,
+      93.48556050760651
+    ],
+    "h7": {
+      "correct": true,
+      "outcome": "time_limit",
+      "samples": 120,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 1.4871372494492732,
+      "local_lateral_p95_m": 0.2314896277519862,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 5
+    },
+    "h6": {
+      "correct": true,
+      "outcome": "time_limit",
+      "samples": 120,
+      "sat_fraction": 0.08333333333333333,
+      "steering_highpass_rms_deg": 2.804510060453421,
+      "local_lateral_p95_m": 0.42399926259529414,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 4
+    }
+  },
+  {
+    "group": "robust",
+    "scene": "replica_east(scenario1)_off+0.0_yaw+0",
+    "plant": "tau0.5",
+    "common_progress": [
+      23.32008761274314,
+      93.48556050760651
+    ],
+    "h7": {
+      "correct": true,
+      "outcome": "time_limit",
+      "samples": 120,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 1.3148857473947275,
+      "local_lateral_p95_m": 0.1725032761320756,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 2
+    },
+    "h6": {
+      "correct": true,
+      "outcome": "time_limit",
+      "samples": 119,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 2.4073796912861716,
+      "local_lateral_p95_m": 0.22183259404248515,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 4
+    }
+  },
+  {
+    "group": "robust",
+    "scene": "replica_east(scenario1)_off+0.0_yaw+0",
+    "plant": "tau1.0",
+    "common_progress": [
+      23.32008761274314,
+      92.49406077771566
+    ],
+    "h7": {
+      "correct": true,
+      "outcome": "time_limit",
+      "samples": 120,
+      "sat_fraction": 0.08333333333333333,
+      "steering_highpass_rms_deg": 1.5277949195412008,
+      "local_lateral_p95_m": 0.35156423950873594,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 3
+    },
+    "h6": {
+      "correct": true,
+      "outcome": "time_limit",
+      "samples": 119,
+      "sat_fraction": 0.07563025210084033,
+      "steering_highpass_rms_deg": 2.0427445997704328,
+      "local_lateral_p95_m": 0.3178857776355343,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 4
+    }
+  },
+  {
+    "group": "robust",
+    "scene": "replica_east(scenario1)_off+0.8_yaw+3",
+    "plant": "tau0.74_noise2",
+    "common_progress": [
+      22.823915535876267,
+      92.49406077771566
+    ],
+    "h7": {
+      "correct": true,
+      "outcome": "time_limit",
+      "samples": 120,
+      "sat_fraction": 0.03333333333333333,
+      "steering_highpass_rms_deg": 1.6790749053634964,
+      "local_lateral_p95_m": 0.24709580070894757,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 4
+    },
+    "h6": {
+      "correct": true,
+      "outcome": "time_limit",
+      "samples": 119,
+      "sat_fraction": 0.058823529411764705,
+      "steering_highpass_rms_deg": 2.2652970330446434,
+      "local_lateral_p95_m": 0.31277108439030515,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 6
+    }
+  },
+  {
+    "group": "robust",
+    "scene": "replica_east(scenario1)_off+0.8_yaw+3",
+    "plant": "tau0.5",
+    "common_progress": [
+      22.823915535876267,
+      92.98981064266108
+    ],
+    "h7": {
+      "correct": true,
+      "outcome": "time_limit",
+      "samples": 120,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 1.6711955680753015,
+      "local_lateral_p95_m": 0.19869277003063818,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 4
+    },
+    "h6": {
+      "correct": true,
+      "outcome": "time_limit",
+      "samples": 120,
+      "sat_fraction": 0.025,
+      "steering_highpass_rms_deg": 2.6618479323054247,
+      "local_lateral_p95_m": 0.22142202508540895,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 4
+    }
+  },
+  {
+    "group": "robust",
+    "scene": "replica_east(scenario1)_off+0.8_yaw+3",
+    "plant": "tau1.0",
+    "common_progress": [
+      22.823915535876267,
+      91.50256104782481
+    ],
+    "h7": {
+      "correct": true,
+      "outcome": "time_limit",
+      "samples": 120,
+      "sat_fraction": 0.016666666666666666,
+      "steering_highpass_rms_deg": 1.3640470526874968,
+      "local_lateral_p95_m": 0.3072117150715238,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 3
+    },
+    "h6": {
+      "correct": true,
+      "outcome": "time_limit",
+      "samples": 119,
+      "sat_fraction": 0.1092436974789916,
+      "steering_highpass_rms_deg": 1.8054672730747383,
+      "local_lateral_p95_m": 0.4015109158643776,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 6
+    }
+  },
+  {
+    "group": "robust",
+    "scene": "replica_east(scenario1)_off-0.8_yaw-3",
+    "plant": "tau0.74_noise2",
+    "common_progress": [
+      23.816259689610018,
+      93.98131037255195
+    ],
+    "h7": {
+      "correct": true,
+      "outcome": "time_limit",
+      "samples": 120,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 1.7436877759565246,
+      "local_lateral_p95_m": 0.20606532196115046,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 7
+    },
+    "h6": {
+      "correct": true,
+      "outcome": "time_limit",
+      "samples": 120,
+      "sat_fraction": 0.06666666666666667,
+      "steering_highpass_rms_deg": 1.7947954946791245,
+      "local_lateral_p95_m": 0.30099794009384334,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 5
+    }
+  },
+  {
+    "group": "robust",
+    "scene": "replica_east(scenario1)_off-0.8_yaw-3",
+    "plant": "tau0.5",
+    "common_progress": [
+      23.816259689610018,
+      93.98131037255195
+    ],
+    "h7": {
+      "correct": true,
+      "outcome": "time_limit",
+      "samples": 120,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 1.5556384923561064,
+      "local_lateral_p95_m": 0.18447360158520956,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 4
+    },
+    "h6": {
+      "correct": true,
+      "outcome": "time_limit",
+      "samples": 119,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 2.0166974887572082,
+      "local_lateral_p95_m": 0.18605673058238095,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 3
+    }
+  },
+  {
+    "group": "robust",
+    "scene": "replica_east(scenario1)_off-0.8_yaw-3",
+    "plant": "tau1.0",
+    "common_progress": [
+      23.816259689610018,
+      92.98981064266108
+    ],
+    "h7": {
+      "correct": true,
+      "outcome": "time_limit",
+      "samples": 120,
+      "sat_fraction": 0.09166666666666666,
+      "steering_highpass_rms_deg": 1.5206321320658744,
+      "local_lateral_p95_m": 0.36484990682792084,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 3
+    },
+    "h6": {
+      "correct": true,
+      "outcome": "time_limit",
+      "samples": 119,
+      "sat_fraction": 0.10084033613445378,
+      "steering_highpass_rms_deg": 1.933138941766627,
+      "local_lateral_p95_m": 0.3682472534393835,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 5
+    }
+  },
+  {
+    "group": "robust",
+    "scene": "replica_north(control)_off+0.0_yaw+0",
+    "plant": "tau0.74_noise2",
+    "common_progress": [
+      23.32008761274314,
+      96.0354839773665
+    ],
+    "h7": {
+      "correct": true,
+      "outcome": "time_limit",
+      "samples": 120,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 0.7058527433274069,
+      "local_lateral_p95_m": 0.1409275110888344,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 6
+    },
+    "h6": {
+      "correct": true,
+      "outcome": "time_limit",
+      "samples": 120,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 1.4215543051644575,
+      "local_lateral_p95_m": 0.15747706338267298,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 8
+    }
+  },
+  {
+    "group": "robust",
+    "scene": "replica_north(control)_off+0.0_yaw+0",
+    "plant": "tau0.5",
+    "common_progress": [
+      23.32008761274314,
+      96.0354839773665
+    ],
+    "h7": {
+      "correct": true,
+      "outcome": "time_limit",
+      "samples": 120,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 1.0745618201668452,
+      "local_lateral_p95_m": 0.07264069858105947,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 6
+    },
+    "h6": {
+      "correct": true,
+      "outcome": "time_limit",
+      "samples": 120,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 1.2884961311937537,
+      "local_lateral_p95_m": 0.08762922053433686,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 6
+    }
+  },
+  {
+    "group": "robust",
+    "scene": "replica_north(control)_off+0.0_yaw+0",
+    "plant": "tau1.0",
+    "common_progress": [
+      23.32008761274314,
+      95.54053167887928
+    ],
+    "h7": {
+      "correct": true,
+      "outcome": "time_limit",
+      "samples": 120,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 0.5166777553911742,
+      "local_lateral_p95_m": 0.09856287022037166,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 3
+    },
+    "h6": {
+      "correct": true,
+      "outcome": "time_limit",
+      "samples": 120,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 1.1200609537452415,
+      "local_lateral_p95_m": 0.09469269817079082,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 6
+    }
+  },
+  {
+    "group": "robust",
+    "scene": "replica_north(control)_off+0.8_yaw+3",
+    "plant": "tau0.74_noise2",
+    "common_progress": [
+      22.823915535876267,
+      95.04557938039206
+    ],
+    "h7": {
+      "correct": true,
+      "outcome": "time_limit",
+      "samples": 119,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 0.9662215585942375,
+      "local_lateral_p95_m": 0.1119036898079267,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 7
+    },
+    "h6": {
+      "correct": true,
+      "outcome": "time_limit",
+      "samples": 120,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 1.375603932858888,
+      "local_lateral_p95_m": 0.16203784916573177,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 6
+    }
+  },
+  {
+    "group": "robust",
+    "scene": "replica_north(control)_off+0.8_yaw+3",
+    "plant": "tau0.5",
+    "common_progress": [
+      22.823915535876267,
+      95.54053167887928
+    ],
+    "h7": {
+      "correct": true,
+      "outcome": "time_limit",
+      "samples": 120,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 1.0708739544715664,
+      "local_lateral_p95_m": 0.05962265271459302,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 6
+    },
+    "h6": {
+      "correct": true,
+      "outcome": "time_limit",
+      "samples": 120,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 1.4536227662640544,
+      "local_lateral_p95_m": 0.09358336379857056,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 6
+    }
+  },
+  {
+    "group": "robust",
+    "scene": "replica_north(control)_off+0.8_yaw+3",
+    "plant": "tau1.0",
+    "common_progress": [
+      22.823915535876267,
+      95.04557938039206
+    ],
+    "h7": {
+      "correct": true,
+      "outcome": "time_limit",
+      "samples": 120,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 0.5178368886323551,
+      "local_lateral_p95_m": 0.09206363087492576,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 2
+    },
+    "h6": {
+      "correct": true,
+      "outcome": "time_limit",
+      "samples": 120,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 0.7052055514152373,
+      "local_lateral_p95_m": 0.09115135982863434,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 3
+    }
+  },
+  {
+    "group": "robust",
+    "scene": "replica_north(control)_off-0.8_yaw-3",
+    "plant": "tau0.74_noise2",
+    "common_progress": [
+      23.816259689610018,
+      96.0354839773665
+    ],
+    "h7": {
+      "correct": true,
+      "outcome": "time_limit",
+      "samples": 120,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 0.6781604538687788,
+      "local_lateral_p95_m": 0.12370361174210427,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 4
+    },
+    "h6": {
+      "correct": true,
+      "outcome": "time_limit",
+      "samples": 120,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 1.6080353682703405,
+      "local_lateral_p95_m": 0.18119047698309843,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 8
+    }
+  },
+  {
+    "group": "robust",
+    "scene": "replica_north(control)_off-0.8_yaw-3",
+    "plant": "tau0.5",
+    "common_progress": [
+      23.816259689610018,
+      96.0354839773665
+    ],
+    "h7": {
+      "correct": true,
+      "outcome": "time_limit",
+      "samples": 120,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 0.9649971322997822,
+      "local_lateral_p95_m": 0.06760690055101133,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 5
+    },
+    "h6": {
+      "correct": true,
+      "outcome": "time_limit",
+      "samples": 120,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 1.6154015917323052,
+      "local_lateral_p95_m": 0.10218095010755403,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 6
+    }
+  },
+  {
+    "group": "robust",
+    "scene": "replica_north(control)_off-0.8_yaw-3",
+    "plant": "tau1.0",
+    "common_progress": [
+      23.816259689610018,
+      96.0354839773665
+    ],
+    "h7": {
+      "correct": true,
+      "outcome": "time_limit",
+      "samples": 120,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 0.7417994940378291,
+      "local_lateral_p95_m": 0.11033829720853465,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 4
+    },
+    "h6": {
+      "correct": true,
+      "outcome": "time_limit",
+      "samples": 120,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 1.2347647245551494,
+      "local_lateral_p95_m": 0.1133222071477353,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 5
+    }
+  },
+  {
+    "group": "robust",
+    "scene": "Yright_target_diverging_off+0_yaw+0",
+    "plant": "tau0.74_noise2",
+    "common_progress": [
+      11.5,
+      139.4113982165358
+    ],
+    "h7": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 214,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 0.8659414190004749,
+      "local_lateral_p95_m": 0.17220179808006061,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 8
+    },
+    "h6": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 214,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 0.7990025606340089,
+      "local_lateral_p95_m": 0.1416019810958133,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 8
+    }
+  },
+  {
+    "group": "robust",
+    "scene": "Yright_target_diverging_off+0_yaw+0",
+    "plant": "tau0.5",
+    "common_progress": [
+      11.5,
+      139.91071138100506
+    ],
+    "h7": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 215,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 0.8693114305822887,
+      "local_lateral_p95_m": 0.09422849642954367,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 4
+    },
+    "h6": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 214,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 0.7613659369761744,
+      "local_lateral_p95_m": 0.06989778446497336,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 2
+    }
+  },
+  {
+    "group": "robust",
+    "scene": "Yright_target_diverging_off+0_yaw+0",
+    "plant": "tau1.0",
+    "common_progress": [
+      11.5,
+      139.4113982165358
+    ],
+    "h7": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 214,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 0.6764322378313172,
+      "local_lateral_p95_m": 0.1440081188075956,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 4
+    },
+    "h6": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 214,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 0.7785454899955189,
+      "local_lateral_p95_m": 0.1293183001199734,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 4
+    }
+  },
+  {
+    "group": "robust",
+    "scene": "Yright_target_continuing_off+0_yaw+0",
+    "plant": "tau0.74_noise2",
+    "common_progress": [
+      11.5,
+      140.9042705821315
+    ],
+    "h7": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 216,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 0.38714896924958575,
+      "local_lateral_p95_m": 0.13274108596817175,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 9
+    },
+    "h6": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 216,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 0.4494809253973174,
+      "local_lateral_p95_m": 0.14335183105149385,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 9
+    }
+  },
+  {
+    "group": "robust",
+    "scene": "Yright_target_continuing_off+0_yaw+0",
+    "plant": "tau0.5",
+    "common_progress": [
+      11.5,
+      140.9042705821315
+    ],
+    "h7": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 216,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 0.16381022997967346,
+      "local_lateral_p95_m": 0.019505282630281458,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 0
+    },
+    "h6": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 216,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 0.2828165601751948,
+      "local_lateral_p95_m": 0.023883127755356455,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 0
+    }
+  },
+  {
+    "group": "robust",
+    "scene": "Yright_target_continuing_off+0_yaw+0",
+    "plant": "tau1.0",
+    "common_progress": [
+      11.5,
+      140.9042705821315
+    ],
+    "h7": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 216,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 0.2208943224216678,
+      "local_lateral_p95_m": 0.034533457682730265,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 2
+    },
+    "h6": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 216,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 0.20682400394624303,
+      "local_lateral_p95_m": 0.034164175919096956,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 0
+    }
+  },
+  {
+    "group": "robust",
+    "scene": "Yleft_target_diverging_off+0_yaw+0",
+    "plant": "tau0.74_noise2",
+    "common_progress": [
+      11.5,
+      139.91071138100506
+    ],
+    "h7": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 215,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 0.994763284853961,
+      "local_lateral_p95_m": 0.1394924637938344,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 9
+    },
+    "h6": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 214,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 0.7691035184917363,
+      "local_lateral_p95_m": 0.1462457944398892,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 8
+    }
+  },
+  {
+    "group": "robust",
+    "scene": "Yleft_target_diverging_off+0_yaw+0",
+    "plant": "tau0.5",
+    "common_progress": [
+      11.5,
+      139.91071138100506
+    ],
+    "h7": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 214,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 1.4789275997321178,
+      "local_lateral_p95_m": 0.0976629485715166,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 6
+    },
+    "h6": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 214,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 0.80605193248853,
+      "local_lateral_p95_m": 0.08420683947307918,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 2
+    }
+  },
+  {
+    "group": "robust",
+    "scene": "Yleft_target_diverging_off+0_yaw+0",
+    "plant": "tau1.0",
+    "common_progress": [
+      11.5,
+      139.4113982165358
+    ],
+    "h7": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 214,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 0.6719346163081886,
+      "local_lateral_p95_m": 0.14649126203595794,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 4
+    },
+    "h6": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 214,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 1.2884872469106052,
+      "local_lateral_p95_m": 0.10782487852927537,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 4
+    }
+  },
+  {
+    "group": "robust",
+    "scene": "Yleft_target_continuing_off+0_yaw+0",
+    "plant": "tau0.74_noise2",
+    "common_progress": [
+      11.5,
+      140.9042705821315
+    ],
+    "h7": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 216,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 0.522745379529007,
+      "local_lateral_p95_m": 0.13653313949893053,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 9
+    },
+    "h6": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 216,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 0.48296533136593456,
+      "local_lateral_p95_m": 0.12450698061184609,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 9
+    }
+  },
+  {
+    "group": "robust",
+    "scene": "Yleft_target_continuing_off+0_yaw+0",
+    "plant": "tau0.5",
+    "common_progress": [
+      11.5,
+      140.9042705821315
+    ],
+    "h7": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 216,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 0.21467255721231976,
+      "local_lateral_p95_m": 0.019667351675123183,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 0
+    },
+    "h6": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 216,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 0.28582773370809134,
+      "local_lateral_p95_m": 0.024026105648454473,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 0
+    }
+  },
+  {
+    "group": "robust",
+    "scene": "Yleft_target_continuing_off+0_yaw+0",
+    "plant": "tau1.0",
+    "common_progress": [
+      11.5,
+      140.9042705821315
+    ],
+    "h7": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 216,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 0.25692705750579375,
+      "local_lateral_p95_m": 0.042281509957874344,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 3
+    },
+    "h6": {
+      "correct": true,
+      "outcome": "goal_reached",
+      "samples": 216,
+      "sat_fraction": 0.0,
+      "steering_highpass_rms_deg": 0.22922765564323652,
+      "local_lateral_p95_m": 0.031417822887200034,
+      "speed_median_mps": 6.0,
+      "sign_changes_above_1deg": 0
+    }
+  }
+]

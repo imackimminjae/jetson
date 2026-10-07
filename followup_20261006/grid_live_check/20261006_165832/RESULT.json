@@ -1,0 +1,56 @@
+{
+  "status": "received",
+  "frames": 322,
+  "received_span_sec": 14.999268048999511,
+  "received_rate_hz": 21.40104430105251,
+  "pattern_counts": {
+    "16483bab1a8ce6c9": 322
+  },
+  "patterns": {
+    "16483bab1a8ce6c9": {
+      "size": [
+        128,
+        128
+      ],
+      "resolution_m": 0.3125,
+      "frame": "Vehicle",
+      "origin": [
+        2.95,
+        -20.0,
+        0.0
+      ],
+      "origin_quaternion": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "known_bbox_indices": [
+        0,
+        127,
+        0,
+        127
+      ],
+      "known_extent_grid_axes_m": [
+        2.95,
+        42.95,
+        -20.0,
+        20.0
+      ],
+      "known_cells": 16384,
+      "unknown_cells": 0,
+      "internal_unknown_holes": 0,
+      "known_mask_sha256": "d0ff1b294b5288d1ae1421eadf5b2d38a8752b76d472ff30bed9028e25b1c5b8"
+    }
+  },
+  "publishers": [
+    {
+      "node_name": "rgb_to_occupancy",
+      "node_namespace": "/",
+      "topic_type": "nav_msgs/msg/OccupancyGrid"
+    }
+  ],
+  "zero_header_stamp_frames": 322,
+  "unique_grid_payloads": 164,
+  "end_kst": "2026-10-06T16:58:48.109723+09:00"
+}

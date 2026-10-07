@@ -1,0 +1,181 @@
+2026-10-06 참조/B 영향 분리 및 단일 파라미터 후보 오프라인 검증
+
+결론
+- 12 m soft 폭 상한은 계속 미채택. 운영에는 적용하지 않았다.
+- 05:06:51.906 회귀는 이 재생 조건에서 B 감소 하나가 아니라 누적된 참조/절단선 변화로
+  설명된다. B를 원래 궤적으로 고정해도 북쪽, 참조를 원래 것으로 고정하면 동쪽이다.
+- 같은 시점의 참조 x 갱신 후 B 교차 대입에서도 갈래가 참조를 따라 바뀐다.
+- 수정 참조의 동쪽 후보는 k6까지 가능하지만 k7에서 불가능해진다. k7에 북쪽 단면만
+  남으며, 원폭으로 복구한 진단에서도 동쪽 조합은 불가능하다. 단순 폭 축소/비용 경쟁만의
+  문제가 아니다. 이 사실을 전체 실제 지그재그의 단독 원인으로 일반화하지 않는다.
+- 최소 적용 후보 upper_r_dpsi 2 -> 3 단독안은 분기 보존 조건 미통과로 보류.
+  지그재그 감소까지 검증된 새 채택안은 없다. 운영 소스/YAML/설치/프로세스 변경 없음.
+
+1. 입력과 새로운 기록
+인계 파일 및 soft_cap12_trial, zigzag_0505_0506, j2_soft, interval_consistency,
+near_consistency, verify, drive_0137, sc3_0141_0143, full_audit 근거를 확인했다.
+실제 updateIntervalCentering, intervalTreatment, buildPreviewReference, split 비용 창,
+누적 위치 모델 및 직접 corridor QP 제약 코드를 확인했다.
+
+인계 이후 drive_debug_20261006_055105_light 발견:
+- snapshot YAML 전체 파싱값이 이번 현재 디스크 사본과 일치.
+  r_dpsi=2, soft=0.8, lower_rd=150, 2 Hz, 6 m/s, tau=0.74, wp=15/20.
+- scenario1의 동쪽 정분기를 통과. 기록 상위 이벤트 70개, 실패 0.
+- bag 마지막 위치 (172.3261,-1.8831), 목표까지 0.684 m.
+  bag 내 goal=true는 없어 목표 완료 신호까지 확인했다고 표현하지 않는다.
+- 초기 odom/BEV가 없는 4주기를 제외한 66주기를 새 입력으로 추출했다.
+- 원본 db3를 mode=ro로 읽어 캐시의 상위 이벤트 70개/하위 trace 340개와 완전 일치 검증.
+  활성 tlog에는 접근하지 않았으며 새로운 tlog/SIH 분석도 하지 않았다.
+
+동일한 하위 trace 기준 실제 후반 150..190 m 비교(새 계산):
+                          050627           055105
+ROS 조향 명령 고역 RMS      4.724 deg        1.075 deg
+유효 QP 표본 조향 포화      27.69%           0%
+지역 경로 횡오차 p95        0.988 m          0.226 m
+입력 속력 중앙             5.903 m/s        6.003 m/s
+|조향|>1deg 표본 부호변화    3회              3회
+새 기록은 후반 진폭/횡오차가 작지만, 첫 분기 포화율은 19.67 -> 23.73%로 증가했다.
+주행 사이 r_dpsi/soft/lower_rd 및 입력 상태가 함께 다르므로 단일 파라미터 인과 효과 아님.
+고역 RMS는 10Hz 보간 + 0.3Hz 2차 Butterworth 양방향 필터. 정상 회전 성분도 포함.
+속력은 ROS 입력값이며 SIH 실속도가 아니다. 이전 보고서의 tlog 기준 포화율과 혼용 금지.
+
+2. 분리 실험 설계
+운영 파일 7개의 해시를 이전 baseline과 대조한 뒤 새 baseline 사본과 restore.py 보존.
+C++ 운영 코드 사본에 진단용 갱신 후 B 대입만 추가. 기존 12m 진단 스위치도 사본에만 유지.
+실험 내 타이머 취소, executor spin 없음, 상위 수치 호출만 수행.
+ROS_DOMAIN_ID=177 / ROS_LOCALHOST_ONLY=1 / ROS_LOG_DIR=이 폴더/ros_logs.
+하위/직렬/MAVLink 출력, ARM, 하드웨어 설정, 운영 빌드/설치/재시작 없음.
+샌드박스 DDS 초기화 경고는 있었지만 직접 수치 계산은 exit=0, 결과 저장 완료.
+
+진단 3기록(050627/050536/055105)의 190시점 x 10모드 = 1900회:
+- 기존 carried/fixed 2모드 재현 대조.
+- cap OFF/12 x 참조 carry/기록 고정 x B carry/기록 고정 = 8모드.
+- 8모드에서는 waypoint pair를 기록값으로 고정해 추가 상태 차이를 배제.
+- B 고정은 B_before와 실제 처리에 쓰는 갱신 후 B 모두 기록값으로 고정.
+  B_before만 고정하면 참조에 의해 현재 주기에 다시 바뀌므로 완전 분리가 아니다.
+- 참조 고정은 기록 preview를 기존 buildPreviewReference에 넣으며 기존 tail 연장 규칙 유지.
+- 차량 위치/방향/BEV는 모든 모드에서 같은 기록. 차량 폐루프가 아니다.
+
+재현 검증:
+- 새 C++ 사본의 legacy carried/fixed 결과는 이전 최신 두 bag 결과와 최대 점 오차 0.
+- 현재 설정 carried baseline 6개 기존 bag 결과도 이전과 최대 점 오차 0.
+- 당시 설정/기록 참조 고정: 최신 두 bag 유효계획 122개 중 120개 1mm 이내 재현.
+  나머지 두 시점은 0.3700m/0.1495m. 유효/실패는 전체 124시점 일치.
+- 새 055105는 66/66 계획이 1mm 이내(최대 약1.3e-13m), 유효/실패 전부 일치.
+- 이전 BEV 수신 시각 정합의 한계는 남는다. 이 시험으로 카메라 촬영 시각을 복원하지 않았다.
+
+3. 05:06:51.906 대조 결과(당시 r=3, soft=0.7)
+12m 상한 조건                B(m)       계획 방향
+참조 carry, B carry          7.0        북쪽
+참조 carry, B 기록 고정      17.8        북쪽
+참조 기록 고정, B carry      17.8        동쪽
+참조 기록 고정, B 기록 고정  17.8        동쪽
+상한 OFF/carried             17.8        동쪽
+
+이어 49.406..52.906의 8시점에 baseline/cap-history 참조와 baseline/cap-history의
+갱신 후 B를 교차 대입했다. 상한 OFF/12까지 각 조합 독립 계산: 64회.
+그중 51.906:
+참조 출처       B=17.8       B=7.0
+baseline        동쪽        동쪽
+cap-history     북쪽        북쪽
+상한 OFF와 12 모두 위 표와 같음. 동일 순간의 B 감소나 상한 자체가 갈래를 결정한 것이 아님.
+B가 비용/계획 위치에 영향을 전혀 주지 않는다는 뜻은 아니다. 갈래 분류만 동일하다.
+
+4. 정확히 무엇이 동쪽 접근을 막는가
+동일 순간 baseline vs cap-history 참조:
+- 마지막 연장 구간 세계 방향: 30.287 deg -> 37.012 deg.
+- k6 동쪽 원폭/허용폭: 2.70/1.08 m -> 2.00/0.80 m.
+- k7 원폭/허용폭: 4.50/1.80 m -> 1.70/0.68 m.
+- baseline k7는 (약137,2) 동쪽, 수정 k7는 (약128.5,13.4) 북쪽 단면만 남음.
+- 실제 비용 회전창은 두 안 모두 [3,4,5]. 이 시점 창 이동이 선택 차이의 원인은 아님.
+  앞선 주기에서 창 이동이 기여했는지는 이번 대조가 분리하지 않는다.
+
+운영 C++에서 추출한 참조/단면에 대해 누적 G와 가속/조향 증분 제약을 독립 LP로 재구성.
+49..52초 32개 모드/시점의 C++ 선택 조합이 LP에서도 가능함을 확인했다.
+51.906에는 각각 네 corridor 조합뿐이며:
+- baseline: k5/k6 동쪽(0/0)만 가능. 다른 세 조합 불가능.
+- cap-history: k5/k6 북쪽(1/1)만 가능. 동쪽을 포함한 세 조합 불가능.
+  번호 의미는 이 시점의 세계 단면 좌표로 확인했고, 시간 간 번호를 갈래 ID로 취급하지 않음.
+- 수정 참조의 동쪽 0/0 조합은 k1..k6까지만 제약하면 가능, k7까지 넣으면 불가능.
+- k6 또는 k7 제약을 진단상 제거하면 가능. 다른 한 단계만 제거해서는 불가능.
+- 모든 단계의 대칭 inset을 원복해 원단면을 사용해도 이 동쪽 조합은 불가능.
+- 모든 단면의 양쪽 경계를 동일하게 느슨하게 하는 최소 LP slack은 약2.116m.
+  위 제거/원복/slack은 원인 분리용이며 적용 후보 또는 차량 안전 여유 권고가 아니다.
+따라서 이 순간에는 회전 비용을 키우는 것만으로 없는 feasible 동쪽 조합을 선택할 수 없다.
+독립 LP는 최적 비용/차체 충돌 검증이 아니라 해당 상위 선형 제약의 가능성 확인이다.
+
+5. 최소 후보: 현재 YAML에서 upper_r_dpsi 2 -> 3 하나만
+현재 설정의 soft=0.8, lower_rd=150, 나머지 설정 유지. 상한 없음.
+candidate_r3.yaml/patch는 이 값 하나만 다른 오프라인 사본이며 운영 설치하지 않았다.
+soft만0.7로 되돌리는 안도 파라미터 혼합 효과를 구분하기 위한 별도 대조로 계산.
+두 변경을 동시에 적용하지 않았다.
+7개 기록 x 312시점 합계 x baseline/r3/soft07 = 936회 상위 계산.
+
+계획 실패 수(기록 차량 고정 재생, 실제 실패/정지 횟수가 아님):
+bag          baseline     r3       soft07 대조
+050536           2         0           1
+050627          16         0           2
+055105           0         0           0
+014143           0         0           1
+014303           5         5           0
+045314           0         0           0
+044738           5         5           0
+
+r3 판단:
+- 050627의 동쪽 계획 회복 및 055105의 동쪽 유지 같은 유리한 결과 존재.
+- 그러나 050536의 05:05:59.344, 59.844, 05:06:00.344에는 현재 baseline의 동쪽 계획이
+  r3에서 북쪽으로 바뀐다. 이 bag의 실제 차량은 원래 북쪽으로 갔으므로,
+  r3의 실패 횟수 감소를 정분기 개선으로 세면 안 된다.
+- 정분기 기록 014303의 마지막 북동 갈래도 r3는 보존하지 못한다.
+  x=246.6,y=138.8에서 기록 끝점(273.2,153.7), baseline(274.8,132.2), r3(275.1,132.2).
+  이 SC3 실패는 r3가 새로 만든 회귀라고 할 수는 없고 baseline에도 존재한다.
+  그러나 정분기 기록을 유지해야 하는 채택 조건은 충족하지 못한다.
+- 따라서 r3 단독은 운영 반영 보류. 조향 지표가 일부 낮아도 채택하지 않는다.
+
+soft07 대조:
+- 050627 및 014303에는 유리하지만, 014143 실패가 0->1로 늘고 근거리 보정 p95도
+  2.833->3.649m로 증가한다(성공 계획만 집계하므로 실패 많은 조건 간 비교에도 주의).
+- 이 값은 경로-참조 보정량이지 조향 RMS/실제 진동이 아니다.
+- soft07을 지그재그 개선 채택안으로 제시하지 않는다. 별도 차량 폐루프 개선 미검증.
+
+현재 설정 자체에 대한 주의:
+과거 050627/014303 입력에서 현재 설정의 재생이 불리한 한편, 동일 설정으로 기록된
+055105는 정분기와 후반 진폭 감소를 보인다. 과거 자세 고정 재생만으로 현재 설정의
+실주행이 반드시 실패한다거나, 반대로 새 한 번의 기록으로 항상 성공한다고 단정하지 않는다.
+
+6. 운영 상태, 한계, 다음 범위
+- 전체 상위 C++ 호출 2900회 완료. LP/기록 분석 별도.
+- 분기 보존에 실패한 r3는 폐루프/주행 단계로 넘기지 않았다.
+- 이번 후보로 실제 조향 포화/부호반전/횡오차/속도가 개선됨은 미검증.
+- 실행 중 노드 설정 조회/변경, 차량 명령, 직렬 연결, ARM, 펌웨어/보드 변경 없음.
+- 운영 파일 7개는 시작/종료 SHA256 일치. restore.py는 Nothing to restore 확인.
+- 신규/수정 파일은 이 reference_B_separation 폴더 안에만 생성. 기존 자료 덮어쓰기 없음.
+- 다음 최소 수정 검토는 B 상한 재시도가 아니라 기존 마지막 두 참조점 연장 방향과
+  k6->k7 절단선 변화의 역할을 분리하는 것이 근거에 맞음. 아직 수정 규칙은 확정하지 않았다.
+  참조 전체를 새 구조로 바꾸거나 현재 k7 제약을 삭제하는 안을 권고하지 않는다.
+
+주요 파일
+reference_B_crossover.png: 동일 순간 참조/B 2x2 비교(상한 OFF)
+critical.json, swap_keys.json, swap_result.json: 시간/교차 대입 상세
+corridor_feasibility.json, prefix_probe.json: 후보 가능성과 최초 막힘 단계
+candidate_*_current.json, summary.json: 단일 파라미터 대조
+new_record_summary.json: 새 055105 포함 실제 기록 지표
+validation.json, inputs_sha256.json, artifacts_sha256.json: 검증/입력/산출물 해시
+baseline/, restore.py: 백업과 이후 편집 덮어쓰기 방지
+candidate_r3.yaml, candidate_r3.patch: 미채택 최소 후보
+
+재실행(기존 실험 폴더의 결과 파일만 갱신; 운영 미변경)
+source /home/imac/ros2_ws/install/setup.bash
+python3 followup_20261006/reference_B_separation/build.py
+python3 followup_20261006/reference_B_separation/run.py diagnostic
+python3 followup_20261006/reference_B_separation/run.py candidate
+python3 followup_20261006/reference_B_separation/analyze.py
+python3 followup_20261006/reference_B_separation/swap.py
+python3 followup_20261006/reference_B_separation/feasibility.py
+python3 followup_20261006/reference_B_separation/prefix_probe.py
+python3 followup_20261006/reference_B_separation/new_record.py
+python3 followup_20261006/reference_B_separation/validate.py
+MPLCONFIGDIR=/tmp python3 followup_20261006/reference_B_separation/plot.py
+python3 followup_20261006/reference_B_separation/restore.py
+prepare.py는 최초 폴더 구성 전용으로 기존 baseline이 있으면 중단한다.
+초기 재생 시도는 빌드 완료 전 실행 파일이 없어 시작하지 못했고, 빌드 완료 후 정상 수행했다.

@@ -1,0 +1,11 @@
+--- before
++++ after
+@@ -215,7 +215,7 @@
+     # Experiment: interpret the received image's first column from vehicle x=0.
+     # Does not generate unseen cells or change the original published grid.
+     # Disable and restart the planner to restore the received origin (2.95m).
+-    grid_origin_x_override_enabled: true
++    grid_origin_x_override_enabled: false
+     grid_origin_x_override_m: 0.0
+     upper_sparse_path_topic: "/planner/upper_path_sparse"
+     lower_reference_path_topic: "/planner/lower_reference_path"

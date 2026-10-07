@@ -1,0 +1,25 @@
+--- before
++++ after
+@@ -318,10 +318,12 @@
+     speed_kp: 0.08
+     speed_ki: 0.01
+     throttle_ff: 0.05
+-    max_virtual_throttle: 0.09
++    # Allow the speed PI to reach 6 m/s; this is a ceiling, not fixed throttle.
++    max_virtual_throttle: 0.35
+     max_virtual_brake: 0.70
+     speed_deadband_mps: 0.03
+-    speed_integral_limit: 0.5
++    # With ki=0.01, permit up to 0.30 learned trim above throttle_ff=0.05.
++    speed_integral_limit: 30.0
+ 
+     publish_pwm: true
+     pwm_min: 1000
+@@ -347,6 +349,6 @@
+     mavlink_auto_arm: false
+     mavlink_force_arm: false
+     mavlink_disarm_on_shutdown: true
+-    mavlink_throttle_max_norm: 0.09
++    mavlink_throttle_max_norm: 0.35
+     mavlink_steer_sign: 1.0
+     mavlink_keepalive_rate_hz: 20.0

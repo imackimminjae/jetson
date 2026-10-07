@@ -1,0 +1,54 @@
+/bev/occupancy_grid count 836 start/end 04:45:22.840 04:45:52.683 gap median/max 0.03203558921813965 0.18714261054992676
+grid [(0.3125, 128, 128, [0.0, -20.0], [0.0, 0.0, 0.0, 1.0])] gaps>1s []
+/motive/vehicle/odom_map count 900 start/end 04:45:22.698 04:45:52.666 gap median/max 0.034096717834472656 0.047615766525268555
+/planner/lower_reference_path/with_arclength count 31 start/end 04:45:22.681 04:45:51.792 gap median/max 1.0005428791046143 1.0093505382537842
+/debug/upper_branch_event count 30 start/end 04:45:22.785 04:45:51.793 gap median/max 1.0006701946258545 1.0104906558990479
+/debug/lower_mpc_trace count 301 start/end 04:45:22.681 04:45:52.656 gap median/max 0.10001158714294434 0.10386252403259277
+LOWER modes Counter({0.0: 301}) speed min/med/max [0.17412085 6.06303332 6.97169309] valid steering saturation 0.023255813953488372
+mode 0.0 count 301 first,last 04:45:22.652 04:45:52.655
+UPPER 04:45:22.785 success 7 xy 186.98 217.41 yaw -89.5 status solved
+UPPER 04:45:23.796 success 7 xy 186.93 216.88 yaw -89.3 status solved
+UPPER 04:45:24.787 success 7 xy 187.0 215.32 yaw -86.8 status solved
+UPPER 04:45:25.788 success 7 xy 187.39 212.66 yaw -81.8 status solved
+UPPER 04:45:26.790 success 7 xy 187.94 208.97 yaw -81.6 status solved
+UPPER 04:45:27.787 success 7 xy 188.22 204.37 yaw -86.9 status solved
+UPPER 04:45:28.787 success 7 xy 188.06 199.12 yaw -92.0 status solved
+UPPER 04:45:29.790 success 7 xy 187.78 193.53 yaw -92.2 status solved
+UPPER 04:45:30.788 success 7 xy 188.23 187.8 yaw -83.6 status solved
+UPPER 04:45:31.788 success 7 xy 189.76 182.27 yaw -75.3 status solved
+UPPER 04:45:32.789 success 7 xy 191.65 176.88 yaw -70.8 status solved
+UPPER 04:45:33.792 success 7 xy 194.85 172.23 yaw -52.4 status solved
+UPPER 04:45:34.788 success 7 xy 199.62 169.04 yaw -34.8 status solved
+UPPER 04:45:35.788 success 7 xy 204.37 165.84 yaw -36.7 status solved
+UPPER 04:45:36.796 success 7 xy 208.77 162.17 yaw -40.9 status solved
+UPPER 04:45:37.790 success 7 xy 213.16 158.53 yaw -40.1 status solved
+UPPER 04:45:38.787 success 7 xy 217.81 155.26 yaw -34.7 status solved
+UPPER 04:45:39.789 success 7 xy 222.87 152.74 yaw -27.1 status solved
+UPPER 04:45:40.787 success 7 xy 227.7 150.04 yaw -34.0 status solved
+UPPER 04:45:41.789 success 7 xy 231.83 146.27 yaw -43.0 status solved
+UPPER 04:45:42.787 success 7 xy 236.17 142.69 yaw -40.9 status solved
+UPPER 04:45:43.787 success 7 xy 240.81 139.52 yaw -31.9 status solved
+UPPER 04:45:44.790 success 7 xy 246.42 138.48 yaw -8.3 status solved
+UPPER 04:45:45.787 success 7 xy 252.02 139.62 yaw 13.8 status solved
+UPPER 04:45:46.790 success 7 xy 256.49 143.22 yaw 42.5 status solved
+UPPER 04:45:47.788 success 7 xy 259.34 148.18 yaw 59.4 status solved
+UPPER 04:45:48.789 success 7 xy 262.55 152.74 yaw 51.1 status solved
+UPPER 04:45:49.790 success 7 xy 266.68 156.52 yaw 43.4 status solved
+UPPER 04:45:50.792 success 5 xy 270.38 160.73 yaw 50.0 status solved
+UPPER 04:45:51.793 success 3 xy 273.65 165.27 yaw 53.9 status solved
+WARNINGS
+04:45:22.681 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+04:45:22.681 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+04:45:22.681 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: 
+04:45:22.702 upper_planner_node grid origin experiment: received_x=0.000 effective_x=0.000 shift_x=0.000; cell data unchanged
+04:45:29.050 upper_planner_node grid origin experiment: received_x=0.000 effective_x=0.000 shift_x=0.000; cell data unchanged
+04:45:39.052 upper_planner_node grid origin experiment: received_x=0.000 effective_x=0.000 shift_x=0.000; cell data unchanged
+04:45:49.063 upper_planner_node grid origin experiment: received_x=0.000 effective_x=0.000 shift_x=0.000; cell data unchanged
+04:45:50.787 upper_planner_node interval_diag step=6 reason=3 ref_body=(26.970,1.232) heading_deg=2.54 center_cell=(86,67) center_value=100 line_free=0 blocked=388 unknown=13 outside=1 longest_run=0 min_run=2 grid_free=1971 zero=1971 positive=11173 unknown=3240 topic=/bev/occupancy_grid frame=Vehicle origin=(0.000,-20.000) origin_yaw_deg=0.00 size=128x128 res=0.3125 positive_is_drivable=0 threshold=1 waypoint_bias=0 previous=1
+04:45:50.788 upper_planner_node no valid preview interval at step=6; usable horizon=5 reason=3
+04:45:50.788 upper_planner_node no valid preview interval at step=7; usable horizon=5 reason=3
+04:45:50.788 upper_planner_node horizon_diag configured=7 extent_limit=7 requested=7 usable=5 reserve=1 restore=1 step_m=4.500 previous=1
+04:45:51.792 upper_planner_node no valid preview interval at step=4; usable horizon=3 reason=3
+04:45:51.793 upper_planner_node no valid preview interval at step=5; usable horizon=3 reason=3
+04:45:51.793 upper_planner_node no valid preview interval at step=6; usable horizon=3 reason=3
+04:45:51.793 upper_planner_node no valid preview interval at step=7; usable horizon=3 reason=3
