@@ -1,0 +1,35 @@
+{
+  "domain": "1",
+  "runs": 10,
+  "topics": [
+    "/bev/occupancy_grid",
+    "/motive/vehicle/odom_map",
+    "/navigation/global_path",
+    "/planner/lower_reference_path/with_arclength",
+    "/planner/goal_reached",
+    "/debug/lower_mpc_trace",
+    "/debug/upper_branch_event",
+    "/debug/upper_miqp_trace",
+    "/debug/upper_interval_info",
+    "/debug/upper_interval_centering_state",
+    "/debug/upper_stage_timing",
+    "/debug/bev_source_timing",
+    "/controller/reset",
+    "/knu_batch/status",
+    "/knu_batch/active_route",
+    "/parameter_events",
+    "/rosout"
+  ],
+  "format": "MCAP Zstd lossless",
+  "max_session_bytes": 536870912,
+  "min_free_bytes": 1073741824,
+  "sha256": {
+    "/home/imac/ros2_ws/src/virtual_control/config/tracking_control_split.yaml": "b1b984f1f02ca7cf48f587615b7b7afa92c70f23a71f192782a940b57f244776",
+    "/home/imac/ros2_ws/src/virtual_control/config/scenario3_repeat.yaml": "a689412c900a8133dabb4cd45a811d284c49c4e01851f4d60edd2e385d446012",
+    "/home/imac/ros2_ws/src/virtual_control/scripts/repeat_drive_session.py": "1bc5d924e45945a35d210f483664f6f2f623937b6e3d66f6bd9c591420b19433",
+    "/home/imac/ros2_ws/src/virtual_control/scripts/knu_batch_runner.py": "dea373214c79c9fb8fec6d000911dd9d24d556d72470341fa9f87f2d96fa959a",
+    "/home/imac/ros2_ws/install/virtual_control/lib/virtual_control/upper_planner_node": "a1cff1e3566c0eb89ff9e8e712fe24aa7d579289c598e269b7a130db05f6b929",
+    "/home/imac/ros2_ws/install/virtual_control/lib/virtual_control/lower_tracking_mpc_node": "04c31c5ef5bdf804281a944c17bb4c3fe1e3a738c195573a161e4ac718a2ba55",
+    "/home/imac/ros2_ws/install/virtual_control/lib/virtual_control/px4_odom_map_bridge": "e11055be4490d271e4a6905a2c0349393e5125eed4e662c40363acb30d10ab49"
+  }
+}

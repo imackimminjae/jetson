@@ -1,0 +1,10 @@
+[INFO] [1791406580.382991129] [px4_ekf_bridge]: PX4 EKF bridge configured: input=disabled odom=/px4/ekf_odom yaw_scalar_pose=/px4/sih/odom connection=udpin:0.0.0.0:14541 @ 921600, EV=50.0 Hz (vision_position_estimate), ENU(+X east,+Y north,+Z up) <-> NED/FRD
+[WARN] [1791406580.384433477] [px4_ekf_bridge]: Start with the vehicle disarmed and stationary. PX4 EKF parameter changes marked as reboot-required need a Pixhawk reboot before fusion is tested.
+[INFO] [1791406580.594987803] [px4_ekf_bridge]: Opening MAVLink connection udpin:0.0.0.0:14541 (baud=921600)
+[WARN] [1791406580.654895308] [px4_ekf_bridge]: SIH heading check: missing_or_stale_sih (EKF-SIH=None deg); pose output blocked
+[INFO] [1791406580.680341261] [px4_ekf_bridge]: PX4 heartbeat detected: target=1:1
+[WARN] [1791406580.700276071] [px4_ekf_bridge]: SIH heading check: settling (EKF-SIH=0.31488649972291877 deg); pose output blocked
+[INFO] [1791406580.843968442] [px4_ekf_bridge]: Requested PX4 LOCAL_POSITION_NED at 30.0 Hz
+[INFO] [1791406580.845780977] [px4_ekf_bridge]: Requested PX4 ATTITUDE at 30.0 Hz
+[INFO] [1791406580.847513029] [px4_ekf_bridge]: Requested PX4 HIL_STATE_QUATERNION at 30.0 Hz
+[WARN] [1791406582.725610192] [px4_ekf_bridge]: SIH heading check: ok (EKF-SIH=0.3180796131598998 deg); pose output enabled

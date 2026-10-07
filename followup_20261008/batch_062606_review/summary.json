@@ -1,0 +1,3601 @@
+{
+  "session": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23",
+  "route": [
+    [
+      187.0,
+      220.0
+    ],
+    [
+      187.0,
+      192.0
+    ],
+    [
+      195.0,
+      168.0
+    ],
+    [
+      215.0,
+      157.0
+    ],
+    [
+      235.0,
+      142.0
+    ],
+    [
+      255.0,
+      135.0
+    ],
+    [
+      270.0,
+      158.0
+    ],
+    [
+      278.0,
+      172.0
+    ]
+  ],
+  "counts": {
+    "/knu_batch/active_route": 11,
+    "/rosout": 2347,
+    "/parameter_events": 180,
+    "/bev/occupancy_grid": 20001,
+    "/planner/goal_reached": 1175,
+    "/debug/upper_branch_event": 1155,
+    "/debug/upper_interval_info": 1155,
+    "/debug/upper_interval_centering_state": 1155,
+    "/navigation/global_path": 10,
+    "/debug/upper_miqp_trace": 1155,
+    "/knu_batch/status": 1102,
+    "/debug/upper_stage_timing": 1173,
+    "/debug/lower_mpc_trace": 5870,
+    "/planner/lower_reference_path/with_arclength": 719,
+    "/motive/vehicle/odom_map": 17506,
+    "/controller/reset": 20
+  },
+  "phases": [
+    {
+      "t": 1791408369.54835,
+      "received_t": 1791408369.6195667,
+      "time": "06:26:09.548",
+      "phase": "startup",
+      "route": "",
+      "index": 0,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "",
+      "sequence": 0,
+      "phase_stamp_sec": 1791408369.54835,
+      "last_result": null
+    },
+    {
+      "t": 1791408371.9537838,
+      "received_t": 1791408371.9546478,
+      "time": "06:26:11.953",
+      "phase": "stopping",
+      "route": "scenario3",
+      "index": 1,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:0:scenario3",
+      "sequence": 1,
+      "phase_stamp_sec": 1791408371.9537838,
+      "last_result": null
+    },
+    {
+      "t": 1791408373.1564844,
+      "received_t": 1791408373.157671,
+      "time": "06:26:13.156",
+      "phase": "pausing",
+      "route": "scenario3",
+      "index": 1,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:0:scenario3",
+      "sequence": 2,
+      "phase_stamp_sec": 1791408373.1564844,
+      "last_result": null
+    },
+    {
+      "t": 1791408373.2570267,
+      "received_t": 1791408373.2587981,
+      "time": "06:26:13.257",
+      "phase": "aligning",
+      "route": "scenario3",
+      "index": 1,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:0:scenario3",
+      "sequence": 3,
+      "phase_stamp_sec": 1791408373.2570267,
+      "last_result": null
+    },
+    {
+      "t": 1791408373.4538562,
+      "received_t": 1791408373.4546134,
+      "time": "06:26:13.453",
+      "phase": "map",
+      "route": "scenario3",
+      "index": 1,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:0:scenario3",
+      "sequence": 4,
+      "phase_stamp_sec": 1791408373.4538562,
+      "last_result": null
+    },
+    {
+      "t": 1791408374.6545625,
+      "received_t": 1791408374.6555028,
+      "time": "06:26:14.654",
+      "phase": "resetting",
+      "route": "scenario3",
+      "index": 1,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:0:scenario3",
+      "sequence": 5,
+      "phase_stamp_sec": 1791408374.6545625,
+      "last_result": null
+    },
+    {
+      "t": 1791408374.8619287,
+      "received_t": 1791408374.8685117,
+      "time": "06:26:14.861",
+      "phase": "reference",
+      "route": "scenario3",
+      "index": 1,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:0:scenario3",
+      "sequence": 6,
+      "phase_stamp_sec": 1791408374.8619287,
+      "last_result": null
+    },
+    {
+      "t": 1791408375.9535449,
+      "received_t": 1791408375.9541411,
+      "time": "06:26:15.953",
+      "phase": "running",
+      "route": "scenario3",
+      "index": 1,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:0:scenario3",
+      "sequence": 7,
+      "phase_stamp_sec": 1791408375.9535449,
+      "last_result": null
+    },
+    {
+      "t": 1791408409.7579231,
+      "received_t": 1791408409.7592182,
+      "time": "06:26:49.757",
+      "phase": "coasting",
+      "route": "scenario3",
+      "index": 1,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:0:scenario3",
+      "sequence": 8,
+      "phase_stamp_sec": 1791408409.7579231,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:0:scenario3",
+        "outcome": "completed",
+        "duration_sec": 37.801,
+        "progress_ratio": 0.9525,
+        "best_progress_ratio": 0.9525,
+        "cross_track_m": 1.0569,
+        "goal_distance_m": 7.9467,
+        "detail": "",
+        "stop_status": "",
+        "stop_x": "",
+        "stop_y": "",
+        "stop_goal_distance_m": ""
+      }
+    },
+    {
+      "t": 1791408430.962977,
+      "received_t": 1791408430.9643056,
+      "time": "06:27:10.962",
+      "phase": "stopping",
+      "route": "scenario3",
+      "index": 2,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:1:scenario3",
+      "sequence": 9,
+      "phase_stamp_sec": 1791408430.962977,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:0:scenario3",
+        "outcome": "completed",
+        "duration_sec": 37.801,
+        "progress_ratio": 0.9525,
+        "best_progress_ratio": 0.9525,
+        "cross_track_m": 1.0569,
+        "goal_distance_m": 7.9467,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 298.3193,
+        "stop_y": 199.6958,
+        "stop_goal_distance_m": 34.3502
+      }
+    },
+    {
+      "t": 1791408432.055367,
+      "received_t": 1791408432.057724,
+      "time": "06:27:12.055",
+      "phase": "pausing",
+      "route": "scenario3",
+      "index": 2,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:1:scenario3",
+      "sequence": 10,
+      "phase_stamp_sec": 1791408432.055367,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:0:scenario3",
+        "outcome": "completed",
+        "duration_sec": 37.801,
+        "progress_ratio": 0.9525,
+        "best_progress_ratio": 0.9525,
+        "cross_track_m": 1.0569,
+        "goal_distance_m": 7.9467,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 298.3193,
+        "stop_y": 199.6958,
+        "stop_goal_distance_m": 34.3502
+      }
+    },
+    {
+      "t": 1791408432.1551228,
+      "received_t": 1791408432.1559017,
+      "time": "06:27:12.155",
+      "phase": "aligning",
+      "route": "scenario3",
+      "index": 2,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:1:scenario3",
+      "sequence": 11,
+      "phase_stamp_sec": 1791408432.1551228,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:0:scenario3",
+        "outcome": "completed",
+        "duration_sec": 37.801,
+        "progress_ratio": 0.9525,
+        "best_progress_ratio": 0.9525,
+        "cross_track_m": 1.0569,
+        "goal_distance_m": 7.9467,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 298.3193,
+        "stop_y": 199.6958,
+        "stop_goal_distance_m": 34.3502
+      }
+    },
+    {
+      "t": 1791408432.3586712,
+      "received_t": 1791408432.3602555,
+      "time": "06:27:12.358",
+      "phase": "map",
+      "route": "scenario3",
+      "index": 2,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:1:scenario3",
+      "sequence": 12,
+      "phase_stamp_sec": 1791408432.3586712,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:0:scenario3",
+        "outcome": "completed",
+        "duration_sec": 37.801,
+        "progress_ratio": 0.9525,
+        "best_progress_ratio": 0.9525,
+        "cross_track_m": 1.0569,
+        "goal_distance_m": 7.9467,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 298.3193,
+        "stop_y": 199.6958,
+        "stop_goal_distance_m": 34.3502
+      }
+    },
+    {
+      "t": 1791408433.5537786,
+      "received_t": 1791408433.5543594,
+      "time": "06:27:13.553",
+      "phase": "resetting",
+      "route": "scenario3",
+      "index": 2,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:1:scenario3",
+      "sequence": 13,
+      "phase_stamp_sec": 1791408433.5537786,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:0:scenario3",
+        "outcome": "completed",
+        "duration_sec": 37.801,
+        "progress_ratio": 0.9525,
+        "best_progress_ratio": 0.9525,
+        "cross_track_m": 1.0569,
+        "goal_distance_m": 7.9467,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 298.3193,
+        "stop_y": 199.6958,
+        "stop_goal_distance_m": 34.3502
+      }
+    },
+    {
+      "t": 1791408433.7571597,
+      "received_t": 1791408433.7584224,
+      "time": "06:27:13.757",
+      "phase": "reference",
+      "route": "scenario3",
+      "index": 2,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:1:scenario3",
+      "sequence": 14,
+      "phase_stamp_sec": 1791408433.7571597,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:0:scenario3",
+        "outcome": "completed",
+        "duration_sec": 37.801,
+        "progress_ratio": 0.9525,
+        "best_progress_ratio": 0.9525,
+        "cross_track_m": 1.0569,
+        "goal_distance_m": 7.9467,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 298.3193,
+        "stop_y": 199.6958,
+        "stop_goal_distance_m": 34.3502
+      }
+    },
+    {
+      "t": 1791408434.854357,
+      "received_t": 1791408434.8556068,
+      "time": "06:27:14.854",
+      "phase": "running",
+      "route": "scenario3",
+      "index": 2,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:1:scenario3",
+      "sequence": 15,
+      "phase_stamp_sec": 1791408434.854357,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:0:scenario3",
+        "outcome": "completed",
+        "duration_sec": 37.801,
+        "progress_ratio": 0.9525,
+        "best_progress_ratio": 0.9525,
+        "cross_track_m": 1.0569,
+        "goal_distance_m": 7.9467,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 298.3193,
+        "stop_y": 199.6958,
+        "stop_goal_distance_m": 34.3502
+      }
+    },
+    {
+      "t": 1791408468.7584002,
+      "received_t": 1791408468.7601383,
+      "time": "06:27:48.758",
+      "phase": "coasting",
+      "route": "scenario3",
+      "index": 2,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:1:scenario3",
+      "sequence": 16,
+      "phase_stamp_sec": 1791408468.7584002,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:1:scenario3",
+        "outcome": "completed",
+        "duration_sec": 37.791,
+        "progress_ratio": 0.9533,
+        "best_progress_ratio": 0.9533,
+        "cross_track_m": 0.4506,
+        "goal_distance_m": 7.7668,
+        "detail": "",
+        "stop_status": "",
+        "stop_x": "",
+        "stop_y": "",
+        "stop_goal_distance_m": ""
+      }
+    },
+    {
+      "t": 1791408489.6558535,
+      "received_t": 1791408489.6581259,
+      "time": "06:28:09.655",
+      "phase": "stopping",
+      "route": "scenario3",
+      "index": 3,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:2:scenario3",
+      "sequence": 17,
+      "phase_stamp_sec": 1791408489.6558535,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:1:scenario3",
+        "outcome": "completed",
+        "duration_sec": 37.791,
+        "progress_ratio": 0.9533,
+        "best_progress_ratio": 0.9533,
+        "cross_track_m": 0.4506,
+        "goal_distance_m": 7.7668,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 297.9446,
+        "stop_y": 200.1459,
+        "stop_goal_distance_m": 34.4961
+      }
+    },
+    {
+      "t": 1791408490.7552333,
+      "received_t": 1791408490.7559605,
+      "time": "06:28:10.755",
+      "phase": "pausing",
+      "route": "scenario3",
+      "index": 3,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:2:scenario3",
+      "sequence": 18,
+      "phase_stamp_sec": 1791408490.7552333,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:1:scenario3",
+        "outcome": "completed",
+        "duration_sec": 37.791,
+        "progress_ratio": 0.9533,
+        "best_progress_ratio": 0.9533,
+        "cross_track_m": 0.4506,
+        "goal_distance_m": 7.7668,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 297.9446,
+        "stop_y": 200.1459,
+        "stop_goal_distance_m": 34.4961
+      }
+    },
+    {
+      "t": 1791408490.8539035,
+      "received_t": 1791408490.855132,
+      "time": "06:28:10.853",
+      "phase": "aligning",
+      "route": "scenario3",
+      "index": 3,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:2:scenario3",
+      "sequence": 19,
+      "phase_stamp_sec": 1791408490.8539035,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:1:scenario3",
+        "outcome": "completed",
+        "duration_sec": 37.791,
+        "progress_ratio": 0.9533,
+        "best_progress_ratio": 0.9533,
+        "cross_track_m": 0.4506,
+        "goal_distance_m": 7.7668,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 297.9446,
+        "stop_y": 200.1459,
+        "stop_goal_distance_m": 34.4961
+      }
+    },
+    {
+      "t": 1791408491.0541146,
+      "received_t": 1791408491.0555646,
+      "time": "06:28:11.054",
+      "phase": "map",
+      "route": "scenario3",
+      "index": 3,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:2:scenario3",
+      "sequence": 20,
+      "phase_stamp_sec": 1791408491.0541146,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:1:scenario3",
+        "outcome": "completed",
+        "duration_sec": 37.791,
+        "progress_ratio": 0.9533,
+        "best_progress_ratio": 0.9533,
+        "cross_track_m": 0.4506,
+        "goal_distance_m": 7.7668,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 297.9446,
+        "stop_y": 200.1459,
+        "stop_goal_distance_m": 34.4961
+      }
+    },
+    {
+      "t": 1791408492.2542098,
+      "received_t": 1791408492.255979,
+      "time": "06:28:12.254",
+      "phase": "resetting",
+      "route": "scenario3",
+      "index": 3,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:2:scenario3",
+      "sequence": 21,
+      "phase_stamp_sec": 1791408492.2542098,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:1:scenario3",
+        "outcome": "completed",
+        "duration_sec": 37.791,
+        "progress_ratio": 0.9533,
+        "best_progress_ratio": 0.9533,
+        "cross_track_m": 0.4506,
+        "goal_distance_m": 7.7668,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 297.9446,
+        "stop_y": 200.1459,
+        "stop_goal_distance_m": 34.4961
+      }
+    },
+    {
+      "t": 1791408492.4590719,
+      "received_t": 1791408492.4607527,
+      "time": "06:28:12.459",
+      "phase": "reference",
+      "route": "scenario3",
+      "index": 3,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:2:scenario3",
+      "sequence": 22,
+      "phase_stamp_sec": 1791408492.4590719,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:1:scenario3",
+        "outcome": "completed",
+        "duration_sec": 37.791,
+        "progress_ratio": 0.9533,
+        "best_progress_ratio": 0.9533,
+        "cross_track_m": 0.4506,
+        "goal_distance_m": 7.7668,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 297.9446,
+        "stop_y": 200.1459,
+        "stop_goal_distance_m": 34.4961
+      }
+    },
+    {
+      "t": 1791408493.556853,
+      "received_t": 1791408493.5576625,
+      "time": "06:28:13.556",
+      "phase": "running",
+      "route": "scenario3",
+      "index": 3,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:2:scenario3",
+      "sequence": 23,
+      "phase_stamp_sec": 1791408493.556853,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:1:scenario3",
+        "outcome": "completed",
+        "duration_sec": 37.791,
+        "progress_ratio": 0.9533,
+        "best_progress_ratio": 0.9533,
+        "cross_track_m": 0.4506,
+        "goal_distance_m": 7.7668,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 297.9446,
+        "stop_y": 200.1459,
+        "stop_goal_distance_m": 34.4961
+      }
+    },
+    {
+      "t": 1791408527.1636407,
+      "received_t": 1791408527.1645517,
+      "time": "06:28:47.163",
+      "phase": "coasting",
+      "route": "scenario3",
+      "index": 3,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:2:scenario3",
+      "sequence": 24,
+      "phase_stamp_sec": 1791408527.1636407,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:2:scenario3",
+        "outcome": "completed",
+        "duration_sec": 37.501,
+        "progress_ratio": 0.9543,
+        "best_progress_ratio": 0.9543,
+        "cross_track_m": 0.6728,
+        "goal_distance_m": 7.6193,
+        "detail": "",
+        "stop_status": "",
+        "stop_x": "",
+        "stop_y": "",
+        "stop_goal_distance_m": ""
+      }
+    },
+    {
+      "t": 1791408547.6576707,
+      "received_t": 1791408547.6597452,
+      "time": "06:29:07.657",
+      "phase": "stopping",
+      "route": "scenario3",
+      "index": 4,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:3:scenario3",
+      "sequence": 25,
+      "phase_stamp_sec": 1791408547.6576707,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:2:scenario3",
+        "outcome": "completed",
+        "duration_sec": 37.501,
+        "progress_ratio": 0.9543,
+        "best_progress_ratio": 0.9543,
+        "cross_track_m": 0.6728,
+        "goal_distance_m": 7.6193,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 294.0906,
+        "stop_y": 200.2611,
+        "stop_goal_distance_m": 32.5207
+      }
+    },
+    {
+      "t": 1791408548.7537668,
+      "received_t": 1791408548.7548072,
+      "time": "06:29:08.753",
+      "phase": "pausing",
+      "route": "scenario3",
+      "index": 4,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:3:scenario3",
+      "sequence": 26,
+      "phase_stamp_sec": 1791408548.7537668,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:2:scenario3",
+        "outcome": "completed",
+        "duration_sec": 37.501,
+        "progress_ratio": 0.9543,
+        "best_progress_ratio": 0.9543,
+        "cross_track_m": 0.6728,
+        "goal_distance_m": 7.6193,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 294.0906,
+        "stop_y": 200.2611,
+        "stop_goal_distance_m": 32.5207
+      }
+    },
+    {
+      "t": 1791408548.8555357,
+      "received_t": 1791408548.8590157,
+      "time": "06:29:08.855",
+      "phase": "aligning",
+      "route": "scenario3",
+      "index": 4,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:3:scenario3",
+      "sequence": 27,
+      "phase_stamp_sec": 1791408548.8555357,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:2:scenario3",
+        "outcome": "completed",
+        "duration_sec": 37.501,
+        "progress_ratio": 0.9543,
+        "best_progress_ratio": 0.9543,
+        "cross_track_m": 0.6728,
+        "goal_distance_m": 7.6193,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 294.0906,
+        "stop_y": 200.2611,
+        "stop_goal_distance_m": 32.5207
+      }
+    },
+    {
+      "t": 1791408549.053565,
+      "received_t": 1791408549.055301,
+      "time": "06:29:09.053",
+      "phase": "map",
+      "route": "scenario3",
+      "index": 4,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:3:scenario3",
+      "sequence": 28,
+      "phase_stamp_sec": 1791408549.053565,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:2:scenario3",
+        "outcome": "completed",
+        "duration_sec": 37.501,
+        "progress_ratio": 0.9543,
+        "best_progress_ratio": 0.9543,
+        "cross_track_m": 0.6728,
+        "goal_distance_m": 7.6193,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 294.0906,
+        "stop_y": 200.2611,
+        "stop_goal_distance_m": 32.5207
+      }
+    },
+    {
+      "t": 1791408550.254899,
+      "received_t": 1791408550.2580156,
+      "time": "06:29:10.254",
+      "phase": "resetting",
+      "route": "scenario3",
+      "index": 4,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:3:scenario3",
+      "sequence": 29,
+      "phase_stamp_sec": 1791408550.254899,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:2:scenario3",
+        "outcome": "completed",
+        "duration_sec": 37.501,
+        "progress_ratio": 0.9543,
+        "best_progress_ratio": 0.9543,
+        "cross_track_m": 0.6728,
+        "goal_distance_m": 7.6193,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 294.0906,
+        "stop_y": 200.2611,
+        "stop_goal_distance_m": 32.5207
+      }
+    },
+    {
+      "t": 1791408550.4701846,
+      "received_t": 1791408550.473939,
+      "time": "06:29:10.470",
+      "phase": "reference",
+      "route": "scenario3",
+      "index": 4,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:3:scenario3",
+      "sequence": 30,
+      "phase_stamp_sec": 1791408550.4701846,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:2:scenario3",
+        "outcome": "completed",
+        "duration_sec": 37.501,
+        "progress_ratio": 0.9543,
+        "best_progress_ratio": 0.9543,
+        "cross_track_m": 0.6728,
+        "goal_distance_m": 7.6193,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 294.0906,
+        "stop_y": 200.2611,
+        "stop_goal_distance_m": 32.5207
+      }
+    },
+    {
+      "t": 1791408551.5538566,
+      "received_t": 1791408551.5554862,
+      "time": "06:29:11.553",
+      "phase": "running",
+      "route": "scenario3",
+      "index": 4,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:3:scenario3",
+      "sequence": 31,
+      "phase_stamp_sec": 1791408551.5538566,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:2:scenario3",
+        "outcome": "completed",
+        "duration_sec": 37.501,
+        "progress_ratio": 0.9543,
+        "best_progress_ratio": 0.9543,
+        "cross_track_m": 0.6728,
+        "goal_distance_m": 7.6193,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 294.0906,
+        "stop_y": 200.2611,
+        "stop_goal_distance_m": 32.5207
+      }
+    },
+    {
+      "t": 1791408584.6668868,
+      "received_t": 1791408584.6706882,
+      "time": "06:29:44.666",
+      "phase": "coasting",
+      "route": "scenario3",
+      "index": 4,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:3:scenario3",
+      "sequence": 32,
+      "phase_stamp_sec": 1791408584.6668868,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:3:scenario3",
+        "outcome": "completed",
+        "duration_sec": 36.997,
+        "progress_ratio": 0.9522,
+        "best_progress_ratio": 0.9522,
+        "cross_track_m": 0.6708,
+        "goal_distance_m": 7.9622,
+        "detail": "",
+        "stop_status": "",
+        "stop_x": "",
+        "stop_y": "",
+        "stop_goal_distance_m": ""
+      }
+    },
+    {
+      "t": 1791408605.3960896,
+      "received_t": 1791408605.3979716,
+      "time": "06:30:05.396",
+      "phase": "stopping",
+      "route": "scenario3",
+      "index": 5,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:4:scenario3",
+      "sequence": 33,
+      "phase_stamp_sec": 1791408605.3960896,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:3:scenario3",
+        "outcome": "completed",
+        "duration_sec": 36.997,
+        "progress_ratio": 0.9522,
+        "best_progress_ratio": 0.9522,
+        "cross_track_m": 0.6708,
+        "goal_distance_m": 7.9622,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 299.0129,
+        "stop_y": 198.4621,
+        "stop_goal_distance_m": 33.7903
+      }
+    },
+    {
+      "t": 1791408606.5536861,
+      "received_t": 1791408606.554292,
+      "time": "06:30:06.553",
+      "phase": "pausing",
+      "route": "scenario3",
+      "index": 5,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:4:scenario3",
+      "sequence": 34,
+      "phase_stamp_sec": 1791408606.5536861,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:3:scenario3",
+        "outcome": "completed",
+        "duration_sec": 36.997,
+        "progress_ratio": 0.9522,
+        "best_progress_ratio": 0.9522,
+        "cross_track_m": 0.6708,
+        "goal_distance_m": 7.9622,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 299.0129,
+        "stop_y": 198.4621,
+        "stop_goal_distance_m": 33.7903
+      }
+    },
+    {
+      "t": 1791408606.6551118,
+      "received_t": 1791408606.6567554,
+      "time": "06:30:06.655",
+      "phase": "aligning",
+      "route": "scenario3",
+      "index": 5,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:4:scenario3",
+      "sequence": 35,
+      "phase_stamp_sec": 1791408606.6551118,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:3:scenario3",
+        "outcome": "completed",
+        "duration_sec": 36.997,
+        "progress_ratio": 0.9522,
+        "best_progress_ratio": 0.9522,
+        "cross_track_m": 0.6708,
+        "goal_distance_m": 7.9622,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 299.0129,
+        "stop_y": 198.4621,
+        "stop_goal_distance_m": 33.7903
+      }
+    },
+    {
+      "t": 1791408606.8543985,
+      "received_t": 1791408606.8570719,
+      "time": "06:30:06.854",
+      "phase": "map",
+      "route": "scenario3",
+      "index": 5,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:4:scenario3",
+      "sequence": 36,
+      "phase_stamp_sec": 1791408606.8543985,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:3:scenario3",
+        "outcome": "completed",
+        "duration_sec": 36.997,
+        "progress_ratio": 0.9522,
+        "best_progress_ratio": 0.9522,
+        "cross_track_m": 0.6708,
+        "goal_distance_m": 7.9622,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 299.0129,
+        "stop_y": 198.4621,
+        "stop_goal_distance_m": 33.7903
+      }
+    },
+    {
+      "t": 1791408608.0544217,
+      "received_t": 1791408608.055075,
+      "time": "06:30:08.054",
+      "phase": "resetting",
+      "route": "scenario3",
+      "index": 5,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:4:scenario3",
+      "sequence": 37,
+      "phase_stamp_sec": 1791408608.0544217,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:3:scenario3",
+        "outcome": "completed",
+        "duration_sec": 36.997,
+        "progress_ratio": 0.9522,
+        "best_progress_ratio": 0.9522,
+        "cross_track_m": 0.6708,
+        "goal_distance_m": 7.9622,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 299.0129,
+        "stop_y": 198.4621,
+        "stop_goal_distance_m": 33.7903
+      }
+    },
+    {
+      "t": 1791408608.2646377,
+      "received_t": 1791408608.2661974,
+      "time": "06:30:08.264",
+      "phase": "reference",
+      "route": "scenario3",
+      "index": 5,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:4:scenario3",
+      "sequence": 38,
+      "phase_stamp_sec": 1791408608.2646377,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:3:scenario3",
+        "outcome": "completed",
+        "duration_sec": 36.997,
+        "progress_ratio": 0.9522,
+        "best_progress_ratio": 0.9522,
+        "cross_track_m": 0.6708,
+        "goal_distance_m": 7.9622,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 299.0129,
+        "stop_y": 198.4621,
+        "stop_goal_distance_m": 33.7903
+      }
+    },
+    {
+      "t": 1791408609.3549967,
+      "received_t": 1791408609.3561952,
+      "time": "06:30:09.354",
+      "phase": "running",
+      "route": "scenario3",
+      "index": 5,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:4:scenario3",
+      "sequence": 39,
+      "phase_stamp_sec": 1791408609.3549967,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:3:scenario3",
+        "outcome": "completed",
+        "duration_sec": 36.997,
+        "progress_ratio": 0.9522,
+        "best_progress_ratio": 0.9522,
+        "cross_track_m": 0.6708,
+        "goal_distance_m": 7.9622,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 299.0129,
+        "stop_y": 198.4621,
+        "stop_goal_distance_m": 33.7903
+      }
+    },
+    {
+      "t": 1791408642.7596414,
+      "received_t": 1791408642.76036,
+      "time": "06:30:42.759",
+      "phase": "coasting",
+      "route": "scenario3",
+      "index": 5,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:4:scenario3",
+      "sequence": 40,
+      "phase_stamp_sec": 1791408642.7596414,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:4:scenario3",
+        "outcome": "off_route",
+        "duration_sec": 37.36,
+        "progress_ratio": 0.763,
+        "best_progress_ratio": 0.763,
+        "cross_track_m": 30.9833,
+        "goal_distance_m": 47.8365,
+        "detail": "",
+        "stop_status": "",
+        "stop_x": "",
+        "stop_y": "",
+        "stop_goal_distance_m": ""
+      }
+    },
+    {
+      "t": 1791408663.7591283,
+      "received_t": 1791408663.7619917,
+      "time": "06:31:03.759",
+      "phase": "stopping",
+      "route": "scenario3",
+      "index": 6,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:5:scenario3",
+      "sequence": 41,
+      "phase_stamp_sec": 1791408663.7591283,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:4:scenario3",
+        "outcome": "off_route",
+        "duration_sec": 37.36,
+        "progress_ratio": 0.763,
+        "best_progress_ratio": 0.763,
+        "cross_track_m": 30.9833,
+        "goal_distance_m": 47.8365,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 326.6651,
+        "stop_y": 110.1921,
+        "stop_goal_distance_m": 78.6671
+      }
+    },
+    {
+      "t": 1791408664.8607607,
+      "received_t": 1791408664.8627594,
+      "time": "06:31:04.860",
+      "phase": "pausing",
+      "route": "scenario3",
+      "index": 6,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:5:scenario3",
+      "sequence": 42,
+      "phase_stamp_sec": 1791408664.8607607,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:4:scenario3",
+        "outcome": "off_route",
+        "duration_sec": 37.36,
+        "progress_ratio": 0.763,
+        "best_progress_ratio": 0.763,
+        "cross_track_m": 30.9833,
+        "goal_distance_m": 47.8365,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 326.6651,
+        "stop_y": 110.1921,
+        "stop_goal_distance_m": 78.6671
+      }
+    },
+    {
+      "t": 1791408664.9555376,
+      "received_t": 1791408664.956372,
+      "time": "06:31:04.955",
+      "phase": "aligning",
+      "route": "scenario3",
+      "index": 6,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:5:scenario3",
+      "sequence": 43,
+      "phase_stamp_sec": 1791408664.9555376,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:4:scenario3",
+        "outcome": "off_route",
+        "duration_sec": 37.36,
+        "progress_ratio": 0.763,
+        "best_progress_ratio": 0.763,
+        "cross_track_m": 30.9833,
+        "goal_distance_m": 47.8365,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 326.6651,
+        "stop_y": 110.1921,
+        "stop_goal_distance_m": 78.6671
+      }
+    },
+    {
+      "t": 1791408665.1545448,
+      "received_t": 1791408665.1557186,
+      "time": "06:31:05.154",
+      "phase": "map",
+      "route": "scenario3",
+      "index": 6,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:5:scenario3",
+      "sequence": 44,
+      "phase_stamp_sec": 1791408665.1545448,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:4:scenario3",
+        "outcome": "off_route",
+        "duration_sec": 37.36,
+        "progress_ratio": 0.763,
+        "best_progress_ratio": 0.763,
+        "cross_track_m": 30.9833,
+        "goal_distance_m": 47.8365,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 326.6651,
+        "stop_y": 110.1921,
+        "stop_goal_distance_m": 78.6671
+      }
+    },
+    {
+      "t": 1791408666.3550994,
+      "received_t": 1791408666.3557985,
+      "time": "06:31:06.355",
+      "phase": "resetting",
+      "route": "scenario3",
+      "index": 6,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:5:scenario3",
+      "sequence": 45,
+      "phase_stamp_sec": 1791408666.3550994,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:4:scenario3",
+        "outcome": "off_route",
+        "duration_sec": 37.36,
+        "progress_ratio": 0.763,
+        "best_progress_ratio": 0.763,
+        "cross_track_m": 30.9833,
+        "goal_distance_m": 47.8365,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 326.6651,
+        "stop_y": 110.1921,
+        "stop_goal_distance_m": 78.6671
+      }
+    },
+    {
+      "t": 1791408666.5602365,
+      "received_t": 1791408666.5635958,
+      "time": "06:31:06.560",
+      "phase": "reference",
+      "route": "scenario3",
+      "index": 6,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:5:scenario3",
+      "sequence": 46,
+      "phase_stamp_sec": 1791408666.5602365,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:4:scenario3",
+        "outcome": "off_route",
+        "duration_sec": 37.36,
+        "progress_ratio": 0.763,
+        "best_progress_ratio": 0.763,
+        "cross_track_m": 30.9833,
+        "goal_distance_m": 47.8365,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 326.6651,
+        "stop_y": 110.1921,
+        "stop_goal_distance_m": 78.6671
+      }
+    },
+    {
+      "t": 1791408667.6539004,
+      "received_t": 1791408667.655504,
+      "time": "06:31:07.653",
+      "phase": "running",
+      "route": "scenario3",
+      "index": 6,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:5:scenario3",
+      "sequence": 47,
+      "phase_stamp_sec": 1791408667.6539004,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:4:scenario3",
+        "outcome": "off_route",
+        "duration_sec": 37.36,
+        "progress_ratio": 0.763,
+        "best_progress_ratio": 0.763,
+        "cross_track_m": 30.9833,
+        "goal_distance_m": 47.8365,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 326.6651,
+        "stop_y": 110.1921,
+        "stop_goal_distance_m": 78.6671
+      }
+    },
+    {
+      "t": 1791408700.1653292,
+      "received_t": 1791408700.1672971,
+      "time": "06:31:40.165",
+      "phase": "coasting",
+      "route": "scenario3",
+      "index": 6,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:5:scenario3",
+      "sequence": 48,
+      "phase_stamp_sec": 1791408700.1653292,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:5:scenario3",
+        "outcome": "completed",
+        "duration_sec": 36.395,
+        "progress_ratio": 0.9547,
+        "best_progress_ratio": 0.9547,
+        "cross_track_m": 0.542,
+        "goal_distance_m": 7.5363,
+        "detail": "",
+        "stop_status": "",
+        "stop_x": "",
+        "stop_y": "",
+        "stop_goal_distance_m": ""
+      }
+    },
+    {
+      "t": 1791408721.0586452,
+      "received_t": 1791408721.0616474,
+      "time": "06:32:01.058",
+      "phase": "stopping",
+      "route": "scenario3",
+      "index": 7,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:6:scenario3",
+      "sequence": 49,
+      "phase_stamp_sec": 1791408721.0586452,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:5:scenario3",
+        "outcome": "completed",
+        "duration_sec": 36.395,
+        "progress_ratio": 0.9547,
+        "best_progress_ratio": 0.9547,
+        "cross_track_m": 0.542,
+        "goal_distance_m": 7.5363,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 297.8517,
+        "stop_y": 200.8411,
+        "stop_goal_distance_m": 35.0128
+      }
+    },
+    {
+      "t": 1791408722.2547107,
+      "received_t": 1791408722.2560122,
+      "time": "06:32:02.254",
+      "phase": "pausing",
+      "route": "scenario3",
+      "index": 7,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:6:scenario3",
+      "sequence": 50,
+      "phase_stamp_sec": 1791408722.2547107,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:5:scenario3",
+        "outcome": "completed",
+        "duration_sec": 36.395,
+        "progress_ratio": 0.9547,
+        "best_progress_ratio": 0.9547,
+        "cross_track_m": 0.542,
+        "goal_distance_m": 7.5363,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 297.8517,
+        "stop_y": 200.8411,
+        "stop_goal_distance_m": 35.0128
+      }
+    },
+    {
+      "t": 1791408722.3547595,
+      "received_t": 1791408722.3577404,
+      "time": "06:32:02.354",
+      "phase": "aligning",
+      "route": "scenario3",
+      "index": 7,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:6:scenario3",
+      "sequence": 51,
+      "phase_stamp_sec": 1791408722.3547595,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:5:scenario3",
+        "outcome": "completed",
+        "duration_sec": 36.395,
+        "progress_ratio": 0.9547,
+        "best_progress_ratio": 0.9547,
+        "cross_track_m": 0.542,
+        "goal_distance_m": 7.5363,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 297.8517,
+        "stop_y": 200.8411,
+        "stop_goal_distance_m": 35.0128
+      }
+    },
+    {
+      "t": 1791408722.5547476,
+      "received_t": 1791408722.5562963,
+      "time": "06:32:02.554",
+      "phase": "map",
+      "route": "scenario3",
+      "index": 7,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:6:scenario3",
+      "sequence": 52,
+      "phase_stamp_sec": 1791408722.5547476,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:5:scenario3",
+        "outcome": "completed",
+        "duration_sec": 36.395,
+        "progress_ratio": 0.9547,
+        "best_progress_ratio": 0.9547,
+        "cross_track_m": 0.542,
+        "goal_distance_m": 7.5363,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 297.8517,
+        "stop_y": 200.8411,
+        "stop_goal_distance_m": 35.0128
+      }
+    },
+    {
+      "t": 1791408723.7571802,
+      "received_t": 1791408723.7578459,
+      "time": "06:32:03.757",
+      "phase": "resetting",
+      "route": "scenario3",
+      "index": 7,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:6:scenario3",
+      "sequence": 53,
+      "phase_stamp_sec": 1791408723.7571802,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:5:scenario3",
+        "outcome": "completed",
+        "duration_sec": 36.395,
+        "progress_ratio": 0.9547,
+        "best_progress_ratio": 0.9547,
+        "cross_track_m": 0.542,
+        "goal_distance_m": 7.5363,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 297.8517,
+        "stop_y": 200.8411,
+        "stop_goal_distance_m": 35.0128
+      }
+    },
+    {
+      "t": 1791408723.9596963,
+      "received_t": 1791408723.9609427,
+      "time": "06:32:03.959",
+      "phase": "reference",
+      "route": "scenario3",
+      "index": 7,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:6:scenario3",
+      "sequence": 54,
+      "phase_stamp_sec": 1791408723.9596963,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:5:scenario3",
+        "outcome": "completed",
+        "duration_sec": 36.395,
+        "progress_ratio": 0.9547,
+        "best_progress_ratio": 0.9547,
+        "cross_track_m": 0.542,
+        "goal_distance_m": 7.5363,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 297.8517,
+        "stop_y": 200.8411,
+        "stop_goal_distance_m": 35.0128
+      }
+    },
+    {
+      "t": 1791408725.0566785,
+      "received_t": 1791408725.0575976,
+      "time": "06:32:05.056",
+      "phase": "running",
+      "route": "scenario3",
+      "index": 7,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:6:scenario3",
+      "sequence": 55,
+      "phase_stamp_sec": 1791408725.0566785,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:5:scenario3",
+        "outcome": "completed",
+        "duration_sec": 36.395,
+        "progress_ratio": 0.9547,
+        "best_progress_ratio": 0.9547,
+        "cross_track_m": 0.542,
+        "goal_distance_m": 7.5363,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 297.8517,
+        "stop_y": 200.8411,
+        "stop_goal_distance_m": 35.0128
+      }
+    },
+    {
+      "t": 1791408759.664613,
+      "received_t": 1791408759.665723,
+      "time": "06:32:39.664",
+      "phase": "coasting",
+      "route": "scenario3",
+      "index": 7,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:6:scenario3",
+      "sequence": 56,
+      "phase_stamp_sec": 1791408759.664613,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:6:scenario3",
+        "outcome": "completed",
+        "duration_sec": 38.599,
+        "progress_ratio": 0.9523,
+        "best_progress_ratio": 0.9523,
+        "cross_track_m": 0.9714,
+        "goal_distance_m": 7.9802,
+        "detail": "",
+        "stop_status": "",
+        "stop_x": "",
+        "stop_y": "",
+        "stop_goal_distance_m": ""
+      }
+    },
+    {
+      "t": 1791408779.960185,
+      "received_t": 1791408779.9626012,
+      "time": "06:32:59.960",
+      "phase": "stopping",
+      "route": "scenario3",
+      "index": 8,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:7:scenario3",
+      "sequence": 57,
+      "phase_stamp_sec": 1791408779.960185,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:6:scenario3",
+        "outcome": "completed",
+        "duration_sec": 38.599,
+        "progress_ratio": 0.9523,
+        "best_progress_ratio": 0.9523,
+        "cross_track_m": 0.9714,
+        "goal_distance_m": 7.9802,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 295.8839,
+        "stop_y": 196.9109,
+        "stop_goal_distance_m": 30.6657
+      }
+    },
+    {
+      "t": 1791408781.154936,
+      "received_t": 1791408781.1570177,
+      "time": "06:33:01.154",
+      "phase": "pausing",
+      "route": "scenario3",
+      "index": 8,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:7:scenario3",
+      "sequence": 58,
+      "phase_stamp_sec": 1791408781.154936,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:6:scenario3",
+        "outcome": "completed",
+        "duration_sec": 38.599,
+        "progress_ratio": 0.9523,
+        "best_progress_ratio": 0.9523,
+        "cross_track_m": 0.9714,
+        "goal_distance_m": 7.9802,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 295.8839,
+        "stop_y": 196.9109,
+        "stop_goal_distance_m": 30.6657
+      }
+    },
+    {
+      "t": 1791408781.254559,
+      "received_t": 1791408781.256543,
+      "time": "06:33:01.254",
+      "phase": "aligning",
+      "route": "scenario3",
+      "index": 8,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:7:scenario3",
+      "sequence": 59,
+      "phase_stamp_sec": 1791408781.254559,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:6:scenario3",
+        "outcome": "completed",
+        "duration_sec": 38.599,
+        "progress_ratio": 0.9523,
+        "best_progress_ratio": 0.9523,
+        "cross_track_m": 0.9714,
+        "goal_distance_m": 7.9802,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 295.8839,
+        "stop_y": 196.9109,
+        "stop_goal_distance_m": 30.6657
+      }
+    },
+    {
+      "t": 1791408781.45392,
+      "received_t": 1791408781.4562118,
+      "time": "06:33:01.453",
+      "phase": "map",
+      "route": "scenario3",
+      "index": 8,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:7:scenario3",
+      "sequence": 60,
+      "phase_stamp_sec": 1791408781.45392,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:6:scenario3",
+        "outcome": "completed",
+        "duration_sec": 38.599,
+        "progress_ratio": 0.9523,
+        "best_progress_ratio": 0.9523,
+        "cross_track_m": 0.9714,
+        "goal_distance_m": 7.9802,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 295.8839,
+        "stop_y": 196.9109,
+        "stop_goal_distance_m": 30.6657
+      }
+    },
+    {
+      "t": 1791408782.6554012,
+      "received_t": 1791408782.6560585,
+      "time": "06:33:02.655",
+      "phase": "resetting",
+      "route": "scenario3",
+      "index": 8,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:7:scenario3",
+      "sequence": 61,
+      "phase_stamp_sec": 1791408782.6554012,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:6:scenario3",
+        "outcome": "completed",
+        "duration_sec": 38.599,
+        "progress_ratio": 0.9523,
+        "best_progress_ratio": 0.9523,
+        "cross_track_m": 0.9714,
+        "goal_distance_m": 7.9802,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 295.8839,
+        "stop_y": 196.9109,
+        "stop_goal_distance_m": 30.6657
+      }
+    },
+    {
+      "t": 1791408782.861007,
+      "received_t": 1791408782.8629105,
+      "time": "06:33:02.861",
+      "phase": "reference",
+      "route": "scenario3",
+      "index": 8,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:7:scenario3",
+      "sequence": 62,
+      "phase_stamp_sec": 1791408782.861007,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:6:scenario3",
+        "outcome": "completed",
+        "duration_sec": 38.599,
+        "progress_ratio": 0.9523,
+        "best_progress_ratio": 0.9523,
+        "cross_track_m": 0.9714,
+        "goal_distance_m": 7.9802,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 295.8839,
+        "stop_y": 196.9109,
+        "stop_goal_distance_m": 30.6657
+      }
+    },
+    {
+      "t": 1791408783.9565897,
+      "received_t": 1791408783.957544,
+      "time": "06:33:03.956",
+      "phase": "running",
+      "route": "scenario3",
+      "index": 8,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:7:scenario3",
+      "sequence": 63,
+      "phase_stamp_sec": 1791408783.9565897,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:6:scenario3",
+        "outcome": "completed",
+        "duration_sec": 38.599,
+        "progress_ratio": 0.9523,
+        "best_progress_ratio": 0.9523,
+        "cross_track_m": 0.9714,
+        "goal_distance_m": 7.9802,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 295.8839,
+        "stop_y": 196.9109,
+        "stop_goal_distance_m": 30.6657
+      }
+    },
+    {
+      "t": 1791408817.1668005,
+      "received_t": 1791408817.1699467,
+      "time": "06:33:37.166",
+      "phase": "coasting",
+      "route": "scenario3",
+      "index": 8,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:7:scenario3",
+      "sequence": 64,
+      "phase_stamp_sec": 1791408817.1668005,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:7:scenario3",
+        "outcome": "completed",
+        "duration_sec": 37.196,
+        "progress_ratio": 0.9539,
+        "best_progress_ratio": 0.9539,
+        "cross_track_m": 0.4511,
+        "goal_distance_m": 7.6541,
+        "detail": "",
+        "stop_status": "",
+        "stop_x": "",
+        "stop_y": "",
+        "stop_goal_distance_m": ""
+      }
+    },
+    {
+      "t": 1791408837.5601225,
+      "received_t": 1791408837.5628145,
+      "time": "06:33:57.560",
+      "phase": "stopping",
+      "route": "scenario3",
+      "index": 9,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:8:scenario3",
+      "sequence": 65,
+      "phase_stamp_sec": 1791408837.5601225,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:7:scenario3",
+        "outcome": "completed",
+        "duration_sec": 37.196,
+        "progress_ratio": 0.9539,
+        "best_progress_ratio": 0.9539,
+        "cross_track_m": 0.4511,
+        "goal_distance_m": 7.6541,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 295.2556,
+        "stop_y": 198.9307,
+        "stop_goal_distance_m": 31.9847
+      }
+    },
+    {
+      "t": 1791408838.7649307,
+      "received_t": 1791408838.7657433,
+      "time": "06:33:58.764",
+      "phase": "pausing",
+      "route": "scenario3",
+      "index": 9,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:8:scenario3",
+      "sequence": 66,
+      "phase_stamp_sec": 1791408838.7649307,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:7:scenario3",
+        "outcome": "completed",
+        "duration_sec": 37.196,
+        "progress_ratio": 0.9539,
+        "best_progress_ratio": 0.9539,
+        "cross_track_m": 0.4511,
+        "goal_distance_m": 7.6541,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 295.2556,
+        "stop_y": 198.9307,
+        "stop_goal_distance_m": 31.9847
+      }
+    },
+    {
+      "t": 1791408838.8545187,
+      "received_t": 1791408838.8579428,
+      "time": "06:33:58.854",
+      "phase": "aligning",
+      "route": "scenario3",
+      "index": 9,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:8:scenario3",
+      "sequence": 67,
+      "phase_stamp_sec": 1791408838.8545187,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:7:scenario3",
+        "outcome": "completed",
+        "duration_sec": 37.196,
+        "progress_ratio": 0.9539,
+        "best_progress_ratio": 0.9539,
+        "cross_track_m": 0.4511,
+        "goal_distance_m": 7.6541,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 295.2556,
+        "stop_y": 198.9307,
+        "stop_goal_distance_m": 31.9847
+      }
+    },
+    {
+      "t": 1791408839.0549808,
+      "received_t": 1791408839.0571373,
+      "time": "06:33:59.054",
+      "phase": "map",
+      "route": "scenario3",
+      "index": 9,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:8:scenario3",
+      "sequence": 68,
+      "phase_stamp_sec": 1791408839.0549808,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:7:scenario3",
+        "outcome": "completed",
+        "duration_sec": 37.196,
+        "progress_ratio": 0.9539,
+        "best_progress_ratio": 0.9539,
+        "cross_track_m": 0.4511,
+        "goal_distance_m": 7.6541,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 295.2556,
+        "stop_y": 198.9307,
+        "stop_goal_distance_m": 31.9847
+      }
+    },
+    {
+      "t": 1791408840.2541351,
+      "received_t": 1791408840.255321,
+      "time": "06:34:00.254",
+      "phase": "resetting",
+      "route": "scenario3",
+      "index": 9,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:8:scenario3",
+      "sequence": 69,
+      "phase_stamp_sec": 1791408840.2541351,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:7:scenario3",
+        "outcome": "completed",
+        "duration_sec": 37.196,
+        "progress_ratio": 0.9539,
+        "best_progress_ratio": 0.9539,
+        "cross_track_m": 0.4511,
+        "goal_distance_m": 7.6541,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 295.2556,
+        "stop_y": 198.9307,
+        "stop_goal_distance_m": 31.9847
+      }
+    },
+    {
+      "t": 1791408840.4636352,
+      "received_t": 1791408840.4649136,
+      "time": "06:34:00.463",
+      "phase": "reference",
+      "route": "scenario3",
+      "index": 9,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:8:scenario3",
+      "sequence": 70,
+      "phase_stamp_sec": 1791408840.4636352,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:7:scenario3",
+        "outcome": "completed",
+        "duration_sec": 37.196,
+        "progress_ratio": 0.9539,
+        "best_progress_ratio": 0.9539,
+        "cross_track_m": 0.4511,
+        "goal_distance_m": 7.6541,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 295.2556,
+        "stop_y": 198.9307,
+        "stop_goal_distance_m": 31.9847
+      }
+    },
+    {
+      "t": 1791408841.5539787,
+      "received_t": 1791408841.5568018,
+      "time": "06:34:01.553",
+      "phase": "running",
+      "route": "scenario3",
+      "index": 9,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:8:scenario3",
+      "sequence": 71,
+      "phase_stamp_sec": 1791408841.5539787,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:7:scenario3",
+        "outcome": "completed",
+        "duration_sec": 37.196,
+        "progress_ratio": 0.9539,
+        "best_progress_ratio": 0.9539,
+        "cross_track_m": 0.4511,
+        "goal_distance_m": 7.6541,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 295.2556,
+        "stop_y": 198.9307,
+        "stop_goal_distance_m": 31.9847
+      }
+    },
+    {
+      "t": 1791408875.3673937,
+      "received_t": 1791408875.3689606,
+      "time": "06:34:35.367",
+      "phase": "coasting",
+      "route": "scenario3",
+      "index": 9,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:8:scenario3",
+      "sequence": 72,
+      "phase_stamp_sec": 1791408875.3673937,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:8:scenario3",
+        "outcome": "completed",
+        "duration_sec": 37.796,
+        "progress_ratio": 0.954,
+        "best_progress_ratio": 0.954,
+        "cross_track_m": 0.5588,
+        "goal_distance_m": 7.6571,
+        "detail": "",
+        "stop_status": "",
+        "stop_x": "",
+        "stop_y": "",
+        "stop_goal_distance_m": ""
+      }
+    },
+    {
+      "t": 1791408896.161094,
+      "received_t": 1791408896.1720583,
+      "time": "06:34:56.161",
+      "phase": "stopping",
+      "route": "scenario3",
+      "index": 10,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:9:scenario3",
+      "sequence": 73,
+      "phase_stamp_sec": 1791408896.161094,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:8:scenario3",
+        "outcome": "completed",
+        "duration_sec": 37.796,
+        "progress_ratio": 0.954,
+        "best_progress_ratio": 0.954,
+        "cross_track_m": 0.5588,
+        "goal_distance_m": 7.6571,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 297.3694,
+        "stop_y": 200.5265,
+        "stop_goal_distance_m": 34.4809
+      }
+    },
+    {
+      "t": 1791408897.2579384,
+      "received_t": 1791408897.2593844,
+      "time": "06:34:57.257",
+      "phase": "pausing",
+      "route": "scenario3",
+      "index": 10,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:9:scenario3",
+      "sequence": 74,
+      "phase_stamp_sec": 1791408897.2579384,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:8:scenario3",
+        "outcome": "completed",
+        "duration_sec": 37.796,
+        "progress_ratio": 0.954,
+        "best_progress_ratio": 0.954,
+        "cross_track_m": 0.5588,
+        "goal_distance_m": 7.6571,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 297.3694,
+        "stop_y": 200.5265,
+        "stop_goal_distance_m": 34.4809
+      }
+    },
+    {
+      "t": 1791408897.3551095,
+      "received_t": 1791408897.3581238,
+      "time": "06:34:57.355",
+      "phase": "aligning",
+      "route": "scenario3",
+      "index": 10,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:9:scenario3",
+      "sequence": 75,
+      "phase_stamp_sec": 1791408897.3551095,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:8:scenario3",
+        "outcome": "completed",
+        "duration_sec": 37.796,
+        "progress_ratio": 0.954,
+        "best_progress_ratio": 0.954,
+        "cross_track_m": 0.5588,
+        "goal_distance_m": 7.6571,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 297.3694,
+        "stop_y": 200.5265,
+        "stop_goal_distance_m": 34.4809
+      }
+    },
+    {
+      "t": 1791408897.5546477,
+      "received_t": 1791408897.5572295,
+      "time": "06:34:57.554",
+      "phase": "map",
+      "route": "scenario3",
+      "index": 10,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:9:scenario3",
+      "sequence": 76,
+      "phase_stamp_sec": 1791408897.5546477,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:8:scenario3",
+        "outcome": "completed",
+        "duration_sec": 37.796,
+        "progress_ratio": 0.954,
+        "best_progress_ratio": 0.954,
+        "cross_track_m": 0.5588,
+        "goal_distance_m": 7.6571,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 297.3694,
+        "stop_y": 200.5265,
+        "stop_goal_distance_m": 34.4809
+      }
+    },
+    {
+      "t": 1791408898.75373,
+      "received_t": 1791408898.754528,
+      "time": "06:34:58.753",
+      "phase": "resetting",
+      "route": "scenario3",
+      "index": 10,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:9:scenario3",
+      "sequence": 77,
+      "phase_stamp_sec": 1791408898.75373,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:8:scenario3",
+        "outcome": "completed",
+        "duration_sec": 37.796,
+        "progress_ratio": 0.954,
+        "best_progress_ratio": 0.954,
+        "cross_track_m": 0.5588,
+        "goal_distance_m": 7.6571,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 297.3694,
+        "stop_y": 200.5265,
+        "stop_goal_distance_m": 34.4809
+      }
+    },
+    {
+      "t": 1791408898.9589646,
+      "received_t": 1791408898.9597685,
+      "time": "06:34:58.958",
+      "phase": "reference",
+      "route": "scenario3",
+      "index": 10,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:9:scenario3",
+      "sequence": 78,
+      "phase_stamp_sec": 1791408898.9589646,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:8:scenario3",
+        "outcome": "completed",
+        "duration_sec": 37.796,
+        "progress_ratio": 0.954,
+        "best_progress_ratio": 0.954,
+        "cross_track_m": 0.5588,
+        "goal_distance_m": 7.6571,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 297.3694,
+        "stop_y": 200.5265,
+        "stop_goal_distance_m": 34.4809
+      }
+    },
+    {
+      "t": 1791408900.0560665,
+      "received_t": 1791408900.0577888,
+      "time": "06:35:00.056",
+      "phase": "running",
+      "route": "scenario3",
+      "index": 10,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:9:scenario3",
+      "sequence": 79,
+      "phase_stamp_sec": 1791408900.0560665,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:8:scenario3",
+        "outcome": "completed",
+        "duration_sec": 37.796,
+        "progress_ratio": 0.954,
+        "best_progress_ratio": 0.954,
+        "cross_track_m": 0.5588,
+        "goal_distance_m": 7.6571,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 297.3694,
+        "stop_y": 200.5265,
+        "stop_goal_distance_m": 34.4809
+      }
+    },
+    {
+      "t": 1791408933.2634113,
+      "received_t": 1791408933.2646549,
+      "time": "06:35:33.263",
+      "phase": "coasting",
+      "route": "scenario3",
+      "index": 10,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:9:scenario3",
+      "sequence": 80,
+      "phase_stamp_sec": 1791408933.2634113,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:9:scenario3",
+        "outcome": "completed",
+        "duration_sec": 37.094,
+        "progress_ratio": 0.9541,
+        "best_progress_ratio": 0.9541,
+        "cross_track_m": 0.8364,
+        "goal_distance_m": 7.6634,
+        "detail": "",
+        "stop_status": "",
+        "stop_x": "",
+        "stop_y": "",
+        "stop_goal_distance_m": ""
+      }
+    },
+    {
+      "t": 1791408954.062611,
+      "received_t": 1791408954.0655565,
+      "time": "06:35:54.062",
+      "phase": "done",
+      "route": "scenario3",
+      "index": 10,
+      "total": 10,
+      "results": "/home/imac/ros2_ws/drive_batches/20261008_062606_scenario3_5cea23/results/20261008_062609_273af99685",
+      "session": "273af99685",
+      "token": "273af99685:9:scenario3",
+      "sequence": 81,
+      "phase_stamp_sec": 1791408954.062611,
+      "last_result": {
+        "route": "scenario3",
+        "token": "273af99685:9:scenario3",
+        "outcome": "completed",
+        "duration_sec": 37.094,
+        "progress_ratio": 0.9541,
+        "best_progress_ratio": 0.9541,
+        "cross_track_m": 0.8364,
+        "goal_distance_m": 7.6634,
+        "detail": "",
+        "stop_status": "stationary",
+        "stop_x": 298.973,
+        "stop_y": 199.4769,
+        "stop_goal_distance_m": 34.5666
+      }
+    }
+  ],
+  "attempts": [
+    {
+      "attempt": 1,
+      "outcome": "completed",
+      "start": 1791408375.9535449,
+      "start_clock": "06:26:15.953",
+      "end": 1791408409.7579231,
+      "end_clock": "06:26:49.757",
+      "reference_time": 1791408374.8619287,
+      "stop_time": 1791408430.962977,
+      "drive_seconds": 33.879348039627075,
+      "first_neutral_time": 1791408409.832893,
+      "neutral_xy": [
+        273.5079549493194,
+        166.13336511079737
+      ],
+      "neutral_speed": 5.447761186351508,
+      "stop_goal_m": 34.3502,
+      "goal_at_trigger_m": 7.9467,
+      "coast_seconds": 21.13008403778076,
+      "coast_displacement_m": 41.737751244118286,
+      "upper_count": 67,
+      "upper_valid": 67,
+      "upper_failed": 0,
+      "horizons": {
+        "6": 62,
+        "5": 2,
+        "4": 2,
+        "3": 1
+      },
+      "guard_hits": 2,
+      "first_revision": 2,
+      "first_wp": [
+        1,
+        2
+      ],
+      "first_B_before": 0.0,
+      "first_plan_valid": true,
+      "first_xy": [
+        187.001569963416,
+        220.00433118055793
+      ],
+      "first_heading_deg": -89.98319773464176,
+      "speed": {
+        "min": 1.0293671028594407,
+        "median": 5.001652643218376,
+        "p95": 5.660386922435849,
+        "max": 6.370834504944121
+      },
+      "lateral_abs": {
+        "min": 0.0003510714432473361,
+        "median": 0.06536462115680286,
+        "p95": 0.3234752405758008,
+        "max": 0.6234975686221068
+      },
+      "sat_percent": 5.279503105590062,
+      "highpass_rms_deg": 2.620171033097398,
+      "sign_flips": 14,
+      "B_range": [
+        2.7,
+        12.200000000000001
+      ],
+      "largest_k1_shifts": [
+        {
+          "t": 1791408402.862313,
+          "time": "06:26:42.862",
+          "xy": [
+            253.30192131856913,
+            139.66140338440403
+          ],
+          "lateral_m": -1.1262535727612286,
+          "B_before": 8.7,
+          "B": 8.7
+        },
+        {
+          "t": 1791408397.862107,
+          "time": "06:26:37.862",
+          "xy": [
+            232.64642834287,
+            146.43759916006815
+          ],
+          "lateral_m": -1.0523910190901162,
+          "B_before": 7.800000000000001,
+          "B": 8.1
+        },
+        {
+          "t": 1791408403.3623009,
+          "time": "06:26:43.362",
+          "xy": [
+            255.0662445062315,
+            141.2355914259359
+          ],
+          "lateral_m": 1.0242315171953709,
+          "B_before": 8.7,
+          "B": 8.3
+        },
+        {
+          "t": 1791408396.362136,
+          "time": "06:26:36.362",
+          "xy": [
+            227.29176312507366,
+            151.35439909643443
+          ],
+          "lateral_m": -0.9649085603737557,
+          "B_before": 6.500000000000001,
+          "B": 8.100000000000001
+        }
+      ],
+      "lower_modes": {
+        "4": 1,
+        "0": 337
+      },
+      "lower_max_gap": 0.10329818725585938,
+      "odom_max_gap": 0.0464167594909668,
+      "failure_events": []
+    },
+    {
+      "attempt": 2,
+      "outcome": "completed",
+      "start": 1791408434.854357,
+      "start_clock": "06:27:14.854",
+      "end": 1791408468.7584002,
+      "end_clock": "06:27:48.758",
+      "reference_time": 1791408433.7571597,
+      "stop_time": 1791408489.6558535,
+      "drive_seconds": 33.98058295249939,
+      "first_neutral_time": 1791408468.83494,
+      "neutral_xy": [
+        274.0536784991438,
+        165.90624008258126
+      ],
+      "neutral_speed": 5.4160095213140895,
+      "stop_goal_m": 34.4961,
+      "goal_at_trigger_m": 7.7668,
+      "coast_seconds": 20.820913553237915,
+      "coast_displacement_m": 41.75081366177866,
+      "upper_count": 68,
+      "upper_valid": 68,
+      "upper_failed": 0,
+      "horizons": {
+        "6": 63,
+        "5": 2,
+        "4": 2,
+        "3": 1
+      },
+      "guard_hits": 0,
+      "first_revision": 4,
+      "first_wp": [
+        1,
+        2
+      ],
+      "first_B_before": 0.0,
+      "first_plan_valid": true,
+      "first_xy": [
+        187.01582684902522,
+        219.98316117238704
+      ],
+      "first_heading_deg": -90.02928785116102,
+      "speed": {
+        "min": 1.1167203878434653,
+        "median": 5.049759016814678,
+        "p95": 5.871396074801283,
+        "max": 6.891493833555813
+      },
+      "lateral_abs": {
+        "min": 1.2407901636875274e-05,
+        "median": 0.05868688923195627,
+        "p95": 0.39729014569394316,
+        "max": 0.7256115627741783
+      },
+      "sat_percent": 8.695652173913043,
+      "highpass_rms_deg": 2.701220714204125,
+      "sign_flips": 9,
+      "B_range": [
+        3.100000000000001,
+        10.4
+      ],
+      "largest_k1_shifts": [
+        {
+          "t": 1791408454.8639235,
+          "time": "06:27:34.863",
+          "xy": [
+            225.90161696600848,
+            151.93807063780218
+          ],
+          "lateral_m": -1.3374863485550528,
+          "B_before": 6.500000000000001,
+          "B": 8.3
+        },
+        {
+          "t": 1791408457.8639596,
+          "time": "06:27:37.863",
+          "xy": [
+            236.59705786919181,
+            142.32063668713903
+          ],
+          "lateral_m": -0.7634074238136538,
+          "B_before": 8.0,
+          "B": 8.000000000000002
+        },
+        {
+          "t": 1791408456.86401,
+          "time": "06:27:36.864",
+          "xy": [
+            232.68116103366577,
+            145.08715382151692
+          ],
+          "lateral_m": -0.6500348830500229,
+          "B_before": 8.100000000000001,
+          "B": 8.200000000000001
+        },
+        {
+          "t": 1791408460.8643856,
+          "time": "06:27:40.864",
+          "xy": [
+            249.65287852740846,
+            137.34646241549842
+          ],
+          "lateral_m": -0.6423624937144741,
+          "B_before": 9.300000000000002,
+          "B": 8.700000000000001
+        }
+      ],
+      "lower_modes": {
+        "4": 1,
+        "0": 338
+      },
+      "lower_max_gap": 0.1047983169555664,
+      "odom_max_gap": 0.047113656997680664,
+      "failure_events": []
+    },
+    {
+      "attempt": 3,
+      "outcome": "completed",
+      "start": 1791408493.556853,
+      "start_clock": "06:28:13.556",
+      "end": 1791408527.1636407,
+      "end_clock": "06:28:47.163",
+      "reference_time": 1791408492.4590719,
+      "stop_time": 1791408547.6576707,
+      "drive_seconds": 33.67966628074646,
+      "first_neutral_time": 1791408527.2365193,
+      "neutral_xy": [
+        273.9134368588149,
+        166.21224616607515
+      ],
+      "neutral_speed": 5.433773420026323,
+      "stop_goal_m": 32.5207,
+      "goal_at_trigger_m": 7.6193,
+      "coast_seconds": 20.421151399612427,
+      "coast_displacement_m": 39.57830668219621,
+      "upper_count": 67,
+      "upper_valid": 67,
+      "upper_failed": 0,
+      "horizons": {
+        "6": 62,
+        "5": 2,
+        "4": 2,
+        "3": 1
+      },
+      "guard_hits": 0,
+      "first_revision": 6,
+      "first_wp": [
+        1,
+        2
+      ],
+      "first_B_before": 0.0,
+      "first_plan_valid": true,
+      "first_xy": [
+        187.04761646575182,
+        219.97553124734182
+      ],
+      "first_heading_deg": -89.90579120077798,
+      "speed": {
+        "min": 1.039779750686116,
+        "median": 4.874987171774457,
+        "p95": 5.689681245065146,
+        "max": 6.099744702825341
+      },
+      "lateral_abs": {
+        "min": 0.00016837382800803657,
+        "median": 0.07010762314953302,
+        "p95": 0.4617675327591608,
+        "max": 0.7473531438858698
+      },
+      "sat_percent": 7.8125,
+      "highpass_rms_deg": 3.163818377238252,
+      "sign_flips": 15,
+      "B_range": [
+        4.5,
+        9.6
+      ],
+      "largest_k1_shifts": [
+        {
+          "t": 1791408513.86575,
+          "time": "06:28:33.865",
+          "xy": [
+            226.6640045703519,
+            151.38576568638538
+          ],
+          "lateral_m": -1.3034733901951956,
+          "B_before": 6.800000000000001,
+          "B": 8.100000000000001
+        },
+        {
+          "t": 1791408520.3659627,
+          "time": "06:28:40.365",
+          "xy": [
+            254.49719071454635,
+            140.36488254393828
+          ],
+          "lateral_m": 0.8187987734230593,
+          "B_before": 8.3,
+          "B": 6.0
+        },
+        {
+          "t": 1791408519.8659244,
+          "time": "06:28:39.865",
+          "xy": [
+            252.09203964472803,
+            140.10263279410069
+          ],
+          "lateral_m": -0.7737556162314051,
+          "B_before": 8.6,
+          "B": 8.3
+        },
+        {
+          "t": 1791408517.3658857,
+          "time": "06:28:37.365",
+          "xy": [
+            240.13023616714565,
+            141.09700051666087
+          ],
+          "lateral_m": -0.6324852918446329,
+          "B_before": 8.0,
+          "B": 8.4
+        }
+      ],
+      "lower_modes": {
+        "4": 1,
+        "0": 335
+      },
+      "lower_max_gap": 0.10359907150268555,
+      "odom_max_gap": 0.04825425148010254,
+      "failure_events": []
+    },
+    {
+      "attempt": 4,
+      "outcome": "completed",
+      "start": 1791408551.5538566,
+      "start_clock": "06:29:11.553",
+      "end": 1791408584.6668868,
+      "end_clock": "06:29:44.666",
+      "reference_time": 1791408550.4701846,
+      "stop_time": 1791408605.3960896,
+      "drive_seconds": 33.18436050415039,
+      "first_neutral_time": 1791408584.738217,
+      "neutral_xy": [
+        273.7968222631963,
+        165.849396191263
+      ],
+      "neutral_speed": 4.831569693902701,
+      "stop_goal_m": 33.7903,
+      "goal_at_trigger_m": 7.9622,
+      "coast_seconds": 20.657872438430786,
+      "coast_displacement_m": 41.224252887650195,
+      "upper_count": 66,
+      "upper_valid": 66,
+      "upper_failed": 0,
+      "horizons": {
+        "6": 61,
+        "5": 2,
+        "4": 2,
+        "3": 1
+      },
+      "guard_hits": 0,
+      "first_revision": 8,
+      "first_wp": [
+        1,
+        2
+      ],
+      "first_B_before": 0.0,
+      "first_plan_valid": true,
+      "first_xy": [
+        187.0500193434477,
+        219.9821937289521
+      ],
+      "first_heading_deg": -89.95970188389691,
+      "speed": {
+        "min": 1.1038816882815048,
+        "median": 4.888505754806357,
+        "p95": 5.648433011998692,
+        "max": 6.14725269737832
+      },
+      "lateral_abs": {
+        "min": 0.0003174963398721864,
+        "median": 0.053018060490198235,
+        "p95": 0.278578906628238,
+        "max": 0.557975223276817
+      },
+      "sat_percent": 3.821656050955414,
+      "highpass_rms_deg": 2.776954647499951,
+      "sign_flips": 14,
+      "B_range": [
+        3.5999999999999996,
+        10.2
+      ],
+      "largest_k1_shifts": [
+        {
+          "t": 1791408571.8675616,
+          "time": "06:29:31.867",
+          "xy": [
+            227.06129413186684,
+            151.16408847242948
+          ],
+          "lateral_m": -0.7584755534562455,
+          "B_before": 6.500000000000001,
+          "B": 8.0
+        },
+        {
+          "t": 1791408573.367542,
+          "time": "06:29:33.367",
+          "xy": [
+            232.61165735174941,
+            146.15157878001267
+          ],
+          "lateral_m": -0.6364859448493186,
+          "B_before": 8.000000000000002,
+          "B": 8.3
+        },
+        {
+          "t": 1791408576.8676891,
+          "time": "06:29:36.867",
+          "xy": [
+            247.69861781082517,
+            138.876535016687
+          ],
+          "lateral_m": 0.5213839353663887,
+          "B_before": 10.2,
+          "B": 9.0
+        },
+        {
+          "t": 1791408576.3676848,
+          "time": "06:29:36.367",
+          "xy": [
+            245.23833218238727,
+            139.00474898305112
+          ],
+          "lateral_m": -0.50630203923625,
+          "B_before": 9.000000000000002,
+          "B": 10.2
+        }
+      ],
+      "lower_modes": {
+        "4": 1,
+        "0": 330
+      },
+      "lower_max_gap": 0.10301709175109863,
+      "odom_max_gap": 0.04859590530395508,
+      "failure_events": []
+    },
+    {
+      "attempt": 5,
+      "outcome": "off_route",
+      "start": 1791408609.3549967,
+      "start_clock": "06:30:09.354",
+      "end": 1791408642.7596414,
+      "end_clock": "06:30:42.759",
+      "reference_time": 1791408608.2646377,
+      "stop_time": 1791408663.7591283,
+      "drive_seconds": 33.48541021347046,
+      "first_neutral_time": 1791408642.840407,
+      "neutral_xy": [
+        285.78721016082415,
+        124.54240289964189
+      ],
+      "neutral_speed": 5.150629691731662,
+      "stop_goal_m": 78.6671,
+      "goal_at_trigger_m": 47.8365,
+      "coast_seconds": 20.918721437454224,
+      "coast_displacement_m": 43.32358562048237,
+      "upper_count": 67,
+      "upper_valid": 66,
+      "upper_failed": 1,
+      "horizons": {
+        "6": 67
+      },
+      "guard_hits": 0,
+      "first_revision": 10,
+      "first_wp": [
+        1,
+        2
+      ],
+      "first_B_before": 0.0,
+      "first_plan_valid": true,
+      "first_xy": [
+        187.0376052059175,
+        219.99058858592196
+      ],
+      "first_heading_deg": -90.0186771522854,
+      "speed": {
+        "min": 1.0002487014039994,
+        "median": 4.928952096329531,
+        "p95": 5.627527041625169,
+        "max": 6.344106044929762
+      },
+      "lateral_abs": {
+        "min": 0.00037591455514315864,
+        "median": 0.06793434936880773,
+        "p95": 0.5478297482732655,
+        "max": 1.127733557187682
+      },
+      "sat_percent": 8.832807570977918,
+      "highpass_rms_deg": 2.9498181931559704,
+      "sign_flips": 10,
+      "B_range": [
+        4.6000000000000005,
+        8.4
+      ],
+      "largest_k1_shifts": [
+        {
+          "t": 1791408629.3693185,
+          "time": "06:30:29.369",
+          "xy": [
+            226.69623799324486,
+            151.4794567436764
+          ],
+          "lateral_m": -1.138703547204919,
+          "B_before": 6.600000000000001,
+          "B": 8.1
+        },
+        {
+          "t": 1791408631.3693702,
+          "time": "06:30:31.369",
+          "xy": [
+            233.1429678259613,
+            144.0011565243314
+          ],
+          "lateral_m": -0.7642700648884101,
+          "B_before": 8.0,
+          "B": 8.3
+        },
+        {
+          "t": 1791408633.8695111,
+          "time": "06:30:33.869",
+          "xy": [
+            243.344890204698,
+            138.07502120490557
+          ],
+          "lateral_m": -0.6293596679760789,
+          "B_before": 8.4,
+          "B": 6.400000000000002
+        },
+        {
+          "t": 1791408634.8694088,
+          "time": "06:30:34.869",
+          "xy": [
+            248.20490598061548,
+            137.98697164568756
+          ],
+          "lateral_m": 0.5135153337199448,
+          "B_before": 6.199999999999998,
+          "B": 6.1000000000000005
+        }
+      ],
+      "lower_modes": {
+        "4": 1,
+        "0": 333
+      },
+      "lower_max_gap": 0.10309648513793945,
+      "odom_max_gap": 0.049854278564453125,
+      "failure_events": [
+        {
+          "time": "06:30:32.369",
+          "t": 1791408632.369401,
+          "xy": [
+            236.3317943943741,
+            140.27578646638824
+          ],
+          "status": "DAQP direct corridor QP infeasible: tried=1"
+        }
+      ]
+    },
+    {
+      "attempt": 6,
+      "outcome": "completed",
+      "start": 1791408667.6539004,
+      "start_clock": "06:31:07.653",
+      "end": 1791408700.1653292,
+      "end_clock": "06:31:40.165",
+      "reference_time": 1791408666.5602365,
+      "stop_time": 1791408721.0586452,
+      "drive_seconds": 32.588231563568115,
+      "first_neutral_time": 1791408700.242132,
+      "neutral_xy": [
+        274.09373190835544,
+        166.17433930000405
+      ],
+      "neutral_speed": 5.274109297031705,
+      "stop_goal_m": 35.0128,
+      "goal_at_trigger_m": 7.5363,
+      "coast_seconds": 20.816513299942017,
+      "coast_displacement_m": 42.026483855711575,
+      "upper_count": 65,
+      "upper_valid": 65,
+      "upper_failed": 0,
+      "horizons": {
+        "6": 60,
+        "5": 2,
+        "4": 2,
+        "3": 1
+      },
+      "guard_hits": 0,
+      "first_revision": 12,
+      "first_wp": [
+        1,
+        2
+      ],
+      "first_B_before": 0.0,
+      "first_plan_valid": true,
+      "first_xy": [
+        186.97842513150096,
+        219.99027569321305
+      ],
+      "first_heading_deg": -89.92134354151813,
+      "speed": {
+        "min": 1.108375096352868,
+        "median": 4.950208080584373,
+        "p95": 5.73734329584701,
+        "max": 6.255407670554158
+      },
+      "lateral_abs": {
+        "min": 8.453839264987995e-05,
+        "median": 0.059367803272194965,
+        "p95": 0.3891383021533018,
+        "max": 0.877091144609274
+      },
+      "sat_percent": 6.493506493506493,
+      "highpass_rms_deg": 2.5868138378225445,
+      "sign_flips": 11,
+      "B_range": [
+        0.39999999999999997,
+        9.399999999999999
+      ],
+      "largest_k1_shifts": [
+        {
+          "t": 1791408686.8710117,
+          "time": "06:31:26.871",
+          "xy": [
+            225.42473723430632,
+            152.27685549224515
+          ],
+          "lateral_m": -1.4426496756276128,
+          "B_before": 6.1000000000000005,
+          "B": 8.7
+        },
+        {
+          "t": 1791408693.3712296,
+          "time": "06:31:33.371",
+          "xy": [
+            253.76925026242006,
+            139.301049898937
+          ],
+          "lateral_m": -0.9067548054274602,
+          "B_before": 8.6,
+          "B": 8.600000000000001
+        },
+        {
+          "t": 1791408690.8712027,
+          "time": "06:31:30.871",
+          "xy": [
+            241.62471202465343,
+            139.989853865395
+          ],
+          "lateral_m": -0.7943627152507033,
+          "B_before": 8.100000000000001,
+          "B": 8.8
+        },
+        {
+          "t": 1791408688.8711967,
+          "time": "06:31:28.871",
+          "xy": [
+            233.01818599233002,
+            144.94699224637992
+          ],
+          "lateral_m": -0.7711812788173265,
+          "B_before": 7.7,
+          "B": 8.100000000000001
+        }
+      ],
+      "lower_modes": {
+        "4": 1,
+        "0": 324
+      },
+      "lower_max_gap": 0.10524225234985352,
+      "odom_max_gap": 0.051619768142700195,
+      "failure_events": []
+    },
+    {
+      "attempt": 7,
+      "outcome": "completed",
+      "start": 1791408725.0566785,
+      "start_clock": "06:32:05.056",
+      "end": 1791408759.664613,
+      "end_clock": "06:32:39.664",
+      "reference_time": 1791408723.9596963,
+      "stop_time": 1791408779.960185,
+      "drive_seconds": 34.6870903968811,
+      "first_neutral_time": 1791408759.743769,
+      "neutral_xy": [
+        273.4553285426167,
+        166.0164869841317
+      ],
+      "neutral_speed": 4.9127552411339455,
+      "stop_goal_m": 30.6657,
+      "goal_at_trigger_m": 7.9802,
+      "coast_seconds": 20.216416120529175,
+      "coast_displacement_m": 38.177291328930096,
+      "upper_count": 69,
+      "upper_valid": 60,
+      "upper_failed": 9,
+      "horizons": {
+        "6": 61,
+        "2": 1,
+        "1": 1,
+        "3": 3,
+        "5": 1,
+        "4": 2
+      },
+      "guard_hits": 0,
+      "first_revision": 14,
+      "first_wp": [
+        1,
+        2
+      ],
+      "first_B_before": 0.0,
+      "first_plan_valid": true,
+      "first_xy": [
+        186.9899141896796,
+        219.9889330790024
+      ],
+      "first_heading_deg": -89.80520300487123,
+      "speed": {
+        "min": 1.0092205045112008,
+        "median": 4.819361498283933,
+        "p95": 5.432344708193241,
+        "max": 6.359630441638693
+      },
+      "lateral_abs": {
+        "min": 0.0004754962311350683,
+        "median": 0.09717041164499686,
+        "p95": 0.9808113815446675,
+        "max": 3.101699764789803
+      },
+      "sat_percent": 18.688524590163937,
+      "highpass_rms_deg": 3.436201212348059,
+      "sign_flips": 10,
+      "B_range": [
+        2.4000000000000004,
+        9.7
+      ],
+      "largest_k1_shifts": [
+        {
+          "t": 1791408744.872947,
+          "time": "06:32:24.872",
+          "xy": [
+            225.26702793391036,
+            152.02031382785952
+          ],
+          "lateral_m": -1.6647490884664868,
+          "B_before": 6.500000000000001,
+          "B": 8.4
+        },
+        {
+          "t": 1791408750.3730779,
+          "time": "06:32:30.373",
+          "xy": [
+            248.4721258989799,
+            140.2355566615968
+          ],
+          "lateral_m": -1.0605455670730428,
+          "B_before": 9.4,
+          "B": 8.6
+        },
+        {
+          "t": 1791408750.8729975,
+          "time": "06:32:30.872",
+          "xy": [
+            250.83916161401305,
+            139.74964092390073
+          ],
+          "lateral_m": 1.0466236596053797,
+          "B_before": 8.6,
+          "B": 8.6
+        },
+        {
+          "t": 1791408749.3729882,
+          "time": "06:32:29.372",
+          "xy": [
+            243.68814899468666,
+            140.92563545558582
+          ],
+          "lateral_m": -0.862862091433443,
+          "B_before": 8.5,
+          "B": 9.7
+        }
+      ],
+      "lower_modes": {
+        "4": 1,
+        "0": 320,
+        "3": 25
+      },
+      "lower_max_gap": 0.1152639389038086,
+      "odom_max_gap": 0.04845619201660156,
+      "failure_events": [
+        {
+          "time": "06:32:31.372",
+          "t": 1791408751.3729565,
+          "xy": [
+            253.219994267632,
+            139.37962501609945
+          ],
+          "status": "DAQP direct corridor QP infeasible: tried=2"
+        },
+        {
+          "time": "06:32:31.873",
+          "t": 1791408751.8730807,
+          "xy": [
+            255.60022753374085,
+            139.41886414306342
+          ],
+          "status": "DAQP direct corridor QP infeasible: tried=3"
+        },
+        {
+          "time": "06:32:32.373",
+          "t": 1791408752.3730004,
+          "xy": [
+            258.0147756979191,
+            140.0405673863034
+          ],
+          "status": "DAQP direct corridor QP infeasible: tried=6"
+        },
+        {
+          "time": "06:32:32.873",
+          "t": 1791408752.8730936,
+          "xy": [
+            260.22059035254733,
+            141.1076082513701
+          ],
+          "status": "DAQP direct corridor QP infeasible: tried=1"
+        },
+        {
+          "time": "06:32:33.373",
+          "t": 1791408753.3731005,
+          "xy": [
+            262.21360636528243,
+            142.27164148721513
+          ],
+          "status": "DAQP direct corridor QP infeasible: tried=1"
+        },
+        {
+          "time": "06:32:34.373",
+          "t": 1791408754.3732154,
+          "xy": [
+            265.9473321138831,
+            144.63434958944683
+          ],
+          "status": "DAQP direct corridor QP infeasible: tried=1"
+        },
+        {
+          "time": "06:32:34.873",
+          "t": 1791408754.8730414,
+          "xy": [
+            267.49560485576364,
+            146.012247414477
+          ],
+          "status": "DAQP direct corridor QP infeasible: tried=1"
+        },
+        {
+          "time": "06:32:35.373",
+          "t": 1791408755.3731828,
+          "xy": [
+            268.79912252717656,
+            147.78646157510914
+          ],
+          "status": "DAQP direct corridor QP infeasible: tried=1"
+        },
+        {
+          "time": "06:32:35.873",
+          "t": 1791408755.87308,
+          "xy": [
+            269.79163776733446,
+            149.716345884642
+          ],
+          "status": "DAQP direct corridor QP infeasible: tried=1"
+        }
+      ]
+    },
+    {
+      "attempt": 8,
+      "outcome": "completed",
+      "start": 1791408783.9565897,
+      "start_clock": "06:33:03.956",
+      "end": 1791408817.1668005,
+      "end_clock": "06:33:37.166",
+      "reference_time": 1791408782.861007,
+      "stop_time": 1791408837.5601225,
+      "drive_seconds": 33.289259910583496,
+      "first_neutral_time": 1791408817.2458496,
+      "neutral_xy": [
+        274.0847100581158,
+        166.0020429358662
+      ],
+      "neutral_speed": 4.8376031168753615,
+      "stop_goal_m": 31.9847,
+      "goal_at_trigger_m": 7.6541,
+      "coast_seconds": 20.3142728805542,
+      "coast_displacement_m": 39.14719705136888,
+      "upper_count": 66,
+      "upper_valid": 66,
+      "upper_failed": 0,
+      "horizons": {
+        "6": 61,
+        "5": 2,
+        "4": 2,
+        "3": 1
+      },
+      "guard_hits": 0,
+      "first_revision": 16,
+      "first_wp": [
+        1,
+        2
+      ],
+      "first_B_before": 0.0,
+      "first_plan_valid": true,
+      "first_xy": [
+        187.01016663289454,
+        219.98519457571805
+      ],
+      "first_heading_deg": -90.01202796312839,
+      "speed": {
+        "min": 1.1362943689971166,
+        "median": 4.938426804466769,
+        "p95": 5.642848141327832,
+        "max": 6.111206146887396
+      },
+      "lateral_abs": {
+        "min": 3.1331748378382596e-05,
+        "median": 0.05618102940118471,
+        "p95": 0.4130806179841888,
+        "max": 0.8886062062922914
+      },
+      "sat_percent": 5.396825396825397,
+      "highpass_rms_deg": 2.8820675650160825,
+      "sign_flips": 15,
+      "B_range": [
+        3.3000000000000003,
+        9.9
+      ],
+      "largest_k1_shifts": [
+        {
+          "t": 1791408791.874206,
+          "time": "06:33:11.874",
+          "xy": [
+            187.05197067268332,
+            194.29441356832913
+          ],
+          "lateral_m": 2.2113464508168947,
+          "B_before": 6.9,
+          "B": 7.9
+        },
+        {
+          "t": 1791408803.8746731,
+          "time": "06:33:23.874",
+          "xy": [
+            226.23725344946516,
+            151.90448684140645
+          ],
+          "lateral_m": -1.3380678647120332,
+          "B_before": 6.500000000000001,
+          "B": 8.0
+        },
+        {
+          "t": 1791408790.874203,
+          "time": "06:33:10.874",
+          "xy": [
+            187.40267416498827,
+            200.06057753532406
+          ],
+          "lateral_m": -0.7933202241885574,
+          "B_before": 6.8,
+          "B": 6.8
+        },
+        {
+          "t": 1791408805.8746443,
+          "time": "06:33:25.874",
+          "xy": [
+            233.09972826097973,
+            145.01001192665075
+          ],
+          "lateral_m": -0.6727153740304056,
+          "B_before": 7.9,
+          "B": 8.0
+        }
+      ],
+      "lower_modes": {
+        "4": 1,
+        "0": 331
+      },
+      "lower_max_gap": 0.1179037094116211,
+      "odom_max_gap": 0.05116915702819824,
+      "failure_events": []
+    },
+    {
+      "attempt": 9,
+      "outcome": "completed",
+      "start": 1791408841.5539787,
+      "start_clock": "06:34:01.553",
+      "end": 1791408875.3673937,
+      "end_clock": "06:34:35.367",
+      "reference_time": 1791408840.4636352,
+      "stop_time": 1791408896.161094,
+      "drive_seconds": 33.893365144729614,
+      "first_neutral_time": 1791408875.4473438,
+      "neutral_xy": [
+        274.01358072704124,
+        166.06856371731237
+      ],
+      "neutral_speed": 5.3838056102762195,
+      "stop_goal_m": 34.4809,
+      "goal_at_trigger_m": 7.6571,
+      "coast_seconds": 20.71375012397766,
+      "coast_displacement_m": 41.627438868766255,
+      "upper_count": 67,
+      "upper_valid": 67,
+      "upper_failed": 0,
+      "horizons": {
+        "6": 62,
+        "5": 2,
+        "4": 2,
+        "3": 1
+      },
+      "guard_hits": 0,
+      "first_revision": 18,
+      "first_wp": [
+        1,
+        2
+      ],
+      "first_B_before": 0.0,
+      "first_plan_valid": true,
+      "first_xy": [
+        186.9969947103242,
+        219.98769906059223
+      ],
+      "first_heading_deg": -89.82282489292987,
+      "speed": {
+        "min": 1.0610332610997206,
+        "median": 4.961276175572297,
+        "p95": 5.536247067260703,
+        "max": 6.024009302967316
+      },
+      "lateral_abs": {
+        "min": 0.00023000872266412675,
+        "median": 0.05935823113119207,
+        "p95": 0.40594609088351974,
+        "max": 0.703431705258891
+      },
+      "sat_percent": 10.903426791277258,
+      "highpass_rms_deg": 2.8859948950241767,
+      "sign_flips": 13,
+      "B_range": [
+        3.4000000000000004,
+        10.600000000000001
+      ],
+      "largest_k1_shifts": [
+        {
+          "t": 1791408861.8764687,
+          "time": "06:34:21.876",
+          "xy": [
+            226.20859432415912,
+            151.80830863162154
+          ],
+          "lateral_m": -1.3967862080477798,
+          "B_before": 6.5,
+          "B": 8.100000000000001
+        },
+        {
+          "t": 1791408865.8764522,
+          "time": "06:34:25.876",
+          "xy": [
+            241.57326314597427,
+            140.3148823087137
+          ],
+          "lateral_m": -0.8001590099059588,
+          "B_before": 8.1,
+          "B": 9.0
+        },
+        {
+          "t": 1791408850.3763702,
+          "time": "06:34:10.376",
+          "xy": [
+            187.86391190504264,
+            189.94529110959513
+          ],
+          "lateral_m": -0.7938509461326311,
+          "B_before": 9.4,
+          "B": 10.600000000000001
+        },
+        {
+          "t": 1791408868.3766892,
+          "time": "06:34:28.376",
+          "xy": [
+            253.40482824034657,
+            138.87627252676216
+          ],
+          "lateral_m": -0.7594338879795883,
+          "B_before": 8.700000000000001,
+          "B": 8.4
+        }
+      ],
+      "lower_modes": {
+        "4": 1,
+        "0": 337
+      },
+      "lower_max_gap": 0.11943769454956055,
+      "odom_max_gap": 0.052469491958618164,
+      "failure_events": []
+    },
+    {
+      "attempt": 10,
+      "outcome": "completed",
+      "start": 1791408900.0560665,
+      "start_clock": "06:35:00.056",
+      "end": 1791408933.2634113,
+      "end_clock": "06:35:33.263",
+      "reference_time": 1791408898.9589646,
+      "stop_time": 1791408954.062611,
+      "drive_seconds": 33.29315400123596,
+      "first_neutral_time": 1791408933.3492205,
+      "neutral_xy": [
+        273.79945504444794,
+        166.21547889423988
+      ],
+      "neutral_speed": 5.251989968977347,
+      "stop_goal_m": 34.5666,
+      "goal_at_trigger_m": 7.6634,
+      "coast_seconds": 20.713390588760376,
+      "coast_displacement_m": 41.713660827166755,
+      "upper_count": 66,
+      "upper_valid": 66,
+      "upper_failed": 0,
+      "horizons": {
+        "6": 61,
+        "5": 2,
+        "4": 2,
+        "3": 1
+      },
+      "guard_hits": 0,
+      "first_revision": 20,
+      "first_wp": [
+        1,
+        2
+      ],
+      "first_B_before": 0.0,
+      "first_plan_valid": true,
+      "first_xy": [
+        186.9966872840988,
+        219.99231563297297
+      ],
+      "first_heading_deg": -89.9529673173753,
+      "speed": {
+        "min": 1.00676107370671,
+        "median": 4.9968856380003315,
+        "p95": 5.6506467652856855,
+        "max": 6.35289012417128
+      },
+      "lateral_abs": {
+        "min": 0.00048289422871444776,
+        "median": 0.05496259625464167,
+        "p95": 0.30459367296072926,
+        "max": 0.850747067774893
+      },
+      "sat_percent": 4.113924050632911,
+      "highpass_rms_deg": 2.663953264986746,
+      "sign_flips": 9,
+      "B_range": [
+        3.5999999999999996,
+        9.9
+      ],
+      "largest_k1_shifts": [
+        {
+          "t": 1791408919.8780677,
+          "time": "06:35:19.878",
+          "xy": [
+            225.49601631753185,
+            152.16838187666866
+          ],
+          "lateral_m": -1.3772161746945057,
+          "B_before": 6.3,
+          "B": 8.4
+        },
+        {
+          "t": 1791408922.3783321,
+          "time": "06:35:22.378",
+          "xy": [
+            234.92146337757129,
+            143.53180251758383
+          ],
+          "lateral_m": -0.7085142126828323,
+          "B_before": 8.200000000000001,
+          "B": 8.200000000000001
+        },
+        {
+          "t": 1791408921.8782623,
+          "time": "06:35:21.878",
+          "xy": [
+            233.07655318161704,
+            145.1795965438686
+          ],
+          "lateral_m": -0.6644261305986584,
+          "B_before": 8.000000000000002,
+          "B": 8.200000000000001
+        },
+        {
+          "t": 1791408907.3779154,
+          "time": "06:35:07.377",
+          "xy": [
+            187.4021670060227,
+            197.82453312486962
+          ],
+          "lateral_m": -0.49998488714967587,
+          "B_before": 6.8,
+          "B": 6.600000000000001
+        }
+      ],
+      "lower_modes": {
+        "4": 1,
+        "0": 331
+      },
+      "lower_max_gap": 0.12220883369445801,
+      "odom_max_gap": 0.05177569389343262,
+      "failure_events": []
+    }
+  ],
+  "parameters": [
+    {
+      "t": 1791408368.282006,
+      "node": "/lower_tracking_mpc_node",
+      "name": "mavlink_auto_arm",
+      "value": false
+    },
+    {
+      "t": 1791408368.2820885,
+      "node": "/lower_tracking_mpc_node",
+      "name": "mavlink_force_arm",
+      "value": false
+    },
+    {
+      "t": 1791408368.2834992,
+      "node": "/upper_planner_node",
+      "name": "upper_preview_steps",
+      "value": 6
+    },
+    {
+      "t": 1791408368.2856243,
+      "node": "/upper_planner_node",
+      "name": "enable_batch_mission_reset",
+      "value": true
+    },
+    {
+      "t": 1791408369.4768994,
+      "node": "/knu_batch_runner",
+      "name": "reset_upper_each_attempt",
+      "value": true
+    }
+  ],
+  "bag_bytes": 12179649,
+  "total_bytes": 12760336
+}

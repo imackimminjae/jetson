@@ -1,0 +1,511 @@
+PHASES [(0, 'startup', '05:56:19.680'), (1, 'stopping', '05:56:22.785'), (1, 'pausing', '05:56:23.987'), (1, 'aligning', '05:56:24.085'), (1, 'map', '05:56:24.285'), (1, 'reference', '05:56:25.492'), (1, 'running', '05:56:26.592'), (1, 'coasting', '05:57:01.677'), (2, 'stopping', '05:57:21.392'), (2, 'pausing', '05:57:22.588'), (2, 'aligning', '05:57:22.684'), (2, 'map', '05:57:22.884'), (2, 'reference', '05:57:24.089'), (2, 'coasting', '05:57:54.189'), (3, 'stopping', '05:57:55.287'), (3, 'pausing', '05:57:56.390'), (3, 'aligning', '05:57:56.485'), (3, 'map', '05:57:56.685'), (3, 'reference', '05:57:57.888'), (3, 'coasting', '05:58:27.992'), (4, 'stopping', '05:58:29.090'), (4, 'pausing', '05:58:30.185'), (4, 'aligning', '05:58:30.285'), (4, 'map', '05:58:30.485'), (4, 'reference', '05:58:31.687'), (4, 'coasting', '05:59:01.796'), (5, 'stopping', '05:59:02.893'), (5, 'pausing', '05:59:04.087'), (5, 'aligning', '05:59:04.185'), (5, 'map', '05:59:04.385'), (5, 'reference', '05:59:05.588'), (5, 'coasting', '05:59:35.696'), (6, 'stopping', '05:59:36.787'), (6, 'pausing', '05:59:37.986'), (6, 'aligning', '05:59:38.086'), (6, 'map', '05:59:38.285'), (6, 'reference', '05:59:39.486'), (6, 'coasting', '06:00:09.593'), (7, 'stopping', '06:00:11.842'), (7, 'pausing', '06:00:12.989'), (7, 'aligning', '06:00:13.085'), (7, 'map', '06:00:13.285'), (7, 'reference', '06:00:14.489'), (7, 'coasting', '06:00:44.594'), (8, 'stopping', '06:00:45.788'), (8, 'pausing', '06:00:46.886'), (8, 'aligning', '06:00:46.986'), (8, 'map', '06:00:47.184'), (8, 'reference', '06:00:48.387'), (8, 'coasting', '06:01:18.493'), (9, 'stopping', '06:01:19.588'), (9, 'pausing', '06:01:20.686'), (9, 'aligning', '06:01:20.784'), (9, 'map', '06:01:20.986'), (9, 'reference', '06:01:22.188'), (9, 'coasting', '06:01:52.296'), (10, 'stopping', '06:01:53.390'), (10, 'pausing', '06:01:54.587'), (10, 'aligning', '06:01:54.685'), (10, 'map', '06:01:54.885'), (10, 'reference', '06:01:56.090'), (10, 'coasting', '06:02:26.294'), (10, 'done', '06:02:27.391')]
+EVENT KEYS ['schema_version', 't_start', 't_emit', 'plan_seq', 'path_revision', 'frame_id', 'x', 'y', 'yaw_rad', 'wp0', 'wp1', 'horizon', 'branch_step', 'max_candidates', 'branch_failure', 'valid_plan', 'solver_valid', 'solver_called', 'solver_time_ms', 'reason', 'status', 'retained_previous_path', 'retained_path_age_sec', 'selected_corridors', 'candidate_counts', 'k1_lane_constraint_excluded', 'intervals_world', 'preview_world', 'planned_world', 'side_boundary_tail_start', 'side_boundary_side', 'published_world', 'retained_world']
+ROUTE [[187.0, 220.0], [187.0, 192.0], [195.0, 168.0], [215.0, 157.0], [235.0, 142.0], [255.0, 135.0], [270.0, 158.0], [278.0, 172.0]]
+[
+  {
+    "attempt": 1,
+    "start": "05:56:22.785",
+    "end": "05:57:21.392",
+    "running": true,
+    "running_start": "05:56:26.592",
+    "run_seconds": 35.0857515335083,
+    "upper_count": 70,
+    "upper_valid": 65,
+    "horizons": {
+      "6": 62,
+      "3": 3,
+      "1": 1,
+      "5": 2,
+      "4": 1,
+      "2": 1
+    },
+    "wp_pairs": {
+      "(1, 2)": 13,
+      "(2, 3)": 10,
+      "(3, 4)": 9,
+      "(4, 5)": 10,
+      "(5, 6)": 9,
+      "(6, 7)": 19
+    },
+    "upper_reasons": {
+      "success": 65,
+      "solver_rejected": 5
+    },
+    "upper_statuses": {
+      "solved": 65,
+      "DAQP direct corridor QP infeasible: tried=2": 3,
+      "DAQP direct corridor QP infeasible: tried=1": 2
+    },
+    "guard_hits": 0,
+    "refs": 65,
+    "lower_modes": {
+      "4": 6,
+      "0": 340,
+      "3": 5
+    },
+    "grid_count": 1163,
+    "grid_free": {
+      "min": 200.0,
+      "median": 4722.0,
+      "p95": 6281.9,
+      "max": 7037.0
+    },
+    "grid_max_gap": 0.13495707511901855,
+    "odom_max_gap": 0.06203770637512207,
+    "xy_span": [
+      88.11451158829246,
+      80.12472505316023
+    ],
+    "speed": {
+      "min": 1.022192200644769,
+      "median": 4.988897558384156,
+      "p95": 5.643678223610882,
+      "max": 6.154711206537261
+    },
+    "lateral_abs": {
+      "min": 0.0007738301544424793,
+      "median": 0.08712379530366013,
+      "p95": 0.6768213991516501,
+      "max": 1.269196703822115
+    },
+    "steering_sat": 0.11419753086419752,
+    "steering_peak_deg": 17.188734024679423,
+    "lower_max_gap": 0.10595154762268066,
+    "first_invalid": [
+      {
+        "time": "05:56:53.450",
+        "reason": "solver_rejected",
+        "status": "DAQP direct corridor QP infeasible: tried=2",
+        "xy": [
+          252.69014301274763,
+          139.8942486013837
+        ]
+      },
+      {
+        "time": "05:56:53.953",
+        "reason": "solver_rejected",
+        "status": "DAQP direct corridor QP infeasible: tried=2",
+        "xy": [
+          255.013775439779,
+          140.00535895784057
+        ]
+      },
+      {
+        "time": "05:56:54.452",
+        "reason": "solver_rejected",
+        "status": "DAQP direct corridor QP infeasible: tried=2",
+        "xy": [
+          257.29047121123506,
+          140.65707525483785
+        ]
+      },
+      {
+        "time": "05:56:55.452",
+        "reason": "solver_rejected",
+        "status": "DAQP direct corridor QP infeasible: tried=1",
+        "xy": [
+          261.33364453739074,
+          142.8709440937703
+        ]
+      },
+      {
+        "time": "05:56:55.952",
+        "reason": "solver_rejected",
+        "status": "DAQP direct corridor QP infeasible: tried=1",
+        "xy": [
+          263.0097652855131,
+          144.35375310692663
+        ]
+      }
+    ],
+    "steering_highpass_rms_deg": 3.0612178493145117,
+    "coast_seconds": 19.714138507843018,
+    "coast_displacement_m": 35.62308030607237
+  },
+  {
+    "attempt": 2,
+    "start": "05:57:21.392",
+    "end": "05:57:55.287",
+    "running": false,
+    "running_start": null,
+    "run_seconds": 0,
+    "upper_count": 66,
+    "upper_valid": 0,
+    "horizons": {
+      "6": 65,
+      "1": 1
+    },
+    "wp_pairs": {
+      "(6, 7)": 66
+    },
+    "upper_reasons": {
+      "solver_rejected": 66
+    },
+    "upper_statuses": {
+      "DAQP direct corridor QP infeasible: tried=1": 4,
+      "DAQP direct corridor QP infeasible: tried=8": 6,
+      "DAQP direct corridor QP infeasible: tried=4": 26,
+      "DAQP direct corridor QP infeasible: tried=6": 26,
+      "DAQP direct corridor QP infeasible: tried=16": 1,
+      "DAQP direct corridor QP infeasible: tried=10": 1,
+      "DAQP direct corridor QP infeasible: tried=12": 2
+    },
+    "guard_hits": 0,
+    "refs": 0,
+    "lower_modes": {
+      "4": 328
+    },
+    "grid_count": 1077,
+    "grid_free": {
+      "min": 264.0,
+      "median": 3453.0,
+      "p95": 3479.0,
+      "max": 3484.0
+    },
+    "grid_max_gap": 0.1679694652557373,
+    "odom_max_gap": 0.05614757537841797,
+    "xy_span": [
+      106.57761193805996,
+      21.896580094089558
+    ]
+  },
+  {
+    "attempt": 3,
+    "start": "05:57:55.287",
+    "end": "05:58:29.090",
+    "running": false,
+    "running_start": null,
+    "run_seconds": 0,
+    "upper_count": 66,
+    "upper_valid": 0,
+    "horizons": {
+      "6": 66
+    },
+    "wp_pairs": {
+      "(6, 7)": 66
+    },
+    "upper_reasons": {
+      "solver_rejected": 66
+    },
+    "upper_statuses": {
+      "DAQP direct corridor QP infeasible: tried=4": 53,
+      "DAQP direct corridor QP infeasible: tried=6": 13
+    },
+    "guard_hits": 0,
+    "refs": 0,
+    "lower_modes": {
+      "4": 327
+    },
+    "grid_count": 1089,
+    "grid_free": {
+      "min": 3385.0,
+      "median": 3399.0,
+      "p95": 3409.0,
+      "max": 3484.0
+    },
+    "grid_max_gap": 0.1372075080871582,
+    "odom_max_gap": 0.06667900085449219,
+    "xy_span": [
+      0.16397229277612269,
+      0.020098555588873523
+    ]
+  },
+  {
+    "attempt": 4,
+    "start": "05:58:29.090",
+    "end": "05:59:02.893",
+    "running": false,
+    "running_start": null,
+    "run_seconds": 0,
+    "upper_count": 65,
+    "upper_valid": 0,
+    "horizons": {
+      "6": 65
+    },
+    "wp_pairs": {
+      "(6, 7)": 65
+    },
+    "upper_reasons": {
+      "solver_rejected": 65
+    },
+    "upper_statuses": {
+      "DAQP direct corridor QP infeasible: tried=4": 43,
+      "DAQP direct corridor QP infeasible: tried=6": 17,
+      "DAQP direct corridor QP infeasible: tried=9": 3,
+      "DAQP direct corridor QP infeasible: tried=8": 2
+    },
+    "guard_hits": 0,
+    "refs": 0,
+    "lower_modes": {
+      "4": 327
+    },
+    "grid_count": 1074,
+    "grid_free": {
+      "min": 3385.0,
+      "median": 3394.0,
+      "p95": 3406.0,
+      "max": 3409.0
+    },
+    "grid_max_gap": 0.16039538383483887,
+    "odom_max_gap": 0.05686235427856445,
+    "xy_span": [
+      0.032250342182237546,
+      0.02169614547270271
+    ]
+  },
+  {
+    "attempt": 5,
+    "start": "05:59:02.893",
+    "end": "05:59:36.787",
+    "running": false,
+    "running_start": null,
+    "run_seconds": 0,
+    "upper_count": 66,
+    "upper_valid": 0,
+    "horizons": {
+      "6": 66
+    },
+    "wp_pairs": {
+      "(6, 7)": 66
+    },
+    "upper_reasons": {
+      "solver_rejected": 66
+    },
+    "upper_statuses": {
+      "DAQP direct corridor QP infeasible: tried=4": 60,
+      "DAQP direct corridor QP infeasible: tried=9": 4,
+      "DAQP direct corridor QP infeasible: tried=6": 2
+    },
+    "guard_hits": 0,
+    "refs": 0,
+    "lower_modes": {
+      "4": 328
+    },
+    "grid_count": 1104,
+    "grid_free": {
+      "min": 3393.0,
+      "median": 3404.0,
+      "p95": 3407.0,
+      "max": 3410.0
+    },
+    "grid_max_gap": 0.10897970199584961,
+    "odom_max_gap": 0.055956125259399414,
+    "xy_span": [
+      0.009707601161949242,
+      0.016860614347166347
+    ]
+  },
+  {
+    "attempt": 6,
+    "start": "05:59:36.787",
+    "end": "06:00:11.842",
+    "running": false,
+    "running_start": null,
+    "run_seconds": 0,
+    "upper_count": 66,
+    "upper_valid": 0,
+    "horizons": {
+      "6": 66
+    },
+    "wp_pairs": {
+      "(6, 7)": 66
+    },
+    "upper_reasons": {
+      "solver_rejected": 66
+    },
+    "upper_statuses": {
+      "DAQP direct corridor QP infeasible: tried=4": 29,
+      "DAQP direct corridor QP infeasible: tried=6": 12,
+      "DAQP direct corridor QP infeasible: tried=9": 25
+    },
+    "guard_hits": 0,
+    "refs": 0,
+    "lower_modes": {
+      "4": 328
+    },
+    "grid_count": 1153,
+    "grid_free": {
+      "min": 3398.0,
+      "median": 3407.0,
+      "p95": 3409.0,
+      "max": 3411.0
+    },
+    "grid_max_gap": 0.13253283500671387,
+    "odom_max_gap": 0.058728694915771484,
+    "xy_span": [
+      0.008689667310903815,
+      0.015847426420606325
+    ]
+  },
+  {
+    "attempt": 7,
+    "start": "06:00:11.842",
+    "end": "06:00:45.788",
+    "running": false,
+    "running_start": null,
+    "run_seconds": 0,
+    "upper_count": 66,
+    "upper_valid": 0,
+    "horizons": {
+      "6": 66
+    },
+    "wp_pairs": {
+      "(6, 7)": 66
+    },
+    "upper_reasons": {
+      "solver_rejected": 66
+    },
+    "upper_statuses": {
+      "DAQP direct corridor QP infeasible: tried=9": 32,
+      "DAQP direct corridor QP infeasible: tried=4": 18,
+      "DAQP direct corridor QP infeasible: tried=6": 15,
+      "DAQP direct corridor QP infeasible: tried=12": 1
+    },
+    "guard_hits": 0,
+    "refs": 0,
+    "lower_modes": {
+      "4": 327
+    },
+    "grid_count": 1130,
+    "grid_free": {
+      "min": 3400.0,
+      "median": 3407.0,
+      "p95": 3409.0,
+      "max": 3412.0
+    },
+    "grid_max_gap": 0.12737655639648438,
+    "odom_max_gap": 0.059671878814697266,
+    "xy_span": [
+      0.007930885738488769,
+      0.016472696780596152
+    ]
+  },
+  {
+    "attempt": 8,
+    "start": "06:00:45.788",
+    "end": "06:01:19.588",
+    "running": false,
+    "running_start": null,
+    "run_seconds": 0,
+    "upper_count": 66,
+    "upper_valid": 0,
+    "horizons": {
+      "6": 66
+    },
+    "wp_pairs": {
+      "(6, 7)": 66
+    },
+    "upper_reasons": {
+      "solver_rejected": 66
+    },
+    "upper_statuses": {
+      "DAQP direct corridor QP infeasible: tried=9": 23,
+      "DAQP direct corridor QP infeasible: tried=4": 35,
+      "DAQP direct corridor QP infeasible: tried=12": 2,
+      "DAQP direct corridor QP infeasible: tried=6": 6
+    },
+    "guard_hits": 0,
+    "refs": 0,
+    "lower_modes": {
+      "4": 327
+    },
+    "grid_count": 1145,
+    "grid_free": {
+      "min": 3401.0,
+      "median": 3407.0,
+      "p95": 3409.8,
+      "max": 3412.0
+    },
+    "grid_max_gap": 0.12482047080993652,
+    "odom_max_gap": 0.06083369255065918,
+    "xy_span": [
+      0.007926030398664352,
+      0.015873593221954252
+    ]
+  },
+  {
+    "attempt": 9,
+    "start": "06:01:19.588",
+    "end": "06:01:53.390",
+    "running": false,
+    "running_start": null,
+    "run_seconds": 0,
+    "upper_count": 65,
+    "upper_valid": 0,
+    "horizons": {
+      "6": 65
+    },
+    "wp_pairs": {
+      "(6, 7)": 65
+    },
+    "upper_reasons": {
+      "solver_rejected": 65
+    },
+    "upper_statuses": {
+      "DAQP direct corridor QP infeasible: tried=6": 16,
+      "DAQP direct corridor QP infeasible: tried=9": 29,
+      "DAQP direct corridor QP infeasible: tried=12": 5,
+      "DAQP direct corridor QP infeasible: tried=4": 15
+    },
+    "guard_hits": 0,
+    "refs": 0,
+    "lower_modes": {
+      "4": 327
+    },
+    "grid_count": 1134,
+    "grid_free": {
+      "min": 3402.0,
+      "median": 3407.0,
+      "p95": 3410.0,
+      "max": 3412.0
+    },
+    "grid_max_gap": 0.12943601608276367,
+    "odom_max_gap": 0.05759429931640625,
+    "xy_span": [
+      0.007943287001012322,
+      0.015892871485732485
+    ]
+  },
+  {
+    "attempt": 10,
+    "start": "06:01:53.390",
+    "end": "06:02:27.391",
+    "running": false,
+    "running_start": null,
+    "run_seconds": 0,
+    "upper_count": 66,
+    "upper_valid": 0,
+    "horizons": {
+      "6": 66
+    },
+    "wp_pairs": {
+      "(6, 7)": 66
+    },
+    "upper_reasons": {
+      "solver_rejected": 66
+    },
+    "upper_statuses": {
+      "DAQP direct corridor QP infeasible: tried=6": 1,
+      "DAQP direct corridor QP infeasible: tried=9": 2,
+      "DAQP direct corridor QP infeasible: tried=4": 63
+    },
+    "guard_hits": 0,
+    "refs": 0,
+    "lower_modes": {
+      "4": 329
+    },
+    "grid_count": 1142,
+    "grid_free": {
+      "min": 3401.0,
+      "median": 3406.0,
+      "p95": 3409.0,
+      "max": 3412.0
+    },
+    "grid_max_gap": 0.13453364372253418,
+    "odom_max_gap": 0.05886983871459961,
+    "xy_span": [
+      0.009387270277358084,
+      0.01586153231392018
+    ]
+  }
+]
