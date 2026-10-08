@@ -1,0 +1,50 @@
+
+NuttShell (NSH) NuttX-11.0.0
+nsh> [Ksimulator_sih status
+INFO  [simulator_sih] Running Ackermann Rover (no-slip kinematic; input guard v1; local position v2)
+INFO  [simulator_sih] vehicle landed: 1
+INFO  [simulator_sih] local position NED (m)
+  | 0      | 1      | 2      
+ 0|-3.3e+02  5.6e+02  0       
+INFO  [simulator_sih] local velocity NED (m/s)
+  | 0      | 1      | 2      
+ 0| 0        0        0       
+INFO  [simulator_sih] attitude roll-pitch-yaw (deg)
+ 0| 0       
+ 1| 0       
+ 2| 1.7e+02 
+INFO  [simulator_sih] angular velocity roll-pitch-yaw (deg/s)
+ 0| 0       
+ 1| 0       
+ 2| 0       
+INFO  [simulator_sih] actuator signals
+  | 0      | 1      | 2      | 3      | 4      | 5      | 6      | 7      
+ 0| 0        0        0        0        0        0        0        0       
+INFO  [simulator_sih] Aerodynamic forces NED (N)
+ 0| 0       
+ 1| 0       
+ 2| 0       
+INFO  [simulator_sih] Aerodynamic moments body frame (Nm)
+  | 0      | 1      | 2      
+ 0| 0        0        0       
+INFO  [simulator_sih] Thruster moments in body frame (Nm)
+  | 0      | 1      | 2      
+ 0| 0        0        0       
+nsh> [Kver all
+HW arch: CUAV_7_NANO
+PX4 git-hash: 94cb2012792b2ae89f0b147cfee53ee31ae550be
+PX4 version: Release 1.16.1 (17826303)
+OS: NuttX
+OS version: Release 11.0.0 (184549631)
+OS git-hash: 886acbbdb4f061e5c0ce1a76afbcfa7cb7df9849
+Build datetime: Aug 22 2026 14:20:31
+Build uri: localhost
+Build variant: default
+Toolchain: GNU GCC, 10.3.1 20210621 (release)
+PX4GUID: 00060000000030373630353251100040001a
+MCU: STM32H7[4|5]xxx, rev. V
+nsh> [Klogger status
+INFO  [logger] Running in mode: all
+INFO  [logger] Number of subscriptions: 112 (3584 bytes)
+INFO  [logger] Not logging
+nsh> [K

@@ -1,0 +1,18 @@
+item,status,current_evidence,next_needed
+추가 분기 시점/다른 회차 상세 장면,기존 로그로 복원 가능,"원 MCAP, upper events, lower path, odom",추가 장면 선정; 격자-차량 source 시각은 여전히 불명
+현재 실행의 전체 화면·주요 하드웨어 사진,추가 계측 필요,해당 run ID에 대응하는 파일 없음,실험 화면과 실물 장치·배선 촬영; 촬영시각/run ID 기록
+Isaac host/OS/version/USD/맵 축척,추가 계측 필요,외부 simulator 실행 snapshot 없음,버전·host 사양·USD hash/metersPerUnit 및 실제 pose 적용 graph 보존
+실제 BEV 분할 문턱·카메라 calibration·TF,추가 계측 필요,제공 소스 기본값만 있고 per-run 생성기 설정 없음,외부 YAML/dump/hash/CameraInfo/TF 및 ground plane 기록
+원 영상→grid→계획 동기/지연,추가 계측 필요,모든 grid header stamp=0; bev_source_timing 미수신,source stamps + input sequence + 같은 시계 동기 상태 기록
+lower 전체 callback 실행시간/deadline,추가 계측 필요,solver 및 build→solver return 부분만 기록,모든 조기 반환 포함 callback entry/exit 및 예정 release time
+upper 지연 760ms 발생 지점의 최종 원인,추가 계측 필요,interval stage wall/CPU 차이는 있으나 내부 대기 위치 불명,stage 내부 이벤트·로그/락 대기·스케줄링 trace
+실제 주행 시 CPU/GPU 부하/전력모드/열,추가 계측 필요,현재 호스트 식별만 가능,해당 run 중 부하/클럭/온도/전력 설정과 시간 기록
+주행별 PX4 firmware/전체 SIH 상수,추가 계측 필요,과거 board identity/status만 존재,해당 실행 firmware hash·parameter dump·SIH model source hash
+실제 조향각,추가 계측 필요,명령값과 내부 모델 추정치뿐,SIH 내부 steering state 기록 또는 실물 wheel sensor; 둘 구분
+차량 중심의 실제 도로 이탈,추가 계측 필요,독립 도로 polygon과 동기 truth 상태 없음,동기 SIH truth + independent road geometry
+차량 외곽 이탈/충돌/최소 경계 여유,추가 계측 필요,폭/collision mesh/후방 도로/접촉 flag 없음,실제 가상차량 형상+road polygon+truth pose+collision flags
+독립 도로 중심선 오차,추가 계측 필요,SD waypoint를 도로 중심선으로 대체할 수 없음,도로 제작 원본의 centerline과 좌표 변환 보존
+SD-map 위치/heading 편향 HIL 결과,추가 실험 필요,확인한8배치 모두 bias disabled,"기존 튜닝 고정, 변환 경로와 nominal 경로/truth 동시 기록, 조건별 반복"
+목표 정차 성공률,추가 실험 필요,completed는 접근; 실제 stop은 멀리 떨어짐,정차 기준·제동 전달 계측을 갖춘 별도 시험
+통제된 입력 이상 복구 성공률,추가 실험 필요,자연 발생 실패 사례만 있음,격리된 HIL 장애 조건·지속시간·복구 조건 사전 정의
+WCET/모든 deadline 만족 보장,현 자료로 주장 불가,관측 표본 최대뿐; 실제 1회 upper 초과,추가 시험만으로 이론적 WCET 보장이 생기지는 않음

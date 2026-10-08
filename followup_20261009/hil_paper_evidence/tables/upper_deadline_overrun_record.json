@@ -1,0 +1,104 @@
+{
+  "receive_s": 1791452527.4937434,
+  "schema_version": 1,
+  "t_start": 1791452526.7327998,
+  "cycle_seq": 266,
+  "plan_seq": 254,
+  "outcome": "early_return",
+  "start_interval_ms": 500.076336,
+  "previous_report_ms": 0.198374,
+  "wall_ms": 760.539865,
+  "cpu_ms": 5.275647999999819,
+  "stages": [
+    {
+      "name": "pose_snapshot",
+      "wall_ms": 0.043138,
+      "cpu_ms": 0.021375999999690976
+    },
+    {
+      "name": "grid_snapshot_and_pose_checks",
+      "wall_ms": 0.026048,
+      "cpu_ms": 0.025728000000526663
+    },
+    {
+      "name": "route_snapshot_and_grid_checks",
+      "wall_ms": 0.005313,
+      "cpu_ms": 0.0051199999998061685
+    },
+    {
+      "name": "goal_checks_and_publish",
+      "wall_ms": 0.355562,
+      "cpu_ms": 0.35756799999944633
+    },
+    {
+      "name": "waypoints_and_previous_reference",
+      "wall_ms": 0.019905,
+      "cpu_ms": 0.017920000000231084
+    },
+    {
+      "name": "preview_build",
+      "wall_ms": 0.032289,
+      "cpu_ms": 0.03264000000035594
+    },
+    {
+      "name": "preview_world_conversion",
+      "wall_ms": 0.007488,
+      "cpu_ms": 0.007135999999263731
+    },
+    {
+      "name": "preview_publish",
+      "wall_ms": 0.097059,
+      "cpu_ms": 0.0978240000004007
+    },
+    {
+      "name": "interval_extraction",
+      "wall_ms": 758.635169,
+      "cpu_ms": 3.409216000000015
+    },
+    {
+      "name": "terminal_targets_and_horizon_log",
+      "wall_ms": 0.041985,
+      "cpu_ms": 0.0254400000003443
+    },
+    {
+      "name": "interval_debug_publish",
+      "wall_ms": 0.26532,
+      "cpu_ms": 0.26723199999923963
+    },
+    {
+      "name": "road_turn_log",
+      "wall_ms": 0.004608,
+      "cpu_ms": 0.003264000000854139
+    },
+    {
+      "name": "solve_upper_full_call",
+      "wall_ms": 0.353322,
+      "cpu_ms": 0.3534079999999449
+    },
+    {
+      "name": "solver_metric_publish",
+      "wall_ms": 0.051042,
+      "cpu_ms": 0.050463999999919906
+    },
+    {
+      "name": "upper_trace_publish",
+      "wall_ms": 0.100515,
+      "cpu_ms": 0.1008959999999206
+    },
+    {
+      "name": "cleanup_before_legacy_timing",
+      "wall_ms": 0.454733,
+      "cpu_ms": 0.45590399999946385
+    },
+    {
+      "name": "legacy_timing_publish",
+      "wall_ms": 0.035297,
+      "cpu_ms": 0.034112000000277476
+    },
+    {
+      "name": "cycle_cleanup",
+      "wall_ms": 0.011072,
+      "cpu_ms": 0.01040000000011787
+    }
+  ]
+}

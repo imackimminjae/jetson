@@ -1,0 +1,10 @@
+file,scope,signals,method
+tables/trials.csv,"all latest30, running[start,end); coast separate",signals/s*_odometry.csv.gz; lower_trace; batch_status; upper_events,distance=sum consecutive XY steps; errors RMSE/max over error-valid control modes; rates use explicit nominal/elapsed definitions
+tables/scenario_summary.csv,"all latest30, per scenario",tables/trials.csv + concatenated valid lower samples,sample-weighted error RMSE; runner outcome counts; no success-only filtering
+tables/runtime_statistics.csv,running and entire_bag separately; all-called and success separately,upper_stage_timing; upper_events; lower_trace,"NumPy linear quantiles .5/.95/.99 and observed max; >period strictly; missing values excluded, n disclosed"
+tables/plan_interval_checks.csv.gz,valid published-plan cycles in running,"upper_events selected corridor endpoints, planned_world",lateral scalar projection; reject below -0.001m; guard-tail excluded; not collision/road containment
+tables/event_counts_by_scope.csv,running and entire_bag,upper_events and lower_trace modes,"per-cycle/message counts, not independent episodes"
+tables/output_rate_exceedances.csv,"consecutive running samples in same attempt, 0<dt<.3","lower_trace command26, delta_prev29, mode12",abs(delta_command)/dt >1.0471975512+1e-4rad/s; categorize reference change vs nominal step tolerance
+tables/grid_and_state_rates.csv,running and entire_bag,grid receipt and odom receipt times,average receive rate=number intervals/sum within-phase spans; not inverse median interval
+tables/exit_and_road_results.csv,all latest30,map trajectories + route + outcomes,manual geometric exit observation separate from unavailable independent road containment
+tables/applied_settings.csv,latest 3 execution configs,effective_config + recorded parameter_events,all applied launch values; only corroborated events labeled as such

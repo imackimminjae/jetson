@@ -1,0 +1,56 @@
+{
+  "topic_counts": {
+    "/rosout": 1985,
+    "/parameter_events": 117,
+    "/bev/occupancy_grid": 24230,
+    "/debug/lower_mpc_trace": 6461,
+    "/debug/upper_stage_timing": 1292,
+    "/knu_batch/status": 1214,
+    "/motive/vehicle/odom_map": 19280,
+    "/knu_batch/active_route": 11,
+    "/planner/goal_reached": 1298,
+    "/planner/lower_reference_path/with_arclength": 918,
+    "/controller/reset": 20,
+    "/navigation/global_path": 10,
+    "/debug/upper_interval_info": 1277,
+    "/debug/upper_interval_centering_state": 1277,
+    "/debug/upper_miqp_trace": 1277,
+    "/debug/upper_branch_event": 1278
+  },
+  "raw_sample_checks": {
+    "/debug/lower_mpc_trace": 6461,
+    "/motive/vehicle/odom_map": 19280
+  },
+  "grid_metadata": [
+    {
+      "values": [
+        128,
+        128,
+        0.3125,
+        0.0,
+        -20.0,
+        "Vehicle"
+      ],
+      "count": 24230
+    }
+  ],
+  "first_grid_values": {
+    "0": 610,
+    "100": 15774
+  },
+  "grid_zero_stamp_count": 24230,
+  "grid_count": 24230,
+  "mosaic_frames": 790,
+  "mosaic_sample_interval_s": 0.75,
+  "mosaic_pixel_stride": 2,
+  "mosaic_resolution_m": 0.5,
+  "grid_receive_interval_s": {
+    "n": 24229,
+    "median": 0.023827075958251953,
+    "p95": 0.0647677898406982,
+    "p99": 0.08357622146606487,
+    "maximum": 0.14916443824768066
+  },
+  "lower_paths": 918,
+  "bev_source_timing_recorded": false
+}

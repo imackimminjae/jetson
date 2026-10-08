@@ -1,0 +1,36 @@
+file,fields,units,frame_and_time,meaning,origin
+signals/s*_odometry.csv.gz,receive_s,"s, Unix epoch",recorder host ROS/wall time,bag receipt,direct
+signals/s*_odometry.csv.gz,header_ros_s,"s, Unix epoch",bridge/node clock; not sensor acquisition,message header,direct
+signals/s*_odometry.csv.gz,"x_map_m,y_map_m,z_map_m",m,reanchored map; planar ENU convention,EKF output converted and reanchored; not independent truth,direct
+signals/s*_odometry.csv.gz,yaw_scalar_rad,rad,"map +X, positive about +Z",orientation.z scalar; do not quaternion-decode,direct
+signals/s*_odometry.csv.gz,"vx_map_mps,vy_map_mps",m/s,map axes (custom bridge convention),finite differences with magnitude LPF alpha .4,direct
+signals/s*_lower_trace.csv.gz,stamp_ros_s,"s, Unix epoch",node clock at trace publication,not control callback entry,direct
+signals/s*_lower_trace.csv.gz,"x_map_m,y_map_m,yaw_scalar_rad,speed_mps","m,m,rad,m/s",latest cached map state,can be stale in neutral; not measured ground truth,direct
+signals/s*_lower_trace.csv.gz,"lateral_error_m,body_heading_error_rad","m,rad",nearest dense lower-path point and tangent,retain only qp_valid OR error_feedback_available; neutral placeholder zeros excluded,direct
+signals/s*_lower_trace.csv.gz,output_command_rad_equivalent,rad-equivalent,ROS steering sign,virtual_steer_norm × .35; command not wheel measurement,direct
+signals/s*_lower_trace.csv.gz,"mpc_first_command_rad,selected_command_rad,delta_prev_rate_reference_rad,last_applied_command_rad",rad command,controller sign,QP output / before filter / rate reference / command history; not measurements,direct
+signals/s*_lower_trace.csv.gz,estimated_effective_steering_rad,rad estimated,internal actuator model,not measured steering,direct
+signals/s*_lower_trace.csv.gz,"applied_steer_norm,virtual_steer_norm,mavlink_steering_norm",dimensionless,respective output channel signs,MAVLink transmitted sign is opposite ROS; see source/HANDOFF,direct
+signals/s*_lower_trace.csv.gz,"virtual_throttle,virtual_brake,mavlink_throttle_norm",dimensionless,command channel,virtual brake does not establish active PX4 braking,direct
+signals/s*_lower_trace.csv.gz,solver_only_ms,ms,steady_clock,solve_problem enter→return; NaN if uncalled,direct
+signals/s*_lower_trace.csv.gz,build_to_solver_return_ms,ms,steady_clock,"solveTrackingMpc entry→solver return; excludes validation, command construction/publication and other callback work",direct
+signals/s*_lower_trace.csv.gz,"nearest_dense_index,qp_valid,fallback_mode,error_feedback_available",index / flag / enum,none,"modes 0 QP,1 previous sequence,2 hold,3 neutral invalid,4 goal OR supervisor stop,5 error feedback",direct
+signals/s*_lower_trace.csv.gz,"objective,reference_curvature_per_m","scaled cost,1/m",lower reference,objective implementation units; curvature diagnostic only,direct
+signals/s*_lower_trace.csv.gz,"actuator_model_enabled,actuator_delay_s,actuator_tau_s,point_to_rear_axle_m,command_scale_rad","flag,s,s,m,rad/unit",controller model,actual model parameters in trace,direct
+signals/s*_upper_events.jsonl.gz,"t_start,t_emit,receive_s","s, Unix epoch",planner ROS clock / recorder clock,cycle entry / JSON creation / bag receipt,direct
+signals/s*_upper_events.jsonl.gz,"preview_world,planned_world,published_world,retained_world,intervals_world",m,map,preview carries previous plan; published can truncate guarded tail; intervals are processed lateral slabs,direct
+signals/s*_upper_events.jsonl.gz,"selected_corridors,candidate_counts,plan_seq,source_mode",index/count,per cycle,not persistent road or branch IDs; source_mode 1 nominal fallback,direct
+signals/s*_upper_events.jsonl.gz,solver_time_ms,ms,steady_clock,"sum of actual solve_problem calls, enumeration and polishing included",direct
+signals/s*_upper_stage_timing.jsonl.gz,"wall_ms,cpu_ms,stages,start_interval_ms,previous_report_ms",ms,steady_clock / CLOCK_THREAD_CPUTIME_ID,full planner body through local cleanup; own report cost arrives on next cycle,direct
+tables/s*_cycle_times.csv.gz,cycle_including_report_ms,ms,two matched consecutive cycle_seq,wall_ms[current]+previous_report_ms[next]; not callback queue delay; last sample may be missing,reconstructed
+signals/s*_grid_times.csv.gz,"receive_s,header_s",s,recorder clock / source header,all observed grid stamps are zero; image age and source latency unavailable,direct
+scenes/*grid.npz,grid,occupancy integer,"Vehicle x forward y left; res .3125m; origin(0,-20)",0 or1 drivable at threshold1; values>1 non-drivable; negative unknown,selected direct frame
+scenes/*road_mosaic.npz,"road_votes,votes",count,post-hoc map .5m cells,"grid every .75s, pixel stride2, pose interpolated between receive times; for visualization only",reconstructed
+signals/s*_lower_paths.jsonl.gz,"receive_s,header_s,frame,xy,s","s,s,frame,m,m",map; path generation header,"recorded atomic PathWithArcLength, no synthetic lower path",direct
+signals/s*_waypoints.csv,"index,x_map_m,y_map_m","index,m,m",map,recorded global_path; latest cohorts bias disabled,direct
+signals/s*_B.csv.gz,"B_before_m,B_m,threshold_m,candidate_m,candidate_step,candidate_interval","m,m,m,m,index,index",interval algorithm,"diagnostics, not physical road width measurement",direct
+signals/s*_batch_status.jsonl.gz,"phase_stamp_sec,phase,index,sequence",s/enum/index,runner ROS clock,running..coasting defines primary performance interval,direct
+tables/plan_interval_checks.csv.gz,"lateral_slab_margin_m,violation_m",m,selected processed interval axis in map,"projection test, 1mm tolerance, guarded tail excluded; not footprint clearance",reconstructed
+tables/trials.csv,"observed_distance_running_m,observed_distance_through_coast_m",m,recorded EKF trajectory,sum consecutive 2D odom sample distances within phase; includes estimation noise,reconstructed
+tables/trials.csv,"lateral_rmse_m,body_heading_rmse_rad","m,rad",lower path reference,unweighted sample RMSE over error-valid command modes during running; moving subset separately,reconstructed
+signals/*rosout*.csv*,"receive_s,name,level,msg",s/string/enum,recorder clock,recorded node messages; may be throttled; do not count warnings as exact event counts,direct

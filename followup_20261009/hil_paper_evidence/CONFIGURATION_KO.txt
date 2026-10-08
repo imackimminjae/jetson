@@ -1,0 +1,105 @@
+HIL 실제 구성·설정과 증거 수준
+
+증거 구분
+  A: 해당 주행 원본 bag/시작 로그/manifest/effective_config에서 확인.
+  B: 같은 시스템의 과거 보드 응답 또는 제공된 소스 사본에서 확인; 해당 주행 당시 재캡처 없음.
+  C: 분석 당시 호스트 조회값; 주행별 하드웨어/소프트웨어 스냅샷으로 간주하지 않음.
+전체 적용 파라미터: tables/applied_settings.csv. 세 배치 effective_config 원본은 configs/.
+YAML과 실제 parameter_events가 겹치는 S1 113, S2 86, S3 112개 값은 모두 일치.
+parameter_events는 늦은 구독으로 일부 초기 파라미터가 빠져 있으므로 완전한 런타임 dump라고 하지 않는다.
+시작 로그와 lower trace가 rate/dt/N/휠베이스/명령 환산/actuator tau 등을 추가 확인한다.
+
+물리 요소 / 가상 요소
+  실제 연산 호스트: imac-desktop. 현재 장치 식별은 NVIDIA Jetson Orin Nano
+  Engineering Reference Developer Kit Super, aarch64 6 CPU, MemTotal 7,802,732kB(C).
+  주행 시작 로그의 host 이름은 같지만 전력 모드·클럭·온도·부하 로그는 해당 주행에 없음.
+  OS: Ubuntu 22.04.5 LTS, kernel 5.15.148-tegra, L4T R36.4.7(C).
+  ROS 2 Humble; 현재 rclcpp 16.0.19 및 rosbag2-storage-mcap 0.15.16 패키지(C).
+  실물 보드: 과거 USB ver all에서 CUAV_7_NANO, STM32H7 계열,
+  PX4 1.16.1, git 94cb2012792b2ae89f0b147cfee53ee31ae550be,
+  NuttX 11.0.0(B). 10월8일 실행별 firmware image/hash·전체 보드 파라미터 dump는 없음.
+  과거 simulator_sih status는 'Running Ackermann Rover (no-slip; original input; timeout 0.5s)'(B).
+  차량 운동과 가상 센서의 생성은 PX4 SIH 측 구성이다. Isaac 차량을 실물 차량으로 부르지 않는다.
+  Isaac Sim 도로·차량·카메라 장면과 외부 BEV 생성기는 가상 환경/영상 처리 부분이다.
+  Isaac 호스트 사양·OS·버전·USD stage·scene units·정확한 pose 적용 Graph는 미확보.
+  전체 실험 화면 및 주요 하드웨어 사진은 해당 실험과 연결된 파일을 확보하지 못했다.
+  figures/00_HIL_configuration은 소스·설정으로 그린 기능도이며 사진/실험 화면이 아니다.
+
+실제 데이터 흐름
+  1. PX4 SIH 가상 차량/센서 → PX4 EKF LOCAL_POSITION_NED + ATTITUDE.
+  2. MAVProxy를 거쳐 UDP 14541 → px4_ekf_bridge. ENU 변환 뒤 yaw_scalar PoseStamped를
+     /px4/sih/odom에 발행. 토픽 이름에 sih가 있어도 위치·자세는 EKF 출력이며 truth가 아니다.
+     HIL_STATE_QUATERNION은 heading guard 비교용. truth로 상태를 대체하지 않는다.
+  3. px4_odom_map_bridge가 시나리오 시작점·방향으로 매 회 좌표 정렬하고
+     /motive/vehicle/odom_map 발행. Motive라는 토픽 이름이 실측 모션캡처를 뜻하지 않는다.
+     enable_motive_pose_input=false. 외부 실물 센서 입력을 계측했다고 주장하지 않는다.
+     속도는 정렬 위치 유한차분에서 계산하고 크기에 alpha=0.4 LPF.
+  4. 가상 장면의 RGB를 평면 BEV로 변환해 occupancy grid를 공급.
+  5. upper가 SD-map waypoint와 이전 계획에서 이어지는 참조, 격자 구간으로 계획.
+  6. sparse 계획을 조밀한 하위 경로+arclength로 발행 → lower QP 추종.
+  7. 정규화 조향/스로틀을 UDP 14540에서 MAVProxy peer에 전달 → 기존 USB/serial → 보드.
+     도달 상태가 다시 1~3으로 되돌아온다. 실제 도로 차량의 운동 계측이 아니다.
+  ROS_DOMAIN_ID=1(A). ROS 메시지 통신은 ROS 2/DDS; 해당 RMW 구현·QoS 전체 snapshot은 미확보.
+  MAVLink backend=mavlink_udp, source system 245, target 1:1, 두 bridge component 190/191(A).
+  MAVProxy peer 127.0.0.1의 임시 포트가 시작 로그에 확인됨(A).
+  기존 직렬 소유 /dev/ttyACM0은 인수인계 기록(B); YAML의 baud=921600은 UDP 접속에서는
+  실제 직렬 baud를 입증하지 않는다. 주행 중 실제 직렬 link 속도는 별도 미확보.
+
+솔버와 구현
+  upper: 이진 구간 선택을 갖는 MIQP 구성. 후보 조합<=256이면 모든 조합을 연속 QP로
+  풀어 유효 비용을 비교하는 direct corridor 경로. 그 이상이면 MIQP 경로.
+  최신 3배치 전체 기록의 조합 최대 S1 120/S2 160/S3 192로 모두 256 이하.
+  따라서 이번 실측을 '매 주기 branch-and-bound 실행'이라고 설명하면 안 된다.
+  lower: 연속 QP. vendor DAQP 소스 CMake 버전 0.7.2. mpclib_vendor 표기 버전은 0.0.0.
+  run manifest의 설치 실행 파일 SHA와 현재 파일 SHA는 일치. 해당 값은
+  sources/run_hash_vs_current.csv에 보존. DAQP 독립 런타임 버전 출력/빌드 commit은 미확보.
+
+실제 공통 적용값(A)
+  축척: scale_mode=fullscale, 위치 scale=1.0; 좌표·길이의 계산 단위 m.
+  휠베이스 2.8m, 계획기의 길이 4.7m, 하위 추종점→뒤축 1.4m.
+  차량 폭·Isaac collision mesh 크기·USD metersPerUnit는 미확보.
+  target speed 6m/s; 실제 속도는 signals/ 및 그림에 별도 제시.
+  upper: 2Hz/500ms, dt=0.75s, 최대 N=6 → 최대 명목 4.5s, 목표속도에서 27m.
+         실제 horizon은 구간 가용성에 따라 줄어들므로 모든 주기가 N=6인 것은 아님.
+  lower: 10Hz/100ms, dt=0.1s, N=30 → 3s.
+  조향 명령 제한 upper/lower 0.3rad, 명령 정규화 환산 0.35rad/unit.
+  가속도 제한 1m/s², lower 명령 변화율 설정 1.0471975512rad/s.
+  actuator model=true, delay=0s, tau=0.74s. 실제 actuator 측정값이 아니라 제어기 모델 값.
+  enable_output_filter=false; 관련 필터 설정값을 적용된 필터 효과로 해석하지 않음.
+  lower Q lateral=1, Q heading=0.5, R steer=0.3, R delta-steer=150.
+  upper lambda_position=1, lambda_relative_turn=0.6, R dv=1, R dpsi=3.
+  position_scale_m=10, relative_turn_scale_rad=0.3490658504.
+  terminal_position_weight_multiplier=1000, terminal_buffer_max_turn_rad=0.3490658504.
+  turn_preview_steps=2, turn_weight_growth=2, cumulative_increment=true,
+  branch_turn_window_at_split=true, branch_turn_target_absolute=true, split_continuity=6.75m.
+  MIQP big M=100, feasibility tolerance=0.001,
+  diagonal regularization=1e-10, binary diagonal regularization=1e-4.
+  soft_ratio=0.7, B relative-length factor=1.5, boundary margin=2m.
+  측면 tail 보호 true. 12m soft 폭 상한은 보류 상태이며 본 자료 작성 중 적용하지 않음.
+  nominal fallback=true, 폭4.5m, fallback max centering length9m.
+  upper input timeout=3s, lower pose timeout=.6s, lower path timeout=1.5s.
+  lower hold-last-valid=0, path-change reset threshold=.75m, pose-jump reset threshold=1m.
+  waypoint switch eps=10m, max distance15m; upper 자체 goal_stop_distance=-1.
+  목표 접근·정지는 배치 감독 조건으로 구분해야 함.
+  throttle max=.35, virtual brake max=.7, speed kp=.08/ki=.01/feedforward=.05.
+  주행 시작/중단·ARM은 사용자가 수행한 기존 기록의 일부이며 본 분석은 명령을 보내지 않음.
+
+Occupancy grid
+  A: 모든 최신 73,250 프레임의 메타데이터는 128×128, resolution=.3125m,
+     origin=(0,-20), frame=Vehicle. 전방 x=[0,40), 좌우 y=[-20,20).
+     모든 외곽 범위가 유효 도로라는 뜻은 아니다. 도로/비도로/미관측을 구분.
+  A: grid_value_threshold=1, positive_is_drivable=false. 0~1 도로, 음수 미관측,
+     1 초과는 비주행 가능으로 해석한다. 실제 첫 프레임 값 목록은 각 input_inventory.json.
+  A: header stamp는 모든 프레임 0. 수신 시간은 있고 원 RGB 취득 시각은 없음.
+     전체 bag 수신 간격 중앙값 S1 23.83ms/S2 23.96ms/S3 24.42ms.
+     이것의 역수를 일정한 발행 주기라고 부르지 않는다.
+     수신 평균율/최대 간격·표본은 tables/grid_and_state_rates.csv 및 input_inventory.json.
+     주행 중/배치 전체 최대 간격은 범위가 달라 구분해야 한다.
+  B: 제공된 rgb_to_occupancy.original.cpp는 CameraInfo와 camera←Vehicle TF로
+     ground plane homography, RGB warp, 회색값 도로 분류·흰선 제외,
+     close/open morphology, 선택적 최대 연결 영역 유지, resize 및 격자 발행 방식이다.
+     그 소스의 기본 RGB 문턱·kernel·ROI·카메라 높이를 실제 주행 적용값으로 쓰지 않았다.
+     제공 소스 기본 grid 64×64/ROI22.5m는 실제 bag의128×128/40m와도 다르다.
+     외부 생성기의 실제 YAML/빌드 hash/카메라 calibration은 미확보.
+  A: /debug/bev_source_timing은 녹화 요청 목록에는 있지만 실제 bag 메시지가 0개.
+     따라서 외부 영상 처리 시간, RGB→grid 지연, 원 영상·TF 동기 상태는 평가 불가.

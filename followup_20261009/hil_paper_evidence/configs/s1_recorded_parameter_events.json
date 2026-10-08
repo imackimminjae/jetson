@@ -1,0 +1,821 @@
+[
+  {
+    "receive_s": 1791451425.5380592,
+    "node": "/lower_tracking_mpc_node",
+    "values": {
+      "qos_overrides./parameter_events.publisher.durability": "volatile"
+    }
+  },
+  {
+    "receive_s": 1791451425.5400288,
+    "node": "/lower_tracking_mpc_node",
+    "values": {
+      "wheelbase": 2.8
+    }
+  },
+  {
+    "receive_s": 1791451425.5401106,
+    "node": "/lower_tracking_mpc_node",
+    "values": {
+      "input_timeout_sec": 0.6
+    }
+  },
+  {
+    "receive_s": 1791451425.5403485,
+    "node": "/lower_tracking_mpc_node",
+    "values": {
+      "odom_topic": "/motive/vehicle/odom_map"
+    }
+  },
+  {
+    "receive_s": 1791451425.5404053,
+    "node": "/lower_tracking_mpc_node",
+    "values": {
+      "odom_yaw_is_orientation_z": true
+    }
+  },
+  {
+    "receive_s": 1791451425.5404415,
+    "node": "/lower_tracking_mpc_node",
+    "values": {
+      "pose_stamped_topic": "/px4/sih/odom"
+    }
+  },
+  {
+    "receive_s": 1791451425.5404913,
+    "node": "/lower_tracking_mpc_node",
+    "values": {
+      "pose_stamped_yaw_is_orientation_z": true
+    }
+  },
+  {
+    "receive_s": 1791451425.540524,
+    "node": "/lower_tracking_mpc_node",
+    "values": {
+      "pose_x_offset": 0.0
+    }
+  },
+  {
+    "receive_s": 1791451425.5405514,
+    "node": "/lower_tracking_mpc_node",
+    "values": {
+      "pose_y_offset": 0.0
+    }
+  },
+  {
+    "receive_s": 1791451425.5405784,
+    "node": "/upper_planner_node",
+    "values": {
+      "upper_prediction_dt_sec": 0.75
+    }
+  },
+  {
+    "receive_s": 1791451425.5406022,
+    "node": "/lower_tracking_mpc_node",
+    "values": {
+      "pose_yaw_offset_rad": 0.0
+    }
+  },
+  {
+    "receive_s": 1791451425.5406263,
+    "node": "/lower_tracking_mpc_node",
+    "values": {
+      "pose_position_scale": 1.0
+    }
+  },
+  {
+    "receive_s": 1791451425.5406501,
+    "node": "/lower_tracking_mpc_node",
+    "values": {
+      "pose_swap_xy": false
+    }
+  },
+  {
+    "receive_s": 1791451425.5408177,
+    "node": "/lower_tracking_mpc_node",
+    "values": {
+      "pose_invert_x": false
+    }
+  },
+  {
+    "receive_s": 1791451425.5408685,
+    "node": "/lower_tracking_mpc_node",
+    "values": {
+      "pose_invert_y": false
+    }
+  },
+  {
+    "receive_s": 1791451425.5408978,
+    "node": "/lower_tracking_mpc_node",
+    "values": {
+      "pose_speed_lpf_alpha": 1.0
+    }
+  },
+  {
+    "receive_s": 1791451425.5409226,
+    "node": "/lower_tracking_mpc_node",
+    "values": {
+      "pose_max_dt_for_speed": 0.5
+    }
+  },
+  {
+    "receive_s": 1791451425.5409477,
+    "node": "/lower_tracking_mpc_node",
+    "values": {
+      "lower_reference_path_topic": "/planner/lower_reference_path"
+    }
+  },
+  {
+    "receive_s": 1791451425.5409744,
+    "node": "/upper_planner_node",
+    "values": {
+      "upper_preview_steps": 6
+    }
+  },
+  {
+    "receive_s": 1791451425.5414472,
+    "node": "/lower_tracking_mpc_node",
+    "values": {
+      "lower_use_path_arclength": true
+    }
+  },
+  {
+    "receive_s": 1791451425.5415123,
+    "node": "/upper_planner_node",
+    "values": {
+      "preview_limit_to_grid_extent": true
+    }
+  },
+  {
+    "receive_s": 1791451425.5415463,
+    "node": "/lower_tracking_mpc_node",
+    "values": {
+      "goal_reached_topic": "/planner/goal_reached"
+    }
+  },
+  {
+    "receive_s": 1791451425.542458,
+    "node": "/lower_tracking_mpc_node",
+    "values": {
+      "steer_norm_lpf_alpha": 0.7
+    }
+  },
+  {
+    "receive_s": 1791451425.5425158,
+    "node": "/lower_tracking_mpc_node",
+    "values": {
+      "steer_sign": 1.0
+    }
+  },
+  {
+    "receive_s": 1791451425.5426755,
+    "node": "/lower_tracking_mpc_node",
+    "values": {
+      "target_speed_mps": 6.0
+    }
+  },
+  {
+    "receive_s": 1791451425.5428715,
+    "node": "/lower_tracking_mpc_node",
+    "values": {
+      "target_accel_mps2": 0.0
+    }
+  },
+  {
+    "receive_s": 1791451425.5429134,
+    "node": "/lower_tracking_mpc_node",
+    "values": {
+      "speed_kp": 0.08
+    }
+  },
+  {
+    "receive_s": 1791451425.5429447,
+    "node": "/upper_planner_node",
+    "values": {
+      "preview_restore_full_horizon": true
+    }
+  },
+  {
+    "receive_s": 1791451425.5429857,
+    "node": "/lower_tracking_mpc_node",
+    "values": {
+      "speed_ki": 0.01
+    }
+  },
+  {
+    "receive_s": 1791451425.5430152,
+    "node": "/lower_tracking_mpc_node",
+    "values": {
+      "throttle_ff": 0.05
+    }
+  },
+  {
+    "receive_s": 1791451425.543039,
+    "node": "/lower_tracking_mpc_node",
+    "values": {
+      "max_virtual_throttle": 0.35
+    }
+  },
+  {
+    "receive_s": 1791451425.5430653,
+    "node": "/lower_tracking_mpc_node",
+    "values": {
+      "max_virtual_brake": 0.7
+    }
+  },
+  {
+    "receive_s": 1791451425.5430887,
+    "node": "/lower_tracking_mpc_node",
+    "values": {
+      "speed_deadband_mps": 0.03
+    }
+  },
+  {
+    "receive_s": 1791451425.5431147,
+    "node": "/lower_tracking_mpc_node",
+    "values": {
+      "speed_integral_limit": 30.0
+    }
+  },
+  {
+    "receive_s": 1791451425.543892,
+    "node": "/lower_tracking_mpc_node",
+    "values": {
+      "pwm_min": 1000
+    }
+  },
+  {
+    "receive_s": 1791451425.5439413,
+    "node": "/lower_tracking_mpc_node",
+    "values": {
+      "pwm_center": 1500
+    }
+  },
+  {
+    "receive_s": 1791451425.5439723,
+    "node": "/lower_tracking_mpc_node",
+    "values": {
+      "pwm_max": 2000
+    }
+  },
+  {
+    "receive_s": 1791451425.5439975,
+    "node": "/lower_tracking_mpc_node",
+    "values": {
+      "throttle_pwm_min": 1500
+    }
+  },
+  {
+    "receive_s": 1791451425.5440216,
+    "node": "/upper_planner_node",
+    "values": {
+      "lower_prediction_dt_sec": 0.1
+    }
+  },
+  {
+    "receive_s": 1791451425.5440438,
+    "node": "/lower_tracking_mpc_node",
+    "values": {
+      "throttle_pwm_max": 2000
+    }
+  },
+  {
+    "receive_s": 1791451425.5444274,
+    "node": "/lower_tracking_mpc_node",
+    "values": {
+      "steering_pwm_min": 1000
+    }
+  },
+  {
+    "receive_s": 1791451425.5444703,
+    "node": "/lower_tracking_mpc_node",
+    "values": {
+      "steering_pwm_max": 2000
+    }
+  },
+  {
+    "receive_s": 1791451425.5444992,
+    "node": "/lower_tracking_mpc_node",
+    "values": {
+      "pixhawk_output_backend": "mavlink_udp"
+    }
+  },
+  {
+    "receive_s": 1791451425.544524,
+    "node": "/lower_tracking_mpc_node",
+    "values": {
+      "mavlink_enable": true
+    }
+  },
+  {
+    "receive_s": 1791451425.545446,
+    "node": "/lower_tracking_mpc_node",
+    "values": {
+      "mavlink_hold_last_valid_sec": 0.0
+    }
+  },
+  {
+    "receive_s": 1791451425.5455046,
+    "node": "/lower_tracking_mpc_node",
+    "values": {
+      "mavlink_auto_manual_mode": false
+    }
+  },
+  {
+    "receive_s": 1791451425.545537,
+    "node": "/lower_tracking_mpc_node",
+    "values": {
+      "mavlink_auto_arm": false
+    }
+  },
+  {
+    "receive_s": 1791451425.5455618,
+    "node": "/lower_tracking_mpc_node",
+    "values": {
+      "mavlink_force_arm": false
+    }
+  },
+  {
+    "receive_s": 1791451425.545586,
+    "node": "/lower_tracking_mpc_node",
+    "values": {
+      "mavlink_disarm_on_shutdown": true
+    }
+  },
+  {
+    "receive_s": 1791451425.5456092,
+    "node": "/lower_tracking_mpc_node",
+    "values": {
+      "mavlink_throttle_max_norm": 0.35
+    }
+  },
+  {
+    "receive_s": 1791451425.5456326,
+    "node": "/lower_tracking_mpc_node",
+    "values": {
+      "mavlink_steer_sign": 1.0
+    }
+  },
+  {
+    "receive_s": 1791451425.5456553,
+    "node": "/lower_tracking_mpc_node",
+    "values": {
+      "mavlink_keepalive_rate_hz": 20.0
+    }
+  },
+  {
+    "receive_s": 1791451425.5456798,
+    "node": "/upper_planner_node",
+    "values": {
+      "target_speed_mps": 6.0
+    }
+  },
+  {
+    "receive_s": 1791451425.5457046,
+    "node": "/lower_tracking_mpc_node",
+    "values": {
+      "batch_supervision": true
+    }
+  },
+  {
+    "receive_s": 1791451425.5461848,
+    "node": "/upper_planner_node",
+    "values": {
+      "wheelbase": 2.8
+    }
+  },
+  {
+    "receive_s": 1791451425.5462546,
+    "node": "/upper_planner_node",
+    "values": {
+      "vehicle_length_m": 4.7
+    }
+  },
+  {
+    "receive_s": 1791451425.5463414,
+    "node": "/upper_planner_node",
+    "values": {
+      "bev_forward_m": 40.0
+    }
+  },
+  {
+    "receive_s": 1791451425.5468652,
+    "node": "/upper_planner_node",
+    "values": {
+      "max_steering_angle_rad": 0.3
+    }
+  },
+  {
+    "receive_s": 1791451425.5469785,
+    "node": "/upper_planner_node",
+    "values": {
+      "a_max_mps2": 1.0
+    }
+  },
+  {
+    "receive_s": 1791451425.5470443,
+    "node": "/upper_planner_node",
+    "values": {
+      "miqp_big_m": 100.0
+    }
+  },
+  {
+    "receive_s": 1791451425.5471046,
+    "node": "/upper_planner_node",
+    "values": {
+      "position_scale_m": 10.0
+    }
+  },
+  {
+    "receive_s": 1791451425.5472775,
+    "node": "/upper_planner_node",
+    "values": {
+      "relative_turn_scale_rad": 0.3490658504
+    }
+  },
+  {
+    "receive_s": 1791451425.5498435,
+    "node": "/upper_planner_node",
+    "values": {
+      "terminal_buffer_max_turn_rad": 0.3490658504
+    }
+  },
+  {
+    "receive_s": 1791451425.5502357,
+    "node": "/upper_planner_node",
+    "values": {
+      "terminal_position_weight_multiplier": 1000.0
+    }
+  },
+  {
+    "receive_s": 1791451425.550782,
+    "node": "/upper_planner_node",
+    "values": {
+      "upper_r_dpsi": 3.0
+    }
+  },
+  {
+    "receive_s": 1791451425.5508564,
+    "node": "/upper_planner_node",
+    "values": {
+      "normalize_upper_input_cost": false
+    }
+  },
+  {
+    "receive_s": 1791451425.550915,
+    "node": "/upper_planner_node",
+    "values": {
+      "turn_preview_steps": 2
+    }
+  },
+  {
+    "receive_s": 1791451425.551005,
+    "node": "/upper_planner_node",
+    "values": {
+      "upper_cumulative_increment_model": true
+    }
+  },
+  {
+    "receive_s": 1791451425.5510612,
+    "node": "/upper_planner_node",
+    "values": {
+      "branch_turn_window_at_split": true
+    }
+  },
+  {
+    "receive_s": 1791451425.551118,
+    "node": "/upper_planner_node",
+    "values": {
+      "branch_turn_target_absolute": true
+    }
+  },
+  {
+    "receive_s": 1791451425.551238,
+    "node": "/upper_planner_node",
+    "values": {
+      "branch_split_continuity_m": 6.75
+    }
+  },
+  {
+    "receive_s": 1791451425.5512938,
+    "node": "/upper_planner_node",
+    "values": {
+      "turn_weight_growth": 2.0
+    }
+  },
+  {
+    "receive_s": 1791451425.5513506,
+    "node": "/upper_planner_node",
+    "values": {
+      "miqp_diagonal_regularization": 1e-10
+    }
+  },
+  {
+    "receive_s": 1791451425.5514321,
+    "node": "/upper_planner_node",
+    "values": {
+      "miqp_binary_diagonal_regularization": 0.0001
+    }
+  },
+  {
+    "receive_s": 1791451425.551483,
+    "node": "/upper_planner_node",
+    "values": {
+      "miqp_feasibility_tolerance": 0.001
+    }
+  },
+  {
+    "receive_s": 1791451425.5515332,
+    "node": "/upper_planner_node",
+    "values": {
+      "wp_switch_eps": 10.0
+    }
+  },
+  {
+    "receive_s": 1791451425.5515943,
+    "node": "/upper_planner_node",
+    "values": {
+      "wp_switch_max_distance_m": 15.0
+    }
+  },
+  {
+    "receive_s": 1791451425.5516813,
+    "node": "/upper_planner_node",
+    "values": {
+      "goal_stop_distance_m": -1.0
+    }
+  },
+  {
+    "receive_s": 1791451425.5518684,
+    "node": "/upper_planner_node",
+    "values": {
+      "enable_waypoint_bias": false
+    }
+  },
+  {
+    "receive_s": 1791451425.5520577,
+    "node": "/upper_planner_node",
+    "values": {
+      "waypoint_x_bias_m": 0.0
+    }
+  },
+  {
+    "receive_s": 1791451425.5522642,
+    "node": "/upper_planner_node",
+    "values": {
+      "waypoint_y_bias_m": 0.0
+    }
+  },
+  {
+    "receive_s": 1791451425.552464,
+    "node": "/upper_planner_node",
+    "values": {
+      "waypoint_yaw_bias_rad": 0.17
+    }
+  },
+  {
+    "receive_s": 1791451425.5526717,
+    "node": "/upper_planner_node",
+    "values": {
+      "input_timeout_sec": 3.0
+    }
+  },
+  {
+    "receive_s": 1791451425.5528781,
+    "node": "/upper_planner_node",
+    "values": {
+      "require_grid_map": true
+    }
+  },
+  {
+    "receive_s": 1791451425.553081,
+    "node": "/upper_planner_node",
+    "values": {
+      "skip_front_clipped_k1_lane_constraints": false
+    }
+  },
+  {
+    "receive_s": 1791451425.5532677,
+    "node": "/upper_planner_node",
+    "values": {
+      "grid_origin_x_override_enabled": false
+    }
+  },
+  {
+    "receive_s": 1791451425.5543263,
+    "node": "/upper_planner_node",
+    "values": {
+      "grid_origin_x_override_m": 0.0
+    }
+  },
+  {
+    "receive_s": 1791451425.5554972,
+    "node": "/upper_planner_node",
+    "values": {
+      "use_csv_global_path": false
+    }
+  },
+  {
+    "receive_s": 1791451425.5555727,
+    "node": "/upper_planner_node",
+    "values": {
+      "csv_global_path_file": "local_map.csv"
+    }
+  },
+  {
+    "receive_s": 1791451425.559806,
+    "node": "/upper_planner_node",
+    "values": {
+      "preview_interval_boundary_margin_m": 2.0
+    }
+  },
+  {
+    "receive_s": 1791451425.5599456,
+    "node": "/upper_planner_node",
+    "values": {
+      "preview_interval_enable_nominal_fallback": true
+    }
+  },
+  {
+    "receive_s": 1791451425.5600524,
+    "node": "/upper_planner_node",
+    "values": {
+      "preview_interval_nominal_fallback_width_m": 4.5
+    }
+  },
+  {
+    "receive_s": 1791451425.5601468,
+    "node": "/upper_planner_node",
+    "values": {
+      "preview_interval_fallback_max_centering_length_m": 9.0
+    }
+  },
+  {
+    "receive_s": 1791451425.5617645,
+    "node": "/upper_planner_node",
+    "values": {
+      "preview_interval_debug": false
+    }
+  },
+  {
+    "receive_s": 1791451425.5657556,
+    "node": "/upper_planner_node",
+    "values": {
+      "state_input_type": "odom"
+    }
+  },
+  {
+    "receive_s": 1791451425.5666971,
+    "node": "/upper_planner_node",
+    "values": {
+      "pose_position_scale": 1.0
+    }
+  },
+  {
+    "receive_s": 1791451425.5668013,
+    "node": "/upper_planner_node",
+    "values": {
+      "pose_swap_xy": false
+    }
+  },
+  {
+    "receive_s": 1791451425.5668643,
+    "node": "/upper_planner_node",
+    "values": {
+      "pose_invert_x": false
+    }
+  },
+  {
+    "receive_s": 1791451425.566925,
+    "node": "/upper_planner_node",
+    "values": {
+      "pose_invert_y": false
+    }
+  },
+  {
+    "receive_s": 1791451425.5669913,
+    "node": "/upper_planner_node",
+    "values": {
+      "pose_speed_lpf_alpha": 1.0
+    }
+  },
+  {
+    "receive_s": 1791451425.567043,
+    "node": "/upper_planner_node",
+    "values": {
+      "pose_max_dt_for_speed": 0.5
+    }
+  },
+  {
+    "receive_s": 1791451425.56717,
+    "node": "/upper_planner_node",
+    "values": {
+      "global_path_topic": "/navigation/global_path"
+    }
+  },
+  {
+    "receive_s": 1791451425.5673416,
+    "node": "/upper_planner_node",
+    "values": {
+      "grid_map_topic": "/bev/occupancy_grid"
+    }
+  },
+  {
+    "receive_s": 1791451425.5674062,
+    "node": "/upper_planner_node",
+    "values": {
+      "upper_sparse_path_topic": "/planner/upper_path_sparse"
+    }
+  },
+  {
+    "receive_s": 1791451425.579753,
+    "node": "/upper_planner_node",
+    "values": {
+      "lower_reference_path_topic": "/planner/lower_reference_path"
+    }
+  },
+  {
+    "receive_s": 1791451425.5804527,
+    "node": "/upper_planner_node",
+    "values": {
+      "goal_reached_topic": "/planner/goal_reached"
+    }
+  },
+  {
+    "receive_s": 1791451425.580587,
+    "node": "/upper_planner_node",
+    "values": {
+      "path_frame_id": "map"
+    }
+  },
+  {
+    "receive_s": 1791451430.443246,
+    "node": "/px4_odom_map_bridge",
+    "values": {
+      "route_name": "scenario1"
+    }
+  },
+  {
+    "receive_s": 1791451495.245453,
+    "node": "/px4_odom_map_bridge",
+    "values": {
+      "route_name": "scenario1"
+    }
+  },
+  {
+    "receive_s": 1791451559.4457066,
+    "node": "/px4_odom_map_bridge",
+    "values": {
+      "route_name": "scenario1"
+    }
+  },
+  {
+    "receive_s": 1791451624.244653,
+    "node": "/px4_odom_map_bridge",
+    "values": {
+      "route_name": "scenario1"
+    }
+  },
+  {
+    "receive_s": 1791451688.6455464,
+    "node": "/px4_odom_map_bridge",
+    "values": {
+      "route_name": "scenario1"
+    }
+  },
+  {
+    "receive_s": 1791451752.842612,
+    "node": "/px4_odom_map_bridge",
+    "values": {
+      "route_name": "scenario1"
+    }
+  },
+  {
+    "receive_s": 1791451818.1431165,
+    "node": "/px4_odom_map_bridge",
+    "values": {
+      "route_name": "scenario1"
+    }
+  },
+  {
+    "receive_s": 1791451883.245413,
+    "node": "/px4_odom_map_bridge",
+    "values": {
+      "route_name": "scenario1"
+    }
+  },
+  {
+    "receive_s": 1791451947.8458927,
+    "node": "/px4_odom_map_bridge",
+    "values": {
+      "route_name": "scenario1"
+    }
+  },
+  {
+    "receive_s": 1791452007.7450945,
+    "node": "/px4_odom_map_bridge",
+    "values": {
+      "route_name": "scenario1"
+    }
+  }
+]

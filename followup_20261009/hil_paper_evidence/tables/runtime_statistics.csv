@@ -1,0 +1,67 @@
+scenario,run_id,scope,metric,unit,period_ms,n,median,p95,p99,maximum,max_scope_slack_ms,above_period_count,above_period_percent,deadline_interpretation
+1,20261008_182344_scenario1_0cefb5,running,upper_solver_all_called,ms,500,787,0.128675,0.9926718999999987,1.8710016599999997,3.3930979999999984,496.606902,0,0.0,not full cycle deadline statistic
+1,20261008_182344_scenario1_0cefb5,running,upper_solver_success,ms,500,780,0.1286595,0.9657995999999993,1.8119131000000028,2.5724160000000005,497.427584,0,0.0,not full cycle deadline statistic
+1,20261008_182344_scenario1_0cefb5,running,upper_full_solve_call,ms,500,787,0.337865,1.5877187999999978,2.7110445399999996,4.820673,495.179327,0,0.0,not full cycle deadline statistic
+1,20261008_182344_scenario1_0cefb5,running,upper_cycle_excluding_own_report,ms,500,787,2.877194,5.808189699999997,7.730577359999996,10.353187,489.646813,0,0.0,measured upper cycle body; excludes callback queue delay
+1,20261008_182344_scenario1_0cefb5,running,upper_cycle_including_report,ms,500,787,3.201976,6.365634999999996,8.475351579999998,13.361921,486.638079,0,0.0,measured upper cycle body; excludes callback queue delay
+1,20261008_182344_scenario1_0cefb5,running,upper_cycle_success_including_report,ms,500,780,3.2013030000000002,6.323469499999997,8.484286870000005,13.361921,486.638079,0,0.0,measured upper cycle body; excludes callback queue delay
+1,20261008_182344_scenario1_0cefb5,running,upper_start_interval,ms,500,787,500.01885,500.3082508,500.73031302,502.990356,-2.9903560000000198,444,56.416772554002534,not full cycle deadline statistic
+1,20261008_182344_scenario1_0cefb5,running,lower_solver_all_called,ms,100,3928,0.30444,0.4445992499999998,1.1268094000000002,4.770787,95.229213,0,0.0,not full cycle deadline statistic
+1,20261008_182344_scenario1_0cefb5,running,lower_solver_success,ms,100,3928,0.30444,0.4445992499999998,1.1268094000000002,4.770787,95.229213,0,0.0,not full cycle deadline statistic
+1,20261008_182344_scenario1_0cefb5,running,lower_build_to_solver_return_all_called,ms,100,3928,0.8403735,1.1893137999999983,2.055303610000001,5.328946,94.671054,0,0.0,not full cycle deadline statistic
+1,20261008_182344_scenario1_0cefb5,running,lower_build_to_solver_return_success,ms,100,3928,0.8403735,1.1893137999999983,2.055303610000001,5.328946,94.671054,0,0.0,not full cycle deadline statistic
+1,20261008_182344_scenario1_0cefb5,entire_bag,upper_solver_all_called,ms,500,1277,0.127811,0.6837056000000007,1.6823308799999999,3.3930979999999984,496.606902,0,0.0,not full cycle deadline statistic
+1,20261008_182344_scenario1_0cefb5,entire_bag,upper_solver_success,ms,500,908,0.128915,0.8337906999999996,1.7654764999999975,2.5724160000000005,497.427584,0,0.0,not full cycle deadline statistic
+1,20261008_182344_scenario1_0cefb5,entire_bag,upper_full_solve_call,ms,500,1277,0.346571,1.2005768000000008,2.49951524,5.009471,494.990529,0,0.0,not full cycle deadline statistic
+1,20261008_182344_scenario1_0cefb5,entire_bag,upper_cycle_excluding_own_report,ms,500,1292,2.775696,5.551499700000001,7.3431688599999925,10.709761,489.290239,0,0.0,measured upper cycle body; excludes callback queue delay
+1,20261008_182344_scenario1_0cefb5,entire_bag,upper_cycle_including_report,ms,500,1291,3.0722240000000003,6.1013435000000005,8.470245699999989,13.826133,486.173867,0,0.0,measured upper cycle body; excludes callback queue delay
+1,20261008_182344_scenario1_0cefb5,entire_bag,upper_cycle_success_including_report,ms,500,908,3.2013030000000002,6.20414565,8.455267809999999,13.361921,486.638079,0,0.0,measured upper cycle body; excludes callback queue delay
+1,20261008_182344_scenario1_0cefb5,entire_bag,upper_start_interval,ms,500,1291,500.016082,500.307356,500.7571963,502.990356,-2.9903560000000198,726,56.23547637490317,not full cycle deadline statistic
+1,20261008_182344_scenario1_0cefb5,entire_bag,lower_solver_all_called,ms,100,3928,0.30444,0.4445992499999998,1.1268094000000002,4.770787,95.229213,0,0.0,not full cycle deadline statistic
+1,20261008_182344_scenario1_0cefb5,entire_bag,lower_solver_success,ms,100,3928,0.30444,0.4445992499999998,1.1268094000000002,4.770787,95.229213,0,0.0,not full cycle deadline statistic
+1,20261008_182344_scenario1_0cefb5,entire_bag,lower_build_to_solver_return_all_called,ms,100,3928,0.8403735,1.1893137999999983,2.055303610000001,5.328946,94.671054,0,0.0,not full cycle deadline statistic
+1,20261008_182344_scenario1_0cefb5,entire_bag,lower_build_to_solver_return_success,ms,100,3928,0.8403735,1.1893137999999983,2.055303610000001,5.328946,94.671054,0,0.0,not full cycle deadline statistic
+2,20261008_183952_scenario2_5524df,running,upper_solver_all_called,ms,500,929,0.138084,0.5930489999999999,1.4186833600000002,5.060912999999998,494.93908700000003,0,0.0,not full cycle deadline statistic
+2,20261008_183952_scenario2_5524df,running,upper_solver_success,ms,500,784,0.1408685,0.6371373499999995,1.4383791699999955,5.060912999999998,494.93908700000003,0,0.0,not full cycle deadline statistic
+2,20261008_183952_scenario2_5524df,running,upper_full_solve_call,ms,500,929,0.363338,1.2046305999999993,2.564685000000001,6.177206,493.822794,0,0.0,not full cycle deadline statistic
+2,20261008_183952_scenario2_5524df,running,upper_cycle_excluding_own_report,ms,500,1245,3.24323,6.452612599999999,9.242560599999985,760.539865,-260.53986499999996,1,0.08032128514056225,measured upper cycle body; excludes callback queue delay
+2,20261008_183952_scenario2_5524df,running,upper_cycle_including_report,ms,500,1245,3.549959,7.020116599999998,9.904937799999983,760.81184,-260.81183999999996,1,0.08032128514056225,measured upper cycle body; excludes callback queue delay
+2,20261008_183952_scenario2_5524df,running,upper_cycle_success_including_report,ms,500,784,3.4091389999999997,6.562781699999998,8.91502735,13.335206,486.66479400000003,0,0.0,measured upper cycle body; excludes callback queue delay
+2,20261008_183952_scenario2_5524df,running,upper_start_interval,ms,500,1245,500.015895,500.359552,501.04060391999997,761.305072,-261.305072,725,58.23293172690763,not full cycle deadline statistic
+2,20261008_183952_scenario2_5524df,running,lower_solver_all_called,ms,100,4052,0.30421699999999996,0.3880994499999999,1.0294289099999998,2.313252,97.686748,0,0.0,not full cycle deadline statistic
+2,20261008_183952_scenario2_5524df,running,lower_solver_success,ms,100,4052,0.30421699999999996,0.3880994499999999,1.0294289099999998,2.313252,97.686748,0,0.0,not full cycle deadline statistic
+2,20261008_183952_scenario2_5524df,running,lower_build_to_solver_return_all_called,ms,100,4052,0.8450005,1.1386276,1.953749799999995,3.928787,96.071213,0,0.0,not full cycle deadline statistic
+2,20261008_183952_scenario2_5524df,running,lower_build_to_solver_return_success,ms,100,4052,0.8450005,1.1386276,1.953749799999995,3.928787,96.071213,0,0.0,not full cycle deadline statistic
+2,20261008_183952_scenario2_5524df,entire_bag,upper_solver_all_called,ms,500,1086,0.139604,0.5620797499999999,1.4146147000000007,5.060912999999998,494.93908700000003,0,0.0,not full cycle deadline statistic
+2,20261008_183952_scenario2_5524df,entire_bag,upper_solver_success,ms,500,857,0.140996,0.6212411999999995,1.4166847199999995,5.060912999999998,494.93908700000003,0,0.0,not full cycle deadline statistic
+2,20261008_183952_scenario2_5524df,entire_bag,upper_full_solve_call,ms,500,1086,0.367163,1.19233975,2.4395772000000107,6.177206,493.822794,0,0.0,not full cycle deadline statistic
+2,20261008_183952_scenario2_5524df,entire_bag,upper_cycle_excluding_own_report,ms,500,1461,3.196927,6.241432,8.994026000000016,760.539865,-260.53986499999996,1,0.06844626967830253,measured upper cycle body; excludes callback queue delay
+2,20261008_183952_scenario2_5524df,entire_bag,upper_cycle_including_report,ms,500,1460,3.5003580000000003,6.715071649999999,9.698366030000004,760.81184,-260.81183999999996,1,0.0684931506849315,measured upper cycle body; excludes callback queue delay
+2,20261008_183952_scenario2_5524df,entire_bag,upper_cycle_success_including_report,ms,500,857,3.403237,6.550157399999998,8.921144199999999,13.335206,486.66479400000003,0,0.0,measured upper cycle body; excludes callback queue delay
+2,20261008_183952_scenario2_5524df,entire_bag,upper_start_interval,ms,500,1460,500.015485,500.35368065,501.0480385,761.305072,-261.305072,863,59.10958904109589,not full cycle deadline statistic
+2,20261008_183952_scenario2_5524df,entire_bag,lower_solver_all_called,ms,100,4052,0.30421699999999996,0.3880994499999999,1.0294289099999998,2.313252,97.686748,0,0.0,not full cycle deadline statistic
+2,20261008_183952_scenario2_5524df,entire_bag,lower_solver_success,ms,100,4052,0.30421699999999996,0.3880994499999999,1.0294289099999998,2.313252,97.686748,0,0.0,not full cycle deadline statistic
+2,20261008_183952_scenario2_5524df,entire_bag,lower_build_to_solver_return_all_called,ms,100,4052,0.8450005,1.1386276,1.953749799999995,3.928787,96.071213,0,0.0,not full cycle deadline statistic
+2,20261008_183952_scenario2_5524df,entire_bag,lower_build_to_solver_return_success,ms,100,4052,0.8450005,1.1386276,1.953749799999995,3.928787,96.071213,0,0.0,not full cycle deadline statistic
+3,20261008_185426_scenario3_72c4df,running,upper_solver_all_called,ms,500,660,0.14683649999999998,1.2328844,2.007674919999998,4.780265999999999,495.219734,0,0.0,not full cycle deadline statistic
+3,20261008_185426_scenario3_72c4df,running,upper_solver_success,ms,500,654,0.1478285,1.2335468000000003,2.010831640000001,4.780265999999999,495.219734,0,0.0,not full cycle deadline statistic
+3,20261008_185426_scenario3_72c4df,running,upper_full_solve_call,ms,500,660,0.378284,1.9755341999999991,2.8905893999999996,6.662088,493.337912,0,0.0,not full cycle deadline statistic
+3,20261008_185426_scenario3_72c4df,running,upper_cycle_excluding_own_report,ms,500,660,3.187367,6.414567599999999,8.161021519999998,12.703133,487.296867,0,0.0,measured upper cycle body; excludes callback queue delay
+3,20261008_185426_scenario3_72c4df,running,upper_cycle_including_report,ms,500,660,3.5175805,6.990370649999998,8.976538629999988,13.082056,486.917944,0,0.0,measured upper cycle body; excludes callback queue delay
+3,20261008_185426_scenario3_72c4df,running,upper_cycle_success_including_report,ms,500,654,3.517289,7.002182550000001,8.99785321000001,13.082056,486.917944,0,0.0,measured upper cycle body; excludes callback queue delay
+3,20261008_185426_scenario3_72c4df,running,upper_start_interval,ms,500,660,500.01458,500.25311185,501.00023708,502.288877,-2.2888770000000136,385,58.333333333333336,not full cycle deadline statistic
+3,20261008_185426_scenario3_72c4df,running,lower_solver_all_called,ms,100,3292,0.307402,0.4844655999999995,1.1607273800000004,2.418409,97.581591,0,0.0,not full cycle deadline statistic
+3,20261008_185426_scenario3_72c4df,running,lower_solver_success,ms,100,3292,0.307402,0.4844655999999995,1.1607273800000004,2.418409,97.581591,0,0.0,not full cycle deadline statistic
+3,20261008_185426_scenario3_72c4df,running,lower_build_to_solver_return_all_called,ms,100,3292,0.838793,1.2722363999999995,2.085715800000002,3.159364,96.840636,0,0.0,not full cycle deadline statistic
+3,20261008_185426_scenario3_72c4df,running,lower_build_to_solver_return_success,ms,100,3292,0.838793,1.2722363999999995,2.085715800000002,3.159364,96.840636,0,0.0,not full cycle deadline statistic
+3,20261008_185426_scenario3_72c4df,entire_bag,upper_solver_all_called,ms,500,1144,0.135572,0.9951312999999999,1.7492349899999988,4.780265999999999,495.219734,0,0.0,not full cycle deadline statistic
+3,20261008_185426_scenario3_72c4df,entire_bag,upper_solver_success,ms,500,707,0.141861,1.208524499999997,1.9830208399999971,4.780265999999999,495.219734,0,0.0,not full cycle deadline statistic
+3,20261008_185426_scenario3_72c4df,entire_bag,upper_full_solve_call,ms,500,1144,0.3982365,1.6313081999999997,2.6727111999999997,6.662088,493.337912,0,0.0,not full cycle deadline statistic
+3,20261008_185426_scenario3_72c4df,entire_bag,upper_cycle_excluding_own_report,ms,500,1160,2.876966,5.795046,7.52542133000002,12.703133,487.296867,0,0.0,measured upper cycle body; excludes callback queue delay
+3,20261008_185426_scenario3_72c4df,entire_bag,upper_cycle_including_report,ms,500,1159,3.1841909999999998,6.604398799999996,8.22618342000002,13.082056,486.917944,0,0.0,measured upper cycle body; excludes callback queue delay
+3,20261008_185426_scenario3_72c4df,entire_bag,upper_cycle_success_including_report,ms,500,707,3.541489,7.015963099999997,9.164817419999979,13.082056,486.917944,0,0.0,measured upper cycle body; excludes callback queue delay
+3,20261008_185426_scenario3_72c4df,entire_bag,upper_start_interval,ms,500,1159,500.013273,500.2533187,501.01853824,502.426327,-2.4263270000000148,668,57.63589301121657,not full cycle deadline statistic
+3,20261008_185426_scenario3_72c4df,entire_bag,lower_solver_all_called,ms,100,3292,0.307402,0.4844655999999995,1.1607273800000004,2.418409,97.581591,0,0.0,not full cycle deadline statistic
+3,20261008_185426_scenario3_72c4df,entire_bag,lower_solver_success,ms,100,3292,0.307402,0.4844655999999995,1.1607273800000004,2.418409,97.581591,0,0.0,not full cycle deadline statistic
+3,20261008_185426_scenario3_72c4df,entire_bag,lower_build_to_solver_return_all_called,ms,100,3292,0.838793,1.2722363999999995,2.085715800000002,3.159364,96.840636,0,0.0,not full cycle deadline statistic
+3,20261008_185426_scenario3_72c4df,entire_bag,lower_build_to_solver_return_success,ms,100,3292,0.838793,1.2722363999999995,2.085715800000002,3.159364,96.840636,0,0.0,not full cycle deadline statistic

@@ -1,0 +1,149 @@
+ROS 2 + Isaac Sim + PX4 SIH Ackermann 자율주행 후속 작업 인계
+
+사용자 의도
+- 갈림길 정분기를 유지하면서 주행 중 지그재그/조향 반전을 줄이고 싶다.
+- 기존 이론의 파라미터 조정 또는 최소 이론 수정만 원한다. 큰 구조 변경은 원하지 않는다.
+- 오분기가 생기는 수정은 일단 보류하라고 명시했다.
+- EKF–SIH 헤딩 차이는 이제 분석 우선순위에서 제외하라고 했다.
+- 최신 논점: 두 번째 분기 전 B가 커져 넓은 단면까지 soft 축소되고 조향이 늦어지는지,
+  이를 작은 수정으로 해결할 수 있는지. 12 m soft 폭 상한을 시험했으나 회귀로 보류했다.
+- 다음 세션에서는 기존 자료와 실제 코드를 먼저 읽고 오프라인 검증을 이어간다.
+
+환경/작업 제한
+- 작업공간 /home/imac/ros2_ws. 운영 ROS_DOMAIN_ID=1.
+- 오프라인 ROS_DOMAIN_ID=177, ROS_LOCALHOST_ONLY=1. ROS_LOG_DIR도 시험 폴더로 지정.
+- 임의 주행, ARM/강제 ARM, 보드 파라미터 초기화, GPS 검사 비활성화, 펌웨어 업로드 금지.
+- 기존 MAVProxy가 /dev/ttyACM0을 소유(--out14540/14541). 추가 직렬 연결 금지.
+- 일부 ROS PoseStamped/Odometry orientation.z는 yaw 라디안이다. 일반 quaternion 변환 금지.
+  MAVLink HIL_STATE_QUATERNION은 실제 quaternion이므로 별개다.
+- COMMAND_LONG 187 param2는 ROS 조향과 반대 부호. 기존 분석은 ROS rad = -param2 * 0.35.
+- 활성 mav.tlog는 MAVProxy 재시작 시 덮어써짐. 분석할 구간은 먼저 복사/해시 보존.
+- 변경 전 백업/해시/이후 변경 덮어쓰기 방지 복원 스크립트 필수.
+- 확정 사실, 강한 가설, 미검증을 구분. 여러 파라미터를 동시에 임의 변경하지 않는다.
+- 이 작업공간은 기존 수정/미추적 파일이 많다. git reset/checkout/일괄 복원으로 정리하지 않는다.
+- 다음 주행 자료는 출발 전부터 bag + 보존 tlog가 필요하며 시나리오/갈래/구간을 맞춰 비교한다.
+
+먼저 읽을 자료(모두 /home/imac/ros2_ws 기준)
+1. followup_20261006/soft_cap12_trial/RESULT.txt
+   마지막 독립 검증의 결론/제한/재실행 방법. summary.json, J2_decisions.json,
+   cap12_regression.png, trial.patch, baseline/sha256.json, restore.py도 있음.
+2. followup_20261006/zigzag_0505_0506/RESULT.txt
+   실제 주행 지그재그 원인 분석. latest_tracks.png, zigzag_timeline.png,
+   path_only_effect.png, B_soft_review.json, series.pkl, plan_events.json.
+3. followup_20261006/j2_soft/RESULT.txt
+   이전 soft 폭 상한 15/12/10 m 시험. 첫 추천 때 이 보고서를 놓쳤지만 이후 확인하고
+   soft_cap12_trial에서 새로 컴파일/재생하여 정분기 악화가 독립 재현됐다.
+4. followup_20261006/interval_consistency/RESULT.txt 및 near_consistency/RESULT.txt
+   근거리 고정 margin/축소 완화/B 한 주기 지연/이전 계획 비용 등 과거 보류안.
+   합성 장면 통과만으로 채택하면 안 됨. 실제 BEV 재생에서 오분기 사례가 있었다.
+5. followup_20261006/verify/VERIFY_RESULT.txt, drive_0137/RESULT.txt,
+   sc3_0141_0143/RESULT.txt, full_audit_20261003/RESULT.txt
+   최초 개선과 운영 검증. 오래된 설정을 현재 설정으로 착각하지 말 것.
+
+현재 디스크 설정과 과거 주행 설정을 반드시 구분
+- 인계 직전 디스크 YAML을 다시 확인했다. 실행 중 프로세스의 로드값을 조회한 것은 아니다.
+- src/virtual_control/config/tracking_control_split.yaml:
+  upper_planner_rate_hz=2.0, target_speed_mps=6.0,
+  upper_r_dpsi=2.0, preview_interval_soft_ratio=0.8,
+  wp_switch_eps=15.0, wp_switch_max_distance_m=20.0,
+  lower_rd_steering_rate=150.0, lower_steering_actuator_time_constant_sec=0.74,
+  upper_cumulative_increment_model=true, branch_turn_window_at_split=true,
+  branch_turn_target_absolute=true, branch_split_continuity_m=6.75,
+  preview_interval_relative_length_factor=1.5, boundary_margin=2.0.
+- 05:05/05:06 두 주행 당시 bag 설정: r_dpsi=3, soft_ratio=0.7, lower_rd=180,
+  rate=2 Hz, wp=15/20, tau=0.74, target_speed=6.
+- 마지막 시험의 current 설정 사본에도 soft_ratio=0.8이 포함돼 있다.
+  기존 RESULT의 설정 요약에 이 값이 빠져 있지만 실제 config_current.yaml로 계산했다.
+  current 결과를 r_dpsi만 바꾼 시험으로 해석하면 안 된다.
+- 현재 파일 7개는 soft_cap12_trial/baseline 해시와 모두 일치한다.
+  마지막 시험/인계 작업에서 운영 코드/YAML/설치 파일/프로세스를 변경하지 않았다.
+
+초기 개선 이력
+- 2026-10-03 하위 조향 응답 tau 0.05 -> 0.74 s. 당시 실제 tau 0.70~0.9 s와 맞춤.
+  최근 두 주행도 재식별 tau 0.71/0.73 s여서 이 큰 지연은 아직 남아 있다.
+  펌웨어 필터를 수정하면 tau를 재식별해야 한다. 펌웨어 원인 가설은 미확정.
+- 2026-10-06 상위 누적 증분 위치 모델 + 실제 split 위치 회전창 + 절대 회전 목표
+  + r_dpsi=3 묶음이 정분기 개선을 보였다. 개별 요소만 활성화한 회귀가 있었음.
+  현재 YAML의 r_dpsi=2를 처음 검증한 묶음과 동일하게 취급하지 말 것.
+- rollback/20261003_steering_response_model 및 rollback/20261006_upper_increment_model에
+  기존 복원 스크립트가 있지만 이후 파일 변경을 덮어쓰며 실행하지 말 것.
+
+실제 최신 분석 로그(이 목록 이후 새 bag이 생겼는지는 새 세션에서 확인)
+- drive_debug_20261006_050536_light: scenario1, 첫 분기 정상, 두 번째 북쪽 오분기.
+- drive_debug_20261006_050627_light: scenario1, 두 분기 정상/목표 도착, 후반 반복 지그재그.
+- 05:06 후반 150~190 m: 조향 포화30.8%, 지역경로 횡오차p95 0.99m,
+  조향 고역RMS4.74deg, 실제 속도중앙값6.24m/s.
+- 최신 두 주행의 조향 내부 추정과 SIH 유효 조향은 RMSE0.280/0.324deg.
+  큰 모델 불일치나 명령 단절이 이번 지그재그의 주원인이라는 근거는 없음.
+- 운영 하위 C++ 수치 계산으로 기록 명령325개를 최대3.1e-14deg 오차로 재현.
+  동일 차량 상태/직전 조향에서 경로만 바꾸면 조향 부호가 바뀜:
+  05:06:48.541 직전 경로 +8.13deg -> 새 경로 -3.35deg.
+  경로 교체가 조향 반전 원인 중 하나라는 직접 증거. 전체 진동의 상위 단독 원인 증명은 아님.
+- 첫 S자에서는 k1 선택 번호가0인 채 근거리 계획이 좌우 급변했다.
+  실제 회전 비용 창이1 -> 6 -> 1로 옮겨진 것도 관측. 인과 기여도 분리는 아직 안 됨.
+  upper_branch_event.branch_step(첫 다중 후보)와 upper_miqp_trace의 실제 비용 창을 혼동 금지.
+- 우회전 뒤 후보1개 구간에서도 원폭3.8 -> 1.52m, 6.0 -> 2.40m 축소가 참조를 밀어내고
+  반대쪽 근거리 계획 이동을 반복한 사례가 있음. 후보 번호 히스테리시스만으로 전부 해결 못 함.
+
+B/soft 코드와 확정 사실
+- src/virtual_control/src/tracking_control.cpp의 updateIntervalCentering/intervalTreatment를 읽을 것.
+- B는 정상 도로 물리폭의 확정 추정치가 아니라, 참조를 유일하게 포함하고 양 경계가 관측된
+  단면 중 최소 길이 후보로 갱신하는 내부 기준폭이다.
+- 후보 <=1.5*직전B 이면 B를 교체. 주기마다 상승이 누적될 수 있다.
+- 관측 단면 W<=1.5B이면 soft, nominal fallback 문턱은 별도9m.
+- soft=0.7이면 양쪽에0.3W씩 빼 최종0.4W, soft=0.8이면 최종0.6W.
+  soft라는 이름이지만 축소된 단면은 실제 QP 위치 제약이다.
+- soft OFF여도 min(2m,0.45W)의 경계 여유를 양쪽에서 뺀다.
+  따라서 아주 좁은 갈래는 soft OFF가 오히려 더 좁을 수도 있다.
+- relative_length_factor는 YAML에 있어도 validator가1.5를 고정 요구한다.
+- 05:06 B는11.3 ->13.5 ->14.1 ->14.6 ->15.3 ->17.8 ->20.0 ->5.9m.
+  원폭20m가8m로 줄어드는 것이 확인됨. 이것만이 늦은 조향의 단독 원인인지는 미확정.
+
+마지막 12 m 상한 시험: 이미 완료, 운영 미적용
+- 규칙: 관측 단면 soft 문턱=min(1.5B,12m), B 갱신/기타 비용은 유지.
+  fallback은 별도 규칙 유지. 운영 소스 사본만 빌드.
+- 6bag x bag당시/현재설정 x 상한OFF/12 x 재생방식2 = 1968회 상위 계산.
+- carried: 최초 참조/B는 기록에서 시작, 이후 새 계획/B를 다음 주기로 전달.
+- fixed: 매 주기 참조/B/waypoint pair를 기록값으로 고정.
+- 두 방식 모두 차량 자세와 BEV는 기록값 고정. 차량 폐루프나 실제 주행 결과 아님.
+- fixed+상한OFF+당시설정은 최신 두 bag 유효계획122개 중120개를1mm 내 재현,
+  전체124시점의 유효/실패 일치. BEV 수신 시각 정합에 작은 잔여 오차 존재.
+- 당시 설정/carried 결과:
+  050536: 북쪽이었던 세 주기에서 동쪽 계획 유지. 실주행 성공으로 계산하지 않는다.
+  050627: 05:06:51.906 기존 동쪽 -> 12m 상한 북쪽. 다음 세 주기도 북쪽 유지.
+    전체 재생 실패2 ->16. 다만 실제 기록된 차량은 동쪽으로 가므로 계획/차량 불일치 후
+    실패 증가를 실제 수정안 주행의 실패 횟수/정지 시간으로 해석하지 말 것.
+- 같은 05:06:51.906을 fixed 방식으로 계산하면 두 안 모두 동쪽.
+  참조와 B의 누적을 동시에 차단했으므로 둘 중 어느 하나만의 원인으로 단정 못 함.
+- carried에서 12m 안의 B는05:06:50.906에 약7m로 조기 감소.
+  05:06:51.906 k6 동쪽 원폭/허용폭: 기존2.7/1.08m, 수정2.0/0.80m.
+  같은 지도라도 이전 계획에서 만든 절단선이 바뀌어 원단면 자체가 달라진다.
+  k5/k6 선택0/0 ->1/1. 이 시점 회전창은 두 안 모두[3,4,5]로 같음.
+- 현재 설정 사본에서도 050627은 상한 유무 모두 북쪽 계획, 개선 확인 못 함.
+- 결론: 12m 폭 상한은 채택하지 않는다. 오분기 회귀로 추가 폐루프/실주행은 진행 안 함.
+
+다음 작업의 권장 시작점(아직 미실행, 해법 확정 아님)
+1. 새 자료가 없다면 기존 시험을 처음부터 반복하지 말고 050627의05:06:49~52초를 중심으로
+   이전 계획/참조 변화와 B 변화의 영향을 분리할 대조부터 설계한다.
+   필요하면 참조만 고정/B만 고정하는 진단으로 두 영향과 상호작용을 구분한다.
+2. 동시에 정확한 갈래 후보의 접근 가능성, 좁은 단면, 원격단면/회전 비용 창을 확인한다.
+   B가 커졌다는 사실과 분기 실패의 단독 원인 주장을 분리한다.
+3. 사용자가 요구한 범위 내에서 파라미터 하나 또는 최소 규칙 변경 하나씩 시험한다.
+   이번에 실패한 12m 상한을 그대로 운영에 설치하거나, 전역 soft 완화가 검증됐다고 말하지 않는다.
+4. 정분기 회귀가 없음을 먼저 확인한 뒤, 폐루프 조향 포화/좌우 반전/횡오차/속도를 비교한다.
+   기록된 자세 고정 재생의 실패/방향 개선만으로 차량 주행 성공이나 진동 개선을 주장하지 않는다.
+
+기타 미해결(이번 주제와 별개)
+- 수신 시각 차분 속도의 주기성/하위 표본 위상 편향.
+- 과거 하위 실행기2.74s 정지 원인 미확정(먼저 콜백/타이머 계측).
+- 급회전 감속, 목표 remaining=0 OR 판정, 지도 stamp0/카메라 투영 정합.
+- BEV 생성 원본은 이 PC 운영 작업공간에 없었고 사용자 제공 참고 사본:
+  /home/imac/.codex/attachments/2501702b-cbf2-49c7-b5da-7f85ee4a19eb/rgb_to_occupancy.cpp
+  실제 운영은 파라미터가 다를 수 있다. 첨부 코드와 운영 일치 확정 금지.
+
+빌드가 실제로 필요할 때(오프라인 회귀 통과 후 운영 반영 작업에 한함)
+colcon build --symlink-install --packages-select virtual_control --parallel-workers 1 --cmake-args -DBUILD_TESTING=ON
+설치 YAML은 소스 심볼릭 링크이므로 소스 YAML 수정도 운영 설정을 바꾸는 행위다.
+
+인계 확인 시각(KST): 2026-10-06T15:55:42.213731+09:00
+확인한 YAML SHA256: c6c3fae133f3da90723f9d3dfcab2698bfe7fc21aa5b6ef54530f04657b24f86

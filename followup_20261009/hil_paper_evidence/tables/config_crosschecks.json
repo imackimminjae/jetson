@@ -1,0 +1,1706 @@
+[
+  {
+    "scenario": 1,
+    "node": "px4_odom_map_bridge",
+    "parameter": "route_name",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "upper_planner_node",
+    "parameter": "bev_forward_m",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "upper_planner_node",
+    "parameter": "preview_interval_boundary_margin_m",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "upper_planner_node",
+    "parameter": "upper_prediction_dt_sec",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "upper_planner_node",
+    "parameter": "upper_preview_steps",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "upper_planner_node",
+    "parameter": "preview_limit_to_grid_extent",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "upper_planner_node",
+    "parameter": "preview_restore_full_horizon",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "upper_planner_node",
+    "parameter": "lower_prediction_dt_sec",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "upper_planner_node",
+    "parameter": "target_speed_mps",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "upper_planner_node",
+    "parameter": "max_steering_angle_rad",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "upper_planner_node",
+    "parameter": "a_max_mps2",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "upper_planner_node",
+    "parameter": "miqp_big_m",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "upper_planner_node",
+    "parameter": "position_scale_m",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "upper_planner_node",
+    "parameter": "relative_turn_scale_rad",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "upper_planner_node",
+    "parameter": "terminal_buffer_max_turn_rad",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "upper_planner_node",
+    "parameter": "terminal_position_weight_multiplier",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "upper_planner_node",
+    "parameter": "upper_r_dpsi",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "upper_planner_node",
+    "parameter": "normalize_upper_input_cost",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "upper_planner_node",
+    "parameter": "turn_preview_steps",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "upper_planner_node",
+    "parameter": "turn_weight_growth",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "upper_planner_node",
+    "parameter": "upper_cumulative_increment_model",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "upper_planner_node",
+    "parameter": "branch_turn_window_at_split",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "upper_planner_node",
+    "parameter": "branch_turn_target_absolute",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "upper_planner_node",
+    "parameter": "branch_split_continuity_m",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "upper_planner_node",
+    "parameter": "miqp_diagonal_regularization",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "upper_planner_node",
+    "parameter": "miqp_binary_diagonal_regularization",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "upper_planner_node",
+    "parameter": "miqp_feasibility_tolerance",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "upper_planner_node",
+    "parameter": "wp_switch_eps",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "upper_planner_node",
+    "parameter": "wp_switch_max_distance_m",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "upper_planner_node",
+    "parameter": "goal_stop_distance_m",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "upper_planner_node",
+    "parameter": "enable_waypoint_bias",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "upper_planner_node",
+    "parameter": "waypoint_x_bias_m",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "upper_planner_node",
+    "parameter": "waypoint_y_bias_m",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "upper_planner_node",
+    "parameter": "waypoint_yaw_bias_rad",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "upper_planner_node",
+    "parameter": "state_input_type",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "upper_planner_node",
+    "parameter": "pose_position_scale",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "upper_planner_node",
+    "parameter": "pose_swap_xy",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "upper_planner_node",
+    "parameter": "pose_invert_x",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "upper_planner_node",
+    "parameter": "pose_invert_y",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "upper_planner_node",
+    "parameter": "pose_speed_lpf_alpha",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "upper_planner_node",
+    "parameter": "pose_max_dt_for_speed",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "upper_planner_node",
+    "parameter": "input_timeout_sec",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "upper_planner_node",
+    "parameter": "require_grid_map",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "upper_planner_node",
+    "parameter": "skip_front_clipped_k1_lane_constraints",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "upper_planner_node",
+    "parameter": "global_path_topic",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "upper_planner_node",
+    "parameter": "grid_map_topic",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "upper_planner_node",
+    "parameter": "grid_origin_x_override_enabled",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "upper_planner_node",
+    "parameter": "grid_origin_x_override_m",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "upper_planner_node",
+    "parameter": "upper_sparse_path_topic",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "upper_planner_node",
+    "parameter": "lower_reference_path_topic",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "upper_planner_node",
+    "parameter": "goal_reached_topic",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "upper_planner_node",
+    "parameter": "path_frame_id",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "upper_planner_node",
+    "parameter": "use_csv_global_path",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "upper_planner_node",
+    "parameter": "csv_global_path_file",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "upper_planner_node",
+    "parameter": "preview_interval_enable_nominal_fallback",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "upper_planner_node",
+    "parameter": "preview_interval_nominal_fallback_width_m",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "upper_planner_node",
+    "parameter": "preview_interval_fallback_max_centering_length_m",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "upper_planner_node",
+    "parameter": "preview_interval_debug",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "lower_use_path_arclength",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "input_timeout_sec",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "odom_topic",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "odom_yaw_is_orientation_z",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "pose_stamped_topic",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "pose_stamped_yaw_is_orientation_z",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "pose_x_offset",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "pose_y_offset",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "pose_yaw_offset_rad",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "pose_position_scale",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "pose_swap_xy",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "pose_invert_x",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "pose_invert_y",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "pose_speed_lpf_alpha",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "pose_max_dt_for_speed",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "lower_reference_path_topic",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "goal_reached_topic",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "steer_norm_lpf_alpha",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "steer_sign",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "target_speed_mps",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "target_accel_mps2",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "speed_kp",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "speed_ki",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "throttle_ff",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "max_virtual_throttle",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "max_virtual_brake",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "speed_deadband_mps",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "speed_integral_limit",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "pwm_min",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "pwm_center",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "pwm_max",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "throttle_pwm_min",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "throttle_pwm_max",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "steering_pwm_min",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "steering_pwm_max",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "pixhawk_output_backend",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "mavlink_enable",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "mavlink_hold_last_valid_sec",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "mavlink_auto_manual_mode",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "mavlink_auto_arm",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "mavlink_force_arm",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "mavlink_disarm_on_shutdown",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "mavlink_throttle_max_norm",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "mavlink_steer_sign",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "mavlink_keepalive_rate_hz",
+    "equal": true
+  },
+  {
+    "scenario": 1,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "batch_supervision",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "px4_odom_map_bridge",
+    "parameter": "route_name",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "upper_planner_node",
+    "parameter": "scale_mode",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "upper_planner_node",
+    "parameter": "upper_planner_rate_hz",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "upper_planner_node",
+    "parameter": "upper_prediction_dt_sec",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "upper_planner_node",
+    "parameter": "upper_preview_steps",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "upper_planner_node",
+    "parameter": "preview_limit_to_grid_extent",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "upper_planner_node",
+    "parameter": "preview_grid_reserve_steps",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "upper_planner_node",
+    "parameter": "a_max_mps2",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "upper_planner_node",
+    "parameter": "branch_turn_target_absolute",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "upper_planner_node",
+    "parameter": "branch_split_continuity_m",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "upper_planner_node",
+    "parameter": "odom_yaw_is_orientation_z",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "upper_planner_node",
+    "parameter": "pose_invert_x",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "upper_planner_node",
+    "parameter": "pose_invert_y",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "upper_planner_node",
+    "parameter": "pose_speed_lpf_alpha",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "upper_planner_node",
+    "parameter": "pose_max_dt_for_speed",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "upper_planner_node",
+    "parameter": "global_path_topic",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "upper_planner_node",
+    "parameter": "grid_map_topic",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "upper_planner_node",
+    "parameter": "upper_sparse_path_topic",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "upper_planner_node",
+    "parameter": "lower_reference_path_topic",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "upper_planner_node",
+    "parameter": "goal_reached_topic",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "upper_planner_node",
+    "parameter": "path_frame_id",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "lower_controller_rate_hz",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "lower_prediction_dt_sec",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "lower_prediction_steps",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "lower_q_lateral",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "lower_q_heading",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "lower_r_steering",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "lower_rd_steering_rate",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "lower_max_steering_angle_rad",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "lower_steering_command_scale_rad",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "lower_reference_point_to_rear_axle_m",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "lower_max_steering_rate_radps",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "publish_pwm",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "pwm_min",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "pwm_center",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "pwm_max",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "throttle_pwm_min",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "throttle_pwm_max",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "steering_pwm_min",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "steering_pwm_max",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "pixhawk_output_backend",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "mavlink_enable",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "mavlink_bind_ip",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "mavlink_send_neutral_on_invalid",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "mavlink_hold_last_valid_sec",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "mavlink_auto_manual_mode",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "mavlink_auto_arm",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "mavlink_force_arm",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "mavlink_disarm_on_shutdown",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "mavlink_throttle_max_norm",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "mavlink_steer_sign",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "mavlink_keepalive_rate_hz",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "lower_tracking_mpc_node",
+    "parameter": "batch_supervision",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "knu_batch_runner",
+    "parameter": "stop_sec",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "knu_batch_runner",
+    "parameter": "movement_m",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "knu_batch_runner",
+    "parameter": "off_route_m",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "knu_batch_runner",
+    "parameter": "off_route_sec",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "knu_batch_runner",
+    "parameter": "reverse_m",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "knu_batch_runner",
+    "parameter": "reverse_sec",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "knu_batch_runner",
+    "parameter": "no_progress_sec",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "knu_batch_runner",
+    "parameter": "goal_radius_m",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "knu_batch_runner",
+    "parameter": "finish_remaining_m",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "knu_batch_runner",
+    "parameter": "min_progress_ratio",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "knu_batch_runner",
+    "parameter": "route_timeout_sec",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "knu_batch_runner",
+    "parameter": "startup_timeout_sec",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "knu_batch_runner",
+    "parameter": "setup_timeout_sec",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "knu_batch_runner",
+    "parameter": "pose_loss_sec",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "knu_batch_runner",
+    "parameter": "grid_loss_sec",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "knu_batch_runner",
+    "parameter": "pose_fresh_sec",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "knu_batch_runner",
+    "parameter": "grid_fresh_sec",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "knu_batch_runner",
+    "parameter": "routes",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "knu_batch_runner",
+    "parameter": "repeat_count",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "knu_batch_runner",
+    "parameter": "require_recorder",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "knu_batch_runner",
+    "parameter": "reset_upper_each_attempt",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "knu_batch_runner",
+    "parameter": "recorder_timeout_sec",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "knu_batch_runner",
+    "parameter": "stationary_timeout_sec",
+    "equal": true
+  },
+  {
+    "scenario": 2,
+    "node": "knu_batch_runner",
+    "parameter": "results_directory",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "px4_odom_map_bridge",
+    "parameter": "route_name",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "scale_mode",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "bev_forward_m",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "upper_planner_rate_hz",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "upper_prediction_dt_sec",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "upper_preview_steps",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "preview_limit_to_grid_extent",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "preview_grid_reserve_steps",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "preview_restore_full_horizon",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "guard_side_boundary_terminal_loss",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "lower_prediction_dt_sec",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "lower_min_path_spacing_m",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "target_speed_mps",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "max_steering_angle_rad",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "a_max_mps2",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "miqp_big_m",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "position_scale_m",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "relative_turn_scale_rad",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "lambda_position",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "lambda_relative_turn",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "terminal_buffer_max_turn_rad",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "terminal_position_weight_multiplier",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "upper_r_dv",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "upper_r_dpsi",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "normalize_upper_input_cost",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "turn_preview_steps",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "turn_weight_growth",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "upper_cumulative_increment_model",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "branch_turn_window_at_split",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "branch_turn_target_absolute",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "branch_split_continuity_m",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "miqp_diagonal_regularization",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "miqp_binary_diagonal_regularization",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "miqp_feasibility_tolerance",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "wp_switch_eps",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "wp_switch_max_distance_m",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "goal_stop_distance_m",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "enable_waypoint_bias",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "waypoint_x_bias_m",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "waypoint_y_bias_m",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "waypoint_yaw_bias_rad",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "state_input_type",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "odom_topic",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "odom_yaw_is_orientation_z",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "pose_stamped_topic",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "pose_stamped_yaw_is_orientation_z",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "pose_x_offset",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "pose_y_offset",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "pose_yaw_offset_rad",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "pose_position_scale",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "pose_invert_x",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "pose_invert_y",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "pose_speed_lpf_alpha",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "pose_max_dt_for_speed",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "input_timeout_sec",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "require_grid_map",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "skip_front_clipped_k1_lane_constraints",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "global_path_topic",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "grid_map_topic",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "grid_origin_x_override_enabled",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "grid_origin_x_override_m",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "upper_sparse_path_topic",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "lower_reference_path_topic",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "goal_reached_topic",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "path_frame_id",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "use_csv_global_path",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "csv_global_path_file",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "allow_topic_path_override_when_csv_loaded",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "reset_waypoint_on_path_update",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "grid_value_threshold",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "grid_positive_is_drivable",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "expected_grid_frame_id",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "require_grid_frame_match",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "preview_min_target_distance_m",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "preview_line_sample_m",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "preview_interval_nominal_fallback_width_m",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "preview_interval_fallback_max_centering_length_m",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "preview_interval_debug",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "upper_planner_node",
+    "parameter": "enable_batch_mission_reset",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "knu_batch_runner",
+    "parameter": "stop_sec",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "knu_batch_runner",
+    "parameter": "movement_m",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "knu_batch_runner",
+    "parameter": "off_route_m",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "knu_batch_runner",
+    "parameter": "off_route_sec",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "knu_batch_runner",
+    "parameter": "reverse_m",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "knu_batch_runner",
+    "parameter": "reverse_sec",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "knu_batch_runner",
+    "parameter": "no_progress_sec",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "knu_batch_runner",
+    "parameter": "goal_radius_m",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "knu_batch_runner",
+    "parameter": "finish_remaining_m",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "knu_batch_runner",
+    "parameter": "min_progress_ratio",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "knu_batch_runner",
+    "parameter": "route_timeout_sec",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "knu_batch_runner",
+    "parameter": "startup_timeout_sec",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "knu_batch_runner",
+    "parameter": "setup_timeout_sec",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "knu_batch_runner",
+    "parameter": "pose_loss_sec",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "knu_batch_runner",
+    "parameter": "grid_loss_sec",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "knu_batch_runner",
+    "parameter": "pose_fresh_sec",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "knu_batch_runner",
+    "parameter": "grid_fresh_sec",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "knu_batch_runner",
+    "parameter": "routes",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "knu_batch_runner",
+    "parameter": "repeat_count",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "knu_batch_runner",
+    "parameter": "require_recorder",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "knu_batch_runner",
+    "parameter": "reset_upper_each_attempt",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "knu_batch_runner",
+    "parameter": "recorder_timeout_sec",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "knu_batch_runner",
+    "parameter": "stationary_timeout_sec",
+    "equal": true
+  },
+  {
+    "scenario": 3,
+    "node": "knu_batch_runner",
+    "parameter": "results_directory",
+    "equal": true
+  }
+]
