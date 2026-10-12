@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <array>
 #include <cmath>
+#include <limits>
 #include <vector>
 
 namespace imac_ctrl::egocentric_planner_geometry
@@ -116,38 +117,65 @@ inline Eigen::Vector2d buildOneStepTerminalTarget(
   return previous_reference + delta_s * stable_direction;
 }
 
-inline bool buildMeasuredFrameShiftedPrefix(
+inline bool buildMeasuredFrameProgressPrefix(
   const std::vector<Eigen::Vector2d> & previous_path_world,
-  double current_measured_yaw_rad,
+  const Eigen::Vector2d & current_position_world,
+  double current_measured_yaw_rad, double spacing_m,
   int requested_horizon,
-  std::vector<Eigen::Vector2d> & shifted_prefix_body)
+  std::vector<Eigen::Vector2d> & prefix_body)
 {
-  shifted_prefix_body.clear();
-  if (requested_horizon < 2 ||
-    previous_path_world.size() != static_cast<std::size_t>(requested_horizon + 1) ||
-    !std::isfinite(current_measured_yaw_rad))
+  prefix_body.clear();
+  if (requested_horizon < 2 || previous_path_world.size() < 2 ||
+    !current_position_world.allFinite() || !std::isfinite(current_measured_yaw_rad) ||
+    !std::isfinite(spacing_m) || spacing_m <= 0.0)
   {
     return false;
   }
+  std::vector<Eigen::Vector2d> points;
+  std::vector<double> arc;
   for (const auto & point : previous_path_world) {
     if (!point.allFinite()) {return false;}
+    if (!points.empty() && (point - points.back()).norm() <= 1e-9) {continue;}
+    arc.push_back(points.empty() ? 0.0 : arc.back() + (point - points.back()).norm());
+    points.push_back(point);
   }
-
+  if (points.size() < 2) {return false;}
+  double best_distance = std::numeric_limits<double>::infinity();
+  double progress = 0.0;
+  for (std::size_t i = 0; i + 1 < points.size(); ++i) {
+    const Eigen::Vector2d segment = points[i + 1] - points[i];
+    const double fraction = std::clamp(
+      (current_position_world - points[i]).dot(segment) / segment.squaredNorm(), 0.0, 1.0);
+    const double distance =
+      (current_position_world - points[i] - fraction * segment).squaredNorm();
+    if (distance < best_distance) {
+      best_distance = distance;
+      progress = arc[i] + fraction * (arc[i + 1] - arc[i]);
+    }
+  }
   const double cosine = std::cos(current_measured_yaw_rad);
   const double sine = std::sin(current_measured_yaw_rad);
   Eigen::Matrix2d rotation_body_world;
   rotation_body_world << cosine, sine, -sine, cosine;
-  const Eigen::Vector2d shift_origin = previous_path_world[1];
-
-  shifted_prefix_body.assign(
-    static_cast<std::size_t>(requested_horizon + 1), Eigen::Vector2d::Zero());
-  // Old p1,...,pN-1 become new r0,...,rN-2. Old pN is intentionally excluded.
-  for (int k = 0; k <= requested_horizon - 2; ++k) {
-    shifted_prefix_body[static_cast<std::size_t>(k)] =
-      rotation_body_world *
-      (previous_path_world[static_cast<std::size_t>(k + 1)] - shift_origin);
+  prefix_body.assign(static_cast<std::size_t>(requested_horizon + 1), Eigen::Vector2d::Zero());
+  // r0 is the measured ego. Future points retain the old world geometry.
+  // The last two points are subsequently extended by buildPreviewReference.
+  for (int k = 1; k <= requested_horizon - 2; ++k) {
+    const double query = progress + k * spacing_m;
+    Eigen::Vector2d world;
+    if (query >= arc.back()) {
+      world = points.back() + (query - arc.back()) *
+        (points.back() - points[points.size() - 2]).normalized();
+    } else {
+      const auto right = static_cast<std::size_t>(
+        std::upper_bound(arc.begin(), arc.end(), query) - arc.begin());
+      const double fraction = (query - arc[right - 1]) / (arc[right] - arc[right - 1]);
+      world = points[right - 1] + fraction * (points[right] - points[right - 1]);
+    }
+    prefix_body[static_cast<std::size_t>(k)] =
+      rotation_body_world * (world - current_position_world);
   }
-  return shifted_prefix_body.front().norm() <= 1e-9;
+  return true;
 }
 
 inline int previewStepsFromForwardExtent(

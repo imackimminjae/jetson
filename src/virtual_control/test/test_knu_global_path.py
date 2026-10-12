@@ -18,7 +18,7 @@ SPEC.loader.exec_module(PUBLISHER)
     ('scenario1', 6, (150, -140, 0), (173, -2, 0)),
     ('scenario2', 7, (-250, 101, 0), (-4, 95, 0)),
     ('scenario3', 8, (187, 220, 0), (278, 172, 0)),
-    ('scenario4', 7, (0, 7, 0), (150, -4, 0)),
+    ('scenario4', 14, (-261.143, 96.574, 0), (-100.305, 138.985, 0)),
 ])
 def test_installed_mission_geometry(route_name, count, first, last):
     """Preserve MATLAB mission endpoints, including scenario2's off-road waypoint."""

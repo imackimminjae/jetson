@@ -11,11 +11,13 @@
 #include <std_msgs/msg/float64.hpp>
 #include <std_msgs/msg/float64_multi_array.hpp>
 #include <std_msgs/msg/string.hpp>
+#include <std_srvs/srv/trigger.hpp>
 
 #include <Eigen/Dense>
 
 #include <array>
 #include <cstdint>
+#include <chrono>
 #include <mutex>
 #include <limits>
 #include <string>
@@ -161,6 +163,8 @@ private:
     std::vector<std::vector<int>> source_modes;
     std::vector<int> fallback_reason_codes;
     std::vector<int> Nck;
+    // Candidate-aligned k1 mask; all later road constraints remain active.
+    std::vector<bool> k1_lane_constraint_excluded;
     // Full requested preview, including observations beyond a missing MIQP stage.
     std::vector<std::vector<IntervalInfo>> interval_info;
     IntervalCenteringUpdate interval_update;
@@ -175,6 +179,10 @@ private:
     double terminal_buffer_turn_rad{0.0};
     bool used_previous_solution{false};
     int N_pred{0};
+    // Full model/reference remain intact. A lost, side-clipped terminal road
+    // is not a forced alternative; only the constrained prefix is published.
+    int side_boundary_tail_start{-1};
+    int side_boundary_side{0};
   };
 
   struct UpperSolveResult
@@ -236,6 +244,8 @@ private:
     const PreviewReferenceData & reference,
     const GridMapSnapshot * grid,
     const IntervalCenteringState & interval_state) const;
+  static std::vector<Eigen::Vector2d> publishablePrediction(
+    const PreviewConstraintData & preview, const UpperSolveResult & solve);
   void applyTerminalPositionTargets(
     PreviewConstraintData & preview,
     const Eigen::Vector2d & wp0_body,
@@ -320,6 +330,12 @@ private:
   double upper_r_dpsi_{1.0};
   bool normalize_upper_input_cost_{false};
   int turn_preview_steps_{2};
+  // 2026-10-06: make the upper prediction consistent with the increment-based steering limit and
+  // relative-turn cost, anchor the turn window at a real arm split, and use an absolute heading target.
+  bool upper_cumulative_increment_model_{false};
+  bool branch_turn_window_at_split_{false};
+  bool branch_turn_target_absolute_{false};
+  double branch_split_continuity_m_{6.75};
   double turn_weight_growth_{2.0};
   double miqp_diagonal_regularization_{1e-10};
   double miqp_binary_diagonal_regularization_{1e-4};
@@ -343,6 +359,7 @@ private:
   std::string csv_global_path_file_{"local_map.csv"};
   bool allow_topic_path_override_when_csv_loaded_{false};
   bool reset_waypoint_on_path_update_{false};
+  bool enable_batch_mission_reset_{false};
 
   // V8 straight preview and BEV interval extraction.
   double preview_min_target_distance_m_{1e-6};
@@ -355,12 +372,16 @@ private:
   double preview_interval_nominal_fallback_width_m_{4.5};
   double preview_interval_fallback_max_centering_length_m_{9.0};
   bool preview_interval_debug_{false};
+  bool skip_front_clipped_k1_lane_constraints_{false};
+  bool guard_side_boundary_terminal_loss_{false};
 
   // OccupancyGrid value convention. Unknown cells remain value < 0.
   int grid_value_threshold_{0};
   bool grid_positive_is_drivable_{true};
   std::string expected_grid_frame_id_{"base_link"};
   bool require_grid_frame_match_{true};
+  bool grid_origin_x_override_enabled_{false};
+  double grid_origin_x_override_m_{0.0};
 
   // Vehicle-state input and pose transformation.
   std::string state_input_type_{"odom"};
@@ -417,6 +438,7 @@ private:
   rclcpp::Subscription<geometry_msgs::msg::PoseStamped>::SharedPtr pose_sub_;
   rclcpp::Subscription<nav_msgs::msg::Path>::SharedPtr global_path_sub_;
   rclcpp::Subscription<nav_msgs::msg::OccupancyGrid>::SharedPtr grid_sub_;
+  rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr mission_reset_service_;
 
   rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr sparse_path_pub_;
   rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr dense_path_pub_;
@@ -430,6 +452,10 @@ private:
   rclcpp::Publisher<std_msgs::msg::Float64MultiArray>::SharedPtr upper_timing_pub_;
   rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr upper_solver_time_pub_;
   std::uint64_t timing_attempt_seq_{0};
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr upper_stage_timing_pub_;
+  std::chrono::steady_clock::time_point last_stage_cycle_start_{};
+  std::uint64_t stage_cycle_sequence_{0};
+  double previous_stage_report_ms_{std::numeric_limits<double>::quiet_NaN()};
   rclcpp::TimerBase::SharedPtr planner_timer_;
 };
 

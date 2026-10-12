@@ -46,6 +46,10 @@ px4_ekf_bridge:
     request_output_streams: true
     output_stream_rate_hz: 30.0
     output_attitude_timeout_sec: 0.25
+    # SIH only: require matching fresh EKF/truth yaw for 2 s before pose output.
+    # Missing/stale truth blocks output; the lower pose timeout selects neutral.
+    sih_heading_guard_enabled: true
+    sih_heading_max_error_deg: 15.0
     align_output_to_motive_on_first_sample: false
 
     # Automatic PX4 parameter setup. PARAM_SET ACKs are verified. These PX4
@@ -125,25 +129,28 @@ upper_planner_node:
     # Main9 interval state with the existing main8 MIQP/heading calculation.
     # Vehicle geometry profile and BEV extent remain independent of interval scale B.
     scale_mode: "fullscale"
-    bev_forward_m: 20.0
+    # Isaac Vehicle-frame grid: 128x128 at 0.3125 m/cell (40x40 m),
+    # origin=(0,-20), identity rotation: x=[0,40], y=[-20,20] m.
+    bev_forward_m: 40.0
     preview_interval_boundary_margin_m: 2.00
 
     upper_planner_rate_hz: 2.0
-    # 1.5 m/s * 2.0 s = 3 m per nominal step; 5 steps cover 15 m.
-    upper_prediction_dt_sec: 1.0
-    upper_preview_steps: 5
+    # 6.0 m/s * 0.75 s = 4.5 m; seven steps cover 31.5 m.
+    upper_prediction_dt_sec: 0.75
+    upper_preview_steps: 6
     preview_limit_to_grid_extent: true
-    # A 17.5 m forward extent leaves 2.5 m beyond the nominal 15 m preview.
-    preview_grid_reserve_steps: 0
+    # Reserve one complete step inside the received extent. At x_max=40 m,
+    # floor(40/4.5)-1=7 steps, leaving 8.5 m to the forward boundary.
+    preview_grid_reserve_steps: 1
     # Retry the full requested horizon after a temporary road/grid contraction.
     preview_restore_full_horizon: true
+    # Trial: omit only a terminal road lost at a lateral BEV edge. Keep the
+    # full reference/model; publish only the road-constrained prefix.
+    guard_side_boundary_terminal_loss: true
     lower_prediction_dt_sec: 0.10
     lower_min_path_spacing_m: 0.05
-    # The latest rosbag entered the narrowing at 3.5--4.0 m/s and saturated
-    # steering. Use a conservative real-vehicle envelope for this section.
-    # A/B test for the identified 0.3--0.4 s steering delay and ~0.9 s
-    # time constant. Keep the 2 Hz upper rate unchanged for this run.
-    target_speed_mps: 3.0
+    # Match the lower controller's requested 6.0 m/s target.
+    target_speed_mps: 6.0
     # steering_debug_20260902_203219 identified about 17.2 deg of effective
     # steering per normalized command. Keep the upper curvature achievable.
     max_steering_angle_rad: 0.30
@@ -153,14 +160,22 @@ upper_planner_node:
     position_scale_m: 10.0
     relative_turn_scale_rad: 0.3490658504
     lambda_position: 1.0
-    lambda_relative_turn: 0.9
+    lambda_relative_turn: 0.6
     terminal_buffer_max_turn_rad: 0.3490658504
     terminal_position_weight_multiplier: 1000.0
     upper_r_dv: 1.0
-    upper_r_dpsi: 1.0
+    # 2026-10-06: 3.0 with the cumulative increment model (was 1.5 with the legacy model).
+    # It now penalizes curvature deviation from the reference. Restore 1.5 if the model flag is off.
+    upper_r_dpsi: 3.0
     normalize_upper_input_cost: false
     turn_preview_steps: 2
     turn_weight_growth: 2.0
+    # 2026-10-06 upper branch model package (followup_20261006/verify, rollback/20261006_upper_increment_model).
+    # Verified only as a set together with upper_r_dpsi 3.0; turning one on alone regressed in tests.
+    upper_cumulative_increment_model: true
+    branch_turn_window_at_split: true
+    branch_turn_target_absolute: true
+    branch_split_continuity_m: 6.75
     miqp_diagonal_regularization: 0.0000000001
     # DAQP can report an infeasible mixed-integer solution as successful when
     # the corridor binary block is nearly singular. This term is constant
@@ -177,7 +192,7 @@ upper_planner_node:
     enable_waypoint_bias: false
     waypoint_x_bias_m: 0.0
     waypoint_y_bias_m: 0.0
-    waypoint_yaw_bias_rad: 0.17
+    waypoint_yaw_bias_rad: 0.09
     state_input_type: "odom"
     odom_topic: "/motive/vehicle/odom_map"
     odom_yaw_is_orientation_z: true
@@ -197,9 +212,17 @@ upper_planner_node:
 
     input_timeout_sec: 0.60
     require_grid_map: true
+    # Trial: omit k1 road constraints only for observed intervals clipped at
+    # the front map edge. k2+ road constraints and vehicle limits stay active.
+    skip_front_clipped_k1_lane_constraints: false
 
     global_path_topic: "/navigation/global_path"
     grid_map_topic: "/bev/occupancy_grid"
+    # Experiment: interpret the received image's first column from vehicle x=0.
+    # Does not generate unseen cells or change the original published grid.
+    # Disable and restart the planner to restore the received origin (2.95m).
+    grid_origin_x_override_enabled: false
+    grid_origin_x_override_m: 0.0
     upper_sparse_path_topic: "/planner/upper_path_sparse"
     lower_reference_path_topic: "/planner/lower_reference_path"
     goal_reached_topic: "/planner/goal_reached"
@@ -222,6 +245,8 @@ upper_planner_node:
     preview_min_target_distance_m: 0.10
     preview_line_sample_m: 0.10
     preview_min_segment_samples: 2
+    # ON retains (2*ratio - 1) of the observed width: 0.8 keeps the central 60%.
+    # OFF uses preview_interval_boundary_margin_m independently.
     preview_interval_soft_ratio: 0.7
     # B is the shortest fully observed interval uniquely containing the reference
     # across k=0..N. Hold B if no candidate exists or candidate > 1.5*B.
@@ -240,30 +265,38 @@ lower_tracking_mpc_node:
 
     lower_controller_rate_hz: 10.0
     lower_prediction_dt_sec: 0.10
-    # Keep the established lower horizon while dynamic compensation layers are
-    # disabled for the A0 baseline.
-    lower_prediction_steps: 20
+    # Keep three seconds of geometric preview with the bicycle plant.
+    lower_prediction_steps: 30
     lower_q_lateral: 1.0
     lower_q_heading: 0.5
     lower_r_steering: 0.30
-    lower_rd_steering_rate: 8.0
-    # Match the lower MPC angle and angle-to-normalized calibration to the
-    # effective steering gain identified from the SIH odometry log.
+    # Dampen repeated steering corrections from small path/pose changes.
+    # 2026-10-06: 120 -> 150 only; modest offline improvement, 56/56 regression cases.
+    # Evidence: followup_20261006/parameter_tuning; rollback: rollback/20261006_lower_rd150.
+    lower_rd_steering_rate: 150.0
+    # Physical planning limit and PX4 normalized-command calibration are separate.
     lower_max_steering_angle_rad: 0.30
+    lower_steering_command_scale_rad: 0.35
+    # SIH reports the chassis center, 1.4 m ahead of the rear axle (wheelbase 2.8 m).
+    lower_reference_point_to_rear_axle_m: 1.40
     lower_max_steering_rate_radps: 1.0471975512
-    # Disable both pure delay and first-order actuator lag in the lower model.
-    # Retain the parameters below for a later re-enable; ignored while disabled.
-    lower_enable_steering_actuator_model: false
-    lower_steering_actuator_delay_sec: 0.20
-    lower_steering_actuator_time_constant_sec: 0.85
+    # Temporary model match for the current rest-gate/original-input SIH firmware.
+    # 2026-10-03 SIH truth fit: tau=0.7375 s; see full_audit_20261003/RESULT.txt.
+    # This predicts the existing response; it does not add an output filter.
+    # Reidentify after fixing PX4 input-filter timing; do not retain 0.74 blindly.
+    lower_enable_steering_actuator_model: true
+    lower_steering_actuator_delay_sec: 0.00
+    lower_steering_actuator_time_constant_sec: 0.74
     # Atomic path + original interpolation s from the upper planner.
     lower_use_path_arclength: true
-    # Compatibility parameters only; lower MPC never resamples or raises actual speed.
+    # Sample future position/heading targets at measured travel; curvature is diagnostic only.
+    lower_reference_follow_measured_speed: true
+    # Compatibility parameters only; measured speed is never raised to a floor.
     lower_min_path_spacing_m: 0.05
     lower_min_effective_speed_mps: 0.10
     input_timeout_sec: 0.60
     lower_path_timeout_sec: 1.50
-    # Valid-path QP failures use curvature fallback (mode 5).
+    # Valid-path QP failures use lateral/heading error feedback (mode 5).
     # Invalid/stale inputs use the existing neutral/hold policy below.
     solver_hold_last_valid_sec: 0.0
     path_change_reset_threshold_m: 0.75
@@ -294,23 +327,26 @@ lower_tracking_mpc_node:
     pwm_topic: "/cmd_pwm"
     virtual_cmd_topic: "/cmd_control"
 
-    # Baseline A0: bypass the post-MPC rate limiter and steering LPF.
+    # Restore the pre-compensation output policy.
     enable_output_filter: false
     steer_norm_max: 1.0
     steer_norm_rate_max: 1.5
     steer_norm_lpf_alpha: 0.7
     steer_sign: 1.0
 
-    target_speed_mps: 1.5
+    # Match the upper planner's nominal speed.
+    target_speed_mps: 6.0
     target_accel_mps2: 0.0
     # Closed-loop throttle is also used by duty/PWM and MAVLink outputs.
     speed_kp: 0.08
     speed_ki: 0.01
     throttle_ff: 0.05
-    max_virtual_throttle: 0.09
+    # Allow the speed PI to reach 6 m/s; this is a ceiling, not fixed throttle.
+    max_virtual_throttle: 0.35
     max_virtual_brake: 0.70
     speed_deadband_mps: 0.03
-    speed_integral_limit: 0.5
+    # With ki=0.01, permit up to 0.30 learned trim above throttle_ff=0.05.
+    speed_integral_limit: 30.0
 
     publish_pwm: true
     pwm_min: 1000
@@ -336,6 +372,6 @@ lower_tracking_mpc_node:
     mavlink_auto_arm: false
     mavlink_force_arm: false
     mavlink_disarm_on_shutdown: true
-    mavlink_throttle_max_norm: 0.09
+    mavlink_throttle_max_norm: 0.35
     mavlink_steer_sign: 1.0
     mavlink_keepalive_rate_hz: 20.0

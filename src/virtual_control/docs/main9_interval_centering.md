@@ -27,8 +27,10 @@ It initializes B immediately. An existing B is retained when no candidate exists
 or candidate B > 1.5*B; otherwise B is replaced immediately. B is the only retained
 algorithm state. Missing or stale required grid data leaves B unchanged.
 
-Observed intervals are ON iff B exists and L <= 1.5*B. ON keeps the central 40%
-using the fixed soft ratio 0.7. OFF insets each endpoint by min(2.0 m, 0.45*L),
+Observed intervals are ON iff B exists and L <= 1.5*B. ON keeps the central
+`(2*soft_ratio - 1)` fraction: the split profile uses 0.8, retaining 60%.
+The ratio is configurable in `(0.5, 1.0]`; the node default remains 0.7 (40%).
+OFF insets each endpoint by min(2.0 m, 0.45*L) in the split profile,
 including when B is unavailable. OFF can therefore be narrower than ON on short
 intervals. B is an observed length scale, not a physical road-width estimate.
 

@@ -1,5 +1,7 @@
 # Lower MPC curvature reference and command contract
 
+> 현재 구현은 [실제 진행량 기반 경로 연결과 곡률 입력 제거](progress_based_path_tracking.md)를 따른다. 아래 곡률 상태 입력 관련 설명과 시험 수치는 이전 구현의 기록이다.
+
 This implementation follows the equations in the task specification. Upper MIQP,
 interval centering, branch selection, and waypoint decisions are unchanged.
 Existing horizon, weights, steering limits, filter tuning, and communication
@@ -30,14 +32,19 @@ current reference; it cannot activate curvature fallback.
 
 Upper/lower configuration both specify Ts=0.10 s. Existing upper spacing is
 `max(max(planning_speed,0)*Ts, lower_min_path_spacing_m)`, with minimum 0.05 m.
-The current planner uses `target_speed_mps` as planning speed. The checked-in
-configuration has upper target 3.0 m/s (0.30 m dense spacing) and lower target
-1.5 m/s (0.15 m per step when actually moving at that speed). This is an
-existing spacing mismatch; these speed tuning values were not changed.
-Thus at planning speed below 0.5 m/s, or when planning speed differs from the
-measured lower-controller speed, spatial spacing differs from `v_actual*Ts`.
-The last interval can also be shorter. The existing generation rule is retained;
-lower MPC uses consecutive dense indices without projection or resampling.
+The current planner uses `target_speed_mps` as planning speed. The active
+profile requests 6.0 m/s in both nodes (0.60 m dense spacing), but the latest
+SIH run reached only about 3.13 m/s. The received original s is preserved.
+
+`lower_reference_follow_measured_speed: true` in the active SIH profile samples
+position and curvature at `s_nearest + k*v_actual*Ts`, clamped to the endpoint.
+Both use linear interpolation in the original s coordinate; chord length is
+not substituted for original s. At zero speed the preview remains at the
+nearest point. This synchronizes the affine disturbance with the model's
+physical progress during acceleration and speed limiting.
+
+The node default is false for compatibility with the original consecutive-index
+contract. Initial errors still use the nearest dense point in both modes.
 `lower_min_effective_speed_mps` and lower-node `lower_min_path_spacing_m` remain
 accepted compatibility parameters but no longer affect the lower computation.
 The upper-node spacing parameter continues to control densification.
@@ -74,8 +81,9 @@ failures retain the existing neutral/hold behavior and never use mode 5.
 
 `/debug/control_cmd.linear.x` is selected steering before filtering.
 `/control/applied_cmd.linear.x` is output steering in radians; `.linear.y` is
-output normalized steering. Existing normalized conversion, virtual command,
-duty/PWM, and MAVLink routing are preserved.
+output normalized steering. Virtual command, duty/PWM, and MAVLink routing are
+preserved. For the subsequent center-point bicycle calibration and the separate
+physical-angle conversion, see [kinematic_bicycle_alignment.md](kinematic_bicycle_alignment.md).
 
 `/debug/lower_mpc_trace` retains existing positions and appends new fields.
 Indices here are zero-based:
@@ -93,10 +101,13 @@ Indices here are zero-based:
 | 27 | Curvature fallback available (can also be true when QP succeeds) |
 | 28 | First reference curvature; NaN without a reference |
 | 29 | Applied command used as delta_prev by this solve/fallback |
+| 30 | Tracked reference point distance ahead of rear axle (m) |
+| 31 | Physical steering radians per normalized command |
 
 The MATLAB ROS logger is updated solely as a consumer of this diagnostic
-schema: 30 fields, nearest-point column, mode 5, selected/output commands, and
-fixed-width rows for older traces. It is not a reference implementation.
+schema: the first 30 fields, nearest-point column, mode 5, selected/output commands,
+and fixed-width rows for older traces. It ignores the two appended calibration
+fields; rosbag preserves all 32 fields. It is not a reference implementation.
 
 ## Reproducing validation
 

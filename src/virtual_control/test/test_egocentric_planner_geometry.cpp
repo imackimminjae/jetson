@@ -142,25 +142,34 @@ TEST(EgocentricPlannerGeometry, TerminalSelectionUsesForwardProgressNotEuclidean
   EXPECT_NEAR(terminal.y(), 0.0, 1e-12);
 }
 
-TEST(EgocentricPlannerGeometry, PreviousPathUsesCurrentMeasuredBodyFrame)
+TEST(EgocentricPlannerGeometry, PreviousPathAdvancesOnlyByMeasuredProgress)
 {
-  const std::vector<Eigen::Vector2d> previous_world{
-    Eigen::Vector2d(0.0, 0.0), Eigen::Vector2d(3.0, 0.0),
-    Eigen::Vector2d(6.0, 0.0), Eigen::Vector2d(9.0, 0.0),
-    Eigen::Vector2d(12.0, 0.0), Eigen::Vector2d(15.0, 0.0)};
-  std::vector<Eigen::Vector2d> shifted;
+  const std::vector<Eigen::Vector2d> old{{0, 0}, {5.4, 0}, {10.8, 0},
+    {10.8, 5.4}, {10.8, 10.8}, {10.8, 16.2}};
+  std::vector<Eigen::Vector2d> prefix;
+  const Eigen::Vector2d ego(1.5, 0.2);
+  ASSERT_TRUE(geometry::buildMeasuredFrameProgressPrefix(old, ego, 0.0, 5.4, 5, prefix));
+  EXPECT_NEAR(prefix[0].norm(), 0, 1e-12);
+  EXPECT_NEAR((prefix[1] + ego - Eigen::Vector2d(6.9, 0)).norm(), 0, 1e-12);
+  EXPECT_NEAR((prefix[2] + ego - Eigen::Vector2d(10.8, 1.5)).norm(), 0, 1e-12);
+  // Repeat at an unchanged pose: do not consume another whole segment.
+  std::vector<Eigen::Vector2d> repeated;
+  ASSERT_TRUE(geometry::buildMeasuredFrameProgressPrefix(old, ego, 0.0, 5.4, 5, repeated));
+  EXPECT_NEAR((prefix[2] - repeated[2]).norm(), 0, 1e-12);
+  ASSERT_TRUE(geometry::buildMeasuredFrameProgressPrefix(old, ego, std::acos(-1.0)/2, 5.4, 5, repeated));
+  EXPECT_NEAR(repeated[1].x(), -0.2, 1e-12);
+  EXPECT_NEAR(repeated[1].y(), -5.4, 1e-12);
+}
 
-  ASSERT_TRUE(
-    geometry::buildMeasuredFrameShiftedPrefix(
-      previous_world, 0.5 * std::acos(-1.0), 5, shifted));
-  ASSERT_EQ(shifted.size(), 6U);
-  EXPECT_NEAR(shifted[0].norm(), 0.0, 1e-12);
-  EXPECT_NEAR(shifted[1].x(), 0.0, 1e-12);
-  EXPECT_NEAR(shifted[1].y(), -3.0, 1e-12);
-  EXPECT_NEAR(shifted[3].y(), -9.0, 1e-12);
-  // Old pN must not leak into the next reference prefix.
-  EXPECT_NEAR(shifted[4].norm(), 0.0, 1e-12);
-  EXPECT_NEAR(shifted[5].norm(), 0.0, 1e-12);
+TEST(EgocentricPlannerGeometry, ProgressPrefixHandlesDuplicatesAndTailWithoutJumping)
+{
+  std::vector<Eigen::Vector2d> prefix;
+  ASSERT_TRUE(geometry::buildMeasuredFrameProgressPrefix(
+    {{0, 0}, {0, 0}, {5, 0}}, {4, 0}, 0, 2, 5, prefix));
+  EXPECT_NEAR(prefix[1].x(), 2, 1e-12);
+  EXPECT_NEAR(prefix[3].x(), 6, 1e-12);
+  EXPECT_FALSE(geometry::buildMeasuredFrameProgressPrefix({{0, 0}, {0, 0}}, {0, 0}, 0, 2, 5, prefix));
+  EXPECT_FALSE(geometry::buildMeasuredFrameProgressPrefix({{0, 0}, {5, 0}}, {NAN, 0}, 0, 2, 5, prefix));
 }
 
 TEST(EgocentricPlannerGeometry, PreviewExtentKeepsOneStepInsideBev)

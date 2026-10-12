@@ -72,6 +72,7 @@ ament_target_dependencies(upper_planner_node
   nav_msgs
   geometry_msgs
   std_msgs
+  std_srvs
   tf2
   ament_index_cpp
   mpclib_vendor
@@ -168,14 +169,24 @@ if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   find_package(ament_cmake_gtest REQUIRED)
   find_package(ament_cmake_pytest REQUIRED)
+  ament_add_pytest_test(test_sih_heading_guard
+    test/test_sih_heading_guard.py
+  )
   ament_add_pytest_test(test_knu_global_path
     test/test_knu_global_path.py
   )
   ament_add_pytest_test(test_knu_batch
     test/test_knu_batch.py
   )
+  ament_add_pytest_test(test_road_route_check
+    test/test_road_route_check.py
+  )
   ament_add_pytest_test(test_knu_batch_ros
     test/test_knu_batch_ros.py
+  )
+  ament_add_pytest_test(test_batch_real_upper_reset
+    test/test_batch_real_upper_reset.py
+    TIMEOUT 200
   )
   set(ament_cmakecopyright_FOUND TRUE)
   set(ament_cmakecpplint_FOUND TRUE)
@@ -205,7 +216,7 @@ if(BUILD_TESTING)
     VIRTUAL_CONTROL_UPPER_PLANNER_NO_MAIN
   )
   ament_target_dependencies(test_interval_centering_state
-    rclcpp nav_msgs geometry_msgs imac_interfaces std_msgs tf2 ament_index_cpp mpclib_vendor
+    rclcpp nav_msgs geometry_msgs imac_interfaces std_msgs std_srvs tf2 ament_index_cpp mpclib_vendor
   )
   target_include_directories(test_interval_centering_state PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -222,7 +233,7 @@ if(BUILD_TESTING)
     test/test_lower_path_generation.cpp src/tracking_control.cpp)
   target_compile_definitions(test_lower_path_generation PRIVATE VIRTUAL_CONTROL_UPPER_PLANNER_NO_MAIN)
   ament_target_dependencies(test_lower_path_generation
-    rclcpp nav_msgs geometry_msgs imac_interfaces std_msgs tf2 ament_index_cpp mpclib_vendor)
+    rclcpp nav_msgs geometry_msgs imac_interfaces std_msgs std_srvs tf2 ament_index_cpp mpclib_vendor)
   target_include_directories(test_lower_path_generation PRIVATE include ${EIGEN3_INCLUDE_DIRS})
   if(TARGET mpclib_vendor::MIQPLib)
     target_link_libraries(test_lower_path_generation mpclib_vendor::MIQPLib)

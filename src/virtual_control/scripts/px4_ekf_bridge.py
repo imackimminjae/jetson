@@ -76,6 +76,59 @@ class PendingParameter:
     last_send_monotonic: float = 0.0
 
 
+class SihHeadingGuard:
+    """Validate SIH yaw without replacing the EKF state with ground truth."""
+
+    def __init__(self, max_error_deg=15.0, timeout_sec=0.25, settle_sec=2.0):
+        self.max_error = math.radians(max_error_deg)
+        self.timeout = timeout_sec
+        self.settle = settle_sec
+        self.reset()
+
+    def reset(self):
+        self.truth_yaw = None
+        self.truth_time = None
+        self.healthy_since = None
+        self.last_check_time = None
+        self.error_deg = None
+        self.reason = "waiting_for_sih"
+
+    def update_truth(self, quaternion, now):
+        if len(quaternion) != 4 or not all(math.isfinite(v) for v in quaternion):
+            self.reset()
+            return
+        norm = math.sqrt(sum(v * v for v in quaternion))
+        if not 0.9 <= norm <= 1.1:
+            self.reset()
+            return
+        w, x, y, z = (v / norm for v in quaternion)
+        self.truth_yaw = math.atan2(2 * (w * z + x * y), 1 - 2 * (y * y + z * z))
+        self.truth_time = now
+
+    def check(self, yaw, attitude_time, now):
+        if self.last_check_time is not None and now - self.last_check_time > self.timeout:
+            self.healthy_since = None
+        self.last_check_time = now
+        self.error_deg = None
+        if self.truth_time is None or now - self.truth_time > self.timeout:
+            reason = "missing_or_stale_sih"
+        elif yaw is None or not math.isfinite(yaw) or now - attitude_time > self.timeout:
+            reason = "missing_or_stale_attitude"
+        else:
+            error = math.atan2(math.sin(yaw - self.truth_yaw), math.cos(yaw - self.truth_yaw))
+            self.error_deg = math.degrees(error)
+            reason = "heading_mismatch" if abs(error) > self.max_error else "ok"
+        if reason != "ok":
+            self.healthy_since = None
+        else:
+            if self.healthy_since is None:
+                self.healthy_since = now
+            if now - self.healthy_since < self.settle:
+                reason = "settling"
+        self.reason = reason
+        return reason == "ok"
+
+
 class Px4EkfBridge(Node):
     """Bidirectional MAVLink bridge for PX4 EKF2 external vision aiding."""
 
@@ -124,6 +177,9 @@ class Px4EkfBridge(Node):
         self.declare_parameter("request_output_streams", True)
         self.declare_parameter("output_stream_rate_hz", 30.0)
         self.declare_parameter("output_attitude_timeout_sec", 0.25)
+        # Real vehicles do not provide simulation ground truth.
+        self.declare_parameter("sih_heading_guard_enabled", False)
+        self.declare_parameter("sih_heading_max_error_deg", 15.0)
         self.declare_parameter("align_output_to_motive_on_first_sample", False)
 
         # PX4 parameter protocol settings.
@@ -232,6 +288,15 @@ class Px4EkfBridge(Node):
         self.align_output_to_motive_on_first_sample = bool(
             self.get_parameter("align_output_to_motive_on_first_sample").value
         )
+
+        self.sih_heading_guard_enabled = bool(
+            self.get_parameter("sih_heading_guard_enabled").value
+        )
+        max_error = float(self.get_parameter("sih_heading_max_error_deg").value)
+        if not math.isfinite(max_error) or not 0.0 < max_error < 90.0:
+            raise ValueError("sih_heading_max_error_deg must be between 0 and 90")
+        self.sih_heading_guard = SihHeadingGuard(max_error)
+        self.heading_guard_last_reason = None
 
         self.configure_px4_parameters = bool(
             self.get_parameter("configure_px4_parameters").value
@@ -479,6 +544,7 @@ class Px4EkfBridge(Node):
             self.streams_requested_for_connection = False
             self.pending_param = None
             self.param_queue.clear()
+            self.sih_heading_guard.reset()
 
         if self.connected:
             elapsed = now_mono - self.first_autopilot_heartbeat_monotonic
@@ -523,6 +589,7 @@ class Px4EkfBridge(Node):
                 pass
         self.master = None
         self.connected = False
+        self.sih_heading_guard.reset()
 
     def _poll_mavlink(self) -> None:
         if self.master is None:
@@ -541,6 +608,14 @@ class Px4EkfBridge(Node):
 
     def _handle_mavlink_message(self, msg) -> None:
         msg_type = msg.get_type()
+        if msg_type in ("ATTITUDE", "LOCAL_POSITION_NED", "HIL_STATE_QUATERNION"):
+            if (msg.get_srcSystem(), msg.get_srcComponent()) != (
+                self.target_system, self.target_component
+            ):
+                return
+        if msg_type == "HIL_STATE_QUATERNION":
+            self.sih_heading_guard.update_truth(msg.attitude_quaternion, time.monotonic())
+            return
         if msg_type == "HEARTBEAT":
             autopilot = int(getattr(msg, "autopilot", mavutil.mavlink.MAV_AUTOPILOT_INVALID))
             if autopilot != mavutil.mavlink.MAV_AUTOPILOT_INVALID:
@@ -701,6 +776,21 @@ class Px4EkfBridge(Node):
     # PX4 fused output
     # ------------------------------------------------------------------
     def _publish_fused_odometry(self, msg) -> None:
+        if self.sih_heading_guard_enabled:
+            ready = self.sih_heading_guard.check(
+                self.latest_attitude_yaw_ned, self.latest_attitude_monotonic,
+                time.monotonic()
+            )
+            reason = self.sih_heading_guard.reason
+            if reason != self.heading_guard_last_reason:
+                self.get_logger().warn(
+                    "SIH heading check: %s (EKF-SIH=%s deg); pose output %s"
+                    % (reason, self.sih_heading_guard.error_deg,
+                       "enabled" if ready else "blocked")
+                )
+                self.heading_guard_last_reason = reason
+            if not ready:
+                return
         if self.latest_attitude_yaw_ned is None:
             return
         if time.monotonic() - self.latest_attitude_monotonic > self.output_attitude_timeout_sec:
@@ -1012,10 +1102,14 @@ class Px4EkfBridge(Node):
         if not self.connected or self.master is None:
             return
         interval_us = int(round(1_000_000.0 / self.output_stream_rate_hz))
-        for msg_id, label in (
+        streams = [
             (mavutil.mavlink.MAVLINK_MSG_ID_LOCAL_POSITION_NED, "LOCAL_POSITION_NED"),
             (mavutil.mavlink.MAVLINK_MSG_ID_ATTITUDE, "ATTITUDE"),
-        ):
+        ]
+        if self.sih_heading_guard_enabled:
+            streams.append((mavutil.mavlink.MAVLINK_MSG_ID_HIL_STATE_QUATERNION,
+                            "HIL_STATE_QUATERNION"))
+        for msg_id, label in streams:
             try:
                 self.master.mav.command_long_send(
                     self.target_system,
@@ -1087,6 +1181,13 @@ class Px4EkfBridge(Node):
         if self.latest_local_position_monotonic > 0.0:
             local_pos_age = now_mono - self.latest_local_position_monotonic
         payload = {
+            "sih_heading_guard_enabled": self.sih_heading_guard_enabled,
+            "sih_heading_guard_state": self.sih_heading_guard.reason,
+            "sih_yaw_ned_rad": self.sih_heading_guard.truth_yaw,
+            "ekf_yaw_ned_rad": self.latest_attitude_yaw_ned,
+            "ekf_minus_sih_yaw_deg": self.sih_heading_guard.error_deg,
+            "sih_age_sec": (now_mono - self.sih_heading_guard.truth_time
+                            if self.sih_heading_guard.truth_time is not None else None),
             "connected": self.connected,
             "target_system": self.target_system,
             "target_component": self.target_component,

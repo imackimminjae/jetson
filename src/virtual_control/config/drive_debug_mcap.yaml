@@ -1,0 +1,5 @@
+# Lossless compression inside indexed MCAP chunks; no temporary uncompressed bag.
+compression: "Zstd"
+compressionLevel: "Fast"
+forceCompression: true
+chunkSize: 1048576

@@ -52,6 +52,11 @@ def setup(context):
     runner = {'routes': routes,
               'grid_topic': grid_topic, 'odom_topic': odom_topic,
               'require_matlab_ack': grid_source == 'matlab'}
+    evidence_upper = {**upper_current,**upper}
+    runner.update(enable_road_route_check=not evidence_upper.get('grid_origin_x_override_enabled',False),
+                  road_grid_positive_is_drivable=evidence_upper.get('grid_positive_is_drivable',False),
+                  road_grid_value_threshold=evidence_upper.get('grid_value_threshold',0),
+                  road_expected_grid_frame=evidence_upper.get('expected_grid_frame_id','Vehicle'))
     lower = {'batch_supervision': True, 'state_input_type': 'odom',
              'odom_topic': odom_topic, 'odom_yaw_is_orientation_z': True,
              'reset_on_path_change': True,

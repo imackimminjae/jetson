@@ -127,7 +127,9 @@ struct LowerTrackingMpcNode::Impl
     bool fallback_valid{false};
     double fallback_steering_rad{0.0};
     double delta_prev_rad{0.0};
-    std::vector<double> curvature_reference;
+    std::vector<double> curvature_reference;  // Diagnostics only; never a model input.
+    std::vector<double> reference_heading;
+    Eigen::VectorXd tracking_target;
     Eigen::VectorXd affine_prediction;
     Eigen::MatrixXd condensed_prediction;
     std::vector<double> steering_sequence_rad;
@@ -145,7 +147,7 @@ struct LowerTrackingMpcNode::Impl
   {
     double steering_angle_rad{0.0};
     bool drive_valid{false};
-    int fallback_mode{3};  // 0=solver, 1=previous sequence, 2=hold, 3=neutral, 4=goal stop, 5=curvature fallback
+    int fallback_mode{3};  // 0=solver, 1=previous sequence, 2=hold, 3=neutral, 4=goal stop, 5=error-feedback fallback
   };
 
   struct VirtualDriveCommand
@@ -179,10 +181,11 @@ struct LowerTrackingMpcNode::Impl
     RCLCPP_INFO(
       node_.get_logger(),
       "LowerTrackingMpcNode ready: rate=%.2fHz dt=%.3fs N=%d path=%s "
-      "scale=%s wheelbase=%.2fm "
+      "scale=%s wheelbase=%.2fm rear_offset=%.2fm command_scale=%.3frad "
       "actuator_model=%d delay=%.2fs tau=%.2fs backend=%s virtual=%s",
       lower_controller_rate_hz_, lower_prediction_dt_sec_, lower_prediction_steps_,
       lower_reference_path_topic_.c_str(), scale_mode_.c_str(), wheelbase_,
+      lower_reference_point_to_rear_axle_m_, steeringCommandScale(),
       lower_enable_steering_actuator_model_ ? 1 : 0,
       lower_steering_actuator_delay_sec_, lower_steering_actuator_time_constant_sec_,
       pixhawk_output_backend_.c_str(),
@@ -224,6 +227,10 @@ struct LowerTrackingMpcNode::Impl
     node_.declare_parameter<double>(
       "lower_max_steering_angle_rad", lower_max_steering_angle_rad_);
     node_.declare_parameter<double>(
+      "lower_steering_command_scale_rad", lower_steering_command_scale_rad_);
+    node_.declare_parameter<double>(
+      "lower_reference_point_to_rear_axle_m", lower_reference_point_to_rear_axle_m_);
+    node_.declare_parameter<double>(
       "lower_max_steering_rate_radps", lower_max_steering_rate_radps_);
     node_.declare_parameter<bool>(
       "lower_enable_steering_actuator_model", lower_enable_steering_actuator_model_);
@@ -232,6 +239,8 @@ struct LowerTrackingMpcNode::Impl
     node_.declare_parameter<double>(
       "lower_steering_actuator_time_constant_sec",
       lower_steering_actuator_time_constant_sec_);
+    node_.declare_parameter<bool>(
+      "lower_reference_follow_measured_speed", lower_reference_follow_measured_speed_);
     node_.declare_parameter<double>("lower_min_path_spacing_m", lower_min_path_spacing_m_);
     node_.declare_parameter<double>(
       "lower_min_effective_speed_mps",
@@ -325,6 +334,9 @@ struct LowerTrackingMpcNode::Impl
     node_.get_parameter("lower_r_steering", lower_r_steering_);
     node_.get_parameter("lower_rd_steering_rate", lower_rd_steering_rate_);
     node_.get_parameter("lower_max_steering_angle_rad", lower_max_steering_angle_rad_);
+    node_.get_parameter("lower_steering_command_scale_rad", lower_steering_command_scale_rad_);
+    node_.get_parameter(
+      "lower_reference_point_to_rear_axle_m", lower_reference_point_to_rear_axle_m_);
     node_.get_parameter("lower_max_steering_rate_radps", lower_max_steering_rate_radps_);
     node_.get_parameter(
       "lower_enable_steering_actuator_model", lower_enable_steering_actuator_model_);
@@ -333,6 +345,8 @@ struct LowerTrackingMpcNode::Impl
     node_.get_parameter(
       "lower_steering_actuator_time_constant_sec",
       lower_steering_actuator_time_constant_sec_);
+    node_.get_parameter(
+      "lower_reference_follow_measured_speed", lower_reference_follow_measured_speed_);
     node_.get_parameter("lower_min_path_spacing_m", lower_min_path_spacing_m_);
     node_.get_parameter("lower_min_effective_speed_mps", lower_min_effective_speed_mps_);
     node_.get_parameter("wheelbase", wheelbase_);
@@ -422,6 +436,19 @@ struct LowerTrackingMpcNode::Impl
     if (wheelbase_ <= 0.0) {fail("wheelbase must be > 0");}
     if (lower_max_steering_angle_rad_ <= 0.0) {
       fail("lower_max_steering_angle_rad must be > 0");
+    }
+    if (!std::isfinite(lower_steering_command_scale_rad_) ||
+      lower_steering_command_scale_rad_ < 0.0 ||
+      (lower_steering_command_scale_rad_ > 0.0 &&
+      lower_steering_command_scale_rad_ < lower_max_steering_angle_rad_))
+    {
+      fail("steering command scale must be 0 (legacy) or >= maximum steering angle");
+    }
+    if (!std::isfinite(lower_reference_point_to_rear_axle_m_) ||
+      lower_reference_point_to_rear_axle_m_ < 0.0 ||
+      lower_reference_point_to_rear_axle_m_ > wheelbase_)
+    {
+      fail("reference point to rear axle must be finite and in [0, wheelbase]");
     }
     if (lower_max_steering_rate_radps_ < 0.0) {
       fail("lower_max_steering_rate_radps must be >= 0");
@@ -724,15 +751,41 @@ struct LowerTrackingMpcNode::Impl
     const int horizon = lower_prediction_steps_;
     const double speed = pose.speed_mps;
     for (int k = 0; k <= horizon; ++k) {
-      const std::size_t index = std::min(nearest + k, path.points.size() - 1);
-      result.reference_horizon.push_back(path.points[index]);
-      if (k < horizon) {result.curvature_reference.push_back(path.kappa[index]);}
+      if (lower_reference_follow_measured_speed_) {
+        // Upper spacing uses requested speed. The prediction advances at measured
+        // speed, so sample the original s coordinate at the same physical progress.
+        const double query_s = std::min(
+          path.s.back(), path.s[nearest] + k * std::max(0.0, speed) * lower_prediction_dt_sec_);
+        const auto right_it = std::upper_bound(path.s.begin(), path.s.end(), query_s);
+        const std::size_t right = std::min(
+          static_cast<std::size_t>(std::distance(path.s.begin(), right_it)), path.s.size() - 1);
+        const std::size_t left = right == 0 ? 0 : right - 1;
+        const double fraction = right == left ? 0.0 :
+          clampd((query_s - path.s[left]) / (path.s[right] - path.s[left]), 0.0, 1.0);
+        result.reference_horizon.push_back(
+          (1.0 - fraction) * path.points[left] + fraction * path.points[right]);
+        result.reference_heading.push_back(
+          (1.0 - fraction) * path.psi[left] + fraction * path.psi[right]);
+        if (k < horizon) {
+          result.curvature_reference.push_back(
+            (1.0 - fraction) * path.kappa[left] + fraction * path.kappa[right]);
+        }
+      } else {
+        const std::size_t index = std::min(nearest + k, path.points.size() - 1);
+        result.reference_horizon.push_back(path.points[index]);
+        result.reference_heading.push_back(path.psi[index]);
+        if (k < horizon) {result.curvature_reference.push_back(path.kappa[index]);}
+      }
     }
     const double previous = last_applied_steering_angle_rad_;
     result.delta_prev_rad = previous;
     const double max_step = lower_max_steering_rate_radps_ * lower_prediction_dt_sec_;
-    const double fallback = std::atan(wheelbase_ * result.curvature_reference.front()) -
-      0.35 * result.lateral_error_m - result.heading_error_rad;
+    const double reference_ratio = lower_reference_point_to_rear_axle_m_ / wheelbase_;
+    const double effective_steering = lower_enable_steering_actuator_model_ ?
+      estimated_effective_steering_angle_rad_ : previous;
+    const double geometric_beta = std::atan(reference_ratio * std::tan(effective_steering));
+    const double fallback =
+      -0.35 * result.lateral_error_m - wrapToPi(result.heading_error_rad + geometric_beta);
     result.fallback_steering_rad = clampd(
       clampd(fallback, -lower_max_steering_angle_rad_, lower_max_steering_angle_rad_),
       previous - max_step, previous + max_step);
@@ -751,13 +804,29 @@ struct LowerTrackingMpcNode::Impl
       system(1, 2) =
         speed / wheelbase_ * actuator.steering_integral_state_sec;
       system(2, 2) = actuator.state_decay;
+      // The tracked point may be ahead of the rear axle: beta ~= lr/L*delta.
+      // Keep the legacy rear-axle discretization when lr=0. For a center point,
+      // integrate both its direct lateral velocity and the within-step yaw turn.
+      double lateral_command_gain = 0.0;
+      if (reference_ratio > 0.0) {
+        const double dt = lower_prediction_dt_sec_;
+        const double tau = lower_steering_actuator_time_constant_sec_;
+        const double double_integral_state =
+          tau * actuator.steering_integral_command_sec;
+        const double double_integral_command = 0.5 * dt * dt - double_integral_state;
+        system(0, 2) = speed * reference_ratio * actuator.steering_integral_state_sec +
+          speed * speed / wheelbase_ * double_integral_state;
+        lateral_command_gain = speed * reference_ratio * actuator.steering_integral_command_sec +
+          speed * speed / wheelbase_ * double_integral_command;
+      }
+      Eigen::Matrix<double, 2, 3> tracked_output;
+      // Penalize course error (yaw + beta), not yaw alone, at a center point.
+      tracked_output << 1.0, 0.0, 0.0, 0.0, 1.0, reference_ratio;
       Eigen::Vector3d affine_state(
         result.lateral_error_m, result.heading_error_rad,
         estimated_effective_steering_angle_rad_);
       Eigen::MatrixXd input_map = Eigen::MatrixXd::Zero(3, horizon);
       for (int k = 0; k < horizon; ++k) {
-        const double curvature_disturbance =
-          -speed * lower_prediction_dt_sec_ * result.curvature_reference[k];
         const int command_index = k - actuator.delay_steps;
         double known_delayed_command = 0.0;
         if (command_index < 0 &&
@@ -768,40 +837,55 @@ struct LowerTrackingMpcNode::Impl
         }
 
         affine_state = system * affine_state + Eigen::Vector3d(
-          0.0,
+          lateral_command_gain * known_delayed_command,
           speed / wheelbase_ * actuator.steering_integral_command_sec *
-          known_delayed_command + curvature_disturbance,
+          known_delayed_command,
           actuator.command_gain * known_delayed_command);
         input_map = system * input_map;
         if (command_index >= 0) {
+          input_map(0, command_index) += lateral_command_gain;
           input_map(1, command_index) +=
             speed / wheelbase_ * actuator.steering_integral_command_sec;
           input_map(2, command_index) += actuator.command_gain;
         }
-        affine.segment<2>(2 * k) = affine_state.head<2>();
-        condensed.block(2 * k, 0, 2, horizon) = input_map.topRows<2>();
+        affine.segment<2>(2 * k) = tracked_output * affine_state;
+        condensed.block(2 * k, 0, 2, horizon) = tracked_output * input_map;
       }
     } else {
       Eigen::Matrix2d system;
       system << 1.0, speed * lower_prediction_dt_sec_, 0.0, 1.0;
       Eigen::Vector2d input(
         0.0, speed / wheelbase_ * lower_prediction_dt_sec_);
+      if (reference_ratio > 0.0) {
+        const double dt = lower_prediction_dt_sec_;
+        input.x() = speed * reference_ratio * dt + 0.5 * speed * speed / wheelbase_ * dt * dt;
+      }
       Eigen::Vector2d affine_state(
         result.lateral_error_m, result.heading_error_rad);
       Eigen::MatrixXd input_map = Eigen::MatrixXd::Zero(2, horizon);
       for (int k = 0; k < horizon; ++k) {
-        const double curvature_disturbance =
-          -speed * lower_prediction_dt_sec_ * result.curvature_reference[k];
-        affine_state = system * affine_state + Eigen::Vector2d(0.0, curvature_disturbance);
+        affine_state = system * affine_state;
         input_map = system * input_map;
         input_map.col(k) += input;
         affine.segment<2>(2 * k) = affine_state;
         condensed.block(2 * k, 0, 2, horizon) = input_map;
+        condensed(2 * k + 1, k) += reference_ratio;
       }
     }
 
     result.affine_prediction = affine;
     result.condensed_prediction = condensed;
+    // Predict vehicle motion in the fixed tangent frame at the nearest point.
+    // Track future geometric positions/headings in the objective, without a
+    // curvature disturbance in the state equation or curvature feed-forward.
+    result.tracking_target = Eigen::VectorXd::Zero(2 * horizon);
+    const Eigen::Vector2d normal(-std::sin(psi), std::cos(psi));
+    for (int k = 0; k < horizon; ++k) {
+      result.tracking_target[2 * k] = normal.dot(
+        result.reference_horizon[static_cast<std::size_t>(k + 1)] - path.points[nearest]);
+      result.tracking_target[2 * k + 1] = wrapToPi(
+        result.reference_heading[static_cast<std::size_t>(k + 1)] - psi);
+    }
 
     Eigen::MatrixXd state_weight = Eigen::MatrixXd::Zero(2 * horizon, 2 * horizon);
     for (int k = 0; k < horizon; ++k) {
@@ -820,7 +904,7 @@ struct LowerTrackingMpcNode::Impl
       lower_r_steering_ * Eigen::MatrixXd::Identity(horizon, horizon) +
       lower_rd_steering_rate_ * difference.transpose() * difference);
     Eigen::VectorXd linear_eigen =
-      2.0 * condensed.transpose() * state_weight * affine;
+      2.0 * condensed.transpose() * state_weight * (affine - result.tracking_target);
     linear_eigen(0) -= 2.0 * lower_rd_steering_rate_ * previous;
     hessian_eigen.diagonal().array() += 1e-9;
 
@@ -1004,9 +1088,15 @@ struct LowerTrackingMpcNode::Impl
     return selected;
   }
 
+  double steeringCommandScale() const
+  {
+    return lower_steering_command_scale_rad_ > 0.0 ?
+      lower_steering_command_scale_rad_ : lower_max_steering_angle_rad_;
+  }
+
   double filterSteering(double steering_angle_rad, const rclcpp::Time & current_time)
   {
-    double normalized = steering_angle_rad / lower_max_steering_angle_rad_;
+    double normalized = steering_angle_rad / steeringCommandScale();
     normalized = clampd(normalized, -steer_norm_max_, steer_norm_max_);
     if (!enable_output_filter_) {
       previous_filtered_steer_norm_ = normalized;
@@ -1182,11 +1272,13 @@ struct LowerTrackingMpcNode::Impl
     // Keep existing field positions; index 5 now denotes the nearest dense point.
     trace.data.push_back(mpc.solver_only_time_ms);
     trace.data.push_back(selected.steering_angle_rad);  // 25: selected, before filter
-    trace.data.push_back(virtual_command.steer * lower_max_steering_angle_rad_);  // 26
+    trace.data.push_back(virtual_command.steer * steeringCommandScale());  // 26
     trace.data.push_back(mpc.fallback_valid ? 1.0 : 0.0);  // 27: available, not QP success
     trace.data.push_back(mpc.curvature_reference.empty() ?
       std::numeric_limits<double>::quiet_NaN() : mpc.curvature_reference.front());  // 28
     trace.data.push_back(mpc.delta_prev_rad);  // 29: QP/fallback rate-limit reference
+    trace.data.push_back(lower_reference_point_to_rear_axle_m_);  // 30: tracked point
+    trace.data.push_back(steeringCommandScale());  // 31: radians / normalized command
     lower_trace_pub_->publish(trace);
   }
 
@@ -1207,7 +1299,7 @@ struct LowerTrackingMpcNode::Impl
       last_valid_steering_time_ = current_time;
     }
     const double raw_normalized = clampd(
-      command.steering_angle_rad / lower_max_steering_angle_rad_, -1.0, 1.0);
+      command.steering_angle_rad / steeringCommandScale(), -1.0, 1.0);
     const double applied_normalized = filterSteering(
       command.steering_angle_rad, current_time);
 
@@ -1221,7 +1313,7 @@ struct LowerTrackingMpcNode::Impl
     const VirtualDriveCommand drive = computeVirtualDrive(
       applied_normalized, command.drive_valid, hold_steering, pose.speed_mps);
     const double applied_steering_angle_rad =
-      drive.steer * lower_max_steering_angle_rad_;
+      drive.steer * steeringCommandScale();
     geometry_msgs::msg::Twist applied = raw;
     applied.linear.x = applied_steering_angle_rad;
     applied.linear.y = drive.steer;
@@ -1338,7 +1430,7 @@ struct LowerTrackingMpcNode::Impl
         fallback.drive_valid = true;
         fallback.fallback_mode = 5;
         RCLCPP_WARN_THROTTLE(node_.get_logger(), *node_.get_clock(), 1000,
-          "lower QP failed; applying curvature fallback delta=%.6f: %s",
+          "lower QP failed; applying error-feedback fallback delta=%.6f: %s",
           fallback.steering_angle_rad, mpc.status.c_str());
         publishLocalReference(mpc.reference_horizon, frame_id);
         publishSelectedCommand(pose, mpc, fallback);
@@ -1680,10 +1772,13 @@ struct LowerTrackingMpcNode::Impl
   double lower_r_steering_{0.30};
   double lower_rd_steering_rate_{8.0};
   double lower_max_steering_angle_rad_{0.35};
+  double lower_steering_command_scale_rad_{0.0};  // 0 preserves legacy calibration.
+  double lower_reference_point_to_rear_axle_m_{0.0};  // 0 is the rear axle.
   double lower_max_steering_rate_radps_{2.09439510239};
   bool lower_enable_steering_actuator_model_{false};
   double lower_steering_actuator_delay_sec_{0.0};
   double lower_steering_actuator_time_constant_sec_{0.85};
+  bool lower_reference_follow_measured_speed_{false};
   double lower_min_path_spacing_m_{0.05};
   double lower_min_effective_speed_mps_{0.10};
   std::string scale_mode_{"model"};

@@ -2,6 +2,7 @@
 
 #include "virtual_control/egocentric_planner_geometry.hpp"
 #include "virtual_control/miqp_solution_validation.hpp"
+#include "virtual_control/planner_stage_timer.hpp"
 
 #include "QuadraticProblem.h"
 #include "matrix_utils.h"
@@ -268,6 +269,9 @@ SdMapUpperPlannerNode::SdMapUpperPlannerNode(const rclcpp::NodeOptions & options
   validateParameters();
   createInterfaces();
   csv_path_loaded_ = loadReferencePathCsvIfConfigured();
+  RCLCPP_INFO(
+    get_logger(), "k1 lane constraint trial: skip_front_clipped_k1_lane_constraints=%s",
+    skip_front_clipped_k1_lane_constraints_ ? "true" : "false");
 
   const auto period = std::chrono::duration<double>(1.0 / upper_planner_rate_hz_);
   planner_timer_ = create_wall_timer(period, std::bind(&SdMapUpperPlannerNode::plannerLoop, this));
@@ -283,6 +287,13 @@ SdMapUpperPlannerNode::SdMapUpperPlannerNode(const rclcpp::NodeOptions & options
     vehicle_length_m_, bev_forward_m_,
     preview_interval_boundary_margin_m_, state_input_type_.c_str(),
     grid_map_topic_.c_str(), sparse_path_topic_.c_str(), dense_path_topic_.c_str());
+  RCLCPP_INFO(
+    get_logger(),
+    "upper branch model: cumulative_increment=%d turn_window_at_split=%d "
+    "turn_target_absolute=%d split_continuity=%.2fm r_dpsi=%.3f lambda_turn=%.3f",
+    upper_cumulative_increment_model_ ? 1 : 0, branch_turn_window_at_split_ ? 1 : 0,
+    branch_turn_target_absolute_ ? 1 : 0, branch_split_continuity_m_, upper_r_dpsi_,
+    lambda_relative_turn_);
 }
 
 void SdMapUpperPlannerNode::declareAndLoadParameters()
@@ -311,6 +322,7 @@ void SdMapUpperPlannerNode::declareAndLoadParameters()
   declare_parameter<bool>("preview_limit_to_grid_extent", preview_limit_to_grid_extent_);
   declare_parameter<int>("preview_grid_reserve_steps", preview_grid_reserve_steps_);
   declare_parameter<bool>("preview_restore_full_horizon", preview_restore_full_horizon_);
+  declare_parameter<bool>("guard_side_boundary_terminal_loss", guard_side_boundary_terminal_loss_);
   declare_parameter<double>("lower_prediction_dt_sec", lower_prediction_dt_sec_);
   declare_parameter<double>("lower_min_path_spacing_m", lower_min_path_spacing_m_);
   declare_parameter<double>("target_speed_mps", target_speed_mps_);
@@ -333,6 +345,10 @@ void SdMapUpperPlannerNode::declareAndLoadParameters()
   declare_parameter<double>("upper_r_dpsi", upper_r_dpsi_);
   declare_parameter<bool>("normalize_upper_input_cost", normalize_upper_input_cost_);
   declare_parameter<int>("turn_preview_steps", turn_preview_steps_);
+  declare_parameter<bool>("upper_cumulative_increment_model", upper_cumulative_increment_model_);
+  declare_parameter<bool>("branch_turn_window_at_split", branch_turn_window_at_split_);
+  declare_parameter<bool>("branch_turn_target_absolute", branch_turn_target_absolute_);
+  declare_parameter<double>("branch_split_continuity_m", branch_split_continuity_m_);
   declare_parameter<double>("turn_weight_growth", turn_weight_growth_);
   declare_parameter<double>("miqp_diagonal_regularization", miqp_diagonal_regularization_);
   declare_parameter<double>(
@@ -348,6 +364,10 @@ void SdMapUpperPlannerNode::declareAndLoadParameters()
   declare_parameter<double>("waypoint_yaw_bias_rad", waypoint_yaw_bias_rad_);
   declare_parameter<double>("input_timeout_sec", input_timeout_sec_);
   declare_parameter<bool>("require_grid_map", require_grid_map_);
+  declare_parameter<bool>(
+    "skip_front_clipped_k1_lane_constraints", skip_front_clipped_k1_lane_constraints_);
+  declare_parameter<bool>("grid_origin_x_override_enabled", grid_origin_x_override_enabled_);
+  declare_parameter<double>("grid_origin_x_override_m", grid_origin_x_override_m_);
 
   declare_parameter<bool>("use_csv_global_path", use_csv_global_path_);
   declare_parameter<std::string>("csv_global_path_file", csv_global_path_file_);
@@ -355,6 +375,7 @@ void SdMapUpperPlannerNode::declareAndLoadParameters()
     "allow_topic_path_override_when_csv_loaded",
     allow_topic_path_override_when_csv_loaded_);
   declare_parameter<bool>("reset_waypoint_on_path_update", reset_waypoint_on_path_update_);
+  declare_parameter<bool>("enable_batch_mission_reset", enable_batch_mission_reset_);
 
   declare_parameter<double>(
     "preview_min_target_distance_m", preview_min_target_distance_m_);
@@ -410,6 +431,7 @@ void SdMapUpperPlannerNode::declareAndLoadParameters()
   get_parameter("preview_limit_to_grid_extent", preview_limit_to_grid_extent_);
   get_parameter("preview_grid_reserve_steps", preview_grid_reserve_steps_);
   get_parameter("preview_restore_full_horizon", preview_restore_full_horizon_);
+  get_parameter("guard_side_boundary_terminal_loss", guard_side_boundary_terminal_loss_);
   get_parameter("lower_prediction_dt_sec", lower_prediction_dt_sec_);
   get_parameter("lower_min_path_spacing_m", lower_min_path_spacing_m_);
   get_parameter("target_speed_mps", target_speed_mps_);
@@ -431,6 +453,10 @@ void SdMapUpperPlannerNode::declareAndLoadParameters()
   get_parameter("upper_r_dpsi", upper_r_dpsi_);
   get_parameter("normalize_upper_input_cost", normalize_upper_input_cost_);
   get_parameter("turn_preview_steps", turn_preview_steps_);
+  get_parameter("upper_cumulative_increment_model", upper_cumulative_increment_model_);
+  get_parameter("branch_turn_window_at_split", branch_turn_window_at_split_);
+  get_parameter("branch_turn_target_absolute", branch_turn_target_absolute_);
+  get_parameter("branch_split_continuity_m", branch_split_continuity_m_);
   get_parameter("turn_weight_growth", turn_weight_growth_);
   get_parameter("miqp_diagonal_regularization", miqp_diagonal_regularization_);
   get_parameter(
@@ -446,6 +472,10 @@ void SdMapUpperPlannerNode::declareAndLoadParameters()
   get_parameter("waypoint_yaw_bias_rad", waypoint_yaw_bias_rad_);
   get_parameter("input_timeout_sec", input_timeout_sec_);
   get_parameter("require_grid_map", require_grid_map_);
+  get_parameter(
+    "skip_front_clipped_k1_lane_constraints", skip_front_clipped_k1_lane_constraints_);
+  get_parameter("grid_origin_x_override_enabled", grid_origin_x_override_enabled_);
+  get_parameter("grid_origin_x_override_m", grid_origin_x_override_m_);
 
   get_parameter("use_csv_global_path", use_csv_global_path_);
   get_parameter("csv_global_path_file", csv_global_path_file_);
@@ -453,6 +483,7 @@ void SdMapUpperPlannerNode::declareAndLoadParameters()
     "allow_topic_path_override_when_csv_loaded",
     allow_topic_path_override_when_csv_loaded_);
   get_parameter("reset_waypoint_on_path_update", reset_waypoint_on_path_update_);
+  get_parameter("enable_batch_mission_reset", enable_batch_mission_reset_);
 
   get_parameter("preview_min_target_distance_m", preview_min_target_distance_m_);
   get_parameter("preview_line_sample_m", preview_line_sample_m_);
@@ -545,6 +576,9 @@ void SdMapUpperPlannerNode::validateParameters() const
     fail("input regularization weights must be >= 0");
   }
   if (turn_preview_steps_ < 0) {fail("turn_preview_steps must be >= 0");}
+  if (!std::isfinite(branch_split_continuity_m_) || branch_split_continuity_m_ <= 0.0) {
+    fail("branch_split_continuity_m must be finite and > 0");
+  }
   if (turn_weight_growth_ <= 0.0) {fail("turn_weight_growth must be > 0");}
   if (miqp_diagonal_regularization_ < 0.0) {
     fail("miqp_diagonal_regularization must be >= 0");
@@ -577,9 +611,9 @@ void SdMapUpperPlannerNode::validateParameters() const
     fail("preview_min_segment_samples must be >= 2");
   }
   if (!std::isfinite(preview_interval_soft_ratio_) ||
-    std::abs(preview_interval_soft_ratio_ - 0.7) > 1e-12)
+    preview_interval_soft_ratio_ <= 0.5 || preview_interval_soft_ratio_ > 1.0)
   {
-    fail("main9 requires fixed preview_interval_soft_ratio=0.7");
+    fail("preview_interval_soft_ratio must be finite and in (0.5, 1.0]");
   }
   if (!std::isfinite(interval_centering_settings_.relative_length_factor) ||
     std::abs(interval_centering_settings_.relative_length_factor - 1.5) > 1e-12)
@@ -603,6 +637,9 @@ void SdMapUpperPlannerNode::validateParameters() const
   }
   if (grid_value_threshold_ < 0 || grid_value_threshold_ > 100) {
     fail("grid_value_threshold must be in [0, 100]");
+  }
+  if (grid_origin_x_override_enabled_ && !std::isfinite(grid_origin_x_override_m_)) {
+    fail("grid_origin_x_override_m must be finite when the override is enabled");
   }
   if (require_grid_frame_match_ && normalizedFrameId(expected_grid_frame_id_).empty()) {
     fail("expected_grid_frame_id must be nonempty when require_grid_frame_match is true");
@@ -663,10 +700,60 @@ void SdMapUpperPlannerNode::createInterfaces()
     "/debug/upper_miqp_trace", 10);
   branch_event_pub_ = create_publisher<std_msgs::msg::String>(
     "/debug/upper_branch_event", 10);
+  // Timing diagnostics must not wait for acknowledgements from a recorder.
+  upper_stage_timing_pub_ = create_publisher<std_msgs::msg::String>(
+    "/debug/upper_stage_timing", rclcpp::QoS(10).best_effort());
   upper_timing_pub_ = create_publisher<std_msgs::msg::Float64MultiArray>(
     "/debug/upper_solver_timing", 10);
   upper_solver_time_pub_ = create_publisher<std_msgs::msg::Float64>(
     "/debug/upper_solver_time_ms", 10);
+  if (enable_batch_mission_reset_) {
+    // The timer, subscriptions and service share the default mutually-exclusive
+    // callback group. No solve can overlap the reset or its acknowledgement.
+    mission_reset_service_ = create_service<std_srvs::srv::Trigger>(
+      "~/reset_mission",
+      [this](const std::shared_ptr<std_srvs::srv::Trigger::Request>,
+      std::shared_ptr<std_srvs::srv::Trigger::Response> response) {
+        PoseSnapshot pose;
+        {
+          std::lock_guard<std::mutex> lock(pose_mtx_);
+          pose = pose_;
+        }
+        const double age = (now() - pose.received).seconds();
+        if (!pose.valid || !pose.speed_valid || age < 0.0 || age > 0.6 ||
+          pose.speed_mps >= 0.2 || use_csv_global_path_)
+        {
+          response->success = false;
+          response->message = "mission reset requires fresh stationary odometry and topic path";
+          return;
+        }
+        std::string frame;
+        {
+          std::lock_guard<std::mutex> lock(path_mtx_);
+          frame = global_path_frame_id_;
+          global_path_.clear();  // Wait for the new mission path, even if its coordinates repeat.
+          wp0_index_ = 0;
+          wp1_index_ = 1;
+          goal_reached_ = false;
+          ++planning_revision_;
+        }
+        invalidatePreviousReference();
+        interval_centering_state_ = IntervalCenteringState{};
+        nav_msgs::msg::Path empty;
+        empty.header.frame_id = frame;
+        empty.header.stamp = now();
+        sparse_path_pub_->publish(empty);
+        dense_path_pub_->publish(empty);
+        imac_interfaces::msg::PathWithArcLength empty_arc;
+        empty_arc.path = empty;
+        dense_arc_path_pub_->publish(empty_arc);
+        publishGoalReached(false);
+        response->success = true;
+        response->message = "mission cleared; awaiting path; revision=" +
+          std::to_string(planning_revision_);
+        RCLCPP_INFO(get_logger(), "%s", response->message.c_str());
+      });
+  }
 }
 
 void SdMapUpperPlannerNode::odomCallback(const nav_msgs::msg::Odometry::SharedPtr msg)
@@ -859,6 +946,15 @@ void SdMapUpperPlannerNode::gridMapCallback(
   next.height = static_cast<int>(msg->info.height);
   next.origin_body = Eigen::Vector2d(
     msg->info.origin.position.x, msg->info.origin.position.y);
+  if (grid_origin_x_override_enabled_) {
+    next.origin_body.x() = grid_origin_x_override_m_;
+    RCLCPP_WARN_THROTTLE(
+      get_logger(), *get_clock(), 10000,
+      "grid origin experiment: received_x=%.3f effective_x=%.3f shift_x=%.3f; "
+      "cell data unchanged",
+      msg->info.origin.position.x, next.origin_body.x(),
+      next.origin_body.x() - msg->info.origin.position.x);
+  }
   next.origin_yaw_rad = quaternionYaw(msg->info.origin.orientation);
   next.frame_id = msg->header.frame_id;
   next.data.assign(msg->data.begin(), msg->data.end());
@@ -1073,8 +1169,8 @@ SdMapUpperPlannerNode::buildPreviewReference(
     finitePoint(previous_reference_body.front()) &&
     previous_reference_body.front().norm() <= 1e-9;
   if (previous_solution_usable) {
-    // Old p1,...,pN-1 were re-expressed using the current measured yaw.
-    // Only r0,...,rN-2 are populated; old pN is deliberately absent.
+    // The old world path is sampled from measured spatial progress.
+    // Only r0,...,rN-2 are populated; the tail is extended below.
     for (int k = 0; k <= requested_horizon - 2; ++k) {
       if (!finitePoint(previous_reference_body[static_cast<std::size_t>(k)])) {
         previous_solution_usable = false;
@@ -1495,6 +1591,62 @@ SdMapUpperPlannerNode::extractPreviewIntervals(
     }
   }
 
+  // Detect loss of the reference-connected road at a lateral map boundary.
+  // Work on raw intervals, before B/soft contraction. Do not infer clipping
+  // from candidate count alone, blocked cells, or an unknown interior gap.
+  const int last = output.N_pred;
+  if (guard_side_boundary_terminal_loss_ && reference.used_previous_solution &&
+    grid && grid->valid && last == requested_horizon && last >= 2 &&
+    output.Nck[last] > 0)
+  {
+    const double c = std::cos(grid->origin_yaw_rad);
+    const double s = std::sin(grid->origin_yaw_rad);
+    const auto local = [&](const Eigen::Vector2d & p) -> Eigen::Vector2d {
+        const Eigen::Vector2d q = p - grid->origin_body;
+        return {c * q.x() + s * q.y(), -s * q.x() + c * q.y()};
+      };
+    const double height = grid->height * grid->resolution;
+    const double tolerance = preview_line_sample_m_ + 1e-6;
+    const auto clipped = [&](int k, std::size_t j, int side) {
+        const auto & obs = observations[k][j];
+        if (obs.nominal_fallback) {return false;}
+        const double edge = side < 0 ? 0.0 : height;
+        return (!obs.start_boundary_observed &&
+               std::abs(local(output.pmk[k][j]).y() - edge) <= tolerance) ||
+               (!obs.end_boundary_observed &&
+               std::abs(local(output.pMk[k][j]).y() - edge) <= tolerance);
+      };
+    bool reference_present = false;
+    for (const auto & obs : observations[last]) {
+      reference_present = reference_present || obs.reference_inside || obs.nominal_fallback;
+    }
+    const Eigen::Vector2d tail = local(output.prk[last]);
+    const Eigen::Vector2d before = local(output.prk[last - 1]);
+    const double step = (tail - before).norm();
+    for (const int side : {-1, 1}) {
+      const double clearance = side < 0 ? tail.y() : height - tail.y();
+      if (reference_present || clearance > step + grid->resolution ||
+        side * (tail.y() - before.y()) <= 0.0)
+      {
+        continue;
+      }
+      bool connected_clipped = false;
+      for (std::size_t j = 0; j < observations[last - 1].size(); ++j) {
+        connected_clipped = connected_clipped ||
+          (observations[last - 1][j].reference_inside && clipped(last - 1, j, side));
+      }
+      bool boundary_candidate_remains = false;
+      for (std::size_t j = 0; j < observations[last].size(); ++j) {
+        boundary_candidate_remains = boundary_candidate_remains || clipped(last, j, side);
+      }
+      if (connected_clipped && !boundary_candidate_remains) {
+        output.side_boundary_tail_start = last;
+        output.side_boundary_side = side;
+        break;
+      }
+    }
+  }
+
   observations.resize(static_cast<std::size_t>(output.N_pred + 1));
   output.interval_update = updateIntervalCentering(
     interval_state, observations, interval_centering_settings_);
@@ -1535,6 +1687,18 @@ SdMapUpperPlannerNode::extractPreviewIntervals(
       }
       output.pmk[step][retained] = processed_start;
       output.pMk[step][retained] = processed_end;
+      if (k == 1) {
+        // A truncated BEV edge is not an observed road boundary. Match the
+        // offline trial's 0.11 m tolerance for the 0.10 m line sampling.
+        const bool front_clipped = grid && grid->valid &&
+          std::abs(grid->origin_yaw_rad) < 1e-9 && !info.observation.nominal_fallback &&
+          ((!info.observation.start_boundary_observed &&
+          std::abs(p0.x() - grid->origin_body.x()) < 0.11) ||
+          (!info.observation.end_boundary_observed &&
+          std::abs(p1.x() - grid->origin_body.x()) < 0.11));
+        output.k1_lane_constraint_excluded.push_back(
+          skip_front_clipped_k1_lane_constraints_ && front_clipped);
+      }
       output.raw_lengths[step][retained] = raw_length;
       output.source_modes[step][retained] = output.source_modes[step][candidate];
       output.processed_lengths[step].push_back(info.processed_length);
@@ -1570,6 +1734,19 @@ SdMapUpperPlannerNode::extractPreviewIntervals(
   output.position_targets.resize(usable_size);
 
   return output;
+}
+
+std::vector<Eigen::Vector2d> SdMapUpperPlannerNode::publishablePrediction(
+  const PreviewConstraintData & preview, const UpperSolveResult & solve)
+{
+  if (!solve.valid) {return {};}
+  auto points = solve.predicted_body;
+  if (preview.side_boundary_tail_start >= 2 &&
+    static_cast<std::size_t>(preview.side_boundary_tail_start) < points.size())
+  {
+    points.resize(static_cast<std::size_t>(preview.side_boundary_tail_start));
+  }
+  return points;
 }
 
 void SdMapUpperPlannerNode::applyTerminalPositionTargets(
@@ -1706,15 +1883,21 @@ SdMapUpperPlannerNode::UpperSolveResult SdMapUpperPlannerNode::solveUpperMiqp(
   Matrix<double> G(0.0, 2 * (horizon + 1), variable_count);
   for (int state_step = 1; state_step <= horizon; ++state_step) {
     for (int input_step = 0; input_step < state_step; ++input_step) {
-      const double heading = preview.psirk[static_cast<std::size_t>(input_step)];
       const int row = 2 * state_step;
       const int column = 2 * input_step;
-      G[row][column] = upper_prediction_dt_sec_ * std::cos(heading);
-      G[row][column + 1] =
-        -upper_prediction_dt_sec_ * planning_speed_mps * std::sin(heading);
-      G[row + 1][column] = upper_prediction_dt_sec_ * std::sin(heading);
-      G[row + 1][column + 1] =
-        upper_prediction_dt_sec_ * planning_speed_mps * std::cos(heading);
+      // Legacy: input j moves only segment j. Cumulative: a speed/heading increment at j persists on
+      // every later segment j..k-1, matching the increment-based steering limit and turn cost.
+      const int last_segment =
+        upper_cumulative_increment_model_ ? state_step - 1 : input_step;
+      for (int segment = input_step; segment <= last_segment; ++segment) {
+        const double heading = preview.psirk[static_cast<std::size_t>(segment)];
+        G[row][column] += upper_prediction_dt_sec_ * std::cos(heading);
+        G[row][column + 1] +=
+          -upper_prediction_dt_sec_ * planning_speed_mps * std::sin(heading);
+        G[row + 1][column] += upper_prediction_dt_sec_ * std::sin(heading);
+        G[row + 1][column + 1] +=
+          upper_prediction_dt_sec_ * planning_speed_mps * std::cos(heading);
+      }
     }
   }
 
@@ -1785,6 +1968,44 @@ SdMapUpperPlannerNode::UpperSolveResult SdMapUpperPlannerNode::solveUpperMiqp(
       break;
     }
   }
+  if (branch_turn_window_at_split_) {
+    // Anchor the relative-turn window at the first step where one observed arm continues into
+    // two or more arms. Candidates that do not continue the previous section (side remnants of an
+    // earlier junction) no longer capture the turn window.
+    const auto point_segment = [](const Eigen::Vector2d & p, const Eigen::Vector2d & q0,
+        const Eigen::Vector2d & q1) {
+        const Eigen::Vector2d d = q1 - q0;
+        const double l2 = d.squaredNorm();
+        const double u = l2 > 1e-12 ? clampd((p - q0).dot(d) / l2, 0.0, 1.0) : 0.0;
+        return (p - (q0 + u * d)).norm();
+      };
+    const auto segment_distance = [&point_segment](const Eigen::Vector2d & a0,
+        const Eigen::Vector2d & a1, const Eigen::Vector2d & b0, const Eigen::Vector2d & b1) {
+        return std::min(std::min(point_segment(a0, b0, b1), point_segment(a1, b0, b1)),
+          std::min(point_segment(b0, a0, a1), point_segment(b1, a0, a1)));
+      };
+    int split_step = -1;
+    for (int k = 1; k <= horizon && split_step < 0; ++k) {
+      const std::size_t sk = static_cast<std::size_t>(k);
+      const int previous_count = k == 1 ? 1 : preview.Nck[sk - 1];
+      for (int i = 0; i < previous_count && split_step < 0; ++i) {
+        const Eigen::Vector2d a0 = k == 1 ? Eigen::Vector2d::Zero() :
+          preview.pmk[sk - 1][static_cast<std::size_t>(i)];
+        const Eigen::Vector2d a1 = k == 1 ? Eigen::Vector2d::Zero() :
+          preview.pMk[sk - 1][static_cast<std::size_t>(i)];
+        int continuing = 0;
+        for (int j = 0; j < preview.Nck[sk]; ++j) {
+          if (segment_distance(a0, a1, preview.pmk[sk][static_cast<std::size_t>(j)],
+            preview.pMk[sk][static_cast<std::size_t>(j)]) <= branch_split_continuity_m_)
+          {
+            ++continuing;
+          }
+        }
+        if (continuing >= 2) {split_step = k;}
+      }
+    }
+    if (split_step >= 1) {result.branch_step = split_step;}
+  }
 
   if (result.branch_step >= 1 && lambda_relative_turn_ > 0.0) {
     const int turn_start = std::max(1, result.branch_step - turn_preview_steps_);
@@ -1804,9 +2025,16 @@ SdMapUpperPlannerNode::UpperSolveResult SdMapUpperPlannerNode::solveUpperMiqp(
       const int step = turn_start + i;
       const double stage_weight =
         unnormalized_weights[static_cast<std::size_t>(i)] / weight_sum;
-      const double target =
+      double target =
         static_cast<double>(i + 1) / static_cast<double>(active_count) *
         preview.delta_psi_road_rad;
+      if (branch_turn_target_absolute_) {
+        // Body-frame heading target (incoming road heading + fraction of the road turn), expressed
+        // relative to the reference heading of segment step-1, so a reference that has already
+        // turned is not asked to turn again.
+        target = wrapToPi(preview.road_segment_heading_rad[0] + target -
+          preview.psirk[static_cast<std::size_t>(step - 1)]);
+      }
       const double q_weight = turn_base_weight * stage_weight;
 
       result.turn_window_steps.push_back(step);
@@ -1840,6 +2068,13 @@ SdMapUpperPlannerNode::UpperSolveResult SdMapUpperPlannerNode::solveUpperMiqp(
   }
 
   const int lane_rows = 2 * binary_count + horizon;
+  const auto skip_lane = [&](int k, int candidate) {
+      if (guard_side_boundary_terminal_loss_ && preview.side_boundary_tail_start >= 2 &&
+        k >= preview.side_boundary_tail_start) {return true;}
+      return skip_front_clipped_k1_lane_constraints_ && k == 1 && candidate >= 0 &&
+             static_cast<std::size_t>(candidate) < preview.k1_lane_constraint_excluded.size() &&
+             preview.k1_lane_constraint_excluded[static_cast<std::size_t>(candidate)];
+    };
   const int input_rows = 4 * horizon;
   Matrix<double> inequality(0.0, lane_rows + input_rows, variable_count);
   Vector<double> inequality_bound(0.0, lane_rows + input_rows);
@@ -1861,6 +2096,14 @@ SdMapUpperPlannerNode::UpperSolveResult SdMapUpperPlannerNode::solveUpperMiqp(
       const int binary_index = input_count +
         binary_offsets[static_cast<std::size_t>(k - 1)] + candidate;
 
+      if (skip_lane(k, candidate)) {
+        // Keep selector indexing and cost unchanged; these bounds are redundant.
+        inequality[row][binary_index] = 1.0;
+        inequality_bound[row++] = 1.0;
+        inequality[row][binary_index] = 1.0;
+        inequality_bound[row++] = 1.0;
+        continue;
+      }
       for (int column = 0; column < input_count; ++column) {
         inequality[row][column] =
           axis.x() * G[2 * k][column] + axis.y() * G[2 * k + 1][column];
@@ -2090,6 +2333,12 @@ SdMapUpperPlannerNode::UpperSolveResult SdMapUpperPlannerNode::solveUpperMiqp(
         for (int k = 1; k <= horizon; ++k) {
           const std::size_t step = static_cast<std::size_t>(k);
           const std::size_t candidate = static_cast<std::size_t>(selected[step]);
+          if (skip_lane(k, static_cast<int>(candidate))) {
+            // DAQP ignores satisfied zero rows (0 <= 1).
+            direct_bound[direct_row++] = 1.0;
+            direct_bound[direct_row++] = 1.0;
+            continue;
+          }
           const double heading = preview.psirk[step];
           const Eigen::Vector2d axis(-std::sin(heading), std::cos(heading));
           const double reference_projection = axis.dot(preview.prk[step]);
@@ -2544,6 +2793,13 @@ void SdMapUpperPlannerNode::publishBranchEvent(
       if (k) {out << ',';} out << preview->Nck[k];
     }
   }
+  out << "],\"k1_lane_constraint_excluded\":[";
+  if (preview && preview->N_pred >= 1) {
+    for (std::size_t j = 0; j < preview->k1_lane_constraint_excluded.size(); ++j) {
+      if (j) {out << ',';}
+      out << (preview->k1_lane_constraint_excluded[j] ? "true" : "false");
+    }
+  }
   out << "],\"intervals_world\":[";
   bool first = true;
   if (preview) {
@@ -2563,13 +2819,21 @@ void SdMapUpperPlannerNode::publishBranchEvent(
   points(preview ? preview->prk : std::vector<Eigen::Vector2d>{}, true);
   out << ",\"planned_world\":";
   points(solve && solve->valid ? solve->predicted_body : std::vector<Eigen::Vector2d>{}, true);
+  out << ",\"side_boundary_tail_start\":" <<
+    (preview ? preview->side_boundary_tail_start : -1);
+  out << ",\"side_boundary_side\":" << (preview ? preview->side_boundary_side : 0);
+  out << ",\"published_world\":";
+  points(preview && solve ? publishablePrediction(*preview, *solve) :
+    std::vector<Eigen::Vector2d>{}, true);
   out << ",\"retained_world\":";
   points(retained ? diagnostic_last_path_ : std::vector<Eigen::Vector2d>{}, false);
   out << '}';
   std_msgs::msg::String msg; msg.data = out.str(); branch_event_pub_->publish(msg);
   if (published && solve) {
     diagnostic_last_path_.clear();
-    for (const auto & p : solve->predicted_body) {diagnostic_last_path_.push_back(world(p));}
+    for (const auto & p : publishablePrediction(*preview, *solve)) {
+      diagnostic_last_path_.push_back(world(p));
+    }
     diagnostic_last_revision_ = revision; diagnostic_last_path_stamp_ = emitted;
   }
 }
@@ -2637,11 +2901,63 @@ void SdMapUpperPlannerNode::plannerLoop()
 {
   const auto cycle_started = std::chrono::steady_clock::now();
   const double cycle_stamp = now().seconds();
+  const double start_interval_ms = last_stage_cycle_start_.time_since_epoch().count() == 0 ?
+    std::numeric_limits<double>::quiet_NaN() :
+    std::chrono::duration<double, std::milli>(cycle_started - last_stage_cycle_start_).count();
+  last_stage_cycle_start_ = cycle_started;
+  // Construct before other locals: the final mark also covers their destruction
+  // and the existing TimingRecord's publication, including on early returns.
+  struct StageRecord
+  {
+    PlannerStageTimer timer;
+    rclcpp::Publisher<std_msgs::msg::String>::SharedPtr publisher;
+    double stamp;
+    std::uint64_t cycle_sequence;
+    double start_interval_ms;
+    double & previous_report_ms;
+    std::uint64_t plan_sequence{0};
+    const char * outcome{"early_return"};
+    ~StageRecord() noexcept
+    {
+      try {
+        timer.mark("cycle_cleanup");
+        const auto reporting_started = std::chrono::steady_clock::now();
+        std::ostringstream out;
+        out << "{\"schema_version\":1,\"t_start\":" << branchJsonNumber(stamp)
+            << ",\"cycle_seq\":" << cycle_sequence << ",\"plan_seq\":" << plan_sequence
+            << ",\"outcome\":" << branchJsonString(outcome)
+            << ",\"start_interval_ms\":" << branchJsonNumber(start_interval_ms)
+            << ",\"previous_report_ms\":" << branchJsonNumber(previous_report_ms)
+            << ",\"wall_ms\":" << branchJsonNumber(timer.wallMs())
+            << ",\"cpu_ms\":" << branchJsonNumber(timer.cpuMs()) << ",\"stages\":[";
+        bool first = true;
+        for (const auto & stage : timer.stages()) {
+          if (!first) {out << ',';}
+          first = false;
+          out << "{\"name\":" << branchJsonString(stage.name)
+              << ",\"wall_ms\":" << branchJsonNumber(stage.wall_ms)
+              << ",\"cpu_ms\":" << branchJsonNumber(stage.cpu_ms) << '}';
+        }
+        out << "]}";
+        std_msgs::msg::String msg;
+        msg.data = out.str();
+        publisher->publish(msg);
+        // Report our own overhead next time to avoid recursive instrumentation.
+        previous_report_ms = std::chrono::duration<double, std::milli>(
+          std::chrono::steady_clock::now() - reporting_started).count();
+      } catch (...) {
+        // A diagnostics failure must not terminate the control process.
+        previous_report_ms = std::numeric_limits<double>::quiet_NaN();
+      }
+    }
+  } stages{PlannerStageTimer(cycle_started), upper_stage_timing_pub_, cycle_stamp,
+    ++stage_cycle_sequence_, start_interval_ms, previous_stage_report_ms_};
   PoseSnapshot pose;
   {
     std::lock_guard<std::mutex> lock(pose_mtx_);
     pose = pose_;
   }
+  stages.timer.mark("pose_snapshot");
   if (!pose.valid) {
     RCLCPP_WARN_THROTTLE(get_logger(), *get_clock(), 2000, "planner waiting for pose");
     return;
@@ -2666,6 +2982,7 @@ void SdMapUpperPlannerNode::plannerLoop()
     std::lock_guard<std::mutex> lock(grid_mtx_);
     grid = grid_;
   }
+  stages.timer.mark("grid_snapshot_and_pose_checks");
   bool grid_available = grid.valid;
   if (grid_available && input_timeout_sec_ > 0.0 &&
     (current_time - grid.received).seconds() > input_timeout_sec_)
@@ -2694,6 +3011,7 @@ void SdMapUpperPlannerNode::plannerLoop()
     already_reached = goal_reached_;
     planning_revision = planning_revision_;
   }
+  stages.timer.mark("route_snapshot_and_grid_checks");
   if (global_path.size() < 2) {
     RCLCPP_WARN_THROTTLE(
       get_logger(), *get_clock(), 2000, "planner waiting for global path");
@@ -2721,12 +3039,15 @@ void SdMapUpperPlannerNode::plannerLoop()
       goal_reached_ = true;
     }
     publishGoalReached(true);
+    stages.outcome = "goal_reached";
+    stages.timer.mark("goal_checks_and_publish");
     RCLCPP_INFO_THROTTLE(
       get_logger(), *get_clock(), 1000,
       "goal reached: remaining=%.3f direct=%.3f", remaining, direct_goal_distance);
     return;
   }
   publishGoalReached(false);
+  stages.timer.mark("goal_checks_and_publish");
 
   // main8.m uses vr=3.0 as a fixed upper-model speed. Keeping delta_s and G
   // independent of measured SIH speed also prevents N_pred from oscillating
@@ -2822,8 +3143,9 @@ void SdMapUpperPlannerNode::plannerLoop()
         compatible = compatible && finitePoint(point);
       }
       if (compatible) {
-        compatible = egocentric_planner_geometry::buildMeasuredFrameShiftedPrefix(
-          previous_optimal_path_world_, pose.yaw_rad, requested_horizon,
+        compatible = egocentric_planner_geometry::buildMeasuredFrameProgressPrefix(
+          previous_optimal_path_world_, pose.position, pose.yaw_rad,
+          planning_speed_mps * upper_prediction_dt_sec_, requested_horizon,
           previous_reference_body);
       }
       if (!compatible) {
@@ -2837,6 +3159,7 @@ void SdMapUpperPlannerNode::plannerLoop()
     }
   }
 
+  stages.timer.mark("waypoints_and_previous_reference");
   // Emit one sample per planning attempt, including early failures. Stamp the
   // start so a solve begun before a route transition cannot enter the next log.
   struct TimingRecord
@@ -2845,6 +3168,7 @@ void SdMapUpperPlannerNode::plannerLoop()
     double stamp;
     rclcpp::Publisher<std_msgs::msg::Float64MultiArray>::SharedPtr publisher;
     std::uint64_t sequence;
+    PlannerStageTimer & stage_timer;
     double solver_ms{std::numeric_limits<double>::quiet_NaN()};
     bool valid{false};
     ~TimingRecord()
@@ -2856,13 +3180,17 @@ void SdMapUpperPlannerNode::plannerLoop()
       // attempt sequence, whether any solver was called.
       msg.data = {stamp, solver_ms, plan_ms, valid ? 1.0 : 0.0,
         static_cast<double>(sequence), std::isfinite(solver_ms) ? 1.0 : 0.0};
+      stage_timer.mark("cleanup_before_legacy_timing");
       publisher->publish(msg);
+      stage_timer.mark("legacy_timing_publish");
     }
-  } timing{cycle_started, cycle_stamp, upper_timing_pub_, ++timing_attempt_seq_};
+  } timing{cycle_started, cycle_stamp, upper_timing_pub_, ++timing_attempt_seq_, stages.timer};
+  stages.plan_sequence = timing.sequence;
 
   const PreviewReferenceData reference = buildPreviewReference(
     wp_prev_body, wp0_body, wp1_body, has_previous_waypoint, planning_speed_mps,
     requested_horizon, previous_reference_body);
+  stages.timer.mark("preview_build");
   if (!reference.valid) {
     publishBranchEvent(cycle_stamp, timing.sequence, planning_revision, pose, wp0_idx, wp1_idx,
       nullptr, nullptr, "preview_failed", reference.status, false);
@@ -2877,11 +3205,14 @@ void SdMapUpperPlannerNode::plannerLoop()
   for (const auto & point : reference.points_body) {
     preview_world.push_back(pose.position + rotation_world_body * point);
   }
+  stages.timer.mark("preview_world_conversion");
   publishPath(preview_debug_pub_, preview_world, frame_id);
+  stages.timer.mark("preview_publish");
 
   PreviewConstraintData constraints = extractPreviewIntervals(
     reference, grid_available ? &grid : nullptr, interval_centering_state_);
   interval_centering_state_ = constraints.interval_update.state;
+  stages.timer.mark("interval_extraction");
   if (constraints.N_pred != upper_preview_steps_) {
     RCLCPP_WARN_THROTTLE(
       get_logger(), *get_clock(), 2000,
@@ -2893,7 +3224,9 @@ void SdMapUpperPlannerNode::plannerLoop()
   }
   applyTerminalPositionTargets(
     constraints, wp0_body, wp1_body, planning_speed_mps * upper_prediction_dt_sec_);
+  stages.timer.mark("terminal_targets_and_horizon_log");
   publishIntervalDebug(constraints);
+  stages.timer.mark("interval_debug_publish");
   if (constraints.N_pred <= 0) {
     UpperSolveResult failed;
     failed.status = "empty valid interval prefix";
@@ -2906,17 +3239,11 @@ void SdMapUpperPlannerNode::plannerLoop()
     return;
   }
 
-  RCLCPP_INFO(
-    get_logger(),
-    "road turn wp=[%s%d %d] psi_in=%+.2fdeg psi_out=%+.2fdeg "
-    "delta=%+.2fdeg N=%d plan_v=%.2fm/s",
-    has_previous_waypoint ? "prev " : "ego ", wp0_idx, wp1_idx,
-    radToDeg(constraints.road_segment_heading_rad[0]),
-    radToDeg(constraints.road_segment_heading_rad[1]),
-    radToDeg(constraints.delta_psi_road_rad), constraints.N_pred,
-    planning_speed_mps);
-
+  // Road-turn diagnostics remain available in upper_trace. Avoid synchronous
+  // per-cycle logging before solving; retain the timing marker for comparison.
+  stages.timer.mark("road_turn_log");
   const UpperSolveResult solve = solveUpperMiqp(constraints, planning_speed_mps);
+  stages.timer.mark("solve_upper_full_call");
   timing.solver_ms = solve.solver_only_time_ms;
   // Publish actual solver work only, including unsuccessful solves. No sample
   // is emitted when planning returns before invoking a solver.
@@ -2925,7 +3252,9 @@ void SdMapUpperPlannerNode::plannerLoop()
     solver_time.data = solve.solver_only_time_ms;
     upper_solver_time_pub_->publish(solver_time);
   }
+  stages.timer.mark("solver_metric_publish");
   publishUpperTrace(pose, wp0_idx, wp1_idx, constraints, solve);
+  stages.timer.mark("upper_trace_publish");
   if (!solve.valid) {
     publishBranchEvent(cycle_stamp, timing.sequence, planning_revision, pose, wp0_idx, wp1_idx,
       &constraints, &solve, std::isfinite(solve.solver_only_time_ms) ?
@@ -2943,7 +3272,12 @@ void SdMapUpperPlannerNode::plannerLoop()
     sparse_world.push_back(pose.position + rotation_world_body * point);
   }
   std::vector<double> dense_s;
-  const auto dense_world = densifyPath(sparse_world, planning_speed_mps, dense_s);
+  std::vector<Eigen::Vector2d> published_world;
+  for (const auto & point : publishablePrediction(constraints, solve)) {
+    published_world.push_back(pose.position + rotation_world_body * point);
+  }
+  const auto dense_world = densifyPath(published_world, planning_speed_mps, dense_s);
+  stages.timer.mark("path_conversion_and_densify");
 
   {
     std::lock_guard<std::mutex> lock(path_mtx_);
@@ -2966,20 +3300,19 @@ void SdMapUpperPlannerNode::plannerLoop()
     }
   }
 
-  publishPath(sparse_path_pub_, sparse_world, frame_id);
+  stages.timer.mark("path_commit_locks");
+  publishPath(sparse_path_pub_, published_world, frame_id);
+  stages.timer.mark("sparse_path_publish");
   publishPath(dense_path_pub_, dense_world, frame_id, &dense_s);
+  stages.timer.mark("dense_path_publish");
   timing.valid = true;
+  stages.outcome = "success";
   publishBranchEvent(cycle_stamp, timing.sequence, planning_revision, pose, wp0_idx, wp1_idx,
     &constraints, &solve, "success", solve.status, true);
-  RCLCPP_INFO(
-    get_logger(),
-    "MIQP solved: N=%d branch=%d obj=%.6f Jpos=%.6f Jin=%.6f Jturn=%.6f "
-    "solve_ms=%.3f polished=%s direct_qp=%d sparse=%zu dense=%zu",
-    constraints.N_pred, solve.branch_step, solve.objective,
-    solve.position_cost, solve.input_cost, solve.turn_cost,
-    solve.solve_time_ms, solve.polished ? "yes" : "no",
-    solve.direct_corridor_combinations,
-    sparse_world.size(), dense_world.size());
+  stages.timer.mark("branch_event_publish");
+  // Solver diagnostics are published above. Avoid synchronous per-cycle result
+  // logging, which can delay the next plan; retain the timing marker.
+  stages.timer.mark("result_log");
 }
 
 }  // namespace imac_ctrl
