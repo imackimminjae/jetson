@@ -1,0 +1,48 @@
+
+NuttShell (NSH) NuttX-11.0.0
+nsh> [Klistener magnetometer_bias_estimate 1
+
+TOPIC: magnetometer_bias_estimate
+ magnetometer_bias_estimate
+    timestamp: 1605861295 (0.004003 seconds ago)
+    bias_x: [1.73890, 0.00000, 0.00000, 0.00000]
+    bias_y: [-0.41366, 0.00000, 0.00000, 0.00000]
+    bias_z: [1.21321, 0.00000, 0.00000, 0.00000]
+    valid: [True, False, False, False]
+    stable: [True, False, False, False]
+nsh> [Kmag_bias_estimator status
+MAG 197388 EN: 1, offset: [0.001 -0.004 -0.000], scale: [1.000 1.000 1.000], Internal
+INFO  [mag_bias_estimator] 0 (197388) bias: [ 1.742 -0.414  1.214]
+nsh> [Klistener sensor_mag 1
+
+TOPIC: sensor_mag
+ sensor_mag
+    timestamp: 1610067519 (0.012950 seconds ago)
+    timestamp_sample: 1610067143 (376 us before timestamp)
+    device_id: 197388 (Type: 0x03, SIMULATION:1 (0x03))
+    x: -0.01347
+    y: 0.21970
+    z: 0.47855
+    temperature: nan
+    error_count: 0
+nsh> [Klistener vehicle_magnetometer 1
+
+TOPIC: vehicle_magnetometer
+ vehicle_magnetometer
+    timestamp: 1612127519 (0.058586 seconds ago)
+    timestamp_sample: 1612127143 (376 us before timestamp)
+    device_id: 197388 (Type: 0x03, SIMULATION:1 (0x03))
+    magnetometer_ga: [-1.76144, 0.60627, -0.82891]
+    calibration_count: 1
+
+nsh> [Kparam show SENS_MAG_AUTOCAL
+Symbols: x = used, + = saved, * = unsaved
+x   SENS_MAG_AUTOCAL [644,1447] : 1
+
+ 719/1923 parameters used.
+nsh> [Kparam show EKF2_MAG_TYPE
+Symbols: x = used, + = saved, * = unsaved
+x   EKF2_MAG_TYPE [265,630] : 1
+
+ 719/1923 parameters used.
+nsh> [K

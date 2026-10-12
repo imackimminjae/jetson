@@ -1,0 +1,71 @@
+logger status
+INFO  [logger] Running in mode: file
+INFO  [logger] Number of subscriptions: 10 (320 bytes)
+INFO  [logger] Full File Logging Running:
+INFO  [logger] Log file: /fs/microsd/log/sess124/log100.ulg
+INFO  [logger] Wrote 7.02 MiB (avg 23.93 KiB/s)
+INFO  [logger] Since last status: dropouts: 0 (max len: 0.000 s), max used buffer: 4665 / 12288 B
+nsh> [Kls /fs/microsd/log
+/fs/microsd/log:
+ 2025-07-25/
+ 2025-07-26/
+ 2025-07-27/
+ 2025-07-28/
+ 2025-07-29/
+ 2025-07-31/
+ 2025-08-01/
+ 2025-08-07/
+ 2025-08-08/
+ 2025-08-14/
+ 2025-08-15/
+ 2025-08-20/
+ sess100/
+ sess101/
+ sess102/
+ sess103/
+ sess104/
+ sess105/
+ 2025-11-18/
+ 2025-11-24/
+ 2025-11-29/
+ 2025-12-16/
+ 2025-12-17/
+ 2025-12-18/
+ 2025-12-22/
+ sess106/
+ sess107/
+ 2026-04-24/
+ sess108/
+ sess109/
+ sess110/
+ sess111/
+ sess112/
+ sess113/
+ sess114/
+ sess115/
+ 2026-05-12/
+ 2026-05-13/
+ sess116/
+ sess117/
+ sess118/
+ sess119/
+ sess120/
+ sess121/
+ sess122/
+ sess123/
+ 2026-07-10/
+ 2026-08-20/
+ 2026-09-12/
+ sess124/
+nsh> [Kcat /fs/microsd/etc/logging/logger_topics.txt
+vehicle_local_position_groundtruth 20 0
+vehicle_land_detected 0 0
+estimator_status_flags 0 0
+estimator_gps_status 0 0
+vehicle_local_position 20 0
+actuator_armed 0 0
+actuator_outputs_sim 0 0
+estimator_selector_status 0 0
+vehicle_angular_velocity 20 0
+vehicle_imu_status 100 0
+nsh> [K

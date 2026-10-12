@@ -1,0 +1,111 @@
+
+NuttShell (NSH) NuttX-11.0.0
+nsh> [Kver all
+HW arch: CUAV_7_NANO
+PX4 git-hash: 94cb2012792b2ae89f0b147cfee53ee31ae550be
+PX4 version: Release 1.16.1 (17826303)
+OS: NuttX
+OS version: Release 11.0.0 (184549631)
+OS git-hash: 886acbbdb4f061e5c0ce1a76afbcfa7cb7df9849
+Build datetime: Aug 22 2026 14:20:31
+Build uri: localhost
+Build variant: default
+Toolchain: GNU GCC, 10.3.1 20210621 (release)
+PX4GUID: 00060000000030373630353251100040001a
+MCU: STM32H7[4|5]xxx, rev. V
+nsh> [Ksensors status
+selected gyro: 1310988 (0)
+validator: best: 0, prev best: 0, failsafe: NO (0 events)
+sensor #0, prio: 50, state: OK
+	val:  -0.0016, lp:   0.0002 mean dev:  -0.0000 RMS:   0.0191 conf:   1.0000
+	val:   0.0022, lp:   0.0015 mean dev:   0.0000 RMS:   0.0101 conf:   1.0000
+	val:   0.0109, lp:   0.0018 mean dev:   0.0000 RMS:   0.0467 conf:   1.0000
+
+selected accel: 1310988 (0)
+validator: best: 0, prev best: 0, failsafe: NO (0 events)
+sensor #0, prio: 50, state: OK
+	val:   0.0886, lp:   0.0714 mean dev:  -0.0000 RMS:   0.0966 conf:   1.0000
+	val:  -0.2895, lp:  -0.1911 mean dev:   0.0000 RMS:   0.4176 conf:   1.0000
+	val:  -9.7732, lp:  -9.7999 mean dev:  -0.0016 RMS:   0.1999 conf:   1.0000
+
+[vehicle_magnetometer] selected MAG: 197388 (0)
+validator: best: 0, prev best: 0, failsafe: NO (0 events)
+sensor #0, prio: 50, state: OK
+	val:  -0.1950, lp:  -0.2131 mean dev:  -0.0005 RMS:   0.0203 conf:   1.0000
+	val:   0.0359, lp:   0.0637 mean dev:   0.0000 RMS:   0.0198 conf:   1.0000
+	val:   0.4562, lp:   0.4335 mean dev:  -0.0001 RMS:   0.0311 conf:   1.0000
+MAG 197388 EN: 1, offset: [0.001 -0.004 -0.000], scale: [1.000 1.000 1.000], Internal
+
+[vehicle_air_data] selected BARO: 6620172 (0)
+validator: best: 0, prev best: 0, failsafe: NO (0 events)
+sensor #0, prio: 50, state: OK
+	val: 95579.7266, lp: 95579.3750 mean dev:  -0.0744 RMS:   0.7169 conf:   1.0000
+	val:  11.8189, lp:  11.8189 mean dev:   0.0000 RMS:   0.0000 conf:   1.0000
+	val: 489.6985, lp: 489.7368 mean dev:  -0.0005 RMS:   0.0625 conf:   1.0000
+BARO 6620172 EN: 1, offset: 0.000, Internal
+
+Airspeed status:
+	no data
+
+[vehicle_acceleration] selected sensor: 1310988, rate: 400.8 Hz, estimated bias: [0.0620 -0.1871 0.0084]
+ACC 1310988 EN: 1, offset: [-0.073 0.197 -0.021], scale: [1.000 1.000 1.000], Internal
+
+[vehicle_angular_velocity] selected sensor: 1310988, rate: 401.0 Hz , estimated bias: [0.00033 0.00113 0.00160]
+GYRO 1310988 EN: 1, offset: [-0.000 -0.001 -0.000], Internal
+vehicle_angular_velocity: gyro filter: 576475 events, 5777841us elapsed, 10.02us avg, min 7us max 196us 1.715us rms
+vehicle_angular_velocity: gyro filter reset: 1 events
+vehicle_angular_velocity: gyro selection changed: 1 events
+
+[vehicle_gps_position] selected GPS: 0
+
+
+[vehicle_imu] 0 - Accel: 1310988, interval: 2500.0 us (SD 2.6 us), Gyro: 1310988, interval: 2500.0 us (SD 2.6 us)
+vehicle_imu: accel data gap: 1 events
+vehicle_imu: gyro data gap: 1 events
+ACC 1310988 EN: 1, offset: [-0.073 0.197 -0.021], scale: [1.000 1.000 1.000], Internal
+GYRO 1310988 EN: 1, offset: [-0.000 -0.001 -0.000], Internal
+nsh> [Kekf2 status
+WARN  [ekf2] module locked, try again later
+nsh> [Klistener vehicle_magnetometer 1
+
+TOPIC: vehicle_magnetometer
+ vehicle_magnetometer
+    timestamp: 1446537577 (0.048435 seconds ago)
+    timestamp_sample: 1446537147 (430 us before timestamp)
+    device_id: 197388 (Type: 0x03, SIMULATION:1 (0x03))
+    magnetometer_ga: [-0.21972, 0.04615, 0.34476]
+    calibration_count: 1
+
+nsh> [Klistener sensor_selection 1
+
+TOPIC: sensor_selection
+ sensor_selection
+    timestamp: 1507447 (1447.179565 seconds ago)
+    accel_device_id: 1310988 (Type: 0x14, SIMULATION:1 (0x01))
+    gyro_device_id: 1310988 (Type: 0x14, SIMULATION:1 (0x01))
+nsh> [Klistener estimator_selector_status 1
+
+TOPIC: estimator_selector_status
+ estimator_selector_status
+    timestamp: 1450177497 (0.616777 seconds ago)
+    last_instance_change: 1507447
+    instance_changed_count: 1
+    accel_device_id: 1310988 (Type: 0x14, SIMULATION:1 (0x01))
+    baro_device_id: 6620172 (Type: 0x65, SIMULATION:1 (0x04))
+    gyro_device_id: 1310988 (Type: 0x14, SIMULATION:1 (0x01))
+    mag_device_id: 197388 (Type: 0x03, SIMULATION:1 (0x03))
+    combined_test_ratio: [0.02607, nan, nan, nan, nan, nan, nan, nan, nan]
+    relative_test_ratio: [0.00000, nan, nan, nan, nan, nan, nan, nan, nan]
+    accumulated_gyro_error: [0.00000, nan, nan, nan]
+    accumulated_accel_error: [0.00000, nan, nan, nan]
+    primary_instance: 0
+    instances_available: 1
+    healthy: [True, False, False, False, False, False, False, False, False]
+    gyro_fault_detected: False
+    accel_fault_detected: False
+
+nsh> [Klogger status
+INFO  [logger] Running in mode: all
+INFO  [logger] Number of subscriptions: 112 (3584 bytes)
+INFO  [logger] Not logging
+nsh> [K

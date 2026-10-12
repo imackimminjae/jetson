@@ -1,0 +1,34 @@
+{
+  "duration_s": 28.56249600000001,
+  "sih_hz_parameter": 400.0,
+  "tau_parameter_s": 0.05000000074505806,
+  "fixed_alpha": 0.04999999925494195,
+  "steering_scale_assumption_rad": 0.35,
+  "physical_assumption": "No-slip bicycle; center reference; wheelbase2.8m; rear offset1.4m.",
+  "continuous_005_rmse_deg": 6.460019632424323,
+  "event_gated_fixed_rmse_deg": 0.6018058172990417,
+  "event_gated_fitted_alpha": 0.054602324013665354,
+  "fitted_rmse_deg": 0.3988600178716083,
+  "normal_output_rate_hz": 25.989752683892416,
+  "output_gap_percentiles_s": [
+    0.0003999999998995918,
+    0.04726800000003095,
+    0.05497130000001106,
+    0.8644110000000182
+  ],
+  "gaps": [
+    {
+      "start_s": 14.020164000000022,
+      "end_s": 14.88457500000004,
+      "duration_s": 0.8644110000000182,
+      "timeout_threshold_s": 14.520164000000022,
+      "steering_input_before": -0.8580000400543213,
+      "steering_deg_before_timeout": -12.857948303222656,
+      "steering_deg_after_timeout": 0.0,
+      "speed_m_s_at_timeout": 5.621190721908531
+    }
+  ],
+  "dropouts": 0,
+  "corruption": false,
+  "limitations": "Fixed replay assumes 0.35rad steering scale and uniform SIH period; uORB processing occurs after publication; not an exact CPU instruction trace."
+}

@@ -1,0 +1,120 @@
+{
+  "result": {
+    "reason": "controller_trace_lost",
+    "progress_s": 37.300000000000004,
+    "run_start": 1790849374.1089993
+  },
+  "control_active": {
+    "cycles": 87,
+    "speed_median": 4.64857905609652,
+    "lateral_error_abs_m_median_p95_max": [
+      0.023619553009168813,
+      0.0801203400350301,
+      0.08827285526171186
+    ],
+    "lateral_error_rms_m": 0.03897849788360364,
+    "steering_abs_deg_p95_max": [
+      1.397733508272894,
+      1.548700976726445
+    ],
+    "saturation_count": 0,
+    "steering_variation_deg_per_sec": 0.737234514400829,
+    "steering_step_abs_deg_p95_max": [
+      0.22101425203907704,
+      0.2858436622249569
+    ]
+  },
+  "control_speed_over_4": {
+    "cycles": 51,
+    "speed_median": 5.478413609907574,
+    "lateral_error_abs_m_median_p95_max": [
+      0.018037799889111607,
+      0.03324274859145251,
+      0.03897192467473543
+    ],
+    "lateral_error_rms_m": 0.021142183500680315,
+    "steering_abs_deg_p95_max": [
+      0.8001770824653951,
+      0.8852025376018253
+    ],
+    "saturation_count": 0,
+    "steering_variation_deg_per_sec": 0.48096636586895675,
+    "steering_step_abs_deg_p95_max": [
+      0.10284250197677455,
+      0.1350489495326397
+    ]
+  },
+  "guard_states": [
+    "ok",
+    "settling"
+  ],
+  "max_yaw_error_deg": 0.610045188940253,
+  "path_sha256": "e592cc2c3f3b19df32d4538546291d0778f826f97ca4103109fb98c9f1a5fcf5",
+  "curvature_max_per_m": 0.04,
+  "fixed_path_length_m": 180.0,
+  "straight": {
+    "cycles": 43,
+    "speed_median": 5.354433206943368,
+    "lateral_error_abs_m_median_p95_max": [
+      0.018416505056541337,
+      0.032841171718364495,
+      0.03482374551088813
+    ],
+    "lateral_error_rms_m": 0.02112145959874185,
+    "steering_abs_deg_p95_max": [
+      0.8014290518713901,
+      0.8852025376018253
+    ],
+    "saturation_count": 0,
+    "steering_variation_deg_per_sec": 0.5019622872536939,
+    "steering_step_abs_deg_p95_max": [
+      0.10788221895445789,
+      0.1350489495326397
+    ]
+  },
+  "board_after": {
+    "HIL_STATE_QUATERNION": {
+      "mavpackettype": "HIL_STATE_QUATERNION",
+      "time_usec": 0,
+      "attitude_quaternion": [
+        0.1806778758764267,
+        0.0,
+        0.0,
+        -0.9835423231124878
+      ],
+      "rollspeed": 0.0,
+      "pitchspeed": 0.0,
+      "yawspeed": 0.0,
+      "lat": 473950634,
+      "lon": 85423365,
+      "alt": 489400,
+      "vx": 0,
+      "vy": 0,
+      "vz": 0,
+      "ind_airspeed": 0,
+      "true_airspeed": 0,
+      "xacc": 0,
+      "yacc": 0,
+      "zacc": 0
+    },
+    "COMMAND_ACK": {
+      "mavpackettype": "COMMAND_ACK",
+      "command": 400,
+      "result": 0,
+      "progress": 0,
+      "result_param2": 0,
+      "target_system": 246,
+      "target_component": 191
+    },
+    "HEARTBEAT": {
+      "mavpackettype": "HEARTBEAT",
+      "type": 10,
+      "autopilot": 12,
+      "base_mode": 97,
+      "custom_mode": 65536,
+      "system_status": 0,
+      "mavlink_version": 3
+    },
+    "verified_disarmed_stationary": true
+  }
+}

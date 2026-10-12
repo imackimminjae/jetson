@@ -1,0 +1,51 @@
+{
+  "conclusion": "no_sustained_mismatch_in_covered_samples",
+  "duration_s": 7.962503,
+  "time_origin_boot_us": 1968138647,
+  "moving_threshold_m_s": 0.05,
+  "stopped_threshold_m_s": 0.02,
+  "minimum_mismatch_s": 0.5,
+  "fresh_moving_rest_coverage": null,
+  "mismatch_intervals": [],
+  "land_at_rest_while_moving_intervals_s": [],
+  "ekf_at_rest_while_moving_intervals_s": [],
+  "phases": [
+    {
+      "state": "stopped",
+      "start_s": 0.0,
+      "end_s": 7.962503,
+      "gps_failures_seen": [],
+      "gps_failures_in_last_2s": [],
+      "first_observed_checks_passed_latch_s": 0.0,
+      "first_observed_no_gps_failure_flags_s": 0.0,
+      "final_continuous_no_gps_failures_from_s": 0.0,
+      "first_observed_horizontal_valid_s": 0.0
+    }
+  ],
+  "events": [
+    {
+      "elapsed_s": 0.0,
+      "time_boot_us": 1968138647,
+      "field": "truth.v_xy_valid",
+      "value": 1.0,
+      "initial_sample": true
+    }
+  ],
+  "maximum_actuator_message_age_s": 803.171558,
+  "checks_passed_semantics": "This PX4 commit latches checks_passed after initial health acceptance. Use individual check_fail_* flags for current GNSS quality.",
+  "scope": "Stationary-only data does not validate moving rest gate. Sub-0.5s flag mismatches remain listed and may include publication latency. Observed topic publication times, not exact internal execution times; inspect timestamp_sample and logger dropouts. Landed/disarm/constant-position are not used as evidence of rest.",
+  "ulog": "px4_followup_20261003/stationary_check.ulg",
+  "firmware_info": {
+    "ver_sw": "94cb2012792b2ae89f0b147cfee53ee31ae550be",
+    "ver_sw_release": "17826303",
+    "ver_vendor_sw_release": "255",
+    "ver_hw": "CUAV_7_NANO",
+    "sys_os_ver_release": "184549631",
+    "ver_data_format": "2"
+  },
+  "estimator_instance": 0,
+  "dropouts": [],
+  "selected_estimator_instances": [
+    0
+  ]
+}

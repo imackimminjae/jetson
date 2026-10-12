@@ -1,0 +1,113 @@
+[
+ {
+  "start": "04:48:09",
+  "route": "scenario3",
+  "cfg": "2.00Hz r3.000 (no bag)",
+  "bag": null,
+  "max_prog": 166,
+  "goal": "0.806",
+  "J1": "SE",
+  "J2": "NE",
+  "fails_progress": [],
+  "fails_before_end": 0,
+  "cmd_gaps": [],
+  "stale_pose": 0,
+  "A_0_60": {
+   "sat": 0.0,
+   "hp_rms": 1.41,
+   "yawrate_p95": 17.8,
+   "route_dev_p95": 3.97
+  },
+  "B_60_115": {
+   "sat": 0.107,
+   "hp_rms": 4.38,
+   "yawrate_p95": 26.0,
+   "route_dev_p95": 3.02
+  },
+  "C_115_145": {
+   "sat": 0.307,
+   "hp_rms": 2.58,
+   "yawrate_p95": 32.5,
+   "route_dev_p95": 3.97
+  }
+ },
+ {
+  "start": "04:50:54",
+  "route": "scenario3",
+  "cfg": "2.00Hz r3.000 (no bag)",
+  "bag": null,
+  "max_prog": 137,
+  "goal": null,
+  "J1": "SE",
+  "J2": "E(wrong)",
+  "fails_progress": [
+   131,
+   132,
+   134,
+   135
+  ],
+  "fails_before_end": 4,
+  "cmd_gaps": [
+   [
+    "04:51:10",
+    1.23
+   ]
+  ],
+  "stale_pose": 1,
+  "A_0_60": {
+   "sat": 0.0,
+   "hp_rms": 1.55,
+   "yawrate_p95": 14.0,
+   "route_dev_p95": 3.69
+  },
+  "B_60_115": {
+   "sat": 0.072,
+   "hp_rms": 4.81,
+   "yawrate_p95": 17.6,
+   "route_dev_p95": 2.66
+  },
+  "C_115_145": {
+   "sat": 0.0,
+   "hp_rms": 2.43,
+   "yawrate_p95": 14.9,
+   "route_dev_p95": 50.87
+  }
+ },
+ {
+  "start": "04:51:42",
+  "route": "scenario3",
+  "cfg": "2.00Hz r3.000 (no bag)",
+  "bag": null,
+  "max_prog": 166,
+  "goal": "2.146",
+  "J1": "SE",
+  "J2": "NE",
+  "fails_progress": [],
+  "fails_before_end": 0,
+  "cmd_gaps": [
+   [
+    "04:52:24",
+    0.36
+   ]
+  ],
+  "stale_pose": 0,
+  "A_0_60": {
+   "sat": 0.0,
+   "hp_rms": 1.18,
+   "yawrate_p95": 12.8,
+   "route_dev_p95": 3.62
+  },
+  "B_60_115": {
+   "sat": 0.01,
+   "hp_rms": 3.42,
+   "yawrate_p95": 19.9,
+   "route_dev_p95": 2.66
+  },
+  "C_115_145": {
+   "sat": 0.023,
+   "hp_rms": 1.6,
+   "yawrate_p95": 28.1,
+   "route_dev_p95": 3.54
+  }
+ }
+]

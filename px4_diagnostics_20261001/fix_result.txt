@@ -1,0 +1,30 @@
+2026-10-01 PX4 SIH 포즈 복구 — 적용 및 검증 결과
+
+적용:
+- PX4 MBE_ENABLE: 1 -> 0, param save 후 정지·disarmed 상태에서 보드 재부팅.
+- 재부팅 후 MBE_ENABLE=0 유지, mag_bias_estimator not running 확인.
+- USB ttyACM0 -> ttyACM1 변경으로 기존 MAVProxy가 재연결하지 못해 장치 고유 주소로 재시작.
+- 연결 주소: /dev/serial/by-id/usb-CUAV_PX4_CUAV_7_Nano_0-if00,115200.
+- 로컬 출력 127.0.0.1:14540, 127.0.0.1:14541 복구.
+- 사용자 명시 승인 후 외부 출력 192.168.0.33:14550 복구.
+- 기존 mav.tlog는 append-log로 보존.
+
+검증:
+- 보정 후 자기장 크기: 약 0.470 gauss (수정 전 약 2.04).
+- estimator_aid_src_mag: innovation_rejected=False, fused=True.
+- 자기장 innovation test ratio=[0.00925,0.00016,0.00299].
+- ROS 상태 14회 모두 connected=True, sih_heading_guard_state=ok.
+- 절대 yaw 차이 0.175~0.220도 (수정 전 약 42~44도).
+- /px4/sih/odom: 30.00 Hz, 430 messages.
+- /px4/ekf_odom: 30.02 Hz, 431 messages.
+- /motive/vehicle/odom_map: 30.01 Hz, 424 messages.
+
+범위 및 한계:
+- 이번 수정은 SIH 시뮬레이션의 온라인 자기장 bias 추정 비활성화.
+- 방향 불일치 보호 로직은 유지했고 이번 수정으로 플래너·제어기 파라미터를 바꾸지 않음.
+- 정상 포즈 복구는 정지 상태에서 검증. 이후 주행 안정성은 새 주행 로그로 확인 필요.
+- 온라인 bias가 최초로 크게 누적된 발단은 아직 확정하지 못함.
+- confirmed_findings.txt는 수정 전 조사 기록이며, 이후 적용 결과는 이 파일 기준.
+
+원문: board_after_fix.txt, ros_after_fix.json, fix_application.txt.
+백업: /home/imac/ros2_ws/rollback/sih_mag_bias_20261001/parameters_before.parm.

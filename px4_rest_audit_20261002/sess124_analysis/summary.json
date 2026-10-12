@@ -1,0 +1,314 @@
+{
+  "conclusion": "moving_rest_mismatch_observed",
+  "duration_s": 393.60000399999996,
+  "time_origin_boot_us": 277278170,
+  "moving_threshold_m_s": 0.2,
+  "stopped_threshold_m_s": 0.05,
+  "minimum_mismatch_s": 0.5,
+  "fresh_moving_rest_coverage": 1.0,
+  "mismatch_intervals": [
+    {
+      "start_s": 177.885339,
+      "end_s": 193.60000399999998,
+      "duration_s": 15.714664999999997
+    }
+  ],
+  "land_at_rest_while_moving_intervals_s": [
+    [
+      177.69539699999999,
+      193.60000399999998
+    ]
+  ],
+  "ekf_at_rest_while_moving_intervals_s": [
+    [
+      139.322496,
+      139.34577
+    ],
+    [
+      177.885339,
+      193.60000399999998
+    ]
+  ],
+  "phases": [
+    {
+      "state": "stopped",
+      "start_s": 0.0,
+      "end_s": 139.322496,
+      "gps_failures_seen": [],
+      "gps_failures_in_last_2s": [],
+      "first_observed_checks_passed_latch_s": 0.0,
+      "first_observed_no_gps_failure_flags_s": 0.0,
+      "final_continuous_no_gps_failures_from_s": 0.0,
+      "first_observed_horizontal_valid_s": 0.0
+    },
+    {
+      "state": "moving",
+      "start_s": 139.322496,
+      "end_s": 194.6225
+    },
+    {
+      "state": "stopped",
+      "start_s": 194.6225,
+      "end_s": 393.60000399999996,
+      "gps_failures_seen": [
+        "gps.check_fail_max_horz_drift",
+        "gps.check_fail_max_horz_spd_err"
+      ],
+      "gps_failures_in_last_2s": [],
+      "first_observed_checks_passed_latch_s": 194.6225,
+      "first_observed_no_gps_failure_flags_s": 215.345485,
+      "final_continuous_no_gps_failures_from_s": 218.59549099999998,
+      "first_observed_horizontal_valid_s": 219.59535
+    }
+  ],
+  "events": [
+    {
+      "elapsed_s": 139.095521,
+      "time_boot_us": 416373691,
+      "field": "land.at_rest",
+      "value": 0.0,
+      "initial_sample": false
+    },
+    {
+      "elapsed_s": 139.34577,
+      "time_boot_us": 416623940,
+      "field": "ekf.cs_vehicle_at_rest",
+      "value": 0.0,
+      "initial_sample": false
+    },
+    {
+      "elapsed_s": 177.69539699999999,
+      "time_boot_us": 454973567,
+      "field": "land.at_rest",
+      "value": 1.0,
+      "initial_sample": false
+    },
+    {
+      "elapsed_s": 177.885339,
+      "time_boot_us": 455163509,
+      "field": "ekf.cs_vehicle_at_rest",
+      "value": 1.0,
+      "initial_sample": false
+    },
+    {
+      "elapsed_s": 178.21543699999998,
+      "time_boot_us": 455493607,
+      "field": "gps.check_fail_max_horz_drift",
+      "value": 1.0,
+      "initial_sample": false
+    },
+    {
+      "elapsed_s": 178.59536599999998,
+      "time_boot_us": 455873536,
+      "field": "gps.check_fail_max_horz_spd_err",
+      "value": 1.0,
+      "initial_sample": false
+    },
+    {
+      "elapsed_s": 183.09563699999998,
+      "time_boot_us": 460373807,
+      "field": "local.xy_valid",
+      "value": 0.0,
+      "initial_sample": false
+    },
+    {
+      "elapsed_s": 183.09563699999998,
+      "time_boot_us": 460373807,
+      "field": "local.v_xy_valid",
+      "value": 0.0,
+      "initial_sample": false
+    },
+    {
+      "elapsed_s": 185.215643,
+      "time_boot_us": 462493813,
+      "field": "local.xy_reset_counter",
+      "value": 3.0,
+      "initial_sample": false
+    },
+    {
+      "elapsed_s": 185.215643,
+      "time_boot_us": 462493813,
+      "field": "local.vxy_reset_counter",
+      "value": 3.0,
+      "initial_sample": false
+    },
+    {
+      "elapsed_s": 185.215671,
+      "time_boot_us": 462493841,
+      "field": "ekf.cs_gnss_pos",
+      "value": 0.0,
+      "initial_sample": false
+    },
+    {
+      "elapsed_s": 185.215671,
+      "time_boot_us": 462493841,
+      "field": "ekf.cs_gnss_vel",
+      "value": 0.0,
+      "initial_sample": false
+    },
+    {
+      "elapsed_s": 214.715557,
+      "time_boot_us": 491993727,
+      "field": "gps.check_fail_max_horz_spd_err",
+      "value": 0.0,
+      "initial_sample": false
+    },
+    {
+      "elapsed_s": 215.345485,
+      "time_boot_us": 492623655,
+      "field": "gps.check_fail_max_horz_drift",
+      "value": 0.0,
+      "initial_sample": false
+    },
+    {
+      "elapsed_s": 215.465484,
+      "time_boot_us": 492743654,
+      "field": "gps.check_fail_max_horz_drift",
+      "value": 1.0,
+      "initial_sample": false
+    },
+    {
+      "elapsed_s": 215.96554999999998,
+      "time_boot_us": 493243720,
+      "field": "gps.check_fail_max_horz_drift",
+      "value": 0.0,
+      "initial_sample": false
+    },
+    {
+      "elapsed_s": 216.21556099999998,
+      "time_boot_us": 493493731,
+      "field": "gps.check_fail_max_horz_drift",
+      "value": 1.0,
+      "initial_sample": false
+    },
+    {
+      "elapsed_s": 216.3458,
+      "time_boot_us": 493623970,
+      "field": "gps.check_fail_max_horz_drift",
+      "value": 0.0,
+      "initial_sample": false
+    },
+    {
+      "elapsed_s": 216.465555,
+      "time_boot_us": 493743725,
+      "field": "gps.check_fail_max_horz_drift",
+      "value": 1.0,
+      "initial_sample": false
+    },
+    {
+      "elapsed_s": 216.595489,
+      "time_boot_us": 493873659,
+      "field": "gps.check_fail_max_horz_drift",
+      "value": 0.0,
+      "initial_sample": false
+    },
+    {
+      "elapsed_s": 217.465735,
+      "time_boot_us": 494743905,
+      "field": "gps.check_fail_max_horz_drift",
+      "value": 1.0,
+      "initial_sample": false
+    },
+    {
+      "elapsed_s": 217.595555,
+      "time_boot_us": 494873725,
+      "field": "gps.check_fail_max_horz_drift",
+      "value": 0.0,
+      "initial_sample": false
+    },
+    {
+      "elapsed_s": 218.465558,
+      "time_boot_us": 495743728,
+      "field": "gps.check_fail_max_horz_drift",
+      "value": 1.0,
+      "initial_sample": false
+    },
+    {
+      "elapsed_s": 218.59549099999998,
+      "time_boot_us": 495873661,
+      "field": "gps.check_fail_max_horz_drift",
+      "value": 0.0,
+      "initial_sample": false
+    },
+    {
+      "elapsed_s": 219.59535,
+      "time_boot_us": 496873520,
+      "field": "local.xy_valid",
+      "value": 1.0,
+      "initial_sample": false
+    },
+    {
+      "elapsed_s": 219.59535,
+      "time_boot_us": 496873520,
+      "field": "local.v_xy_valid",
+      "value": 1.0,
+      "initial_sample": false
+    },
+    {
+      "elapsed_s": 219.59535,
+      "time_boot_us": 496873520,
+      "field": "local.xy_reset_counter",
+      "value": 4.0,
+      "initial_sample": false
+    },
+    {
+      "elapsed_s": 219.59535,
+      "time_boot_us": 496873520,
+      "field": "local.vxy_reset_counter",
+      "value": 4.0,
+      "initial_sample": false
+    },
+    {
+      "elapsed_s": 219.59535,
+      "time_boot_us": 496873520,
+      "field": "local.z_reset_counter",
+      "value": 3.0,
+      "initial_sample": false
+    },
+    {
+      "elapsed_s": 219.59535,
+      "time_boot_us": 496873520,
+      "field": "local.vz_reset_counter",
+      "value": 3.0,
+      "initial_sample": false
+    },
+    {
+      "elapsed_s": 219.59535,
+      "time_boot_us": 496873520,
+      "field": "local.dist_bottom_reset_counter",
+      "value": 3.0,
+      "initial_sample": false
+    },
+    {
+      "elapsed_s": 219.595376,
+      "time_boot_us": 496873546,
+      "field": "ekf.cs_gnss_pos",
+      "value": 1.0,
+      "initial_sample": false
+    },
+    {
+      "elapsed_s": 219.595376,
+      "time_boot_us": 496873546,
+      "field": "ekf.cs_gnss_vel",
+      "value": 1.0,
+      "initial_sample": false
+    }
+  ],
+  "maximum_actuator_message_age_s": 318.055904,
+  "checks_passed_semantics": "This PX4 commit latches checks_passed after initial health acceptance. Use individual check_fail_* flags for current GNSS quality.",
+  "scope": "Observed topic publication times, not exact internal execution times; inspect timestamp_sample and logger dropouts. Landed/disarm/constant-position are not used as evidence of rest.",
+  "ulog": "px4_rest_audit_20261002/sess124_log100.ulg",
+  "firmware_info": {
+    "ver_sw": "94cb2012792b2ae89f0b147cfee53ee31ae550be",
+    "ver_sw_release": "17826303",
+    "ver_vendor_sw_release": "255",
+    "ver_hw": "CUAV_7_NANO",
+    "sys_os_ver_release": "184549631",
+    "ver_data_format": "2"
+  },
+  "estimator_instance": 0,
+  "dropouts": [],
+  "selected_estimator_instances": [
+    0
+  ]
+}

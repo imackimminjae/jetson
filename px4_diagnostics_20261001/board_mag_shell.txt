@@ -1,0 +1,149 @@
+
+NuttShell (NSH) NuttX-11.0.0
+nsh> [Klistener sensor_mag 3
+
+TOPIC: sensor_mag
+ sensor_mag
+    timestamp: 1565927572 (0.003629 seconds ago)
+    timestamp_sample: 1565927149 (423 us before timestamp)
+    device_id: 197388 (Type: 0x03, SIMULATION:1 (0x03))
+    x: -0.00419
+    y: 0.21327
+    z: 0.43069
+    temperature: nan
+    error_count: 0
+nsh> [Klistener vehicle_magnetometer 3
+
+TOPIC: vehicle_magnetometer
+ vehicle_magnetometer
+    timestamp: 1568027513 (0.011761 seconds ago)
+    timestamp_sample: 1568027146 (367 us before timestamp)
+    device_id: 197388 (Type: 0x03, SIMULATION:1 (0x03))
+    magnetometer_ga: [-1.72389, 0.64395, -0.74401]
+    calibration_count: 1
+
+nsh> [Ksensors status
+selected gyro: 1310988 (0)
+validator: best: 0, prev best: 0, failsafe: NO (0 events)
+sensor #0, prio: 50, state: OK
+	val:  -0.0039, lp:   0.0001 mean dev:  -0.0000 RMS:   0.0146 conf:   1.0000
+	val:   0.0038, lp:   0.0015 mean dev:   0.0000 RMS:   0.0084 conf:   1.0000
+	val:   0.0204, lp:   0.0016 mean dev:   0.0000 RMS:   0.0373 conf:   1.0000
+
+selected accel: 1310988 (0)
+validator: best: 0, prev best: 0, failsafe: NO (0 events)
+sensor #0, prio: 50, state: OK
+	val:   0.1231, lp:   0.0654 mean dev:  -0.0000 RMS:   0.0829 conf:   1.0000
+	val:  -0.2474, lp:  -0.1881 mean dev:   0.0000 RMS:   0.3130 conf:   1.0000
+	val:  -9.7326, lp:  -9.7988 mean dev:  -0.0015 RMS:   0.1572 conf:   1.0000
+
+[vehicle_magnetometer] selected MAG: 197388 (0)
+validator: best: 0, prev best: 0, failsafe: NO (0 events)
+sensor #0, prio: 50, state: OK
+	val:  -1.6947, lp:  -1.7112 mean dev:  -0.0024 RMS:   0.0204 conf:   1.0000
+	val:   0.6542, lp:   0.6263 mean dev:   0.0007 RMS:   0.0194 conf:   1.0000
+	val:  -0.7475, lp:  -0.7573 mean dev:  -0.0015 RMS:   0.0312 conf:   1.0000
+MAG 197388 EN: 1, offset: [0.001 -0.004 -0.000], scale: [1.000 1.000 1.000], Internal
+
+[vehicle_air_data] selected BARO: 6620172 (0)
+validator: best: 0, prev best: 0, failsafe: NO (0 events)
+sensor #0, prio: 50, state: OK
+	val: 95579.8828, lp: 95579.3906 mean dev:  -0.0744 RMS:   0.7168 conf:   1.0000
+	val:  11.8189, lp:  11.8189 mean dev:   0.0000 RMS:   0.0000 conf:   1.0000
+	val: 489.6852, lp: 489.7353 mean dev:  -0.0005 RMS:   0.0624 conf:   1.0000
+BARO 6620172 EN: 1, offset: 0.000, Internal
+
+Airspeed status:
+	no data
+
+[vehicle_acceleration] selected sensor: 1310988, rate: 400.0 Hz, estimated bias: [-0.3999 0.3999 -0.0204]
+ACC 1310988 EN: 1, offset: [-0.073 0.197 -0.021], scale: [1.000 1.000 1.000], Internal
+
+[vehicle_angular_velocity] selected sensor: 1310988, rate: 400.0 Hz , estimated bias: [0.00036 0.00113 0.00155]
+GYRO 1310988 EN: 1, offset: [-0.000 -0.001 -0.000], Internal
+vehicle_angular_velocity: gyro filter: 627588 events, 6487691us elapsed, 10.34us avg, min 7us max 197us 1.542us rms
+vehicle_angular_velocity: gyro filter reset: 1 events
+vehicle_angular_velocity: gyro selection changed: 1 events
+
+[vehicle_gps_position] selected GPS: 0
+
+
+[vehicle_imu] 0 - Accel: 1310988, interval: 2500.0 us (SD 2.3 us), Gyro: 1310988, interval: 2500.0 us (SD 2.3 us)
+vehicle_imu: accel data gap: 1 events
+vehicle_imu: gyro data gap: 1 events
+ACC 1310988 EN: 1, offset: [-0.073 0.197 -0.021], scale: [1.000 1.000 1.000], Internal
+GYRO 1310988 EN: 1, offset: [-0.000 -0.001 -0.000], Internal
+nsh> [Kparam show CAL_MAG1*
+Symbols: x = used, + = saved, * = unsaved
+x + CAL_MAG1_ID [79,160] : 197388
+x   CAL_MAG1_PITCH [80,161] : 0.0000
+x + CAL_MAG1_PRIO [81,162] : 50
+x   CAL_MAG1_ROLL [82,163] : 0.0000
+x   CAL_MAG1_ROT [83,164] : -1
+x   CAL_MAG1_XCOMP [84,165] : 0.0000
+x   CAL_MAG1_XODIAG [85,166] : 0.0000
+x + CAL_MAG1_XOFF [86,167] : 0.0018
+x   CAL_MAG1_XSCALE [87,168] : 1.0000
+x   CAL_MAG1_YAW [88,169] : 0.0000
+x   CAL_MAG1_YCOMP [89,170] : 0.0000
+x   CAL_MAG1_YODIAG [90,171] : 0.0000
+x   CAL_MAG1_YOFF [91,172] : -0.0046
+x   CAL_MAG1_YSCALE [92,173] : 1.0000
+x   CAL_MAG1_ZCOMP [93,174] : 0.0000
+x   CAL_MAG1_ZODIAG [94,175] : 0.0000
+x   CAL_MAG1_ZOFF [95,176] : -0.0001
+x   CAL_MAG1_ZSCALE [96,177] : 1.0000
+
+ 719/1923 parameters used.
+nsh> [Klistener estimator_aid_src_mag 1
+
+TOPIC: estimator_aid_src_mag
+ estimator_aid_src_mag
+    timestamp: 1574307611 (0.048554 seconds ago)
+    timestamp_sample: 1574112145 (195466 us before timestamp)
+    time_last_fuse: 1572577107
+    device_id: 0 (Type: 0x00, UNKNOWN:0 (0x00))
+    observation: [-1.71279, 0.62514, -0.73859]
+    observation_variance: [0.00250, 0.00250, 0.00250]
+    innovation: [1.55727, -0.42909, 1.15100]
+    innovation_filtered: [0.53528, -0.43144, 0.51967]
+    innovation_variance: [0.00795, 0.00779, 0.00750]
+    test_ratio: [33.85477, 2.62564, 19.62220]
+    test_ratio_filtered: [4.00000, -2.65740, 4.00000]
+    estimator_instance: 0
+    innovation_rejected: True
+    fused: False
+
+nsh> [Ksimulator_sih status
+INFO  [simulator_sih] Running Ackermann Rover (no-slip kinematic; input guard v1; local position v2)
+INFO  [simulator_sih] vehicle landed: 1
+INFO  [simulator_sih] local position NED (m)
+  | 0      | 1      | 2      
+ 0| 1.0e+02 -1.5e+02  0       
+INFO  [simulator_sih] local velocity NED (m/s)
+  | 0      | 1      | 2      
+ 0| 0        0        0       
+INFO  [simulator_sih] attitude roll-pitch-yaw (deg)
+ 0| 0       
+ 1| 0       
+ 2|-8.9e+01 
+INFO  [simulator_sih] angular velocity roll-pitch-yaw (deg/s)
+ 0| 0       
+ 1| 0       
+ 2| 0       
+INFO  [simulator_sih] actuator signals
+  | 0      | 1      | 2      | 3      | 4      | 5      | 6      | 7      
+ 0| 0        0        0        0        0        0        0        0       
+INFO  [simulator_sih] Aerodynamic forces NED (N)
+ 0| 0       
+ 1| 0       
+ 2| 0       
+INFO  [simulator_sih] Aerodynamic moments body frame (Nm)
+  | 0      | 1      | 2      
+ 0| 0        0        0       
+INFO  [simulator_sih] Thruster moments in body frame (Nm)
+  | 0      | 1      | 2      
+ 0| 0        0        0       
+nsh> [Klistener sensor_mag 1 -i 1
+never published
+nsh> [K

@@ -1,0 +1,203 @@
+
+NuttShell (NSH) NuttX-11.0.0
+nsh> [Ksih status
+nsh: sih: command not found
+nsh> [Ksensor_mag_sim status
+INFO  [sensor_mag_sim] running
+nsh> [Klistener sensor_mag 1
+
+TOPIC: sensor_mag
+ sensor_mag
+    timestamp: 1521967615 (0.015002 seconds ago)
+    timestamp_sample: 1521967143 (472 us before timestamp)
+    device_id: 197388 (Type: 0x03, SIMULATION:1 (0x03))
+    x: 0.02265
+    y: 0.18551
+    z: 0.46133
+    temperature: nan
+    error_count: 0
+nsh> [Klistener vehicle_attitude_groundtruth 1
+
+TOPIC: vehicle_attitude_groundtruth
+ vehicle_attitude_groundtruth
+    timestamp: 1524084647 (0.000617 seconds ago)
+    timestamp_sample: 1524084614 (33 us before timestamp)
+    q: [0.71562, 0.00000, 0.00000, -0.69848] (Roll: 0.0 deg, Pitch: 0.0 deg, Yaw: -88.6 deg)
+    delta_q_reset: [0.00000, 0.00000, 0.00000, 0.00000]
+    quat_reset_counter: 0
+
+nsh> [Klistener vehicle_global_position_groundtruth 1
+
+TOPIC: vehicle_global_position_groundtruth
+ vehicle_global_position_groundtruth
+    timestamp: 1526187163 (0.003838 seconds ago)
+    timestamp_sample: 1526187107 (56 us before timestamp)
+    lat: 47.398647
+    lon: 8.543622
+    alt: 489.39999
+    alt_ellipsoid: 489.39999
+    delta_alt: 0.00000
+    delta_terrain: 0.00000
+    eph: 0.00000
+    epv: 0.00000
+    terrain_alt: -0.00000
+    lat_lon_valid: False
+    alt_valid: False
+    lat_lon_reset_counter: 0
+    alt_reset_counter: 0
+    terrain_reset_counter: 0
+    terrain_alt_valid: False
+    dead_reckoning: False
+
+nsh> [Klistener estimator_status_flags 1
+
+TOPIC: estimator_status_flags
+ estimator_status_flags
+    timestamp: 1527717628 (0.582460 seconds ago)
+    timestamp_sample: 1527527107 (190521 us before timestamp)
+    control_status_changes: 287
+    fault_status_changes: 0
+    innovation_fault_status_changes: 1931
+    cs_tilt_align: True
+    cs_yaw_align: True
+    cs_gnss_pos: True
+    cs_opt_flow: False
+    cs_mag_hdg: False
+    cs_mag_3d: False
+    cs_mag_dec: True
+    cs_in_air: False
+    cs_wind: False
+    cs_baro_hgt: True
+    cs_rng_hgt: True
+    cs_gps_hgt: True
+    cs_ev_pos: False
+    cs_ev_yaw: False
+    cs_ev_hgt: False
+    cs_fuse_beta: False
+    cs_mag_field_disturbed: True
+    cs_fixed_wing: False
+    cs_mag_fault: False
+    cs_fuse_aspd: False
+    cs_gnd_effect: False
+    cs_rng_stuck: False
+    cs_gnss_yaw: False
+    cs_mag_aligned_in_flight: False
+    cs_ev_vel: False
+    cs_synthetic_mag_z: False
+    cs_vehicle_at_rest: True
+    cs_gnss_yaw_fault: False
+    cs_rng_fault: False
+    cs_inertial_dead_reckoning: False
+    cs_wind_dead_reckoning: False
+    cs_rng_kin_consistent: True
+    cs_fake_pos: False
+    cs_fake_hgt: False
+    cs_gravity_vector: False
+    cs_mag: True
+    cs_ev_yaw_fault: False
+    cs_mag_heading_consistent: False
+    cs_aux_gpos: False
+    cs_rng_terrain: True
+    cs_opt_flow_terrain: False
+    cs_valid_fake_pos: False
+    cs_constant_pos: False
+    cs_baro_fault: False
+    cs_gnss_vel: True
+    fs_bad_mag_x: False
+    fs_bad_mag_y: False
+    fs_bad_mag_z: False
+    fs_bad_hdg: False
+    fs_bad_mag_decl: False
+    fs_bad_airspeed: False
+    fs_bad_sideslip: False
+    fs_bad_optflow_x: False
+    fs_bad_optflow_y: False
+    fs_bad_acc_vertical: False
+    fs_bad_acc_clipping: False
+    reject_hor_vel: False
+    reject_ver_vel: False
+    reject_hor_pos: False
+    reject_ver_pos: False
+    reject_yaw: False
+    reject_airspeed: False
+    reject_sideslip: False
+    reject_hagl: False
+    reject_optflow_x: False
+    reject_optflow_y: False
+
+nsh> [Klistener estimator_sensor_bias 1
+
+TOPIC: estimator_sensor_bias
+ estimator_sensor_bias
+    timestamp: 1529807490 (0.600648 seconds ago)
+    timestamp_sample: 1529617107 (190383 us before timestamp)
+    gyro_device_id: 1310988 (Type: 0x14, SIMULATION:1 (0x01))
+    gyro_bias: [0.00037, 0.00114, 0.00156]
+    gyro_bias_limit: 0.15000
+    gyro_bias_variance: [0.00000, 0.00000, 0.00000]
+    accel_device_id: 1310988 (Type: 0x14, SIMULATION:1 (0x01))
+    accel_bias: [-0.39996, 0.39995, -0.02054]
+    accel_bias_limit: 0.40000
+    accel_bias_variance: [0.00132, 0.00151, 0.00001]
+    mag_device_id: 197388 (Type: 0x03, SIMULATION:1 (0x03))
+    mag_bias: [0.00000, 0.00000, 0.00000]
+    mag_bias_limit: 0.50000
+    mag_bias_variance: [0.00250, 0.00250, 0.00250]
+    gyro_bias_valid: True
+    gyro_bias_stable: True
+    accel_bias_valid: True
+    accel_bias_stable: False
+    mag_bias_valid: True
+    mag_bias_stable: False
+
+nsh> [Kls /fs/microsd/log
+/fs/microsd/log:
+ 2025-07-25/
+ 2025-07-26/
+ 2025-07-27/
+ 2025-07-28/
+ 2025-07-29/
+ 2025-07-31/
+ 2025-08-01/
+ 2025-08-07/
+ 2025-08-08/
+ 2025-08-14/
+ 2025-08-15/
+ 2025-08-20/
+ sess100/
+ sess101/
+ sess102/
+ sess103/
+ sess104/
+ sess105/
+ 2025-11-18/
+ 2025-11-24/
+ 2025-11-29/
+ 2025-12-16/
+ 2025-12-17/
+ 2025-12-18/
+ 2025-12-22/
+ sess106/
+ sess107/
+ 2026-04-24/
+ sess108/
+ sess109/
+ sess110/
+ sess111/
+ sess112/
+ sess113/
+ sess114/
+ sess115/
+ 2026-05-12/
+ 2026-05-13/
+ sess116/
+ sess117/
+ sess118/
+ sess119/
+ sess120/
+ sess121/
+ sess122/
+ sess123/
+ 2026-07-10/
+ 2026-08-20/
+nsh> [K

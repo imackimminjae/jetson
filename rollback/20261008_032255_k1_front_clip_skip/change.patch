@@ -1,0 +1,244 @@
+--- before/src/virtual_control/src/tracking_control.cpp
++++ after/src/virtual_control/src/tracking_control.cpp
+@@ -269,6 +269,9 @@
+   validateParameters();
+   createInterfaces();
+   csv_path_loaded_ = loadReferencePathCsvIfConfigured();
++  RCLCPP_INFO(
++    get_logger(), "k1 lane constraint trial: skip_front_clipped_k1_lane_constraints=%s",
++    skip_front_clipped_k1_lane_constraints_ ? "true" : "false");
+ 
+   const auto period = std::chrono::duration<double>(1.0 / upper_planner_rate_hz_);
+   planner_timer_ = create_wall_timer(period, std::bind(&SdMapUpperPlannerNode::plannerLoop, this));
+@@ -360,6 +363,8 @@
+   declare_parameter<double>("waypoint_yaw_bias_rad", waypoint_yaw_bias_rad_);
+   declare_parameter<double>("input_timeout_sec", input_timeout_sec_);
+   declare_parameter<bool>("require_grid_map", require_grid_map_);
++  declare_parameter<bool>(
++    "skip_front_clipped_k1_lane_constraints", skip_front_clipped_k1_lane_constraints_);
+   declare_parameter<bool>("grid_origin_x_override_enabled", grid_origin_x_override_enabled_);
+   declare_parameter<double>("grid_origin_x_override_m", grid_origin_x_override_m_);
+ 
+@@ -464,6 +469,8 @@
+   get_parameter("waypoint_yaw_bias_rad", waypoint_yaw_bias_rad_);
+   get_parameter("input_timeout_sec", input_timeout_sec_);
+   get_parameter("require_grid_map", require_grid_map_);
++  get_parameter(
++    "skip_front_clipped_k1_lane_constraints", skip_front_clipped_k1_lane_constraints_);
+   get_parameter("grid_origin_x_override_enabled", grid_origin_x_override_enabled_);
+   get_parameter("grid_origin_x_override_m", grid_origin_x_override_m_);
+ 
+@@ -1573,6 +1580,18 @@
+       }
+       output.pmk[step][retained] = processed_start;
+       output.pMk[step][retained] = processed_end;
++      if (k == 1) {
++        // A truncated BEV edge is not an observed road boundary. Match the
++        // offline trial's 0.11 m tolerance for the 0.10 m line sampling.
++        const bool front_clipped = grid && grid->valid &&
++          std::abs(grid->origin_yaw_rad) < 1e-9 && !info.observation.nominal_fallback &&
++          ((!info.observation.start_boundary_observed &&
++          std::abs(p0.x() - grid->origin_body.x()) < 0.11) ||
++          (!info.observation.end_boundary_observed &&
++          std::abs(p1.x() - grid->origin_body.x()) < 0.11));
++        output.k1_lane_constraint_excluded.push_back(
++          skip_front_clipped_k1_lane_constraints_ && front_clipped);
++      }
+       output.raw_lengths[step][retained] = raw_length;
+       output.source_modes[step][retained] = output.source_modes[step][candidate];
+       output.processed_lengths[step].push_back(info.processed_length);
+@@ -1929,6 +1948,11 @@
+   }
+ 
+   const int lane_rows = 2 * binary_count + horizon;
++  const auto skip_lane = [&](int k, int candidate) {
++      return skip_front_clipped_k1_lane_constraints_ && k == 1 && candidate >= 0 &&
++             static_cast<std::size_t>(candidate) < preview.k1_lane_constraint_excluded.size() &&
++             preview.k1_lane_constraint_excluded[static_cast<std::size_t>(candidate)];
++    };
+   const int input_rows = 4 * horizon;
+   Matrix<double> inequality(0.0, lane_rows + input_rows, variable_count);
+   Vector<double> inequality_bound(0.0, lane_rows + input_rows);
+@@ -1950,6 +1974,14 @@
+       const int binary_index = input_count +
+         binary_offsets[static_cast<std::size_t>(k - 1)] + candidate;
+ 
++      if (skip_lane(k, candidate)) {
++        // Keep selector indexing and cost unchanged; these bounds are redundant.
++        inequality[row][binary_index] = 1.0;
++        inequality_bound[row++] = 1.0;
++        inequality[row][binary_index] = 1.0;
++        inequality_bound[row++] = 1.0;
++        continue;
++      }
+       for (int column = 0; column < input_count; ++column) {
+         inequality[row][column] =
+           axis.x() * G[2 * k][column] + axis.y() * G[2 * k + 1][column];
+@@ -2179,6 +2211,12 @@
+         for (int k = 1; k <= horizon; ++k) {
+           const std::size_t step = static_cast<std::size_t>(k);
+           const std::size_t candidate = static_cast<std::size_t>(selected[step]);
++          if (skip_lane(k, static_cast<int>(candidate))) {
++            // DAQP ignores satisfied zero rows (0 <= 1).
++            direct_bound[direct_row++] = 1.0;
++            direct_bound[direct_row++] = 1.0;
++            continue;
++          }
+           const double heading = preview.psirk[step];
+           const Eigen::Vector2d axis(-std::sin(heading), std::cos(heading));
+           const double reference_projection = axis.dot(preview.prk[step]);
+@@ -2631,6 +2669,13 @@
+   if (preview) {
+     for (std::size_t k = 0; k < preview->Nck.size(); ++k) {
+       if (k) {out << ',';} out << preview->Nck[k];
++    }
++  }
++  out << "],\"k1_lane_constraint_excluded\":[";
++  if (preview && preview->N_pred >= 1) {
++    for (std::size_t j = 0; j < preview->k1_lane_constraint_excluded.size(); ++j) {
++      if (j) {out << ',';}
++      out << (preview->k1_lane_constraint_excluded[j] ? "true" : "false");
+     }
+   }
+   out << "],\"intervals_world\":[";
+--- before/src/virtual_control/include/virtual_control/tracking_control.hpp
++++ after/src/virtual_control/include/virtual_control/tracking_control.hpp
+@@ -162,6 +162,8 @@
+     std::vector<std::vector<int>> source_modes;
+     std::vector<int> fallback_reason_codes;
+     std::vector<int> Nck;
++    // Candidate-aligned k1 mask; all later road constraints remain active.
++    std::vector<bool> k1_lane_constraint_excluded;
+     // Full requested preview, including observations beyond a missing MIQP stage.
+     std::vector<std::vector<IntervalInfo>> interval_info;
+     IntervalCenteringUpdate interval_update;
+@@ -362,6 +364,7 @@
+   double preview_interval_nominal_fallback_width_m_{4.5};
+   double preview_interval_fallback_max_centering_length_m_{9.0};
+   bool preview_interval_debug_{false};
++  bool skip_front_clipped_k1_lane_constraints_{false};
+ 
+   // OccupancyGrid value convention. Unknown cells remain value < 0.
+   int grid_value_threshold_{0};
+--- before/src/virtual_control/config/tracking_control_split.yaml
++++ after/src/virtual_control/config/tracking_control_split.yaml
+@@ -209,6 +209,9 @@
+ 
+     input_timeout_sec: 0.60
+     require_grid_map: true
++    # Trial: omit k1 road constraints only for observed intervals clipped at
++    # the front map edge. k2+ road constraints and vehicle limits stay active.
++    skip_front_clipped_k1_lane_constraints: true
+ 
+     global_path_topic: "/navigation/global_path"
+     grid_map_topic: "/bev/occupancy_grid"
+--- before/src/virtual_control/test/test_lower_path_generation.cpp
++++ after/src/virtual_control/test/test_lower_path_generation.cpp
+@@ -21,7 +21,9 @@
+   {
+     return node.sampleGridValue(point, node.grid_, value);
+   }
+-  static auto solveRoad(SdMapUpperPlannerNode & node, double minimum_y)
++  static auto solveRoad(
++    SdMapUpperPlannerNode & node, double minimum_y, bool skip_k1 = false,
++    double k2_minimum_y = -5.0)
+   {
+     SdMapUpperPlannerNode::PreviewConstraintData preview;
+     preview.N_pred = 2;
+@@ -29,9 +31,32 @@
+     preview.psirk = {0, 0, 0};
+     preview.position_targets = {{0, 0}, {1, 1}, {2, 2}};
+     preview.Nck = {1, 1, 1};
+-    preview.pmk = {{{0, -5}}, {{1, minimum_y}}, {{2, -5}}};
+-    preview.pMk = {{{0, 5}}, {{1, minimum_y + 1.0}}, {{2, 5}}};
++    preview.pmk = {{{0, -5}}, {{1, minimum_y}}, {{2, k2_minimum_y}}};
++    preview.pMk = {{{0, 5}}, {{1, minimum_y + 1.0}}, {{2, k2_minimum_y + 10.0}}};
++    preview.k1_lane_constraint_excluded = {skip_k1};
+     return node.solveUpperMiqp(preview, 1.0);
++  }
++
++  static auto clippedRoad(SdMapUpperPlannerNode & node, double heading, bool unknown)
++  {
++    SdMapUpperPlannerNode::GridMapSnapshot grid;
++    grid.valid = true;
++    grid.width = grid.height = 128;
++    grid.resolution = 0.3125;
++    grid.origin_body = {2.95, -20.0};
++    grid.data.resize(128 * 128);
++    for (int y = 0; y < 128; ++y) {
++      for (int x = 0; x < 128; ++x) {
++        const double lateral = -20.0 + (y + 0.5) * grid.resolution;
++        grid.data[y * 128 + x] = unknown ? -1 : (std::abs(lateral) < 4.0 ? 0 : 100);
++      }
++    }
++    SdMapUpperPlannerNode::PreviewReferenceData reference;
++    reference.valid = true;
++    reference.points_body = {{0.0, 0.0}, {4.5, 0.0}, {5.5, 0.0}};
++    reference.heading_rad = {heading, heading, heading};
++    return node.extractPreviewIntervals(
++      reference, &grid, SdMapUpperPlannerNode::IntervalCenteringState{});
+   }
+ 
+   static auto densify(SdMapUpperPlannerNode & node, std::vector<double> & s)
+@@ -46,6 +71,61 @@
+   }
+ };
+ }  // namespace imac_ctrl
++
++TEST(LowerPathGeneration, K1TrialOnlyMarksObservedFrontClippedCandidates)
++{
++  rclcpp::init(0, nullptr);
++  for (bool enabled : {false, true}) {
++    rclcpp::NodeOptions options;
++    options.parameter_overrides({
++      rclcpp::Parameter("skip_front_clipped_k1_lane_constraints", enabled),
++      rclcpp::Parameter("grid_positive_is_drivable", false),
++      rclcpp::Parameter("grid_value_threshold", 1)});
++    auto node = std::make_shared<imac_ctrl::SdMapUpperPlannerNode>(options);
++    using Access = imac_ctrl::LowerPathGenerationTestAccess;
++    Access::cancel(*node);
++    const auto clipped = Access::clippedRoad(*node, 0.7853981633974483, false);
++    ASSERT_EQ(clipped.N_pred, 2);
++    ASSERT_EQ(clipped.k1_lane_constraint_excluded.size(), 1u);
++    EXPECT_EQ(clipped.k1_lane_constraint_excluded[0], enabled);
++    EXPECT_EQ(clipped.Nck[2], 1);
++    const auto full = Access::clippedRoad(*node, 0.0, false);
++    ASSERT_EQ(full.k1_lane_constraint_excluded.size(), 1u);
++    EXPECT_FALSE(full.k1_lane_constraint_excluded[0]);
++    const auto unknown = Access::clippedRoad(*node, 0.0, true);
++    for (bool excluded : unknown.k1_lane_constraint_excluded) {EXPECT_FALSE(excluded);}
++  }
++  rclcpp::shutdown();
++}
++
++TEST(LowerPathGeneration, K1TrialRetainsLaterRoadAndVehicleInputConstraints)
++{
++  rclcpp::init(0, nullptr);
++  for (bool enabled : {false, true}) {
++    rclcpp::NodeOptions options;
++    options.parameter_overrides({
++      rclcpp::Parameter("skip_front_clipped_k1_lane_constraints", enabled)});
++    auto node = std::make_shared<imac_ctrl::SdMapUpperPlannerNode>(options);
++    using Access = imac_ctrl::LowerPathGenerationTestAccess;
++    Access::cancel(*node);
++    const auto result = Access::solveRoad(*node, 100.0, true);
++    ASSERT_EQ(result.valid, enabled) << result.status;
++    EXPECT_FALSE(Access::solveRoad(*node, 100.0, true, 100.0).valid);
++    if (result.valid) {
++      const double dt = node->get_parameter("upper_prediction_dt_sec").as_double();
++      const double phi = std::tan(node->get_parameter("max_steering_angle_rad").as_double()) *
++        dt / node->get_parameter("wheelbase").as_double();
++      const double max_dv = node->get_parameter("a_max_mps2").as_double() * dt;
++      double speed = 1.0;
++      for (std::size_t j = 0; j < result.actual_input.size(); j += 2) {
++        EXPECT_LE(std::abs(result.actual_input[j]), max_dv + 1e-6);
++        speed += result.actual_input[j];
++        EXPECT_LE(std::abs(result.actual_input[j + 1]), phi * speed + 1e-6);
++      }
++    }
++  }
++  rclcpp::shutdown();
++}
+ 
+ TEST(LowerPathGeneration, GridOriginTrialChangesCellCoordinatesOnlyWhenEnabled)
+ {

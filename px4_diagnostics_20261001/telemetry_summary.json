@@ -1,0 +1,243 @@
+{
+  "first": "2026-10-01T18:19:53.828979",
+  "last": "2026-10-01T18:23:54.754100",
+  "counts": {
+    "HEARTBEAT": 963,
+    "VFR_HUD": 4815,
+    "ATTITUDE_QUATERNION": 12036,
+    "HIGHRES_IMU": 12035,
+    "ATTITUDE": 7221,
+    "SCALED_IMU": 6018,
+    "HIL_STATE_QUATERNION": 7221,
+    "TIMESYNC": 7173,
+    "LOCAL_POSITION_NED": 7221,
+    "DISTANCE_SENSOR": 2408,
+    "ODOMETRY": 7221,
+    "ALTITUDE": 2408,
+    "REQUEST_DATA_STREAM": 17,
+    "GLOBAL_POSITION_INT": 2407,
+    "GPS_RAW_INT": 1931,
+    "ESTIMATOR_STATUS": 1204,
+    "UNKNOWN_436": 122,
+    "HOME_POSITION": 122,
+    "VIBRATION": 602,
+    "EXTENDED_SYS_STATE": 482,
+    "OPEN_DRONE_ID_LOCATION": 242,
+    "UNKNOWN_410": 13,
+    "UNKNOWN_411": 81,
+    "STATUSTEXT": 4,
+    "COMMAND_LONG": 13,
+    "COMMAND_ACK": 8,
+    "PING": 483,
+    "OPEN_DRONE_ID_SYSTEM": 241,
+    "SCALED_PRESSURE": 241,
+    "SYS_STATUS": 241,
+    "SYSTEM_TIME": 241,
+    "UNKNOWN_380": 120,
+    "UNKNOWN_8": 241,
+    "MISSION_CURRENT": 239,
+    "SERVO_OUTPUT_RAW": 5,
+    "HIL_ACTUATOR_CONTROLS": 5,
+    "FILE_TRANSFER_PROTOCOL": 6,
+    "PARAM_REQUEST_LIST": 1,
+    "PARAM_VALUE": 720
+  },
+  "latest": {
+    "HEARTBEAT": {
+      "time": "2026-10-01T18:23:54.740824",
+      "data": {
+        "mavpackettype": "HEARTBEAT",
+        "type": 10,
+        "autopilot": 12,
+        "base_mode": 113,
+        "custom_mode": 196608,
+        "system_status": 0,
+        "mavlink_version": 3
+      }
+    },
+    "HIGHRES_IMU": {
+      "time": "2026-10-01T18:23:54.738896",
+      "data": {
+        "mavpackettype": "HIGHRES_IMU",
+        "time_usec": 1290427106,
+        "xacc": 0.5258121490478516,
+        "yacc": -0.5533815622329712,
+        "zacc": -9.74338150024414,
+        "xgyro": -0.005539241712540388,
+        "ygyro": 0.010751631110906601,
+        "zgyro": 0.0024306264240294695,
+        "xmag": -1.463166356086731,
+        "ymag": 0.5471158027648926,
+        "zmag": -0.6266765594482422,
+        "abs_pressure": 95579.78125,
+        "diff_pressure": 0.0,
+        "pressure_alt": 489.6931457519531,
+        "temperature": 15.0,
+        "fields_updated": 7167,
+        "id": 0
+      }
+    },
+    "ATTITUDE": {
+      "time": "2026-10-01T18:23:54.734208",
+      "data": {
+        "mavpackettype": "ATTITUDE",
+        "time_boot_ms": 1290422,
+        "roll": 0.06021784618496895,
+        "pitch": 0.04796794801950455,
+        "yaw": -2.272549629211426,
+        "rollspeed": -0.002474334090948105,
+        "pitchspeed": 0.006227639503777027,
+        "yawspeed": -0.003045571967959404
+      }
+    },
+    "SCALED_IMU": {
+      "time": "2026-10-01T18:23:54.739844",
+      "data": {
+        "mavpackettype": "SCALED_IMU",
+        "time_boot_ms": 1290427,
+        "xacc": 12,
+        "yacc": -15,
+        "zacc": -995,
+        "xgyro": -5,
+        "ygyro": 11,
+        "zgyro": 3,
+        "xmag": 8,
+        "ymag": 170,
+        "zmag": 421,
+        "temperature": 1500
+      }
+    },
+    "HIL_STATE_QUATERNION": {
+      "time": "2026-10-01T18:23:54.735180",
+      "data": {
+        "mavpackettype": "HIL_STATE_QUATERNION",
+        "time_usec": 0,
+        "attitude_quaternion": [
+          0.7156238555908203,
+          0.0,
+          0.0,
+          -0.6984858512878418
+        ],
+        "rollspeed": 0.0,
+        "pitchspeed": 0.0,
+        "yawspeed": 0.0,
+        "lat": 473986466,
+        "lon": 85436215,
+        "alt": 489400,
+        "vx": 0,
+        "vy": 0,
+        "vz": 0,
+        "ind_airspeed": 0,
+        "true_airspeed": 0,
+        "xacc": 0,
+        "yacc": 0,
+        "zacc": 0
+      }
+    },
+    "LOCAL_POSITION_NED": {
+      "time": "2026-10-01T18:23:54.731684",
+      "data": {
+        "mavpackettype": "LOCAL_POSITION_NED",
+        "time_boot_ms": 1290417,
+        "x": 100.50005340576172,
+        "y": -148.32781982421875,
+        "z": 0.15008544921875,
+        "vx": -0.004488213919103146,
+        "vy": 0.012016449123620987,
+        "vz": -0.012806635349988937
+      }
+    },
+    "GPS_RAW_INT": {
+      "time": "2026-10-01T18:23:54.674784",
+      "data": {
+        "mavpackettype": "GPS_RAW_INT",
+        "time_usec": 1290367628,
+        "fix_type": 3,
+        "lat": 473986468,
+        "lon": 85436218,
+        "alt": 489516,
+        "eph": 70,
+        "epv": 110,
+        "vel": 3,
+        "cog": 16993,
+        "satellites_visible": 10,
+        "alt_ellipsoid": 489516,
+        "h_acc": 900,
+        "v_acc": 1780,
+        "vel_acc": 400,
+        "hdg_acc": 0,
+        "yaw": 0
+      }
+    },
+    "ESTIMATOR_STATUS": {
+      "time": "2026-10-01T18:23:54.728456",
+      "data": {
+        "mavpackettype": "ESTIMATOR_STATUS",
+        "time_usec": 1290417422,
+        "flags": 1023,
+        "vel_ratio": 0.0304389800876379,
+        "pos_horiz_ratio": 0.014378764666616917,
+        "pos_vert_ratio": 0.009501597844064236,
+        "mag_ratio": NaN,
+        "hagl_ratio": 0.0006720205419696867,
+        "tas_ratio": NaN,
+        "pos_horiz_accuracy": 0.29346609115600586,
+        "pos_vert_accuracy": 0.2812967896461487
+      }
+    },
+    "VIBRATION": {
+      "time": "2026-10-01T18:23:54.531616",
+      "data": {
+        "mavpackettype": "VIBRATION",
+        "time_usec": 1290218046,
+        "vibration_x": 9.504403514215554e-11,
+        "vibration_y": 0.012388733215630054,
+        "vibration_z": 0.13517606258392334,
+        "clipping_0": 0,
+        "clipping_1": 0,
+        "clipping_2": 0
+      }
+    },
+    "SYS_STATUS": {
+      "time": "2026-10-01T18:23:54.435084",
+      "data": {
+        "mavpackettype": "SYS_STATUS",
+        "onboard_control_sensors_present": 16431,
+        "onboard_control_sensors_enabled": 81967,
+        "onboard_control_sensors_health": 52463679,
+        "load": 184,
+        "voltage_battery": 65535,
+        "current_battery": -1,
+        "battery_remaining": -1,
+        "drop_rate_comm": 0,
+        "errors_comm": 0,
+        "errors_count1": 0,
+        "errors_count2": 0,
+        "errors_count3": 0,
+        "errors_count4": 0
+      }
+    }
+  },
+  "recent_text": [
+    {
+      "time": "2026-10-01T18:19:53.922072",
+      "severity": 6,
+      "text": "Connection to ground station lost\t"
+    },
+    {
+      "time": "2026-10-01T18:19:54.427448",
+      "severity": 2,
+      "text": "Preflight Fail: Strong magnetic interference"
+    },
+    {
+      "time": "2026-10-01T18:19:54.484236",
+      "severity": 6,
+      "text": "GCS connection regained\t"
+    },
+    {
+      "time": "2026-10-01T18:19:54.541228",
+      "severity": 2,
+      "text": "Preflight Fail: Strong magnetic interference"
+    }
+  ]
+}

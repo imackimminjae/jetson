@@ -1,0 +1,84 @@
+Running main() from /opt/ros/humble/src/gtest_vendor/src/gtest_main.cc
+Note: Google Test filter = LowerPathGeneration.K1Trial*:LowerPathGeneration.RoadCanRequireTurnBeyondRemovedInitialHeadingLimit:LowerPathGeneration.GridOriginTrialChangesCellCoordinatesOnlyWhenEnabled
+[==========] Running 4 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 4 tests from LowerPathGeneration
+[ RUN      ] LowerPathGeneration.K1TrialOnlyMarksObservedFrontClippedCandidates
+getifaddrs: Operation not permitted
+getifaddrs: Operation not permitted
+getifaddrs: Operation not permitted
+getifaddrs: Operation not permitted
+[37;1m2026-10-08 03:27:46.414 [31;1m[[37;1mTRANSPORT[31;1m Error] [37mAll whitelist interfaces were filtered out[34;1m -> Function [36mUDPv4Transport[m
+[37;1m2026-10-08 03:27:46.414 [31;1m[[37;1mTRANSPORT_UDP[31;1m Error] [37mError creating socket: Operation not permitted[34;1m -> Function [36minit[m
+[37;1m2026-10-08 03:27:46.415 [31;1m[[37;1mRTPS_PARTICIPANT[31;1m Error] [37mUser transport failed to register.[34;1m -> Function [36mRTPSParticipantImpl[m
+[INFO] [1791397666.440305692] [upper_planner_node]: planner state input: Odometry topic=/px4/sih/odom_map yaw=quaternion
+[INFO] [1791397666.445161950] [upper_planner_node]: k1 lane constraint trial: skip_front_clipped_k1_lane_constraints=false
+[INFO] [1791397666.445304963] [upper_planner_node]: Egocentric MIQP planner ready: rate=2.00Hz pred_dt=1.000s Nmax=7 lower_dt=0.100s target_v=3.000m/s scale=model wheelbase=0.30m length=0.42m bev=1.50m margin=2.00m state=odom grid=/grid_map sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791397666.445403974] [upper_planner_node]: upper branch model: cumulative_increment=0 turn_window_at_split=0 turn_target_absolute=0 split_continuity=6.75m r_dpsi=1.000 lambda_turn=0.900
+getifaddrs: Operation not permitted
+getifaddrs: Operation not permitted
+[37;1m2026-10-08 03:27:46.453 [31;1m[[37;1mTRANSPORT[31;1m Error] [37mAll whitelist interfaces were filtered out[34;1m -> Function [36mUDPv4Transport[m
+[37;1m2026-10-08 03:27:46.453 [31;1m[[37;1mTRANSPORT_UDP[31;1m Error] [37mError creating socket: Operation not permitted[34;1m -> Function [36minit[m
+[37;1m2026-10-08 03:27:46.453 [31;1m[[37;1mRTPS_PARTICIPANT[31;1m Error] [37mUser transport failed to register.[34;1m -> Function [36mRTPSParticipantImpl[m
+[INFO] [1791397666.463570500] [upper_planner_node]: planner state input: Odometry topic=/px4/sih/odom_map yaw=quaternion
+[INFO] [1791397666.466498502] [upper_planner_node]: k1 lane constraint trial: skip_front_clipped_k1_lane_constraints=true
+[INFO] [1791397666.466611850] [upper_planner_node]: Egocentric MIQP planner ready: rate=2.00Hz pred_dt=1.000s Nmax=7 lower_dt=0.100s target_v=3.000m/s scale=model wheelbase=0.30m length=0.42m bev=1.50m margin=2.00m state=odom grid=/grid_map sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791397666.466680972] [upper_planner_node]: upper branch model: cumulative_increment=0 turn_window_at_split=0 turn_target_absolute=0 split_continuity=6.75m r_dpsi=1.000 lambda_turn=0.900
+[       OK ] LowerPathGeneration.K1TrialOnlyMarksObservedFrontClippedCandidates (77 ms)
+[ RUN      ] LowerPathGeneration.K1TrialRetainsLaterRoadAndVehicleInputConstraints
+getifaddrs: Operation not permitted
+getifaddrs: Operation not permitted
+[37;1m2026-10-08 03:27:46.474 [31;1m[[37;1mTRANSPORT[31;1m Error] [37mAll whitelist interfaces were filtered out[34;1m -> Function [36mUDPv4Transport[m
+[37;1m2026-10-08 03:27:46.474 [31;1m[[37;1mTRANSPORT_UDP[31;1m Error] [37mError creating socket: Operation not permitted[34;1m -> Function [36minit[m
+[37;1m2026-10-08 03:27:46.474 [31;1m[[37;1mRTPS_PARTICIPANT[31;1m Error] [37mUser transport failed to register.[34;1m -> Function [36mRTPSParticipantImpl[m
+[INFO] [1791397666.484604354] [upper_planner_node]: planner state input: Odometry topic=/px4/sih/odom_map yaw=quaternion
+[INFO] [1791397666.487308796] [upper_planner_node]: k1 lane constraint trial: skip_front_clipped_k1_lane_constraints=false
+[INFO] [1791397666.487462529] [upper_planner_node]: Egocentric MIQP planner ready: rate=2.00Hz pred_dt=1.000s Nmax=7 lower_dt=0.100s target_v=3.000m/s scale=model wheelbase=0.30m length=0.42m bev=1.50m margin=2.00m state=odom grid=/grid_map sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791397666.487532675] [upper_planner_node]: upper branch model: cumulative_increment=0 turn_window_at_split=0 turn_target_absolute=0 split_continuity=6.75m r_dpsi=1.000 lambda_turn=0.900
+getifaddrs: Operation not permitted
+getifaddrs: Operation not permitted
+[37;1m2026-10-08 03:27:46.493 [31;1m[[37;1mTRANSPORT[31;1m Error] [37mAll whitelist interfaces were filtered out[34;1m -> Function [36mUDPv4Transport[m
+[37;1m2026-10-08 03:27:46.493 [31;1m[[37;1mTRANSPORT_UDP[31;1m Error] [37mError creating socket: Operation not permitted[34;1m -> Function [36minit[m
+[37;1m2026-10-08 03:27:46.493 [31;1m[[37;1mRTPS_PARTICIPANT[31;1m Error] [37mUser transport failed to register.[34;1m -> Function [36mRTPSParticipantImpl[m
+[INFO] [1791397666.503367348] [upper_planner_node]: planner state input: Odometry topic=/px4/sih/odom_map yaw=quaternion
+[INFO] [1791397666.506169457] [upper_planner_node]: k1 lane constraint trial: skip_front_clipped_k1_lane_constraints=true
+[INFO] [1791397666.506275317] [upper_planner_node]: Egocentric MIQP planner ready: rate=2.00Hz pred_dt=1.000s Nmax=7 lower_dt=0.100s target_v=3.000m/s scale=model wheelbase=0.30m length=0.42m bev=1.50m margin=2.00m state=odom grid=/grid_map sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791397666.506346295] [upper_planner_node]: upper branch model: cumulative_increment=0 turn_window_at_split=0 turn_target_absolute=0 split_continuity=6.75m r_dpsi=1.000 lambda_turn=0.900
+[       OK ] LowerPathGeneration.K1TrialRetainsLaterRoadAndVehicleInputConstraints (39 ms)
+[ RUN      ] LowerPathGeneration.GridOriginTrialChangesCellCoordinatesOnlyWhenEnabled
+getifaddrs: Operation not permitted
+getifaddrs: Operation not permitted
+[37;1m2026-10-08 03:27:46.513 [31;1m[[37;1mTRANSPORT[31;1m Error] [37mAll whitelist interfaces were filtered out[34;1m -> Function [36mUDPv4Transport[m
+[37;1m2026-10-08 03:27:46.513 [31;1m[[37;1mTRANSPORT_UDP[31;1m Error] [37mError creating socket: Operation not permitted[34;1m -> Function [36minit[m
+[37;1m2026-10-08 03:27:46.513 [31;1m[[37;1mRTPS_PARTICIPANT[31;1m Error] [37mUser transport failed to register.[34;1m -> Function [36mRTPSParticipantImpl[m
+[INFO] [1791397666.523097350] [upper_planner_node]: planner state input: Odometry topic=/px4/sih/odom_map yaw=quaternion
+[INFO] [1791397666.526531896] [upper_planner_node]: k1 lane constraint trial: skip_front_clipped_k1_lane_constraints=false
+[INFO] [1791397666.526649884] [upper_planner_node]: Egocentric MIQP planner ready: rate=2.00Hz pred_dt=1.000s Nmax=7 lower_dt=0.100s target_v=3.000m/s scale=model wheelbase=0.30m length=0.42m bev=1.50m margin=2.00m state=odom grid=/grid_map sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791397666.526718238] [upper_planner_node]: upper branch model: cumulative_increment=0 turn_window_at_split=0 turn_target_absolute=0 split_continuity=6.75m r_dpsi=1.000 lambda_turn=0.900
+getifaddrs: Operation not permitted
+getifaddrs: Operation not permitted
+[37;1m2026-10-08 03:27:46.533 [31;1m[[37;1mTRANSPORT[31;1m Error] [37mAll whitelist interfaces were filtered out[34;1m -> Function [36mUDPv4Transport[m
+[37;1m2026-10-08 03:27:46.533 [31;1m[[37;1mTRANSPORT_UDP[31;1m Error] [37mError creating socket: Operation not permitted[34;1m -> Function [36minit[m
+[37;1m2026-10-08 03:27:46.533 [31;1m[[37;1mRTPS_PARTICIPANT[31;1m Error] [37mUser transport failed to register.[34;1m -> Function [36mRTPSParticipantImpl[m
+[INFO] [1791397666.542656114] [upper_planner_node]: planner state input: Odometry topic=/px4/sih/odom_map yaw=quaternion
+[INFO] [1791397666.545232488] [upper_planner_node]: k1 lane constraint trial: skip_front_clipped_k1_lane_constraints=false
+[INFO] [1791397666.545387949] [upper_planner_node]: Egocentric MIQP planner ready: rate=2.00Hz pred_dt=1.000s Nmax=7 lower_dt=0.100s target_v=3.000m/s scale=model wheelbase=0.30m length=0.42m bev=1.50m margin=2.00m state=odom grid=/grid_map sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791397666.545462095] [upper_planner_node]: upper branch model: cumulative_increment=0 turn_window_at_split=0 turn_target_absolute=0 split_continuity=6.75m r_dpsi=1.000 lambda_turn=0.900
+[WARN] [1791397666.545508657] [upper_planner_node]: grid origin experiment: received_x=2.950 effective_x=0.000 shift_x=-2.950; cell data unchanged
+[       OK ] LowerPathGeneration.GridOriginTrialChangesCellCoordinatesOnlyWhenEnabled (39 ms)
+[ RUN      ] LowerPathGeneration.RoadCanRequireTurnBeyondRemovedInitialHeadingLimit
+getifaddrs: Operation not permitted
+getifaddrs: Operation not permitted
+[37;1m2026-10-08 03:27:46.552 [31;1m[[37;1mTRANSPORT[31;1m Error] [37mAll whitelist interfaces were filtered out[34;1m -> Function [36mUDPv4Transport[m
+[37;1m2026-10-08 03:27:46.552 [31;1m[[37;1mTRANSPORT_UDP[31;1m Error] [37mError creating socket: Operation not permitted[34;1m -> Function [36minit[m
+[37;1m2026-10-08 03:27:46.552 [31;1m[[37;1mRTPS_PARTICIPANT[31;1m Error] [37mUser transport failed to register.[34;1m -> Function [36mRTPSParticipantImpl[m
+[INFO] [1791397666.560972981] [upper_planner_node]: planner state input: Odometry topic=/px4/sih/odom_map yaw=quaternion
+[INFO] [1791397666.563578316] [upper_planner_node]: k1 lane constraint trial: skip_front_clipped_k1_lane_constraints=false
+[INFO] [1791397666.563684911] [upper_planner_node]: Egocentric MIQP planner ready: rate=2.00Hz pred_dt=1.000s Nmax=7 lower_dt=0.100s target_v=3.000m/s scale=model wheelbase=0.30m length=0.42m bev=1.50m margin=2.00m state=odom grid=/grid_map sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791397666.563750193] [upper_planner_node]: upper branch model: cumulative_increment=0 turn_window_at_split=0 turn_target_absolute=0 split_continuity=6.75m r_dpsi=1.000 lambda_turn=0.900
+[       OK ] LowerPathGeneration.RoadCanRequireTurnBeyondRemovedInitialHeadingLimit (18 ms)
+[----------] 4 tests from LowerPathGeneration (173 ms total)
+
+[----------] Global test environment tear-down
+[==========] 4 tests from 1 test suite ran. (173 ms total)
+[  PASSED  ] 4 tests.

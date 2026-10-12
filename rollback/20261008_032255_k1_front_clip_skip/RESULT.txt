@@ -1,0 +1,7 @@
+Conditional k1 trial prepared; skip_front_clipped_k1_lane_constraints=true.
+Installed executable/config symlinks point to the rebuilt executable and edited config.
+Startup flag verified on isolated ROS domain177. No operating process restarted; no driving/ARM/hardware change.
+Unit checks4 passed; production/offline equivalence1524+2616 solves, max coordinate difference0.
+Scenario1:6 recorded drives, no new E-to-N branch regression observed; see followup_20261006/k1_scenario1_trial/RESULT.txt.
+Run restore.py to restore all pre-trial files and binary only if post-setup hashes still match.
+To disable only the trial, set skip_front_clipped_k1_lane_constraints=false and restart the planner yourself.

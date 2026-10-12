@@ -1,0 +1,60 @@
+{
+  "log_entries": [],
+  "last": {
+    "LOCAL_POSITION_NED": {
+      "mavpackettype": "LOCAL_POSITION_NED",
+      "time_boot_ms": 1618497,
+      "x": 100.49959564208984,
+      "y": -148.3275909423828,
+      "z": 0.1502685546875,
+      "vx": -0.005490424577146769,
+      "vy": 0.012685452587902546,
+      "vz": -0.014757851138710976
+    },
+    "ATTITUDE": {
+      "mavpackettype": "ATTITUDE",
+      "time_boot_ms": 1618472,
+      "roll": 0.06016308069229126,
+      "pitch": 0.04802042245864868,
+      "yaw": -2.1668784618377686,
+      "rollspeed": -0.005305299535393715,
+      "pitchspeed": -0.00877951830625534,
+      "yawspeed": 0.00045365840196609497
+    },
+    "HIL_STATE_QUATERNION": {
+      "mavpackettype": "HIL_STATE_QUATERNION",
+      "time_usec": 0,
+      "attitude_quaternion": [
+        0.7156238555908203,
+        0.0,
+        0.0,
+        -0.6984858512878418
+      ],
+      "rollspeed": 0.0,
+      "pitchspeed": 0.0,
+      "yawspeed": 0.0,
+      "lat": 473986466,
+      "lon": 85436215,
+      "alt": 489400,
+      "vx": 0,
+      "vy": 0,
+      "vz": 0,
+      "ind_airspeed": 0,
+      "true_airspeed": 0,
+      "xacc": 0,
+      "yacc": 0,
+      "zacc": 0
+    },
+    "HEARTBEAT": {
+      "mavpackettype": "HEARTBEAT",
+      "type": 10,
+      "autopilot": 12,
+      "base_mode": 113,
+      "custom_mode": 196608,
+      "system_status": 0,
+      "mavlink_version": 3
+    }
+  },
+  "statustext": [],
+  "shell": "\nNuttShell (NSH) NuttX-11.0.0\nnsh> \u001b[Klistener magnetometer_bias_estimate 1\n\nTOPIC: magnetometer_bias_estimate\n magnetometer_bias_estimate\n    timestamp: 1605861295 (0.004003 seconds ago)\n    bias_x: [1.73890, 0.00000, 0.00000, 0.00000]\n    bias_y: [-0.41366, 0.00000, 0.00000, 0.00000]\n    bias_z: [1.21321, 0.00000, 0.00000, 0.00000]\n    valid: [True, False, False, False]\n    stable: [True, False, False, False]\nnsh> \u001b[Kmag_bias_estimator status\nMAG 197388 EN: 1, offset: [0.001 -0.004 -0.000], scale: [1.000 1.000 1.000], Internal\nINFO  [mag_bias_estimator] 0 (197388) bias: [ 1.742 -0.414  1.214]\nnsh> \u001b[Klistener sensor_mag 1\n\nTOPIC: sensor_mag\n sensor_mag\n    timestamp: 1610067519 (0.012950 seconds ago)\n    timestamp_sample: 1610067143 (376 us before timestamp)\n    device_id: 197388 (Type: 0x03, SIMULATION:1 (0x03))\n    x: -0.01347\n    y: 0.21970\n    z: 0.47855\n    temperature: nan\n    error_count: 0\nnsh> \u001b[Klistener vehicle_magnetometer 1\n\nTOPIC: vehicle_magnetometer\n vehicle_magnetometer\n    timestamp: 1612127519 (0.058586 seconds ago)\n    timestamp_sample: 1612127143 (376 us before timestamp)\n    device_id: 197388 (Type: 0x03, SIMULATION:1 (0x03))\n    magnetometer_ga: [-1.76144, 0.60627, -0.82891]\n    calibration_count: 1\n\nnsh> \u001b[Kparam show SENS_MAG_AUTOCAL\nSymbols: x = used, + = saved, * = unsaved\nx   SENS_MAG_AUTOCAL [644,1447] : 1\n\n 719/1923 parameters used.\nnsh> \u001b[Kparam show EKF2_MAG_TYPE\nSymbols: x = used, + = saved, * = unsaved\nx   EKF2_MAG_TYPE [265,630] : 1\n\n 719/1923 parameters used.\nnsh> \u001b[K"
+}

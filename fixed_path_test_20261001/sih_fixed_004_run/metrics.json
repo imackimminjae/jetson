@@ -1,0 +1,160 @@
+{
+  "result": {
+    "reason": "pose_or_heading_guard_lost",
+    "progress_s": 136.9,
+    "run_start": 1790849161.6765475
+  },
+  "control_active": {
+    "cycles": 261,
+    "speed_median": 5.809762992882847,
+    "lateral_error_abs_m_median_p95_max": [
+      0.06180250047764148,
+      0.32325960622614863,
+      0.3450659499780804
+    ],
+    "lateral_error_rms_m": 0.1585431724075902,
+    "steering_abs_deg_p95_max": [
+      6.542774126719697,
+      6.767135339538767
+    ],
+    "saturation_count": 0,
+    "steering_variation_deg_per_sec": 1.2626352942424552,
+    "steering_step_abs_deg_p95_max": [
+      0.4267366646185454,
+      0.5244341974697438
+    ]
+  },
+  "control_speed_over_4": {
+    "cycles": 224,
+    "speed_median": 5.838636884599259,
+    "lateral_error_abs_m_median_p95_max": [
+      0.09243261350732102,
+      0.3246921455310814,
+      0.3450659499780804
+    ],
+    "lateral_error_rms_m": 0.17030930793579785,
+    "steering_abs_deg_p95_max": [
+      6.5643051198705304,
+      6.767135339538767
+    ],
+    "saturation_count": 0,
+    "steering_variation_deg_per_sec": 1.2927999338244787,
+    "steering_step_abs_deg_p95_max": [
+      0.4352870102505988,
+      0.5244341974697438
+    ]
+  },
+  "guard_states": [
+    "ok",
+    "settling"
+  ],
+  "max_yaw_error_deg": 2.766485187887884,
+  "path_sha256": "2c26f8082c61ac427958bfe415e6d22af885273a8457288b6f582ec878687292",
+  "curvature_max_per_m": 0.04,
+  "fixed_path_length_m": 180.0,
+  "straight": {
+    "cycles": 50,
+    "speed_median": 5.488179050362847,
+    "lateral_error_abs_m_median_p95_max": [
+      0.01586638822915404,
+      0.1818411681376458,
+      0.19624138137879232
+    ],
+    "lateral_error_rms_m": 0.07456606847817752,
+    "steering_abs_deg_p95_max": [
+      0.47817133826267294,
+      0.5772818470217066
+    ],
+    "saturation_count": 0,
+    "steering_variation_deg_per_sec": 0.4275873605136256,
+    "steering_step_abs_deg_p95_max": [
+      0.09561055991251304,
+      0.1159907860833656
+    ]
+  },
+  "left_constant": {
+    "cycles": 21,
+    "speed_median": 5.843565941127042,
+    "lateral_error_abs_m_median_p95_max": [
+      0.29008027653115853,
+      0.30729508390395965,
+      0.3074243372874394
+    ],
+    "lateral_error_rms_m": 0.28355291827476536,
+    "steering_abs_deg_p95_max": [
+      6.741204867864273,
+      6.767135339538767
+    ],
+    "saturation_count": 0,
+    "steering_variation_deg_per_sec": 0.40427979125420266,
+    "steering_step_abs_deg_p95_max": [
+      0.10178648429476529,
+      0.13012449519885166
+    ]
+  },
+  "right_constant": {
+    "cycles": 21,
+    "speed_median": 5.945093122788533,
+    "lateral_error_abs_m_median_p95_max": [
+      0.03415746382425763,
+      0.07220642309765614,
+      0.0777351326534246
+    ],
+    "lateral_error_rms_m": 0.04452483757353109,
+    "steering_abs_deg_p95_max": [
+      6.43429919675567,
+      6.4446670824062915
+    ],
+    "saturation_count": 0,
+    "steering_variation_deg_per_sec": 0.3522202277224977,
+    "steering_step_abs_deg_p95_max": [
+      0.07776795759255413,
+      0.08644048356947204
+    ]
+  },
+  "board_after": {
+    "HIL_STATE_QUATERNION": {
+      "mavpackettype": "HIL_STATE_QUATERNION",
+      "time_usec": 0,
+      "attitude_quaternion": [
+        0.17563235759735107,
+        0.0,
+        0.0,
+        -0.9844558238983154
+      ],
+      "rollspeed": 0.0,
+      "pitchspeed": 0.0,
+      "yawspeed": 0.0,
+      "lat": 473957446,
+      "lon": 85427144,
+      "alt": 489400,
+      "vx": 0,
+      "vy": 0,
+      "vz": 0,
+      "ind_airspeed": 0,
+      "true_airspeed": 0,
+      "xacc": 0,
+      "yacc": 0,
+      "zacc": 0
+    },
+    "COMMAND_ACK": {
+      "mavpackettype": "COMMAND_ACK",
+      "command": 400,
+      "result": 0,
+      "progress": 0,
+      "result_param2": 0,
+      "target_system": 246,
+      "target_component": 191
+    },
+    "HEARTBEAT": {
+      "mavpackettype": "HEARTBEAT",
+      "type": 10,
+      "autopilot": 12,
+      "base_mode": 97,
+      "custom_mode": 65536,
+      "system_status": 0,
+      "mavlink_version": 3
+    },
+    "verified_disarmed_stationary": true
+  }
+}

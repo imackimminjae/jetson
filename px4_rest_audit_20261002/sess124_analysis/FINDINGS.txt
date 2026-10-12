@@ -1,0 +1,114 @@
+SIH Ackermann: 실제 이동 중 내부 정지 판정 확인
+분석일: 2026-10-02 / 대상: sess124/log100.ulg
+
+1. 자료와 신뢰 범위
+보드 /fs/microsd/log/sess124/log100.ulg를 기존 MAVProxy 연결을 통해 읽기 전용 다운로드.
+9,605,408 bytes; SHA256 211fb3c7b0e7b0e6dd61e84610c973356fec034f20630cba0bbd2c289a8ef890
+ULog 기록 길이 393.645초, 파서 corruption=false, logger dropout=0.
+요청한 7종 내부 토픽이 모두 있으며 EKF 선택 인스턴스는 0으로 유지됐다.
+시간은 첫 SIH groundtruth timestamp=277278170us를 0초로 한다.
+ULog 헤더 시작은 이보다 0.045초 앞선다. 표의 시간은 기록된 발행 시각이며
+정확한 내부 코드 실행 시각과는 버퍼 지연 등이 있을 수 있다.
+
+2. 실제 보드 펌웨어
+simulator_sih status:
+Running Ackermann Rover (no-slip kinematic; input guard v1; local position v2)
+CUAV_7_NANO, PX4 1.16.1, reported Git 94cb2012792b2ae89f0b147cfee53ee31ae550be.
+SYS_HITL=2, SIH_VEHICLE_TYPE=4.
+첨부 .px4에는 local position v2 식별 문자열이 없으므로 같은 바이너리라고
+확정하지 않는다. 아래 코드 대조는 보고된 커밋의 공개 소스 기준이다.
+실제 커스텀 수정 전체는 원본 작업 트리 없이는 확인할 수 없다.
+
+3. 정지 → 이동 → 정지와 실패 순서
+  0~139.32초: 정지, GPS 실패 없음, 수평 추정과 GNSS 융합 유효.
+  139.32초: SIH 실제 수평 속도 >0.2m/s.
+  174.94초경: actuator_outputs_sim 스로틀/조향이 0으로 전환. 차량은 계속 감속 이동.
+  176.690초: 자이로 진동 지표가 0.02를 초과한 마지막 기록.
+  177.695초: vehicle_land_detected.at_rest=true; 실제 속도 3.684m/s.
+  177.885초: cs_vehicle_at_rest=true; 실제 속도 3.601m/s.
+  178.215초: check_fail_max_horz_drift=true; 실제 속도 3.475m/s.
+  178.595초: check_fail_max_horz_spd_err=true; 실제 속도 3.330m/s.
+  183.096초: xy_valid와 v_xy_valid=false; 실제 속도 2.033m/s.
+  185.216초: cs_gnss_pos와 cs_gnss_vel=false; 실제 속도 1.583m/s.
+               xy/vxy reset counter 각각 2→3.
+  193.600초: 실제 속도 0.2m/s 아래로 감소.
+  194.903초: 실제 속도 정확히 0, 완전 정지.
+  214.716초: 수평 속도 드리프트 실패 해제.
+  215.345~218.595초: 수평 위치 드리프트 실패가 임계값 부근에서 반복 전환.
+  218.595초: 수평 위치 드리프트 실패 최종 해제.
+  219.595초: GNSS 위치/속도 융합과 xy/vxy_valid 복구; reset counter 각각 3→4.
+               위치 reset delta_xy 약 (7.070, 10.449)m.
+  이후 기록 끝까지 정지, GPS 실패 없음, 추정 유효 유지.
+
+두 내부 정지 플래그가 켜진 채 실제 속도 >0.2m/s였던 구간은 15.715초.
+분석용 이동 기준 0.2m/s는 펌웨어 수정의 정지 허용 기준으로 제안하는 값이 아니다.
+armed=false, prearmed=true, landed=true, ground_contact=true, cs_in_air=false가
+전 구간 유지됐다. 이 값들로 정지 오판을 추론한 것이 아니라 두 내부 at_rest와
+동시각의 신선한 SIH 실제 속도를 직접 비교해 확인했다.
+
+actuator_outputs_sim: 마지막 0이 아닌 스로틀은 174.887초에 0.208.
+174.94초 이후 입력 0, 176.080초까지 0 입력 갱신 후 다음 발행은 386.273초.
+초기에는 기록 시작 전 발행된 오래된 값도 포함되며, 단순 전체 최대 age는
+318.056초이다. 이를 주행 중 전체 통신 장애 시간으로 해석하면 안 된다.
+입력 갱신 중단/0 입력 이후에도 실제 속도는 194.903초까지 남아 있었다.
+이 로그만으로 사용자가 명령을 끈 것인지 송신 장애인지까지 단정하지 않는다.
+
+4. 왜 GPS 실패가 정지 후에도 남았는가
+이번 기록에서 실패한 GPS 항목은 check_fail_max_horz_drift와
+check_fail_max_horz_spd_err 두 개다. 다른 check_fail_*는 발생하지 않았다.
+GPS 정지 검사 필터는 시정수 10초이며 이동 중 정지 오판 때문에 값이 누적됐다.
+실제 정지 이후에도 속도 드리프트 실패가 약 19.81초, 위치 드리프트 실패가
+약 23.69초 남았으며, 수평 추정은 약 24.69초 뒤 복구됐다.
+따라서 이번 로그에서는 영구 미복구가 아니다.
+
+주의: estimator_gps_status.checks_passed는 전 구간 true였다.
+이 커밋에서는 초기 통과를 기억하는 래치로, 현재 검사 실패 여부를 의미하지 않는다.
+현재 상태와 복구 판정에는 개별 check_fail_* 및 실제 융합/valid 플래그를 사용했다.
+EKF2_GPS_CHECK=1023, EKF2_REQ_GPS_H=10, EKF2_REQ_HDRIFT=0.1,
+EKF2_NOAID_TOUT=5000000us. GPS 재수용은 초기 건강 승인 래치가 이미 켜진 경우
+최근 실패 후 max(1초, 건강시간/10) 조건을 적용하므로 매번 10초 대기를 요구하지 않는다.
+
+5. 보고된 커밋의 원인 경로
+reference_source/src/modules/land_detector/RoverLandDetector.cpp:
+  일반 rover 상태에서 landed는 !_armed, ground_contact는 true.
+reference_source/src/modules/land_detector/LandDetector.cpp:
+  UpdateVehicleAtRest는 자이로 각속도/진동 및 가속도 진동으로 최근 움직임을 갱신한다.
+  gyro vibration >0.02 또는 accel vibration >1.2이면 움직임으로 취급한다.
+  마지막 감지 후 1초가 지나면 _at_rest=true; landed && _at_rest를 발행한다.
+  실제 병진 속도는 여기서 확인하지 않는다.
+  이번 기록은 마지막 gyro vibration 초과 후 1.005초에 at_rest가 켜졌다.
+reference_source/src/modules/ekf2/EKF2.cpp:
+  UpdateSystemFlagsSample에서 land detector의 at_rest를 EKF 시스템 상태로 전달한다.
+reference_source/src/modules/ekf2/EKF/aid_sources/gnss/gps_checks.cpp:
+  !in_air && vehicle_at_rest일 때 수평 위치 드리프트와 수평 속도 검사를 적용한다.
+reference_source/src/modules/ekf2/EKF/aid_sources/gnss/gps_control.cpp:
+  검사 실패 시 GPS 샘플을 건너뛰고 지속 실패 시 GNSS 융합을 중지한다.
+
+즉, 이번 감속 구간은 회전/진동이 작아져도 차량은 병진 이동을 계속했는데,
+IMU 기반 정지 판정이 먼저 켜져 정상적인 GPS 이동을 정지 드리프트로 검사했다.
+관측된 플래그 및 시각은 이 코드 경로와 강하게 일치한다.
+
+6. 최소 수정안 — 아직 적용하지 않음
+범위를 SYS_HITL==2 && SIH_VEHICLE_TYPE==4인 SIH Ackermann으로 제한한다.
+기존 IMU 기반 정지 조건에 더해, 신선하고 유효한 SIH groundtruth 속도로 정지
+허용 여부를 확인한다. 실제 속도가 남아 있으면 at_rest를 강제로 해제한다.
+EKF 추정 속도, 스로틀 0, DISARM을 실제 정지의 대용으로 사용하지 않는다.
+
+초기 제안값: 실제 수평 속도 >0.05m/s이면 정지 해제,
+<0.02m/s가 1초 지속되고 기존 IMU 정지 조건도 만족할 때만 정지 허용.
+0.02~0.05m/s는 히스테리시스로 처리하고 정지 진입 대기 중에는 at_rest=false.
+truth timestamp age <=200ms, finite vx/vy와 v_xy_valid를 확인한다.
+해당 SIH 모드에서 truth가 없거나 오래됐으면 정지로 확정하지 않는다.
+이는 설계 제안이며 실제 커스텀 소스에서 필드/갱신 계약 확인 및 빌드 검증이 필요하다.
+
+landed/ground_contact, 실제 하드웨어 rover 동작, GPS 검사 및 ARM 정책은 유지한다.
+검증은 정속 직진, 입력 0 감속, 완전 정지, 재출발, truth 갱신 중단을 포함한다.
+특히 감속 동안 두 at_rest가 false인지, 정지 후 true로 복귀하는지, GPS 검사
+실패 및 수평 invalid가 재발하지 않는지 확인한다.
+
+7. 실행 범위
+이번 분석에서 임의 주행/ARM/파라미터 변경/펌웨어 업로드는 수행하지 않았다.
+새 로그는 사용자가 직접 기록했다. logger off 이후 상태는 모듈 실행 중이지만
+Not logging으로 확인했다. logger 프로세스가 남아 있는 것과 파일 기록 중은 다르다.
+자세한 시계열은 aligned.csv, 이벤트는 summary.json/evidence_events.json,
+그림은 rest_mismatch_evidence.png를 참조한다.

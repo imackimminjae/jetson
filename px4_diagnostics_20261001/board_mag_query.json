@@ -1,0 +1,60 @@
+{
+  "log_entries": [],
+  "last": {
+    "LOCAL_POSITION_NED": {
+      "mavpackettype": "LOCAL_POSITION_NED",
+      "time_boot_ms": 1580637,
+      "x": 100.49600219726562,
+      "y": -148.3269500732422,
+      "z": 0.150909423828125,
+      "vx": -0.006117567420005798,
+      "vy": 0.01261675264686346,
+      "vz": -0.013851364143192768
+    },
+    "ATTITUDE": {
+      "mavpackettype": "ATTITUDE",
+      "time_boot_ms": 1580637,
+      "roll": 0.060174260288476944,
+      "pitch": 0.04813394322991371,
+      "yaw": -2.1778135299682617,
+      "rollspeed": 0.002351827220991254,
+      "pitchspeed": -0.001354394480586052,
+      "yawspeed": 0.0108876908197999
+    },
+    "HIL_STATE_QUATERNION": {
+      "mavpackettype": "HIL_STATE_QUATERNION",
+      "time_usec": 0,
+      "attitude_quaternion": [
+        0.7156238555908203,
+        0.0,
+        0.0,
+        -0.6984858512878418
+      ],
+      "rollspeed": 0.0,
+      "pitchspeed": 0.0,
+      "yawspeed": 0.0,
+      "lat": 473986466,
+      "lon": 85436215,
+      "alt": 489400,
+      "vx": 0,
+      "vy": 0,
+      "vz": 0,
+      "ind_airspeed": 0,
+      "true_airspeed": 0,
+      "xacc": 0,
+      "yacc": 0,
+      "zacc": 0
+    },
+    "HEARTBEAT": {
+      "mavpackettype": "HEARTBEAT",
+      "type": 10,
+      "autopilot": 12,
+      "base_mode": 113,
+      "custom_mode": 196608,
+      "system_status": 0,
+      "mavlink_version": 3
+    }
+  },
+  "statustext": [],
+  "shell": "\nNuttShell (NSH) NuttX-11.0.0\nnsh> \u001b[Klistener sensor_mag 3\n\nTOPIC: sensor_mag\n sensor_mag\n    timestamp: 1565927572 (0.003629 seconds ago)\n    timestamp_sample: 1565927149 (423 us before timestamp)\n    device_id: 197388 (Type: 0x03, SIMULATION:1 (0x03))\n    x: -0.00419\n    y: 0.21327\n    z: 0.43069\n    temperature: nan\n    error_count: 0\nnsh> \u001b[Klistener vehicle_magnetometer 3\n\nTOPIC: vehicle_magnetometer\n vehicle_magnetometer\n    timestamp: 1568027513 (0.011761 seconds ago)\n    timestamp_sample: 1568027146 (367 us before timestamp)\n    device_id: 197388 (Type: 0x03, SIMULATION:1 (0x03))\n    magnetometer_ga: [-1.72389, 0.64395, -0.74401]\n    calibration_count: 1\n\nnsh> \u001b[Ksensors status\nselected gyro: 1310988 (0)\nvalidator: best: 0, prev best: 0, failsafe: NO (0 events)\nsensor #0, prio: 50, state: OK\n\tval:  -0.0039, lp:   0.0001 mean dev:  -0.0000 RMS:   0.0146 conf:   1.0000\n\tval:   0.0038, lp:   0.0015 mean dev:   0.0000 RMS:   0.0084 conf:   1.0000\n\tval:   0.0204, lp:   0.0016 mean dev:   0.0000 RMS:   0.0373 conf:   1.0000\n\nselected accel: 1310988 (0)\nvalidator: best: 0, prev best: 0, failsafe: NO (0 events)\nsensor #0, prio: 50, state: OK\n\tval:   0.1231, lp:   0.0654 mean dev:  -0.0000 RMS:   0.0829 conf:   1.0000\n\tval:  -0.2474, lp:  -0.1881 mean dev:   0.0000 RMS:   0.3130 conf:   1.0000\n\tval:  -9.7326, lp:  -9.7988 mean dev:  -0.0015 RMS:   0.1572 conf:   1.0000\n\n[vehicle_magnetometer] selected MAG: 197388 (0)\nvalidator: best: 0, prev best: 0, failsafe: NO (0 events)\nsensor #0, prio: 50, state: OK\n\tval:  -1.6947, lp:  -1.7112 mean dev:  -0.0024 RMS:   0.0204 conf:   1.0000\n\tval:   0.6542, lp:   0.6263 mean dev:   0.0007 RMS:   0.0194 conf:   1.0000\n\tval:  -0.7475, lp:  -0.7573 mean dev:  -0.0015 RMS:   0.0312 conf:   1.0000\nMAG 197388 EN: 1, offset: [0.001 -0.004 -0.000], scale: [1.000 1.000 1.000], Internal\n\n[vehicle_air_data] selected BARO: 6620172 (0)\nvalidator: best: 0, prev best: 0, failsafe: NO (0 events)\nsensor #0, prio: 50, state: OK\n\tval: 95579.8828, lp: 95579.3906 mean dev:  -0.0744 RMS:   0.7168 conf:   1.0000\n\tval:  11.8189, lp:  11.8189 mean dev:   0.0000 RMS:   0.0000 conf:   1.0000\n\tval: 489.6852, lp: 489.7353 mean dev:  -0.0005 RMS:   0.0624 conf:   1.0000\nBARO 6620172 EN: 1, offset: 0.000, Internal\n\nAirspeed status:\n\tno data\n\n[vehicle_acceleration] selected sensor: 1310988, rate: 400.0 Hz, estimated bias: [-0.3999 0.3999 -0.0204]\nACC 1310988 EN: 1, offset: [-0.073 0.197 -0.021], scale: [1.000 1.000 1.000], Internal\n\n[vehicle_angular_velocity] selected sensor: 1310988, rate: 400.0 Hz , estimated bias: [0.00036 0.00113 0.00155]\nGYRO 1310988 EN: 1, offset: [-0.000 -0.001 -0.000], Internal\nvehicle_angular_velocity: gyro filter: 627588 events, 6487691us elapsed, 10.34us avg, min 7us max 197us 1.542us rms\nvehicle_angular_velocity: gyro filter reset: 1 events\nvehicle_angular_velocity: gyro selection changed: 1 events\n\n[vehicle_gps_position] selected GPS: 0\n\n\n[vehicle_imu] 0 - Accel: 1310988, interval: 2500.0 us (SD 2.3 us), Gyro: 1310988, interval: 2500.0 us (SD 2.3 us)\nvehicle_imu: accel data gap: 1 events\nvehicle_imu: gyro data gap: 1 events\nACC 1310988 EN: 1, offset: [-0.073 0.197 -0.021], scale: [1.000 1.000 1.000], Internal\nGYRO 1310988 EN: 1, offset: [-0.000 -0.001 -0.000], Internal\nnsh> \u001b[Kparam show CAL_MAG1*\nSymbols: x = used, + = saved, * = unsaved\nx + CAL_MAG1_ID [79,160] : 197388\nx   CAL_MAG1_PITCH [80,161] : 0.0000\nx + CAL_MAG1_PRIO [81,162] : 50\nx   CAL_MAG1_ROLL [82,163] : 0.0000\nx   CAL_MAG1_ROT [83,164] : -1\nx   CAL_MAG1_XCOMP [84,165] : 0.0000\nx   CAL_MAG1_XODIAG [85,166] : 0.0000\nx + CAL_MAG1_XOFF [86,167] : 0.0018\nx   CAL_MAG1_XSCALE [87,168] : 1.0000\nx   CAL_MAG1_YAW [88,169] : 0.0000\nx   CAL_MAG1_YCOMP [89,170] : 0.0000\nx   CAL_MAG1_YODIAG [90,171] : 0.0000\nx   CAL_MAG1_YOFF [91,172] : -0.0046\nx   CAL_MAG1_YSCALE [92,173] : 1.0000\nx   CAL_MAG1_ZCOMP [93,174] : 0.0000\nx   CAL_MAG1_ZODIAG [94,175] : 0.0000\nx   CAL_MAG1_ZOFF [95,176] : -0.0001\nx   CAL_MAG1_ZSCALE [96,177] : 1.0000\n\n 719/1923 parameters used.\nnsh> \u001b[Klistener estimator_aid_src_mag 1\n\nTOPIC: estimator_aid_src_mag\n estimator_aid_src_mag\n    timestamp: 1574307611 (0.048554 seconds ago)\n    timestamp_sample: 1574112145 (195466 us before timestamp)\n    time_last_fuse: 1572577107\n    device_id: 0 (Type: 0x00, UNKNOWN:0 (0x00))\n    observation: [-1.71279, 0.62514, -0.73859]\n    observation_variance: [0.00250, 0.00250, 0.00250]\n    innovation: [1.55727, -0.42909, 1.15100]\n    innovation_filtered: [0.53528, -0.43144, 0.51967]\n    innovation_variance: [0.00795, 0.00779, 0.00750]\n    test_ratio: [33.85477, 2.62564, 19.62220]\n    test_ratio_filtered: [4.00000, -2.65740, 4.00000]\n    estimator_instance: 0\n    innovation_rejected: True\n    fused: False\n\nnsh> \u001b[Ksimulator_sih status\nINFO  [simulator_sih] Running Ackermann Rover (no-slip kinematic; input guard v1; local position v2)\nINFO  [simulator_sih] vehicle landed: 1\nINFO  [simulator_sih] local position NED (m)\n  | 0      | 1      | 2      \n 0| 1.0e+02 -1.5e+02  0       \nINFO  [simulator_sih] local velocity NED (m/s)\n  | 0      | 1      | 2      \n 0| 0        0        0       \nINFO  [simulator_sih] attitude roll-pitch-yaw (deg)\n 0| 0       \n 1| 0       \n 2|-8.9e+01 \nINFO  [simulator_sih] angular velocity roll-pitch-yaw (deg/s)\n 0| 0       \n 1| 0       \n 2| 0       \nINFO  [simulator_sih] actuator signals\n  | 0      | 1      | 2      | 3      | 4      | 5      | 6      | 7      \n 0| 0        0        0        0        0        0        0        0       \nINFO  [simulator_sih] Aerodynamic forces NED (N)\n 0| 0       \n 1| 0       \n 2| 0       \nINFO  [simulator_sih] Aerodynamic moments body frame (Nm)\n  | 0      | 1      | 2      \n 0| 0        0        0       \nINFO  [simulator_sih] Thruster moments in body frame (Nm)\n  | 0      | 1      | 2      \n 0| 0        0        0       \nnsh> \u001b[Klistener sensor_mag 1 -i 1\nnever published\nnsh> \u001b[K"
+}

@@ -1,0 +1,127 @@
+{
+  "end_kst": "2026-10-08T04:16:03.653256+09:00",
+  "domain": "1",
+  "frames": 613,
+  "rate_hz": 30.293498059973412,
+  "nodes": [
+    [
+      "_ros2cli_daemon_1_cafefe3ffd794a2db9c61940a3026ef6",
+      "/"
+    ],
+    [
+      "codex_readonly_zero_origin_check",
+      "/"
+    ],
+    [
+      "_World_Graph_Graph_ROS_Camera_Color_TF_PublisherTF",
+      "/"
+    ],
+    [
+      "_World_Graph_Graph_ROS_Odometry_01_TFWorld2Odom",
+      "/"
+    ],
+    [
+      "_World_Graph_Graph_ROS_Odometry_01_TFOdom2Robot",
+      "/"
+    ],
+    [
+      "_World_Graph_Graph_ROS_Odometry_01_TFRobot",
+      "/"
+    ],
+    [
+      "_World_Graph_Graph_ROS_Odometry_01_PublisherOdometry",
+      "/"
+    ],
+    [
+      "_World_Graph_Graph_ActionGraph_ros2_subscriber",
+      "/"
+    ],
+    [
+      "_Render_PostProcess_SDGPipeline_Replicator_42_NodeWriterWriter",
+      "/"
+    ],
+    [
+      "_Render_PostProcess_SDGPipeline_Replicator_42_NodeWriterWriter_01",
+      "/"
+    ],
+    [
+      "rgb_to_occupancy",
+      "/"
+    ],
+    [
+      "transform_listener_impl_6351c6f4b1c0",
+      "/"
+    ]
+  ],
+  "publishers": [
+    {
+      "name": "rgb_to_occupancy",
+      "namespace": "/"
+    }
+  ],
+  "parameters": {
+    "/rgb_to_occupancy": {
+      "base_frame": "Vehicle",
+      "camera_frame": "Camera_OmniVision_OV9782_Color",
+      "ground_z": -1.0,
+      "invalid_as_nonroad": true,
+      "keep_largest_component": true,
+      "near_fill_mode": "free",
+      "near_free_distance": 0.0,
+      "nonroad_value": 0,
+      "occupancy_flip_lr": false,
+      "occupancy_grid_height": 128,
+      "occupancy_grid_reliable": true,
+      "occupancy_grid_rviz_standard_values": true,
+      "occupancy_grid_transient_local": true,
+      "occupancy_grid_width": 128,
+      "occupancy_grid_zero_stamp": true,
+      "occupancy_invalid_as_unknown": true,
+      "occupancy_rotate_ccw_90": false,
+      "publish_bev_images": false,
+      "resolution": 0.04,
+      "road_gray_max": 85,
+      "road_value": 1,
+      "x_max": 40.0,
+      "x_min": 0.0,
+      "y_max": 20.0,
+      "y_min": -20.0
+    }
+  },
+  "events": [],
+  "last_metadata": {
+    "frame": "Vehicle",
+    "width": 128,
+    "height": 128,
+    "resolution": 0.3125,
+    "origin": [
+      0.0,
+      -20.0
+    ],
+    "quaternion": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    "extent": [
+      0.0,
+      40.0,
+      -20.0,
+      20.0
+    ]
+  },
+  "near_free_range": [
+    406,
+    407
+  ],
+  "near_center_free_range": [
+    108,
+    108
+  ],
+  "near_center_cells": 108,
+  "near_unknown_range": [
+    0,
+    0
+  ]
+}

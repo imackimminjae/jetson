@@ -1,0 +1,90 @@
+logger on
+
+NuttShell (NSH) NuttX-11.0.0
+nsh> [Klogger on
+nsh> [Klogger status
+logger status
+INFO  [logger] Running in mode: all
+INFO  [logger] Number of subscriptions: 10 (320 bytes)
+INFO  [logger] Full File Logging Running:
+INFO  [logger] Log file: /fs/microsd/log/2026-09-13/01_08_05.ulg
+INFO  [logger] Wrote 0.10 MiB (avg 52.06 KiB/s)
+INFO  [logger] Since last status: dropouts: 0 (max len: 0.000 s), max used buffer: 62536 / 65536 B
+nsh> [Klistener actuator_armed 1
+listener actuator_armed 1
+
+TOPIC: actuator_armed
+ actuator_armed
+    timestamp: 1972585916 (0.078845 seconds ago)
+    armed: False
+    prearmed: True
+    ready_to_arm: False
+    lockdown: True
+    manual_lockdown: False
+    force_failsafe: False
+    in_esc_calibration_mode: False
+
+nsh> [Klogger off
+logger off
+nsh> [Klogger status
+logger status
+INFO  [logger] Running in mode: all
+INFO  [logger] Number of subscriptions: 10 (320 bytes)
+INFO  [logger] Not logging
+nsh> [Kls /fs/microsd/log
+ls /fs/microsd/log
+/fs/microsd/log:
+ 2025-07-25/
+ 2025-07-26/
+ 2025-07-27/
+ 2025-07-28/
+ 2025-07-29/
+ 2025-07-31/
+ 2025-08-01/
+ 2025-08-07/
+ 2025-08-08/
+ 2025-08-14/
+ 2025-08-15/
+ 2025-08-20/
+ sess100/
+ sess101/
+ sess102/
+ sess103/
+ sess104/
+ sess105/
+ 2025-11-18/
+ 2025-11-24/
+ 2025-11-29/
+ 2025-12-16/
+ 2025-12-17/
+ 2025-12-18/
+ 2025-12-22/
+ sess106/
+ sess107/
+ 2026-04-24/
+ sess108/
+ sess109/
+ sess110/
+ sess111/
+ sess112/
+ sess113/
+ sess114/
+ sess115/
+ 2026-05-12/
+ 2026-05-13/
+ sess116/
+ sess117/
+ sess118/
+ sess119/
+ sess120/
+ sess121/
+ sess122/
+ sess123/
+ 2026-07-10/
+ 2026-08-20/
+ 2026-09-12/
+ sess124/
+ 2026-09-13/
+nsh> [Klogger off
+logger off
+nsh> [K
