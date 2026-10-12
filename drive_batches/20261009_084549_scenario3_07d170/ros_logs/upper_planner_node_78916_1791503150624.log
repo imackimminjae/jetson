@@ -1,0 +1,425 @@
+[INFO] [1791503150.802855487] [upper_planner_node]: planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+[INFO] [1791503150.838952591] [upper_planner_node]: k1 lane constraint trial: skip_front_clipped_k1_lane_constraints=false
+[INFO] [1791503150.839199735] [upper_planner_node]: Egocentric MIQP planner ready: rate=2.00Hz pred_dt=0.750s Nmax=6 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791503150.839287033] [upper_planner_node]: upper branch model: cumulative_increment=1 turn_window_at_split=1 turn_target_absolute=1 split_continuity=6.75m r_dpsi=3.000 lambda_turn=0.600
+[WARN] [1791503151.339539675] [upper_planner_node]: planner waiting for pose
+[WARN] [1791503153.839503068] [upper_planner_node]: planner waiting for pose
+[WARN] [1791503154.339540408] [upper_planner_node]: planner waiting for global path
+[WARN] [1791503156.339591649] [upper_planner_node]: planner waiting for global path
+[INFO] [1791503156.989451682] [upper_planner_node]: mission cleared; awaiting path; revision=1
+[INFO] [1791503157.095055999] [upper_planner_node]: reference path loaded from /navigation/global_path: 8 points frame=map waypoint_bias=enabled
+[INFO] [1791503157.341992831] [upper_planner_node]: waypoint pair advanced: [0,1] -> [1,2]; previous reference retained
+[INFO] [1791503164.840110700] [upper_planner_node]: waypoint pair advanced: [1,2] -> [2,3]; previous reference retained
+[INFO] [1791503171.840342335] [upper_planner_node]: waypoint pair advanced: [2,3] -> [3,4]; previous reference retained
+[WARN] [1791503177.341639269] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=4 solve_ms=0.256; retaining last published path
+[INFO] [1791503177.840505053] [upper_planner_node]: waypoint pair advanced: [3,4] -> [4,5]; previous reference retained
+[WARN] [1791503177.841179761] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503178.340865378] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503178.343241386] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=4 solve_ms=0.558; retaining last published path
+[INFO] [1791503183.340667968] [upper_planner_node]: waypoint pair advanced: [4,5] -> [5,6]; previous reference retained
+[WARN] [1791503188.340821545] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503188.341340089] [upper_planner_node]: interval_diag step=4 reason=3 ref_body=(12.136,13.066) heading_deg=50.66 center_cell=(38,105) center_value=100 line_free=0 blocked=469 unknown=0 outside=2 longest_run=0 min_run=2 grid_free=996 zero=996 positive=15388 unknown=0 topic=/bev/occupancy_grid frame=Vehicle origin=(0.000,-20.000) origin_yaw_deg=0.00 size=128x128 res=0.3125 positive_is_drivable=0 threshold=1 waypoint_bias=1 previous=1
+[WARN] [1791503188.341582432] [upper_planner_node]: no valid preview interval at step=4; usable horizon=3 reason=3
+[WARN] [1791503188.341788262] [upper_planner_node]: no valid preview interval at step=5; usable horizon=3 reason=3
+[WARN] [1791503188.341895338] [upper_planner_node]: horizon_diag configured=6 extent_limit=6 requested=6 usable=3 reserve=1 restore=1 step_m=4.500 previous=1
+[WARN] [1791503188.342595135] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=2 solve_ms=0.144; retaining last published path
+[INFO] [1791503189.840907865] [upper_planner_node]: waypoint pair advanced: [5,6] -> [6,7]; previous reference retained
+[WARN] [1791503193.841743203] [upper_planner_node]: interval_diag step=6 reason=3 ref_body=(26.974,0.153) heading_deg=-0.01 center_cell=(86,64) center_value=100 line_free=0 blocked=401 unknown=0 outside=1 longest_run=0 min_run=2 grid_free=2155 zero=2155 positive=14229 unknown=0 topic=/bev/occupancy_grid frame=Vehicle origin=(0.000,-20.000) origin_yaw_deg=0.00 size=128x128 res=0.3125 positive_is_drivable=0 threshold=1 waypoint_bias=1 previous=1
+[WARN] [1791503193.842586269] [upper_planner_node]: no valid preview interval at step=6; usable horizon=5 reason=3
+[WARN] [1791503193.842721345] [upper_planner_node]: horizon_diag configured=6 extent_limit=6 requested=6 usable=5 reserve=1 restore=1 step_m=4.500 previous=1
+[WARN] [1791503194.341811775] [upper_planner_node]: no valid preview interval at step=6; usable horizon=5 reason=3
+[WARN] [1791503194.841752151] [upper_planner_node]: no valid preview interval at step=5; usable horizon=4 reason=3
+[WARN] [1791503194.842311560] [upper_planner_node]: no valid preview interval at step=6; usable horizon=4 reason=3
+[WARN] [1791503195.341702256] [upper_planner_node]: no valid preview interval at step=5; usable horizon=4 reason=3
+[WARN] [1791503195.342368804] [upper_planner_node]: no valid preview interval at step=6; usable horizon=4 reason=3
+[WARN] [1791503195.841718506] [upper_planner_node]: no valid preview interval at step=4; usable horizon=3 reason=3
+[WARN] [1791503195.842295964] [upper_planner_node]: interval_diag step=5 reason=3 ref_body=(22.244,3.384) heading_deg=8.65 center_cell=(71,74) center_value=100 line_free=0 blocked=405 unknown=0 outside=1 longest_run=0 min_run=2 grid_free=1333 zero=1333 positive=15051 unknown=0 topic=/bev/occupancy_grid frame=Vehicle origin=(0.000,-20.000) origin_yaw_deg=0.00 size=128x128 res=0.3125 positive_is_drivable=0 threshold=1 waypoint_bias=1 previous=0
+[WARN] [1791503195.842493890] [upper_planner_node]: no valid preview interval at step=5; usable horizon=3 reason=3
+[WARN] [1791503195.842708873] [upper_planner_node]: no valid preview interval at step=6; usable horizon=3 reason=3
+[WARN] [1791503195.842827468] [upper_planner_node]: horizon_diag configured=6 extent_limit=6 requested=6 usable=3 reserve=1 restore=1 step_m=4.500 previous=0
+[WARN] [1791503196.341761734] [upper_planner_node]: no valid preview interval at step=4; usable horizon=3 reason=3
+[WARN] [1791503196.342399481] [upper_planner_node]: no valid preview interval at step=5; usable horizon=3 reason=3
+[WARN] [1791503196.344912710] [upper_planner_node]: no valid preview interval at step=6; usable horizon=3 reason=3
+[WARN] [1791503196.841682173] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+[WARN] [1791503196.842253999] [upper_planner_node]: no valid preview interval at step=4; usable horizon=2 reason=3
+[WARN] [1791503196.842463733] [upper_planner_node]: no valid preview interval at step=5; usable horizon=2 reason=3
+[WARN] [1791503196.842654395] [upper_planner_node]: no valid preview interval at step=6; usable horizon=2 reason=3
+[WARN] [1791503197.342493296] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+[WARN] [1791503197.343026784] [upper_planner_node]: no valid preview interval at step=4; usable horizon=2 reason=3
+[WARN] [1791503197.343359627] [upper_planner_node]: no valid preview interval at step=5; usable horizon=2 reason=3
+[WARN] [1791503197.343511439] [upper_planner_node]: no valid preview interval at step=6; usable horizon=2 reason=3
+[WARN] [1791503197.841707346] [upper_planner_node]: no valid preview interval at step=2; usable horizon=1 reason=3
+[WARN] [1791503197.842296100] [upper_planner_node]: no valid preview interval at step=3; usable horizon=1 reason=3
+[WARN] [1791503197.842524875] [upper_planner_node]: interval_diag step=4 reason=3 ref_body=(17.833,-2.449) heading_deg=-7.82 center_cell=(57,56) center_value=100 line_free=0 blocked=404 unknown=0 outside=1 longest_run=0 min_run=2 grid_free=536 zero=536 positive=15848 unknown=0 topic=/bev/occupancy_grid frame=Vehicle origin=(0.000,-20.000) origin_yaw_deg=0.00 size=128x128 res=0.3125 positive_is_drivable=0 threshold=1 waypoint_bias=1 previous=0
+[WARN] [1791503197.842680560] [upper_planner_node]: no valid preview interval at step=4; usable horizon=1 reason=3
+[WARN] [1791503197.842882326] [upper_planner_node]: no valid preview interval at step=5; usable horizon=1 reason=3
+[WARN] [1791503197.843083740] [upper_planner_node]: no valid preview interval at step=6; usable horizon=1 reason=3
+[WARN] [1791503197.843167039] [upper_planner_node]: horizon_diag configured=6 extent_limit=6 requested=6 usable=1 reserve=1 restore=1 step_m=4.500 previous=0
+[WARN] [1791503198.341115674] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503198.341547527] [upper_planner_node]: no valid preview interval at step=1; usable horizon=0 reason=3
+[WARN] [1791503198.341772142] [upper_planner_node]: no valid preview interval at step=2; usable horizon=0 reason=3
+[WARN] [1791503198.341973012] [upper_planner_node]: no valid preview interval at step=3; usable horizon=0 reason=3
+[WARN] [1791503198.342164826] [upper_planner_node]: no valid preview interval at step=4; usable horizon=0 reason=3
+[WARN] [1791503198.342362560] [upper_planner_node]: no valid preview interval at step=5; usable horizon=0 reason=3
+[WARN] [1791503198.342970867] [upper_planner_node]: empty valid interval prefix; retaining the last published path
+[WARN] [1791503198.841398685] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503198.842053873] [upper_planner_node]: no valid preview interval at step=1; usable horizon=0 reason=3
+[WARN] [1791503198.842326073] [upper_planner_node]: no valid preview interval at step=2; usable horizon=0 reason=3
+[WARN] [1791503198.842558848] [upper_planner_node]: no valid preview interval at step=3; usable horizon=0 reason=3
+[WARN] [1791503198.842778727] [upper_planner_node]: no valid preview interval at step=4; usable horizon=0 reason=3
+[WARN] [1791503198.842992365] [upper_planner_node]: no valid preview interval at step=5; usable horizon=0 reason=3
+[WARN] [1791503199.341452312] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503199.342088620] [upper_planner_node]: no valid preview interval at step=1; usable horizon=0 reason=3
+[WARN] [1791503199.342276721] [upper_planner_node]: no valid preview interval at step=2; usable horizon=0 reason=3
+[WARN] [1791503199.342470071] [upper_planner_node]: no valid preview interval at step=3; usable horizon=0 reason=3
+[WARN] [1791503199.342628572] [upper_planner_node]: no valid preview interval at step=4; usable horizon=0 reason=3
+[WARN] [1791503199.342830306] [upper_planner_node]: no valid preview interval at step=6; usable horizon=0 reason=3
+[WARN] [1791503199.343442389] [upper_planner_node]: empty valid interval prefix; retaining the last published path
+[WARN] [1791503199.841540949] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503199.842143751] [upper_planner_node]: no valid preview interval at step=1; usable horizon=0 reason=3
+[WARN] [1791503199.842346926] [upper_planner_node]: no valid preview interval at step=2; usable horizon=0 reason=3
+[WARN] [1791503199.842523027] [upper_planner_node]: no valid preview interval at step=3; usable horizon=0 reason=3
+[WARN] [1791503199.842668375] [upper_planner_node]: interval_diag step=4 reason=3 ref_body=(17.357,-4.768) heading_deg=-15.36 center_cell=(55,48) center_value=100 line_free=0 blocked=415 unknown=0 outside=1 longest_run=0 min_run=2 grid_free=79 zero=79 positive=16305 unknown=0 topic=/bev/occupancy_grid frame=Vehicle origin=(0.000,-20.000) origin_yaw_deg=0.00 size=128x128 res=0.3125 positive_is_drivable=0 threshold=1 waypoint_bias=1 previous=0
+[WARN] [1791503199.842799963] [upper_planner_node]: no valid preview interval at step=4; usable horizon=0 reason=3
+[WARN] [1791503199.842999426] [upper_planner_node]: no valid preview interval at step=6; usable horizon=0 reason=3
+[WARN] [1791503200.341468589] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503200.342224324] [upper_planner_node]: no valid preview interval at step=1; usable horizon=0 reason=3
+[WARN] [1791503200.342493772] [upper_planner_node]: no valid preview interval at step=2; usable horizon=0 reason=3
+[WARN] [1791503200.342751892] [upper_planner_node]: no valid preview interval at step=3; usable horizon=0 reason=3
+[WARN] [1791503200.343016188] [upper_planner_node]: no valid preview interval at step=5; usable horizon=0 reason=3
+[WARN] [1791503200.343479242] [upper_planner_node]: no valid preview interval at step=6; usable horizon=0 reason=3
+[WARN] [1791503200.343619087] [upper_planner_node]: horizon_diag configured=6 extent_limit=6 requested=6 usable=0 reserve=1 restore=1 step_m=4.500 previous=0
+[WARN] [1791503200.344870037] [upper_planner_node]: empty valid interval prefix; retaining the last published path
+[WARN] [1791503200.841448326] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503200.842088250] [upper_planner_node]: no valid preview interval at step=1; usable horizon=0 reason=3
+[WARN] [1791503200.842348258] [upper_planner_node]: no valid preview interval at step=2; usable horizon=0 reason=3
+[WARN] [1791503200.842560488] [upper_planner_node]: no valid preview interval at step=3; usable horizon=0 reason=3
+[WARN] [1791503200.842829584] [upper_planner_node]: no valid preview interval at step=5; usable horizon=0 reason=3
+[WARN] [1791503200.843115001] [upper_planner_node]: no valid preview interval at step=6; usable horizon=0 reason=3
+[WARN] [1791503201.341459968] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503201.342238776] [upper_planner_node]: no valid preview interval at step=1; usable horizon=0 reason=3
+[WARN] [1791503201.342479776] [upper_planner_node]: no valid preview interval at step=2; usable horizon=0 reason=3
+[WARN] [1791503201.342766024] [upper_planner_node]: no valid preview interval at step=4; usable horizon=0 reason=3
+[WARN] [1791503201.342987023] [upper_planner_node]: no valid preview interval at step=5; usable horizon=0 reason=3
+[WARN] [1791503201.343199542] [upper_planner_node]: no valid preview interval at step=6; usable horizon=0 reason=3
+[WARN] [1791503201.841466011] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503201.842143823] [upper_planner_node]: no valid preview interval at step=1; usable horizon=0 reason=3
+[WARN] [1791503201.842387671] [upper_planner_node]: no valid preview interval at step=2; usable horizon=0 reason=3
+[WARN] [1791503201.842613598] [upper_planner_node]: no valid preview interval at step=3; usable horizon=0 reason=3
+[WARN] [1791503201.842838661] [upper_planner_node]: interval_diag step=4 reason=3 ref_body=(14.863,-10.153) heading_deg=-34.34 center_cell=(47,31) center_value=100 line_free=0 blocked=485 unknown=0 outside=1 longest_run=0 min_run=2 grid_free=85 zero=85 positive=16299 unknown=0 topic=/bev/occupancy_grid frame=Vehicle origin=(0.000,-20.000) origin_yaw_deg=0.00 size=128x128 res=0.3125 positive_is_drivable=0 threshold=1 waypoint_bias=1 previous=0
+[WARN] [1791503201.843017514] [upper_planner_node]: no valid preview interval at step=4; usable horizon=0 reason=3
+[WARN] [1791503201.843217904] [upper_planner_node]: no valid preview interval at step=5; usable horizon=0 reason=3
+[WARN] [1791503201.843444247] [upper_planner_node]: no valid preview interval at step=6; usable horizon=0 reason=3
+[WARN] [1791503201.844159149] [upper_planner_node]: empty valid interval prefix; retaining the last published path
+[WARN] [1791503202.342050791] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503202.342607960] [upper_planner_node]: no valid preview interval at step=1; usable horizon=0 reason=3
+[WARN] [1791503202.342755356] [upper_planner_node]: no valid preview interval at step=2; usable horizon=0 reason=3
+[WARN] [1791503202.342891264] [upper_planner_node]: no valid preview interval at step=3; usable horizon=0 reason=3
+[WARN] [1791503202.343026660] [upper_planner_node]: no valid preview interval at step=4; usable horizon=0 reason=3
+[WARN] [1791503202.343145288] [upper_planner_node]: no valid preview interval at step=5; usable horizon=0 reason=3
+[WARN] [1791503202.343260428] [upper_planner_node]: no valid preview interval at step=6; usable horizon=0 reason=3
+[WARN] [1791503202.841831418] [upper_planner_node]: no valid preview interval at step=1; usable horizon=0 reason=3
+[WARN] [1791503202.842565584] [upper_planner_node]: no valid preview interval at step=2; usable horizon=0 reason=3
+[WARN] [1791503202.842810712] [upper_planner_node]: no valid preview interval at step=3; usable horizon=0 reason=3
+[WARN] [1791503202.843033343] [upper_planner_node]: no valid preview interval at step=4; usable horizon=0 reason=3
+[WARN] [1791503202.843240325] [upper_planner_node]: no valid preview interval at step=5; usable horizon=0 reason=3
+[WARN] [1791503202.844686673] [upper_planner_node]: horizon_diag configured=6 extent_limit=6 requested=6 usable=0 reserve=1 restore=1 step_m=4.500 previous=0
+[WARN] [1791503202.846618540] [upper_planner_node]: empty valid interval prefix; retaining the last published path
+[WARN] [1791503203.341755122] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503203.342428806] [upper_planner_node]: no valid preview interval at step=1; usable horizon=0 reason=3
+[WARN] [1791503203.342680718] [upper_planner_node]: no valid preview interval at step=2; usable horizon=0 reason=3
+[WARN] [1791503203.342907029] [upper_planner_node]: no valid preview interval at step=3; usable horizon=0 reason=3
+[WARN] [1791503203.343116443] [upper_planner_node]: no valid preview interval at step=4; usable horizon=0 reason=3
+[WARN] [1791503203.841589735] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503203.843669350] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.456; retaining last published path
+[WARN] [1791503204.341670723] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503204.842989349] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503204.844574806] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.305; retaining last published path
+[WARN] [1791503205.341278763] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503205.841629232] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503206.341827120] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503206.344161751] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.520; retaining last published path
+[WARN] [1791503206.841823370] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503207.342051979] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503207.344648634] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.297; retaining last published path
+[WARN] [1791503207.842015044] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503208.341865753] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503208.841674797] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503208.843400034] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.328; retaining last published path
+[WARN] [1791503209.341841676] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503209.841761668] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503210.341764542] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503210.343546260] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.325; retaining last published path
+[WARN] [1791503210.841962622] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503211.341871477] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503211.343661004] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.310; retaining last published path
+[WARN] [1791503211.841445698] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503212.342420986] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503212.344048012] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.290; retaining last published path
+[WARN] [1791503212.841696478] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503213.341595989] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503213.841702770] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503213.842718673] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.175; retaining last published path
+[WARN] [1791503214.341953524] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503214.841914796] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503214.843653122] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.310; retaining last published path
+[WARN] [1791503215.341837188] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503215.842099750] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503215.843854780] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.323; retaining last published path
+[WARN] [1791503216.341910682] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503216.842891186] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503216.844709578] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.323; retaining last published path
+[INFO] [1791503218.289091635] [upper_planner_node]: mission cleared; awaiting path; revision=3
+[WARN] [1791503218.341544375] [upper_planner_node]: planner waiting for global path
+[INFO] [1791503218.394765011] [upper_planner_node]: reference path loaded from /navigation/global_path: 8 points frame=map waypoint_bias=enabled
+[INFO] [1791503218.842195525] [upper_planner_node]: waypoint pair advanced: [0,1] -> [1,2]; previous reference retained
+[INFO] [1791503226.341919362] [upper_planner_node]: waypoint pair advanced: [1,2] -> [2,3]; previous reference retained
+[INFO] [1791503232.842268191] [upper_planner_node]: waypoint pair advanced: [2,3] -> [3,4]; previous reference retained
+[INFO] [1791503238.842612225] [upper_planner_node]: waypoint pair advanced: [3,4] -> [4,5]; previous reference retained
+[WARN] [1791503238.845020779] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=3 solve_ms=0.438; retaining last published path
+[WARN] [1791503239.342757984] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503239.842726841] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[INFO] [1791503244.842707484] [upper_planner_node]: waypoint pair advanced: [4,5] -> [5,6]; previous reference retained
+[WARN] [1791503245.343726933] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=2 solve_ms=0.235; retaining last published path
+[WARN] [1791503256.343731057] [upper_planner_node]: interval_diag step=6 reason=3 ref_body=(26.999,-0.005) heading_deg=0.20 center_cell=(86,63) center_value=100 line_free=0 blocked=401 unknown=0 outside=1 longest_run=0 min_run=2 grid_free=1422 zero=1422 positive=14962 unknown=0 topic=/bev/occupancy_grid frame=Vehicle origin=(0.000,-20.000) origin_yaw_deg=0.00 size=128x128 res=0.3125 positive_is_drivable=0 threshold=1 waypoint_bias=1 previous=1
+[WARN] [1791503256.345751630] [upper_planner_node]: no valid preview interval at step=6; usable horizon=5 reason=3
+[WARN] [1791503256.345987894] [upper_planner_node]: horizon_diag configured=6 extent_limit=6 requested=6 usable=5 reserve=1 restore=1 step_m=4.500 previous=1
+[WARN] [1791503256.845294618] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.309; retaining last published path
+[WARN] [1791503258.343878429] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.171; retaining last published path
+[WARN] [1791503259.346212632] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.405; retaining last published path
+[WARN] [1791503259.843632483] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503260.343313780] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503260.843285581] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503260.846395596] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.338; retaining last published path
+[WARN] [1791503261.343299847] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503261.843057978] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503262.343180823] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503262.344253208] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.169; retaining last published path
+[WARN] [1791503262.843574941] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503263.344331086] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503263.348233286] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.333; retaining last published path
+[WARN] [1791503263.843281704] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503264.343162719] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503264.843203386] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503264.844181944] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.168; retaining last published path
+[WARN] [1791503265.343540798] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503265.843702013] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503265.845630104] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.337; retaining last published path
+[WARN] [1791503266.343793690] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503266.843541612] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503266.849002067] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.330; retaining last published path
+[WARN] [1791503267.343361473] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503267.843666084] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503268.343331508] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503268.344375123] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.166; retaining last published path
+[WARN] [1791503268.843764059] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503269.344365447] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503269.346317539] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.392; retaining last published path
+[WARN] [1791503269.843330977] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503270.343629893] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503270.843651903] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503270.845394068] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.327; retaining last published path
+[WARN] [1791503271.343662329] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503271.843924315] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503271.845733619] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.349; retaining last published path
+[WARN] [1791503272.343444263] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503272.843765642] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503272.845959758] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.287; retaining last published path
+[WARN] [1791503273.343884552] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503273.843986117] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503273.846777146] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.341; retaining last published path
+[WARN] [1791503274.343691574] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503274.843838773] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503275.343872592] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503275.345597540] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.368; retaining last published path
+[WARN] [1791503275.843451229] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503276.344292560] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503276.346192906] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.331; retaining last published path
+[WARN] [1791503276.845012320] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503277.343968538] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503277.844330175] [upper_planner_node]: interval_diag step=2 reason=3 ref_body=(4.090,8.017) heading_deg=62.97 center_cell=(13,89) center_value=100 line_free=0 blocked=449 unknown=0 outside=2 longest_run=0 min_run=2 grid_free=142 zero=142 positive=16242 unknown=0 topic=/bev/occupancy_grid frame=Vehicle origin=(0.000,-20.000) origin_yaw_deg=0.00 size=128x128 res=0.3125 positive_is_drivable=0 threshold=1 waypoint_bias=1 previous=0
+[WARN] [1791503277.844808622] [upper_planner_node]: no valid preview interval at step=2; usable horizon=1 reason=3
+[WARN] [1791503277.845011028] [upper_planner_node]: no valid preview interval at step=3; usable horizon=1 reason=3
+[WARN] [1791503277.845190490] [upper_planner_node]: no valid preview interval at step=4; usable horizon=1 reason=3
+[WARN] [1791503277.845392704] [upper_planner_node]: horizon_diag configured=6 extent_limit=6 requested=6 usable=1 reserve=1 restore=1 step_m=4.500 previous=0
+[WARN] [1791503277.846713608] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.234; retaining last published path
+[INFO] [1791503279.091089293] [upper_planner_node]: mission cleared; awaiting path; revision=5
+[INFO] [1791503279.195086265] [upper_planner_node]: reference path loaded from /navigation/global_path: 8 points frame=map waypoint_bias=enabled
+[INFO] [1791503279.344155240] [upper_planner_node]: waypoint pair advanced: [0,1] -> [1,2]; previous reference retained
+[INFO] [1791503286.844029801] [upper_planner_node]: waypoint pair advanced: [1,2] -> [2,3]; previous reference retained
+[INFO] [1791503292.844298217] [upper_planner_node]: waypoint pair advanced: [2,3] -> [3,4]; previous reference retained
+[WARN] [1791503295.844891543] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503296.344829007] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[INFO] [1791503297.344378101] [upper_planner_node]: waypoint pair advanced: [3,4] -> [4,5]; previous reference retained
+[WARN] [1791503301.346411683] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.356; retaining last published path
+[WARN] [1791503302.846511251] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.354; retaining last published path
+[INFO] [1791503303.844700912] [upper_planner_node]: waypoint pair advanced: [4,5] -> [5,6]; previous reference retained
+[WARN] [1791503303.847151931] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.321; retaining last published path
+[WARN] [1791503305.346927714] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.627; retaining last published path
+[WARN] [1791503306.345017915] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503309.346721643] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.332; retaining last published path
+[WARN] [1791503310.346858787] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.320; retaining last published path
+[WARN] [1791503310.845228587] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503311.345246950] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503311.347347430] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.346; retaining last published path
+[WARN] [1791503311.844934806] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503312.344825773] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503312.845383320] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503312.848178477] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.331; retaining last published path
+[WARN] [1791503313.345031431] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503313.845149476] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503314.345160287] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503314.845064374] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503314.847154358] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.336; retaining last published path
+[WARN] [1791503315.345525182] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503315.845058217] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503317.344859185] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503317.345235517] [upper_planner_node]: interval_diag step=1 reason=3 ref_body=(4.110,-1.991) heading_deg=-23.48 center_cell=(13,57) center_value=100 line_free=0 blocked=343 unknown=0 outside=1 longest_run=0 min_run=2 grid_free=0 zero=0 positive=16384 unknown=0 topic=/bev/occupancy_grid frame=Vehicle origin=(0.000,-20.000) origin_yaw_deg=0.00 size=128x128 res=0.3125 positive_is_drivable=0 threshold=1 waypoint_bias=1 previous=1
+[WARN] [1791503317.345365793] [upper_planner_node]: no valid preview interval at step=1; usable horizon=0 reason=3
+[WARN] [1791503317.345604840] [upper_planner_node]: no valid preview interval at step=2; usable horizon=0 reason=3
+[WARN] [1791503317.345845775] [upper_planner_node]: no valid preview interval at step=3; usable horizon=0 reason=3
+[WARN] [1791503317.346045173] [upper_planner_node]: no valid preview interval at step=4; usable horizon=0 reason=3
+[WARN] [1791503317.346227835] [upper_planner_node]: no valid preview interval at step=5; usable horizon=0 reason=3
+[WARN] [1791503317.346425921] [upper_planner_node]: no valid preview interval at step=6; usable horizon=0 reason=3
+[WARN] [1791503317.346476482] [upper_planner_node]: horizon_diag configured=6 extent_limit=6 requested=6 usable=0 reserve=1 restore=1 step_m=4.500 previous=1
+[WARN] [1791503317.346814605] [upper_planner_node]: empty valid interval prefix; retaining the last published path
+[WARN] [1791503317.845197653] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503317.845834313] [upper_planner_node]: no valid preview interval at step=1; usable horizon=0 reason=3
+[WARN] [1791503317.846083120] [upper_planner_node]: no valid preview interval at step=2; usable horizon=0 reason=3
+[WARN] [1791503317.846306391] [upper_planner_node]: no valid preview interval at step=3; usable horizon=0 reason=3
+[WARN] [1791503317.846526654] [upper_planner_node]: no valid preview interval at step=4; usable horizon=0 reason=3
+[WARN] [1791503317.846746309] [upper_planner_node]: no valid preview interval at step=5; usable horizon=0 reason=3
+[WARN] [1791503317.846966315] [upper_planner_node]: no valid preview interval at step=6; usable horizon=0 reason=3
+[WARN] [1791503318.345661981] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503318.346293713] [upper_planner_node]: no valid preview interval at step=1; usable horizon=0 reason=3
+[WARN] [1791503318.346539352] [upper_planner_node]: no valid preview interval at step=2; usable horizon=0 reason=3
+[WARN] [1791503318.346793440] [upper_planner_node]: no valid preview interval at step=3; usable horizon=0 reason=3
+[WARN] [1791503318.347036551] [upper_planner_node]: no valid preview interval at step=4; usable horizon=0 reason=3
+[WARN] [1791503318.347271695] [upper_planner_node]: no valid preview interval at step=5; usable horizon=0 reason=3
+[WARN] [1791503318.347508630] [upper_planner_node]: no valid preview interval at step=6; usable horizon=0 reason=3
+[WARN] [1791503318.348218572] [upper_planner_node]: empty valid interval prefix; retaining the last published path
+[WARN] [1791503318.845189257] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503318.845741338] [upper_planner_node]: no valid preview interval at step=1; usable horizon=0 reason=3
+[WARN] [1791503318.845921183] [upper_planner_node]: no valid preview interval at step=2; usable horizon=0 reason=3
+[WARN] [1791503318.846062212] [upper_planner_node]: no valid preview interval at step=3; usable horizon=0 reason=3
+[WARN] [1791503318.846195560] [upper_planner_node]: no valid preview interval at step=4; usable horizon=0 reason=3
+[WARN] [1791503318.846327244] [upper_planner_node]: no valid preview interval at step=5; usable horizon=0 reason=3
+[WARN] [1791503318.846903421] [upper_planner_node]: no valid preview interval at step=6; usable horizon=0 reason=3
+[WARN] [1791503319.345629456] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503319.346311941] [upper_planner_node]: interval_diag step=1 reason=3 ref_body=(2.261,-5.362) heading_deg=-28.64 center_cell=(7,46) center_value=100 line_free=0 blocked=336 unknown=0 outside=2 longest_run=0 min_run=2 grid_free=0 zero=0 positive=16384 unknown=0 topic=/bev/occupancy_grid frame=Vehicle origin=(0.000,-20.000) origin_yaw_deg=0.00 size=128x128 res=0.3125 positive_is_drivable=0 threshold=1 waypoint_bias=1 previous=1
+[WARN] [1791503319.346564205] [upper_planner_node]: no valid preview interval at step=1; usable horizon=0 reason=3
+[WARN] [1791503319.346786324] [upper_planner_node]: no valid preview interval at step=2; usable horizon=0 reason=3
+[WARN] [1791503319.346989786] [upper_planner_node]: no valid preview interval at step=3; usable horizon=0 reason=3
+[WARN] [1791503319.347183424] [upper_planner_node]: no valid preview interval at step=4; usable horizon=0 reason=3
+[WARN] [1791503319.347375014] [upper_planner_node]: no valid preview interval at step=5; usable horizon=0 reason=3
+[WARN] [1791503319.347567756] [upper_planner_node]: no valid preview interval at step=6; usable horizon=0 reason=3
+[WARN] [1791503319.347655022] [upper_planner_node]: horizon_diag configured=6 extent_limit=6 requested=6 usable=0 reserve=1 restore=1 step_m=4.500 previous=1
+[WARN] [1791503319.348291714] [upper_planner_node]: empty valid interval prefix; retaining the last published path
+[WARN] [1791503319.845393475] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503319.846078776] [upper_planner_node]: no valid preview interval at step=1; usable horizon=0 reason=3
+[WARN] [1791503319.846354560] [upper_planner_node]: no valid preview interval at step=2; usable horizon=0 reason=3
+[WARN] [1791503319.846590856] [upper_planner_node]: no valid preview interval at step=3; usable horizon=0 reason=3
+[WARN] [1791503319.846809486] [upper_planner_node]: no valid preview interval at step=4; usable horizon=0 reason=3
+[WARN] [1791503319.847019637] [upper_planner_node]: no valid preview interval at step=5; usable horizon=0 reason=3
+[WARN] [1791503319.847220827] [upper_planner_node]: no valid preview interval at step=6; usable horizon=0 reason=3
+[WARN] [1791503320.345588739] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503320.346235095] [upper_planner_node]: no valid preview interval at step=1; usable horizon=0 reason=3
+[WARN] [1791503320.346485694] [upper_planner_node]: no valid preview interval at step=2; usable horizon=0 reason=3
+[WARN] [1791503320.346706405] [upper_planner_node]: no valid preview interval at step=3; usable horizon=0 reason=3
+[WARN] [1791503320.346928300] [upper_planner_node]: no valid preview interval at step=4; usable horizon=0 reason=3
+[WARN] [1791503320.347130354] [upper_planner_node]: no valid preview interval at step=5; usable horizon=0 reason=3
+[WARN] [1791503320.347325944] [upper_planner_node]: no valid preview interval at step=6; usable horizon=0 reason=3
+[WARN] [1791503320.845864325] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503320.846451959] [upper_planner_node]: no valid preview interval at step=1; usable horizon=0 reason=3
+[WARN] [1791503320.846695359] [upper_planner_node]: no valid preview interval at step=2; usable horizon=0 reason=3
+[WARN] [1791503320.846898437] [upper_planner_node]: no valid preview interval at step=3; usable horizon=0 reason=3
+[WARN] [1791503320.847150637] [upper_planner_node]: no valid preview interval at step=4; usable horizon=0 reason=3
+[WARN] [1791503320.847342706] [upper_planner_node]: no valid preview interval at step=5; usable horizon=0 reason=3
+[WARN] [1791503320.847540601] [upper_planner_node]: no valid preview interval at step=6; usable horizon=0 reason=3
+[WARN] [1791503320.848288751] [upper_planner_node]: empty valid interval prefix; retaining the last published path
+[WARN] [1791503321.345623512] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503321.346287948] [upper_planner_node]: no valid preview interval at step=1; usable horizon=0 reason=3
+[WARN] [1791503321.346534388] [upper_planner_node]: interval_diag step=2 reason=3 ref_body=(4.696,-10.124) heading_deg=-28.91 center_cell=(15,31) center_value=100 line_free=0 blocked=441 unknown=0 outside=2 longest_run=0 min_run=2 grid_free=0 zero=0 positive=16384 unknown=0 topic=/bev/occupancy_grid frame=Vehicle origin=(0.000,-20.000) origin_yaw_deg=0.00 size=128x128 res=0.3125 positive_is_drivable=0 threshold=1 waypoint_bias=1 previous=1
+[WARN] [1791503321.346710841] [upper_planner_node]: no valid preview interval at step=2; usable horizon=0 reason=3
+[WARN] [1791503321.346921984] [upper_planner_node]: no valid preview interval at step=3; usable horizon=0 reason=3
+[WARN] [1791503321.347124486] [upper_planner_node]: no valid preview interval at step=4; usable horizon=0 reason=3
+[WARN] [1791503321.347325068] [upper_planner_node]: no valid preview interval at step=5; usable horizon=0 reason=3
+[WARN] [1791503321.347528882] [upper_planner_node]: no valid preview interval at step=6; usable horizon=0 reason=3
+[WARN] [1791503321.845271207] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503321.845844601] [upper_planner_node]: no valid preview interval at step=1; usable horizon=0 reason=3
+[WARN] [1791503321.846048895] [upper_planner_node]: no valid preview interval at step=2; usable horizon=0 reason=3
+[WARN] [1791503321.846241893] [upper_planner_node]: no valid preview interval at step=3; usable horizon=0 reason=3
+[WARN] [1791503321.846433227] [upper_planner_node]: no valid preview interval at step=4; usable horizon=0 reason=3
+[WARN] [1791503321.846618416] [upper_planner_node]: no valid preview interval at step=5; usable horizon=0 reason=3
+[WARN] [1791503321.846807190] [upper_planner_node]: no valid preview interval at step=6; usable horizon=0 reason=3
+[WARN] [1791503321.846881176] [upper_planner_node]: horizon_diag configured=6 extent_limit=6 requested=6 usable=0 reserve=1 restore=1 step_m=4.500 previous=1
+[WARN] [1791503322.345081819] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503322.345450470] [upper_planner_node]: no valid preview interval at step=1; usable horizon=0 reason=3
+[WARN] [1791503322.345686670] [upper_planner_node]: no valid preview interval at step=2; usable horizon=0 reason=3
+[WARN] [1791503322.345906132] [upper_planner_node]: no valid preview interval at step=3; usable horizon=0 reason=3
+[WARN] [1791503322.346105210] [upper_planner_node]: no valid preview interval at step=4; usable horizon=0 reason=3
+[WARN] [1791503322.346293120] [upper_planner_node]: no valid preview interval at step=5; usable horizon=0 reason=3
+[WARN] [1791503322.346475910] [upper_planner_node]: no valid preview interval at step=6; usable horizon=0 reason=3
+[WARN] [1791503322.346861458] [upper_planner_node]: empty valid interval prefix; retaining the last published path
+[WARN] [1791503322.845594789] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503322.846294650] [upper_planner_node]: no valid preview interval at step=2; usable horizon=1 reason=3
+[WARN] [1791503322.846535298] [upper_planner_node]: no valid preview interval at step=3; usable horizon=1 reason=3
+[WARN] [1791503322.846768489] [upper_planner_node]: no valid preview interval at step=4; usable horizon=1 reason=3
+[WARN] [1791503322.846977135] [upper_planner_node]: no valid preview interval at step=5; usable horizon=1 reason=3
+[WARN] [1791503322.848145267] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.238; retaining last published path
+[WARN] [1791503323.345435002] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503323.346137871] [upper_planner_node]: no valid preview interval at step=2; usable horizon=1 reason=3
+[WARN] [1791503323.346393623] [upper_planner_node]: no valid preview interval at step=3; usable horizon=1 reason=3
+[WARN] [1791503323.346645823] [upper_planner_node]: interval_diag step=4 reason=3 ref_body=(11.408,-16.605) heading_deg=-28.95 center_cell=(36,10) center_value=100 line_free=0 blocked=458 unknown=0 outside=1 longest_run=0 min_run=2 grid_free=0 zero=0 positive=16384 unknown=0 topic=/bev/occupancy_grid frame=Vehicle origin=(0.000,-20.000) origin_yaw_deg=0.00 size=128x128 res=0.3125 positive_is_drivable=0 threshold=1 waypoint_bias=1 previous=1
+[WARN] [1791503323.346791139] [upper_planner_node]: no valid preview interval at step=4; usable horizon=1 reason=3
+[WARN] [1791503323.347018986] [upper_planner_node]: no valid preview interval at step=5; usable horizon=1 reason=3
+[WARN] [1791503323.846363120] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503323.847009956] [upper_planner_node]: no valid preview interval at step=2; usable horizon=1 reason=3
+[WARN] [1791503323.847266380] [upper_planner_node]: no valid preview interval at step=3; usable horizon=1 reason=3
+[WARN] [1791503323.847489107] [upper_planner_node]: no valid preview interval at step=4; usable horizon=1 reason=3
+[WARN] [1791503323.847704057] [upper_planner_node]: no valid preview interval at step=5; usable horizon=1 reason=3
+[WARN] [1791503323.847849022] [upper_planner_node]: horizon_diag configured=6 extent_limit=6 requested=6 usable=1 reserve=1 restore=1 step_m=4.500 previous=1
+[WARN] [1791503323.848885053] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.230; retaining last published path
+[WARN] [1791503324.345669525] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503324.346355178] [upper_planner_node]: no valid preview interval at step=2; usable horizon=1 reason=3
+[WARN] [1791503324.346604529] [upper_planner_node]: no valid preview interval at step=3; usable horizon=1 reason=3
+[WARN] [1791503324.346815832] [upper_planner_node]: no valid preview interval at step=4; usable horizon=1 reason=3
+[WARN] [1791503324.347035711] [upper_planner_node]: no valid preview interval at step=5; usable horizon=1 reason=3
+[WARN] [1791503324.845450568] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503324.846099516] [upper_planner_node]: no valid preview interval at step=2; usable horizon=1 reason=3
+[WARN] [1791503324.846333763] [upper_planner_node]: no valid preview interval at step=3; usable horizon=1 reason=3
+[WARN] [1791503324.846541513] [upper_planner_node]: no valid preview interval at step=4; usable horizon=1 reason=3
+[WARN] [1791503325.346198041] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503325.346894286] [upper_planner_node]: interval_diag step=2 reason=3 ref_body=(2.553,-13.964) heading_deg=-28.98 center_cell=(8,19) center_value=100 line_free=0 blocked=441 unknown=0 outside=1 longest_run=0 min_run=2 grid_free=0 zero=0 positive=16384 unknown=0 topic=/bev/occupancy_grid frame=Vehicle origin=(0.000,-20.000) origin_yaw_deg=0.00 size=128x128 res=0.3125 positive_is_drivable=0 threshold=1 waypoint_bias=1 previous=1
+[WARN] [1791503325.347542690] [upper_planner_node]: no valid preview interval at step=2; usable horizon=1 reason=3
+[WARN] [1791503325.347800778] [upper_planner_node]: no valid preview interval at step=3; usable horizon=1 reason=3
+[WARN] [1791503325.347999984] [upper_planner_node]: no valid preview interval at step=4; usable horizon=1 reason=3
+[WARN] [1791503325.349746405] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.235; retaining last published path
+[WARN] [1791503325.845667139] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503325.846310358] [upper_planner_node]: no valid preview interval at step=2; usable horizon=1 reason=3
+[WARN] [1791503325.846568510] [upper_planner_node]: no valid preview interval at step=3; usable horizon=1 reason=3
+[WARN] [1791503325.846787301] [upper_planner_node]: no valid preview interval at step=4; usable horizon=1 reason=3
+[WARN] [1791503326.345746719] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791503326.346462613] [upper_planner_node]: no valid preview interval at step=2; usable horizon=1 reason=3
+[WARN] [1791503326.346705404] [upper_planner_node]: no valid preview interval at step=3; usable horizon=1 reason=3
+[WARN] [1791503326.347004485] [upper_planner_node]: horizon_diag configured=6 extent_limit=6 requested=6 usable=1 reserve=1 restore=1 step_m=4.500 previous=1
+[WARN] [1791503326.845749049] [upper_planner_node]: no valid preview interval at step=2; usable horizon=1 reason=3
+[WARN] [1791503326.846346507] [upper_planner_node]: no valid preview interval at step=3; usable horizon=1 reason=3
+[WARN] [1791503326.847701717] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.228; retaining last published path
+[WARN] [1791503327.346061116] [upper_planner_node]: no valid preview interval at step=2; usable horizon=1 reason=3
+[WARN] [1791503327.346579436] [upper_planner_node]: no valid preview interval at step=3; usable horizon=1 reason=3
+[WARN] [1791503327.845818671] [upper_planner_node]: interval_diag step=2 reason=3 ref_body=(1.520,-15.515) heading_deg=-28.94 center_cell=(4,14) center_value=100 line_free=0 blocked=437 unknown=0 outside=2 longest_run=0 min_run=2 grid_free=1922 zero=1922 positive=14462 unknown=0 topic=/bev/occupancy_grid frame=Vehicle origin=(0.000,-20.000) origin_yaw_deg=0.00 size=128x128 res=0.3125 positive_is_drivable=0 threshold=1 waypoint_bias=1 previous=1
+[WARN] [1791503327.846312574] [upper_planner_node]: no valid preview interval at step=2; usable horizon=1 reason=3
+[WARN] [1791503327.846596007] [upper_planner_node]: no valid preview interval at step=3; usable horizon=1 reason=3
+[WARN] [1791503327.847769707] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.209; retaining last published path
+[WARN] [1791503328.345919180] [upper_planner_node]: no valid preview interval at step=2; usable horizon=1 reason=3
+[WARN] [1791503328.845644157] [upper_planner_node]: no valid preview interval at step=2; usable horizon=1 reason=3
+[WARN] [1791503328.846250672] [upper_planner_node]: no valid preview interval at step=3; usable horizon=1 reason=3
+[WARN] [1791503328.846547001] [upper_planner_node]: horizon_diag configured=6 extent_limit=6 requested=6 usable=1 reserve=1 restore=1 step_m=4.500 previous=1
+[WARN] [1791503329.347886492] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=15 solve_ms=0.930; retaining last published path
+[WARN] [1791503330.847100690] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=10 solve_ms=0.535; retaining last published path
+[WARN] [1791503331.848074083] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=20 solve_ms=1.126; retaining last published path
+[WARN] [1791503333.348765222] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=15 solve_ms=0.990; retaining last published path
+[WARN] [1791503334.848624624] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=15 solve_ms=0.750; retaining last published path
+[WARN] [1791503335.848788712] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=15 solve_ms=0.953; retaining last published path
+[INFO] [1791503337.095710235] [rclcpp]: signal_handler(SIGINT/SIGTERM)

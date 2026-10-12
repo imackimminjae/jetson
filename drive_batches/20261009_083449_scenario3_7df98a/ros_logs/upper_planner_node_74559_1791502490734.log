@@ -1,0 +1,98 @@
+[INFO] [1791502491.251203507] [upper_planner_node]: planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+[INFO] [1791502491.283946460] [upper_planner_node]: k1 lane constraint trial: skip_front_clipped_k1_lane_constraints=false
+[INFO] [1791502491.284217924] [upper_planner_node]: Egocentric MIQP planner ready: rate=2.00Hz pred_dt=0.750s Nmax=6 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791502491.284316423] [upper_planner_node]: upper branch model: cumulative_increment=1 turn_window_at_split=1 turn_target_absolute=1 split_continuity=6.75m r_dpsi=3.000 lambda_turn=0.600
+[WARN] [1791502491.784518025] [upper_planner_node]: planner waiting for pose
+[WARN] [1791502493.784540534] [upper_planner_node]: planner waiting for pose
+[WARN] [1791502494.784988058] [upper_planner_node]: planner waiting for global path
+[WARN] [1791502497.284637847] [upper_planner_node]: planner waiting for global path
+[INFO] [1791502497.456048113] [upper_planner_node]: mission cleared; awaiting path; revision=1
+[INFO] [1791502497.564258846] [upper_planner_node]: reference path loaded from /navigation/global_path: 8 points frame=map waypoint_bias=enabled
+[INFO] [1791502497.786218754] [upper_planner_node]: waypoint pair advanced: [0,1] -> [1,2]; previous reference retained
+[WARN] [1791502497.792274427] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=3 solve_ms=0.407; retaining last published path
+[WARN] [1791502499.287094606] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=3 solve_ms=0.424; retaining last published path
+[WARN] [1791502500.786374953] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=3 solve_ms=0.409; retaining last published path
+[WARN] [1791502501.787005907] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=2 solve_ms=0.397; retaining last published path
+[WARN] [1791502502.787280465] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=4 solve_ms=0.457; retaining last published path
+[WARN] [1791502503.787309960] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=4 solve_ms=0.467; retaining last published path
+[WARN] [1791502504.787552742] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=6 solve_ms=0.676; retaining last published path
+[WARN] [1791502506.288193003] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=2 solve_ms=0.380; retaining last published path
+[WARN] [1791502507.787434949] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=2 solve_ms=0.388; retaining last published path
+[WARN] [1791502509.287205359] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=2 solve_ms=0.369; retaining last published path
+[WARN] [1791502510.787429031] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=2 solve_ms=0.389; retaining last published path
+[WARN] [1791502511.787514752] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=6 solve_ms=0.549; retaining last published path
+[WARN] [1791502512.787691323] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=8 solve_ms=0.642; retaining last published path
+[WARN] [1791502514.287992310] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=3 solve_ms=0.401; retaining last published path
+[WARN] [1791502515.288619903] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=3 solve_ms=1.103; retaining last published path
+[WARN] [1791502516.787559632] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=3 solve_ms=0.431; retaining last published path
+[WARN] [1791502518.291041163] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=2 solve_ms=0.603; retaining last published path
+[WARN] [1791502519.789261574] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=4 solve_ms=0.510; retaining last published path
+[WARN] [1791502521.287436575] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=2 solve_ms=0.384; retaining last published path
+[WARN] [1791502522.289612984] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=2 solve_ms=0.407; retaining last published path
+[WARN] [1791502523.787915637] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=4 solve_ms=0.485; retaining last published path
+[WARN] [1791502525.287665023] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=2 solve_ms=0.384; retaining last published path
+[WARN] [1791502526.787662128] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=2 solve_ms=0.323; retaining last published path
+[WARN] [1791502527.787889517] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=3 solve_ms=0.436; retaining last published path
+[WARN] [1791502529.288113540] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=3 solve_ms=0.418; retaining last published path
+[WARN] [1791502530.793427096] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=3 solve_ms=0.496; retaining last published path
+[INFO] [1791502531.557714821] [upper_planner_node]: mission cleared; awaiting path; revision=3
+[INFO] [1791502531.664292449] [upper_planner_node]: reference path loaded from /navigation/global_path: 8 points frame=map waypoint_bias=enabled
+[INFO] [1791502531.786080301] [upper_planner_node]: waypoint pair advanced: [0,1] -> [1,2]; previous reference retained
+[WARN] [1791502532.288112102] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=6 solve_ms=0.539; retaining last published path
+[WARN] [1791502533.288974263] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=6 solve_ms=0.568; retaining last published path
+[WARN] [1791502534.789098380] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=4 solve_ms=1.361; retaining last published path
+[WARN] [1791502536.288896662] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=4 solve_ms=0.506; retaining last published path
+[WARN] [1791502537.788031757] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=2 solve_ms=0.391; retaining last published path
+[WARN] [1791502538.788349037] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=4 solve_ms=0.486; retaining last published path
+[WARN] [1791502539.788870547] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=4 solve_ms=0.478; retaining last published path
+[WARN] [1791502541.288498552] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=4 solve_ms=0.480; retaining last published path
+[WARN] [1791502542.788083836] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=2 solve_ms=0.345; retaining last published path
+[WARN] [1791502543.788469374] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=2 solve_ms=0.396; retaining last published path
+[WARN] [1791502544.788531574] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=2 solve_ms=0.387; retaining last published path
+[WARN] [1791502546.288743245] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=2 solve_ms=0.394; retaining last published path
+[WARN] [1791502547.291632156] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=6 solve_ms=1.490; retaining last published path
+[WARN] [1791502548.789412873] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=3 solve_ms=0.428; retaining last published path
+[WARN] [1791502550.288399131] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=3 solve_ms=0.373; retaining last published path
+[WARN] [1791502551.289432208] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=3 solve_ms=0.405; retaining last published path
+[WARN] [1791502552.788859055] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=3 solve_ms=0.426; retaining last published path
+[WARN] [1791502554.288675867] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=2 solve_ms=0.401; retaining last published path
+[WARN] [1791502555.788796367] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=2 solve_ms=0.389; retaining last published path
+[WARN] [1791502556.788975338] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=2 solve_ms=0.382; retaining last published path
+[WARN] [1791502558.288920794] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=2 solve_ms=0.393; retaining last published path
+[WARN] [1791502559.288965777] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=2 solve_ms=0.378; retaining last published path
+[WARN] [1791502560.787842815] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=2 solve_ms=0.217; retaining last published path
+[WARN] [1791502561.788332388] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=4 solve_ms=0.406; retaining last published path
+[WARN] [1791502562.789288471] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=3 solve_ms=0.318; retaining last published path
+[WARN] [1791502564.287961567] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=2 solve_ms=0.253; retaining last published path
+[WARN] [1791502565.289221180] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=3 solve_ms=0.464; retaining last published path
+[INFO] [1791502565.756777495] [upper_planner_node]: mission cleared; awaiting path; revision=5
+[WARN] [1791502565.786800973] [upper_planner_node]: planner waiting for global path
+[INFO] [1791502565.862695902] [upper_planner_node]: reference path loaded from /navigation/global_path: 8 points frame=map waypoint_bias=enabled
+[INFO] [1791502566.287156210] [upper_planner_node]: waypoint pair advanced: [0,1] -> [1,2]; previous reference retained
+[WARN] [1791502566.289550492] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=3 solve_ms=0.427; retaining last published path
+[WARN] [1791502567.789030365] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=6 solve_ms=0.407; retaining last published path
+[WARN] [1791502568.790086771] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=6 solve_ms=0.526; retaining last published path
+[WARN] [1791502570.289598228] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=6 solve_ms=0.552; retaining last published path
+[WARN] [1791502571.789581093] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=6 solve_ms=0.556; retaining last published path
+[WARN] [1791502572.789826978] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=6 solve_ms=0.499; retaining last published path
+[WARN] [1791502573.791712945] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=6 solve_ms=1.277; retaining last published path
+[WARN] [1791502575.289404220] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=2 solve_ms=0.395; retaining last published path
+[WARN] [1791502576.289427442] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=4 solve_ms=0.477; retaining last published path
+[WARN] [1791502577.789230525] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=4 solve_ms=0.429; retaining last published path
+[WARN] [1791502578.789582429] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=3 solve_ms=0.428; retaining last published path
+[WARN] [1791502579.789594259] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=3 solve_ms=0.433; retaining last published path
+[WARN] [1791502580.789690092] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=4 solve_ms=0.435; retaining last published path
+[WARN] [1791502582.288674462] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=4 solve_ms=0.350; retaining last published path
+[WARN] [1791502583.289745876] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=4 solve_ms=0.479; retaining last published path
+[WARN] [1791502584.290012178] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=4 solve_ms=0.472; retaining last published path
+[WARN] [1791502585.788910785] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=2 solve_ms=0.331; retaining last published path
+[WARN] [1791502587.289259324] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=4 solve_ms=0.356; retaining last published path
+[WARN] [1791502588.290056394] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=4 solve_ms=0.478; retaining last published path
+[WARN] [1791502589.290078465] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=4 solve_ms=0.460; retaining last published path
+[WARN] [1791502590.291072757] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=4 solve_ms=0.485; retaining last published path
+[WARN] [1791502591.789739165] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=4 solve_ms=0.321; retaining last published path
+[WARN] [1791502593.288760943] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=4 solve_ms=0.253; retaining last published path
+[WARN] [1791502594.292908804] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=4 solve_ms=0.487; retaining last published path
+[WARN] [1791502595.791038843] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=4 solve_ms=0.500; retaining last published path
+[WARN] [1791502597.290347254] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=4 solve_ms=0.559; retaining last published path
+[INFO] [1791502598.463772740] [rclcpp]: signal_handler(SIGINT/SIGTERM)
