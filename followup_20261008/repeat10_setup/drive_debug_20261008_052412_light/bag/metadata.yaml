@@ -1,0 +1,92 @@
+rosbag2_bagfile_information:
+  version: 5
+  storage_identifier: mcap
+  duration:
+    nanoseconds: 24511339132
+  starting_time:
+    nanoseconds_since_epoch: 1791404653117893544
+  message_count: 2258
+  topics_with_message_count:
+    - topic_metadata:
+        name: /navigation/global_path
+        type: nav_msgs/msg/Path
+        serialization_format: cdr
+        offered_qos_profiles: ""
+      message_count: 12
+    - topic_metadata:
+        name: /debug/upper_branch_event
+        type: std_msgs/msg/String
+        serialization_format: cdr
+        offered_qos_profiles: ""
+      message_count: 48
+    - topic_metadata:
+        name: /debug/upper_interval_info
+        type: std_msgs/msg/Float64MultiArray
+        serialization_format: cdr
+        offered_qos_profiles: ""
+      message_count: 48
+    - topic_metadata:
+        name: /planner/lower_reference_path/with_arclength
+        type: imac_interfaces/msg/PathWithArcLength
+        serialization_format: cdr
+        offered_qos_profiles: ""
+      message_count: 49
+    - topic_metadata:
+        name: /debug/upper_interval_centering_state
+        type: std_msgs/msg/Float64MultiArray
+        serialization_format: cdr
+        offered_qos_profiles: ""
+      message_count: 48
+    - topic_metadata:
+        name: /debug/upper_miqp_trace
+        type: std_msgs/msg/Float64MultiArray
+        serialization_format: cdr
+        offered_qos_profiles: ""
+      message_count: 48
+    - topic_metadata:
+        name: /debug/upper_stage_timing
+        type: std_msgs/msg/String
+        serialization_format: cdr
+        offered_qos_profiles: ""
+      message_count: 48
+    - topic_metadata:
+        name: /planner/goal_reached
+        type: std_msgs/msg/Bool
+        serialization_format: cdr
+        offered_qos_profiles: ""
+      message_count: 49
+    - topic_metadata:
+        name: /bev/occupancy_grid
+        type: nav_msgs/msg/OccupancyGrid
+        serialization_format: cdr
+        offered_qos_profiles: ""
+      message_count: 851
+    - topic_metadata:
+        name: /debug/lower_mpc_trace
+        type: std_msgs/msg/Float64MultiArray
+        serialization_format: cdr
+        offered_qos_profiles: ""
+      message_count: 222
+    - topic_metadata:
+        name: /motive/vehicle/odom_map
+        type: nav_msgs/msg/Odometry
+        serialization_format: cdr
+        offered_qos_profiles: ""
+      message_count: 735
+    - topic_metadata:
+        name: /rosout
+        type: rcl_interfaces/msg/Log
+        serialization_format: cdr
+        offered_qos_profiles: ""
+      message_count: 100
+  compression_format: ""
+  compression_mode: ""
+  relative_file_paths:
+    - bag_0.mcap
+  files:
+    - path: bag_0.mcap
+      starting_time:
+        nanoseconds_since_epoch: 1791404653117893544
+      duration:
+        nanoseconds: 24511339132
+      message_count: 2258

@@ -1,0 +1,155 @@
+--- followup_20261008/side_boundary_tail_trial/baseline/src/virtual_control/src/tracking_control.cpp	2026-10-08 03:22:55.738557079 +0900
++++ followup_20261008/side_boundary_tail_trial/trial/src/virtual_control/src/tracking_control.cpp	2026-10-08 05:10:25.821459998 +0900
+@@ -322,6 +322,7 @@
+   declare_parameter<bool>("preview_limit_to_grid_extent", preview_limit_to_grid_extent_);
+   declare_parameter<int>("preview_grid_reserve_steps", preview_grid_reserve_steps_);
+   declare_parameter<bool>("preview_restore_full_horizon", preview_restore_full_horizon_);
++  declare_parameter<bool>("guard_side_boundary_terminal_loss", guard_side_boundary_terminal_loss_);
+   declare_parameter<double>("lower_prediction_dt_sec", lower_prediction_dt_sec_);
+   declare_parameter<double>("lower_min_path_spacing_m", lower_min_path_spacing_m_);
+   declare_parameter<double>("target_speed_mps", target_speed_mps_);
+@@ -429,6 +430,7 @@
+   get_parameter("preview_limit_to_grid_extent", preview_limit_to_grid_extent_);
+   get_parameter("preview_grid_reserve_steps", preview_grid_reserve_steps_);
+   get_parameter("preview_restore_full_horizon", preview_restore_full_horizon_);
++  get_parameter("guard_side_boundary_terminal_loss", guard_side_boundary_terminal_loss_);
+   get_parameter("lower_prediction_dt_sec", lower_prediction_dt_sec_);
+   get_parameter("lower_min_path_spacing_m", lower_min_path_spacing_m_);
+   get_parameter("target_speed_mps", target_speed_mps_);
+@@ -1540,6 +1542,62 @@
+     }
+   }
+ 
++  // Detect loss of the reference-connected road at a lateral map boundary.
++  // Work on raw intervals, before B/soft contraction. Do not infer clipping
++  // from candidate count alone, blocked cells, or an unknown interior gap.
++  const int last = output.N_pred;
++  if (guard_side_boundary_terminal_loss_ && reference.used_previous_solution &&
++    grid && grid->valid && last == requested_horizon && last >= 2 &&
++    output.Nck[last] > 0)
++  {
++    const double c = std::cos(grid->origin_yaw_rad);
++    const double s = std::sin(grid->origin_yaw_rad);
++    const auto local = [&](const Eigen::Vector2d & p) -> Eigen::Vector2d {
++        const Eigen::Vector2d q = p - grid->origin_body;
++        return {c * q.x() + s * q.y(), -s * q.x() + c * q.y()};
++      };
++    const double height = grid->height * grid->resolution;
++    const double tolerance = preview_line_sample_m_ + 1e-6;
++    const auto clipped = [&](int k, std::size_t j, int side) {
++        const auto & obs = observations[k][j];
++        if (obs.nominal_fallback) {return false;}
++        const double edge = side < 0 ? 0.0 : height;
++        return (!obs.start_boundary_observed &&
++               std::abs(local(output.pmk[k][j]).y() - edge) <= tolerance) ||
++               (!obs.end_boundary_observed &&
++               std::abs(local(output.pMk[k][j]).y() - edge) <= tolerance);
++      };
++    bool reference_present = false;
++    for (const auto & obs : observations[last]) {
++      reference_present = reference_present || obs.reference_inside || obs.nominal_fallback;
++    }
++    const Eigen::Vector2d tail = local(output.prk[last]);
++    const Eigen::Vector2d before = local(output.prk[last - 1]);
++    const double step = (tail - before).norm();
++    for (const int side : {-1, 1}) {
++      const double clearance = side < 0 ? tail.y() : height - tail.y();
++      if (reference_present || clearance > step + grid->resolution ||
++        side * (tail.y() - before.y()) <= 0.0)
++      {
++        continue;
++      }
++      bool connected_clipped = false;
++      for (std::size_t j = 0; j < observations[last - 1].size(); ++j) {
++        connected_clipped = connected_clipped ||
++          (observations[last - 1][j].reference_inside && clipped(last - 1, j, side));
++      }
++      bool boundary_candidate_remains = false;
++      for (std::size_t j = 0; j < observations[last].size(); ++j) {
++        boundary_candidate_remains = boundary_candidate_remains || clipped(last, j, side);
++      }
++      if (connected_clipped && !boundary_candidate_remains) {
++        output.side_boundary_tail_start = last;
++        output.side_boundary_side = side;
++        break;
++      }
++    }
++  }
++
+   observations.resize(static_cast<std::size_t>(output.N_pred + 1));
+   output.interval_update = updateIntervalCentering(
+     interval_state, observations, interval_centering_settings_);
+@@ -1629,6 +1687,19 @@
+   return output;
+ }
+ 
++std::vector<Eigen::Vector2d> SdMapUpperPlannerNode::publishablePrediction(
++  const PreviewConstraintData & preview, const UpperSolveResult & solve)
++{
++  if (!solve.valid) {return {};}
++  auto points = solve.predicted_body;
++  if (preview.side_boundary_tail_start >= 2 &&
++    static_cast<std::size_t>(preview.side_boundary_tail_start) < points.size())
++  {
++    points.resize(static_cast<std::size_t>(preview.side_boundary_tail_start));
++  }
++  return points;
++}
++
+ void SdMapUpperPlannerNode::applyTerminalPositionTargets(
+   PreviewConstraintData & preview,
+   const Eigen::Vector2d & wp0_body,
+@@ -1949,6 +2020,8 @@
+ 
+   const int lane_rows = 2 * binary_count + horizon;
+   const auto skip_lane = [&](int k, int candidate) {
++      if (guard_side_boundary_terminal_loss_ && preview.side_boundary_tail_start >= 2 &&
++        k >= preview.side_boundary_tail_start) {return true;}
+       return skip_front_clipped_k1_lane_constraints_ && k == 1 && candidate >= 0 &&
+              static_cast<std::size_t>(candidate) < preview.k1_lane_constraint_excluded.size() &&
+              preview.k1_lane_constraint_excluded[static_cast<std::size_t>(candidate)];
+@@ -2697,13 +2770,21 @@
+   points(preview ? preview->prk : std::vector<Eigen::Vector2d>{}, true);
+   out << ",\"planned_world\":";
+   points(solve && solve->valid ? solve->predicted_body : std::vector<Eigen::Vector2d>{}, true);
++  out << ",\"side_boundary_tail_start\":" <<
++    (preview ? preview->side_boundary_tail_start : -1);
++  out << ",\"side_boundary_side\":" << (preview ? preview->side_boundary_side : 0);
++  out << ",\"published_world\":";
++  points(preview && solve ? publishablePrediction(*preview, *solve) :
++    std::vector<Eigen::Vector2d>{}, true);
+   out << ",\"retained_world\":";
+   points(retained ? diagnostic_last_path_ : std::vector<Eigen::Vector2d>{}, false);
+   out << '}';
+   std_msgs::msg::String msg; msg.data = out.str(); branch_event_pub_->publish(msg);
+   if (published && solve) {
+     diagnostic_last_path_.clear();
+-    for (const auto & p : solve->predicted_body) {diagnostic_last_path_.push_back(world(p));}
++    for (const auto & p : publishablePrediction(*preview, *solve)) {
++      diagnostic_last_path_.push_back(world(p));
++    }
+     diagnostic_last_revision_ = revision; diagnostic_last_path_stamp_ = emitted;
+   }
+ }
+@@ -3142,7 +3223,11 @@
+     sparse_world.push_back(pose.position + rotation_world_body * point);
+   }
+   std::vector<double> dense_s;
+-  const auto dense_world = densifyPath(sparse_world, planning_speed_mps, dense_s);
++  std::vector<Eigen::Vector2d> published_world;
++  for (const auto & point : publishablePrediction(constraints, solve)) {
++    published_world.push_back(pose.position + rotation_world_body * point);
++  }
++  const auto dense_world = densifyPath(published_world, planning_speed_mps, dense_s);
+   stages.timer.mark("path_conversion_and_densify");
+ 
+   {
+@@ -3167,7 +3252,7 @@
+   }
+ 
+   stages.timer.mark("path_commit_locks");
+-  publishPath(sparse_path_pub_, sparse_world, frame_id);
++  publishPath(sparse_path_pub_, published_world, frame_id);
+   stages.timer.mark("sparse_path_publish");
+   publishPath(dense_path_pub_, dense_world, frame_id, &dense_s);
+   stages.timer.mark("dense_path_publish");

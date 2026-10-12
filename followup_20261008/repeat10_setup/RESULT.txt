@@ -1,0 +1,50 @@
+2026-10-08 시나리오 3 반복 주행·필수 압축 기록 준비
+
+구현
+- run_scenario3_10.sh 및 바탕화면 바로가기. 기본 scenario3 × 10 시도.
+- 실행 중복/UDP 포트/최소 여유 공간 사전 검사. 기존 프로세스를 종료하지 않음.
+- 사용자 지정 UDP/토픽/upper 3.0초/threshold 1을 effective_config.yaml에 통합.
+- 참조 생성·조향·B/soft·측면 말단 보호 이론/튜닝은 수정하지 않음.
+- 같은 경로를 새 토큰으로 반복, 회차 종료 후 관성 구간도 기록.
+- 속도 <0.2 m/s가 1초 유지된 뒤에만 맵 출발점 재정렬.
+- 정지 60초 초과 시 전체 중단. recorder heartbeat 신선도와 공간 기준으로 주행 허용 제한.
+- 마지막 회차도 정지 확인 후 기록/실행기 정리.
+- 자동 ARM/모드 전환/파라미터 설정 false. 추가 직렬 연결 없음.
+- 기존 배치 판정 completed는 8m 목표 영역 접근이다. 정확한 목표 정차와 구분해
+  stop_status, stop_x/y, stop_goal_distance_m을 CSV에 별도 저장한다.
+
+저장
+- 원본 BEV 전 프레임을 포함한 필수 17개 topic whitelist.
+- MCAP 내부 1 MiB chunk를 Zstd Fast로 압축. 별도 비압축 bag 사본 없음.
+- 60초/16 MiB 단위 split, cache 8 MiB.
+- 시작 여유 >=1.5 GiB. 512 MiB 세션 또는 여유 <1 GiB에서 중단 요청.
+  중단 뒤 정지 확인 중 추가 저장이 있을 수 있어 이 수치는 절대 파일 크기 상한은 아님.
+- standalone record_drive_debug.sh도 동일 압축 whitelist 적용.
+- 구 decoder의 단일 SQLite 의존성을 없애 MCAP/분할 bag 및 --no-cache 지원.
+
+압축 실측과 검증: compression.json
+052329: 18,694,144 bytes -> 738,501 bytes / 2,634 retained messages.
+052412: 16,539,648 bytes -> 715,622 bytes / 2,258 retained messages.
+두 bag의 retained messages 모두 수신시각·topic·CDR bytes 일치.
+BEV 프레임 샘플링/해상도 축소/값 재변환 없음.
+분당 1.52~1.75 MB. 총 기록 10~20분이면 bag 약 15~35 MB 추정(추가 로그 별도).
+
+검증 결과
+unit_tests.txt: 37 passed (기존 경로 판정 회귀 검사 포함).
+ros_tests.txt: 5 passed / 69.71 s (가짜 입력의 10회 반복, 기록 장애/정지 시간초과,
+              기존 runner의 혼합 실패 복구, 실제 map bridge+출력 비활성 lower 검사).
+recorder_cli_test.txt: 1 passed / 9.41 s.
+  실제 ros2 bag record의 topic 구독 이름, 시작 전에 발행된 transient global path,
+  지도 90장 필드/순서, 자동 파일 분할, 제외 topic 미기록 확인.
+  독립 직렬화의 CDR padding 바이트는 달라질 수 있어 이 시험은 모든 메시지 필드를 비교.
+  과거 bag 변환 시험은 같은 CDR bytes를 압축하므로 바이트 단위 동일성까지 확인함.
+decoder_check.txt: 새 압축 bag으로 기존 디코딩/요약 작동, --no-cache로 pickle 없음.
+launch --show-args, Python compile, bash -n, desktop-file-validate 통과.
+live_readonly_preflight.txt: 운영 domain 1에서 --check만 실행해 충돌/포트/공간 점검 통과.
+
+실행 범위/제한
+- 모든 발행 시험은 ROS_DOMAIN_ID=177, ROS_LOCALHOST_ONLY=1.
+- 실제 주행/ARM/하드웨어 설정/운영 프로세스 종료는 수행하지 않음.
+- 실제 Isaac가 재정렬된 pose를 따라가는 전체 10회 주행은 사용자의 실행 때 확인해야 함.
+- 카메라/B 변화/측면 보호의 최근 실패 원인이나 개선 효과를 이번 자동화로 검증한 것은 아님.
+- 세부 실행 방법: /home/imac/ros2_ws/시나리오3_10회_사용법.txt

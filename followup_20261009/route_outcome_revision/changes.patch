@@ -1,0 +1,522 @@
+--- before/src/virtual_control/CMakeLists.txt
++++ after/src/virtual_control/CMakeLists.txt
+@@ -178,6 +178,9 @@
+   ament_add_pytest_test(test_knu_batch
+     test/test_knu_batch.py
+   )
++  ament_add_pytest_test(test_road_route_check
++    test/test_road_route_check.py
++  )
+   ament_add_pytest_test(test_knu_batch_ros
+     test/test_knu_batch_ros.py
+   )
+--- before/src/virtual_control/launch/knu_batch.launch.py
++++ after/src/virtual_control/launch/knu_batch.launch.py
+@@ -52,6 +52,11 @@
+     runner = {'routes': routes,
+               'grid_topic': grid_topic, 'odom_topic': odom_topic,
+               'require_matlab_ack': grid_source == 'matlab'}
++    evidence_upper = {**upper_current,**upper}
++    runner.update(enable_road_route_check=not evidence_upper.get('grid_origin_x_override_enabled',False),
++                  road_grid_positive_is_drivable=evidence_upper.get('grid_positive_is_drivable',False),
++                  road_grid_value_threshold=evidence_upper.get('grid_value_threshold',0),
++                  road_expected_grid_frame=evidence_upper.get('expected_grid_frame_id','Vehicle'))
+     lower = {'batch_supervision': True, 'state_input_type': 'odom',
+              'odom_topic': odom_topic, 'odom_yaw_is_orientation_z': True,
+              'reset_on_path_change': True,
+--- before/src/virtual_control/scripts/knu_batch_monitor.py
++++ after/src/virtual_control/scripts/knu_batch_monitor.py
+@@ -118,3 +118,179 @@
+         return {'progress_ratio': self.progress/self.arc[-1],
+                 'best_progress_ratio': self.best/self.arc[-1],
+                 'cross_track_m': self.cross_track, 'goal_distance_m': self.goal_distance}
++
++
++@dataclass
++class RoadLimits:
++    """Evidence thresholds, independent of planner constraints and steering tuning."""
++    road_confirmation_sec: float = 3.0
++    road_evidence_fresh_sec: float = 0.6
++    road_lookahead_m: float = 20.0
++    road_corridor_half_width_m: float = 3.0
++    road_blocked_span_m: float = 5.0
++    road_supported_span_m: float = 2.0
++    road_pose_skew_sec: float = 0.25
++
++    def __post_init__(self):
++        if any(not math.isfinite(v) or v <= 0 for v in vars(self).values()):
++            raise ValueError('all road limits must be finite and positive')
++        if self.road_supported_span_m+self.road_blocked_span_m > self.road_lookahead_m:
++            raise ValueError('road lookahead must include supported and blocked spans')
++        # Bound per-observation work regardless of an accidental parameter change.
++        if self.road_lookahead_m > 40 or self.road_corridor_half_width_m > 10:
++            raise ValueError('road lookahead/half width must be <= 40/10 m')
++
++
++class RoadRouteCheck:
++    """Bounded grid sampling: classify a route/map mismatch, never physical road ends.
++
++    Unknown/outside cells cannot prove blockage. Only scalar evidence is retained;
++    neither this class nor the runner stores decoded grids between observations.
++    """
++
++    def __init__(self, points, limits=None):
++        self.route = RouteMonitor(points, 0)
++        self.limits = limits or RoadLimits()
++        self.since = self.last_observed = None
++        self.last_id = None
++        self.block = None
++        self.observations = 0
++        self.evidence = {'state': 'unavailable', 'reason': 'no grid evidence'}
++
++    def sample(self, grid, position, yaw, progress, positive_is_drivable=False,
++               threshold=0, expected_frame='Vehicle'):
++        """Use the pose at grid reception; grid origin orientation is a quaternion."""
++        def unavailable(reason):
++            return {'state': 'unavailable', 'reason': reason}
++        info = grid.info
++        if grid.header.frame_id.lstrip('/') != expected_frame.lstrip('/'):
++            return unavailable('grid frame mismatch')
++        if (not math.isfinite(yaw) or not all(math.isfinite(v) for v in position[:2])
++                or not math.isfinite(info.resolution) or info.resolution <= 0
++                or info.width <= 0 or info.height <= 0
++                or len(grid.data) != info.width*info.height):
++            return unavailable('invalid grid or pose')
++        origin = info.origin
++        q = origin.orientation
++        if not all(math.isfinite(v) for v in (origin.position.x, origin.position.y,
++                                              q.x, q.y, q.z, q.w)):
++            return unavailable('invalid grid origin')
++        norm = math.sqrt(q.x*q.x+q.y*q.y+q.z*q.z+q.w*q.w)
++        if abs(norm-1.0) > 0.01 or abs(q.x) > 1e-3 or abs(q.y) > 1e-3:
++            return unavailable('grid origin must have a planar unit quaternion')
++        gy = math.atan2(2*(q.w*q.z+q.x*q.y),1-2*(q.y*q.y+q.z*q.z))
++        cy, sy, cg, sg = math.cos(yaw), math.sin(yaw), math.cos(gy), math.sin(gy)
++
++        def cell(x, y):
++            dx, dy = x-position[0], y-position[1]
++            bx = cy*dx+sy*dy-origin.position.x
++            by = -sy*dx+cy*dy-origin.position.y
++            ix = math.floor((cg*bx+sg*by)/info.resolution)
++            iy = math.floor((-sg*bx+cg*by)/info.resolution)
++            if not (0 <= ix < info.width and 0 <= iy < info.height):
++                return 'outside'
++            value = int(grid.data[iy*info.width+ix])
++            if not 0 <= value <= 100:
++                return 'unknown'
++            return 'free' if ((value > threshold) if positive_is_drivable
++                              else (value <= threshold)) else 'blocked'
++
++        limit = self.limits
++        half = limit.road_corridor_half_width_m
++        offsets = [(-half+2*half*i/math.ceil(2*half/.5))
++                   for i in range(math.ceil(2*half/.5)+1)]
++
++        def corridor(arc):
++            i = next((j for j in range(len(self.route.lengths))
++                      if self.route.arc[j+1] >= arc),len(self.route.lengths)-1)
++            a,b = self.route.points[i:i+2];length = self.route.lengths[i]
++            u = (arc-self.route.arc[i])/length
++            x,y = a[0]+u*(b[0]-a[0]), a[1]+u*(b[1]-a[1])
++            nx,ny = -(b[1]-a[1])/length,(b[0]-a[0])/length
++            return [cell(x+nx*v,y+ny*v) for v in offsets]
++
++        # Continue observing the SAME map-fixed blockage as ego approaches it.
++        # Requiring the earlier free stretch to remain ahead of the front-only BEV
++        # would erase evidence precisely when the vehicle reaches the road end.
++        # Call expire(now) first: stale seeds cannot excuse an unrelated deviation.
++        if self.block is not None:
++            start,end = self.block
++            samples = [c for k in range(int((end-start)/.5)+1)
++                       for c in corridor(start+.5*k)]
++            if samples and all(c=='blocked' for c in samples):
++                return dict(state='route_unavailable',reason='same previously supported-to-blocked corridor reobserved',
++                            blocked_start_m=start,blocked_end_m=end,blocked=len(samples),
++                            free=0,unknown=0,outside=0)
++
++        # The front-mounted BEV may start at ego x=0. Observe ego and two front corners.
++        vehicle = [cell(position[0]+cy*x-sy*y, position[1]+sy*x+cy*y)
++                   for x,y in ((0,0),(.5,-.5),(.5,.5))]
++        if any(v != 'free' for v in vehicle):
++            return unavailable('vehicle patch not confirmed free')
++        end = min(self.route.arc[-1], progress+limit.road_lookahead_m)
++        support_start = last_free_arc = blocked_start = None
++        count = {'free': 0, 'blocked': 0, 'unknown': 0, 'outside': 0}
++        steps = int(max(0,end-progress)/.5)
++        for step in range(steps+1):
++            arc = progress+.5*step
++            cells = corridor(arc)
++            for c in cells: count[c] += 1
++            if 'free' in cells:
++                if blocked_start is not None:
++                    support_start = arc
++                support_start = arc if support_start is None else support_start
++                last_free_arc = arc
++                blocked_start = None
++            elif all(c == 'blocked' for c in cells):
++                if support_start is not None:
++                    if blocked_start is None:
++                        if last_free_arc-support_start >= limit.road_supported_span_m:
++                            blocked_start = arc
++                        else:
++                            support_start = None
++                    if blocked_start is not None and arc-blocked_start >= limit.road_blocked_span_m:
++                        return dict(state='route_unavailable',reason='observed supported-to-blocked route corridor',
++                                    blocked_start_m=blocked_start,blocked_end_m=arc,**count)
++            else:
++                # A gap cannot be stitched into a supported-to-blocked transition.
++                support_start = blocked_start = None
++        state = 'unavailable' if count['unknown'] or count['outside'] else 'supported'
++        return dict(state=state,reason='unknown/outside route samples' if state=='unavailable'
++                    else 'no confirmed route blockage',**count)
++
++    def expire(self,now):
++        if self.last_observed is None or now-self.last_observed > self.limits.road_evidence_fresh_sec:
++            self.since = self.block = None
++            self.observations = 0
++
++    def observe(self, now, observation_id, evidence):
++        if self.last_id is not None and observation_id <= self.last_id:
++            return  # Duplicate or backwards stamps do not provide new evidence.
++        self.last_id = observation_id
++        gap = self.last_observed is None or now-self.last_observed > self.limits.road_evidence_fresh_sec
++        self.last_observed = now
++        self.evidence = evidence
++        if evidence['state'] != 'route_unavailable':
++            self.since = self.block = None
++            self.observations = 0
++            return
++        block = (evidence['blocked_start_m'],evidence['blocked_end_m'])
++        overlap = self.block is not None and min(block[1],self.block[1])-max(block[0],self.block[0]) >= 1.0
++        if gap or not overlap or self.since is None:
++            self.since = now
++            self.observations = 0
++        self.block = block
++        self.observations += 1
++
++    def confirmed(self, now):
++        return (self.since is not None and self.last_observed is not None
++                and now-self.last_observed <= self.limits.road_evidence_fresh_sec
++                and self.last_observed-self.since >= self.limits.road_confirmation_sec
++                and self.observations >= 3)
++
++    def detail(self, now):
++        value = dict(self.evidence)
++        if self.last_observed is None or now-self.last_observed > self.limits.road_evidence_fresh_sec:
++            value = {'state':'unavailable','reason':'grid evidence missing or stale'}
++        value.update(observations=self.observations,confirmed=self.confirmed(now))
++        return value
+--- before/src/virtual_control/scripts/knu_batch_runner.py
++++ after/src/virtual_control/scripts/knu_batch_runner.py
+@@ -20,7 +20,7 @@
+ from std_msgs.msg import Bool, String, Float64MultiArray
+ from std_srvs.srv import Trigger
+ 
+-from knu_batch_monitor import Limits, RouteMonitor
++from knu_batch_monitor import Limits, RouteMonitor, RoadLimits, RoadRouteCheck
+ from knu_global_path_publisher import load_route, load_start_positions
+ 
+ 
+@@ -58,15 +58,35 @@
+             'pose_loss_sec': 10.0, 'grid_loss_sec': 10.0,
+             'pose_fresh_sec': 0.6, 'grid_fresh_sec': 2.0,
+             'results_directory': str(Path.cwd() / 'knu_batch_results'),
++            'enable_road_route_check': True,
++            'road_grid_positive_is_drivable': False,
++            'road_grid_value_threshold': 0,
++            'road_expected_grid_frame': 'Vehicle',
++            # Existing Isaac BEV messages have zero header stamps; use reception age.
++            'road_allow_unstamped_grids': True,
++            'road_enable_waypoint_bias': False,
++            'road_waypoint_yaw_bias_rad': 0.0,
++            'road_waypoint_x_bias_m': 0.0,
++            'road_waypoint_y_bias_m': 0.0,
+         }
+         defaults.update(vars(Limits()))
++        defaults.update(vars(RoadLimits()))
+         for name, value in defaults.items():
+             self.declare_parameter(name, value)
+         self.settings = {name: self.get_parameter(name).value for name in defaults}
+         for key, value in self.settings.items():
+-            if isinstance(value, float) and (not math.isfinite(value) or value <= 0):
++            if (isinstance(value, float) and not key.startswith('road_waypoint_')
++                    and (not math.isfinite(value) or value <= 0)):
+                 raise ValueError(f'{key} must be positive and finite')
+         self.limits = Limits(**{k: self.settings[k] for k in vars(Limits())})
++        self.road_limits = RoadLimits(**{k:self.settings[k] for k in vars(RoadLimits())})
++        if not 0 <= self.settings['road_grid_value_threshold'] <= 100:
++            raise ValueError('road_grid_value_threshold must be in [0,100]')
++        if not self.settings['road_expected_grid_frame'].lstrip('/'):
++            raise ValueError('road_expected_grid_frame must be nonempty')
++        if any(not math.isfinite(self.settings[k]) for k in
++               ('road_waypoint_yaw_bias_rad','road_waypoint_x_bias_m','road_waypoint_y_bias_m')):
++            raise ValueError('road waypoint bias must be finite')
+         self.routes = self.settings['routes']
+         if not self.routes or len(set(self.routes)) != len(self.routes):
+             raise ValueError('routes must be a nonempty list without duplicates')
+@@ -114,6 +134,12 @@
+         self.upper_reset_future = None
+         self.reference_not_before_ns = 0
+         self.pose = None
++        self.pose_yaw = None
++        self.pose_stamp_sec = None
++        self.road_check = None
++        self.road_sample_at = -math.inf
++        self.road_grid_sequence = 0
++        self.road_grid_stamp = None
+         self.pose_at = self.grid_at = self.reference_at = -math.inf
+         self.pause_ack_token = None
+         self.logger_required = False
+@@ -155,6 +181,10 @@
+         if all(math.isfinite(x) for x in values):
+             self.pose = (p.x, p.y, math.hypot(v.x, v.y))
+             self.pose_at = time.monotonic()
++            # This project's odometry stores scalar yaw directly in orientation.z.
++            yaw = msg.pose.pose.orientation.z
++            self.pose_yaw = yaw if math.isfinite(yaw) else None
++            self.pose_stamp_sec = msg.header.stamp.sec+msg.header.stamp.nanosec*1e-9
+ 
+     def on_recorder(self, msg):
+         self.recorder_at = time.monotonic()
+@@ -213,6 +243,34 @@
+         if (msg.info.width > 0 and msg.info.height > 0 and msg.info.resolution > 0
+                 and len(msg.data) == msg.info.width * msg.info.height):
+             self.grid_at = time.monotonic()
++        now = time.monotonic()
++        if (self.phase != 'running' or self.road_check is None
++                or now-self.road_sample_at < 0.2):
++            return
++        self.road_sample_at = now
++        self.road_check.expire(now)
++        stamp = msg.header.stamp.sec+msg.header.stamp.nanosec*1e-9
++        if stamp > 0:
++            if self.road_grid_stamp is not None and stamp <= self.road_grid_stamp:
++                return
++            self.road_grid_stamp = stamp
++        self.road_grid_sequence += 1
++        synchronized = (abs(stamp-self.pose_stamp_sec) <= self.road_limits.road_pose_skew_sec
++                        if stamp > 0 and self.pose_stamp_sec is not None else
++                        stamp == 0 and self.settings['road_allow_unstamped_grids']
++                        and now-self.pose_at <= self.road_limits.road_pose_skew_sec)
++        if (not synchronized or self.pose_stamp_sec is None or self.pose_yaw is None
++                or now-self.pose_at > self.settings['pose_fresh_sec']):
++            evidence = {'state':'unavailable','reason':'missing or unsynchronized grid/pose stamps'}
++        else:
++            evidence = self.road_check.sample(
++                msg,self.pose[:2],self.pose_yaw,self.monitor.progress,
++                self.settings['road_grid_positive_is_drivable'],
++                self.settings['road_grid_value_threshold'],
++                self.settings['road_expected_grid_frame'])
++        evidence.update(clock_source='header' if stamp > 0 else 'receive_monotonic',
++                        acquisition_stamp_available=stamp > 0)
++        self.road_check.observe(now,self.road_grid_sequence,evidence)
+ 
+     def on_reference(self, msg):
+         stamp = msg.header.stamp.sec * 1000000000 + msg.header.stamp.nanosec
+@@ -279,6 +337,7 @@
+         self.pause_ack_token = None
+         self.logger_required = bool(self.settings['require_matlab_ack'])
+         self.monitor = None
++        self.road_check = None
+         self.ack = None
+         self.future = None
+         self.upper_reset_future = None
+@@ -493,6 +552,20 @@
+                     and not compute_issue and now-self.entered > 1.0):
+                 self.reset_pub.publish(Bool(data=True))
+                 self.monitor = RouteMonitor(self.points[self.route], now, self.limits)
++                if self.settings['enable_road_route_check']:
++                    points = self.points[self.route]
++                    if self.settings['road_enable_waypoint_bias']:
++                        # Match the planner's first-waypoint-centred transform for evidence only.
++                        angle = self.settings['road_waypoint_yaw_bias_rad']
++                        c,s = math.cos(angle),math.sin(angle)
++                        x0,y0 = points[0][:2]
++                        points = [(x0+c*(x-x0)-s*(y-y0)+self.settings['road_waypoint_x_bias_m'],
++                                   y0+s*(x-x0)+c*(y-y0)+self.settings['road_waypoint_y_bias_m'])
++                                  for x,y,*_ in points]
++                    self.road_check = RoadRouteCheck(points,self.road_limits)
++                    self.road_sample_at = -math.inf
++                    self.road_grid_sequence = 0
++                    self.road_grid_stamp = None
+                 self.set_phase('running')
+             return
+         if self.phase == 'running':
+@@ -511,8 +584,16 @@
+                 self.fail_or_finish('route_timeout')
+             elif pose_fresh:
+                 result = self.monitor.update(now, self.pose[:2])
++                waypoint_result = result
++                if (self.road_check is not None and self.road_check.confirmed(now)
++                        and result not in ('completed','pose_jump','invalid_pose','wrong_direction')):
++                    result = self.monitor.outcome = 'route_unavailable'
+                 if result:
+-                    self.fail_or_finish(result)
++                    detail = (json.dumps({'outcome_policy':'road_route_v1',
++                                          'waypoint_guard_result':waypoint_result,
++                                          'road_evidence':self.road_check.detail(now)},sort_keys=True)
++                              if self.road_check is not None else '')
++                    self.fail_or_finish(result,detail)
+ 
+     def stop(self):
+         self.publish_permission(False)
+--- before/src/virtual_control/scripts/repeat_drive_session.py
++++ after/src/virtual_control/scripts/repeat_drive_session.py
+@@ -44,6 +44,16 @@
+             config.setdefault(node, {'ros__parameters': {}})['ros__parameters'].update(
+                 section['ros__parameters'])
+     runner = config['knu_batch_runner']['ros__parameters']
++    upper = config['upper_planner_node']['ros__parameters']
++    # Outcome evidence uses the identical value convention/frame/bias as the planner.
++    runner.update(enable_road_route_check=not upper.get('grid_origin_x_override_enabled',False),
++                  road_grid_positive_is_drivable=upper.get('grid_positive_is_drivable',False),
++                  road_grid_value_threshold=upper.get('grid_value_threshold',0),
++                  road_expected_grid_frame=upper.get('expected_grid_frame_id','Vehicle'),
++                  road_enable_waypoint_bias=upper.get('enable_waypoint_bias',False),
++                  road_waypoint_yaw_bias_rad=upper.get('waypoint_yaw_bias_rad',0.0),
++                  road_waypoint_x_bias_m=upper.get('waypoint_x_bias_m',0.0),
++                  road_waypoint_y_bias_m=upper.get('waypoint_y_bias_m',0.0))
+     routes = list(SCENARIOS) if scenario == 'all' else [scenario]
+     runner.update(routes=routes, repeat_count=count, results_directory=str(results))
+     if scenario == 'all':
+@@ -164,6 +174,7 @@
+         sources = [PACKAGE/'config/tracking_control_split.yaml',
+                    PACKAGE/'config/scenario3_repeat.yaml', Path(__file__),
+                    PACKAGE/'scripts/knu_batch_runner.py', PACKAGE/'config/knu_batch.yaml',
++                   PACKAGE/'scripts/knu_batch_monitor.py',
+                    PACKAGE/'data/knu_routes/knu_batch_profile.json',
+                    PACKAGE/'data/knu_routes/knu_start_poses.json']
+         sources += [PACKAGE/f'data/knu_routes/{route}.csv' for route in routes]
+--- before/시나리오전체_5회_사용법.txt
++++ after/시나리오전체_5회_사용법.txt
+@@ -50,6 +50,27 @@
+ 중립 출력은 즉시 제동이 아니며 관성 이동 중에는 다음 회차를 시작하지 않는다.
+ completed는 목표 영역 접근이며 목표 정차 성공이 아니다.
+ 
++2026-10-12 결과 판정 보완:
++- route_unavailable: 관측 지도에서 waypoint 경로가 이어지지 않는 경우의 별도 결과.
++  전방20m의 경로 주변 ±3m를 표본 확인한다. 차량 위치의 주행 가능 표본과
++  경로의 주행 가능 구간2m 이상에 이어 비주행 가능 구간5m 이상이 관측되면 후보로 잡는다.
++  같은 지도 좌표의 비주행 구간을 여러 지도 수신에서3초 이상 연속 재확인해야 종료한다.
++  접근 중 이전 주행 가능 구간이 BEV 뒤로 사라져도 같은 비주행 구간 재관측은 이어간다.
++  지도 밖/unknown은 비주행 가능 근거가 아니다. 근거 갱신 간격>0.6초면 초기화한다.
++- 이 결과는 목표 접근 성공이나 물리적인 도로 끝 확정이 아니다. 경로·관측 지도 불일치다.
++  정지 허용 해제 및 정지 확인 후 남은 회차 계속. 시스템 이상 스킵으로 세지 않는다.
++- 기존 off_route(waypoint 경로 거리>15m,3초), completed, 계산/입력 이상 감시 유지.
++  지도 근거가 부족하면 기존 정지 판정을 유지하고 detail에 근거 부족을 기록한다.
++- 현재 Isaac 지도는 header 시각이0이다. 수신 시각과0.25초 이내의 차량 상태를 사용하며
++  detail에 촬영 시각 미확인을 표시한다. 시각이 있는 지도는 pose와0.25초 이내이고
++  시각이 증가해야 근거로 사용한다. 지도는 보관하지 않고 최대5Hz로 표본 검사한다.
++- 지도 값/좌표계와 waypoint 편향은 해당 실행의 상위 설정에 맞춰 판정에만 반영한다.
++  grid origin 실험 override가 켜져 있으면 이 추가 판정은 비활성화한다.
++- summary detail: outcome_policy, waypoint_guard_result, road_evidence.
++  기존60회 원본/결과를 다시 이름 붙이지 않는다. 새 판정은 다음 새 실행부터 사용한다.
++- 변경·격리 검증·복원 자료:
++  /home/imac/ros2_ws/followup_20261009/route_outcome_revision/RESULT.txt
++
+ 기록:
+ /home/imac/ros2_ws/drive_batches/날짜시간_all_세션/
+ - bag/: 기존 MCAP/Zstd 무손실 압축. 60초 또는16MiB 분할, 연속 bag으로 읽는다.
+--- before/src/virtual_control/test/test_all_scenarios_repeat.py
++++ after/src/virtual_control/test/test_all_scenarios_repeat.py
+@@ -194,3 +194,100 @@
+     for _ in range(5):
+         h.step()
+     assert h.r.index == 5
++
++
++@pytest.mark.parametrize('stamped',[True,False])
++def test_route_unavailable_stops_and_continues_next_repetition(supervisor,stamped):
++    from knu_batch_monitor import RouteMonitor, RoadRouteCheck
++    from nav_msgs.msg import Odometry, OccupancyGrid
++    h = supervisor
++    h.r.set_phase('running')
++    h.r.start_positions['scenario1'] = (0.,0.,0.)
++    h.r.monitor = RouteMonitor([(0,0),(100,0)],h.clock[0])
++    h.r.road_check = RoadRouteCheck([(0,0),(100,0)])
++    g = OccupancyGrid()
++    g.header.frame_id = 'Vehicle'
++    g.info.width,g.info.height,g.info.resolution = 80,40,.5
++    g.info.origin.position.y = -10.
++    g.info.origin.orientation.w = 1.
++    g.data = [0 if x < 20 else 100 for y in range(40) for x in range(80)]
++    for i in range(14):
++        od = Odometry();od.header.frame_id = 'map'
++        od.header.stamp.sec = int(h.clock[0])
++        od.header.stamp.nanosec = int((h.clock[0]%1)*1e9)
++        if stamped:
++            g.header.stamp = od.header.stamp
++        h.r.on_pose(od)
++        h.r.on_grid(g)
++        h.step(dt=.25)
++        if h.r.phase == 'coasting': break
++    assert h.r.phase == 'coasting'
++    assert h.r.rows[0]['outcome'] == 'route_unavailable'
++    assert json.loads(h.r.rows[0]['detail'])['road_evidence']['confirmed']
++    assert json.loads(h.r.rows[0]['detail'])['road_evidence']['acquisition_stamp_available']==stamped
++    assert h.permissions[-1] is False
++    assert not h.r.system_fault_scenarios
++    for _ in range(100):
++        h.step()
++        if h.r.index != 0: break
++    assert h.r.index == 1
++    assert h.r.rows[0]['stop_status'] == 'stationary'
++    assert h.r.road_check is None
++
++
++def test_duplicate_stamped_grids_cannot_confirm(supervisor):
++    from knu_batch_monitor import RouteMonitor,RoadRouteCheck
++    from nav_msgs.msg import Odometry,OccupancyGrid
++    h=supervisor
++    h.r.set_phase('running')
++    h.r.start_positions['scenario1']=(0.,0.,0.)
++    h.r.monitor=RouteMonitor([(0,0),(100,0)],h.clock[0])
++    h.r.road_check=RoadRouteCheck([(0,0),(100,0)])
++    g=OccupancyGrid();g.header.frame_id='Vehicle';g.header.stamp.sec=100
++    g.info.width,g.info.height,g.info.resolution=80,40,.5
++    g.info.origin.position.y=-10.;g.info.origin.orientation.w=1.
++    g.data=[0 if x<20 else 100 for y in range(40) for x in range(80)]
++    for _ in range(16):
++        od=Odometry();od.header.frame_id='map';od.header.stamp=g.header.stamp
++        h.r.on_pose(od);h.r.on_grid(g);h.step(dt=.25)
++    assert h.r.phase=='running' and not h.r.road_check.confirmed(h.clock[0])
++
++
++def test_unknown_map_keeps_original_stop_with_evidence_detail(supervisor):
++    from knu_batch_monitor import RouteMonitor,RoadRouteCheck,Limits
++    h=supervisor
++    h.r.set_phase('running')
++    h.r.start_positions['scenario1']=(0.,0.,0.)
++    h.r.monitor=RouteMonitor([(0,0),(100,0)],h.clock[0],Limits(stop_sec=1))
++    h.r.road_check=RoadRouteCheck([(0,0),(100,0)])
++    h.r.road_check.observe(h.clock[0],1,{'state':'unavailable','reason':'unknown samples'})
++    for _ in range(4):h.step()
++    assert h.r.rows[0]['outcome']=='stopped_10s'
++    detail=json.loads(h.r.rows[0]['detail'])
++    assert detail['waypoint_guard_result']=='stopped_10s'
++    assert detail['road_evidence']['state']=='unavailable'
++
++
++def test_road_evidence_cannot_override_compute_stall(supervisor):
++    from knu_batch_monitor import RouteMonitor, RoadRouteCheck
++    h=supervisor
++    h.r.set_phase('running')
++    h.r.monitor=RouteMonitor([(0,0),(100,0)],h.clock[0])
++    h.r.road_check=RoadRouteCheck([(0,0),(100,0)])
++    e=dict(state='route_unavailable',reason='synthetic',blocked_start_m=10,blocked_end_m=15)
++    for i in range(16): h.r.road_check.observe(h.clock[0]-3+i*.2,i,e)
++    assert h.r.road_check.confirmed(h.clock[0])
++    h.r.compute_overrun='lower_compute_timeout'
++    h.step()
++    assert h.r.rows[0]['outcome']=='lower_compute_timeout'
++
++
++def test_effective_evidence_settings_match_planner(tmp_path):
++    config=effective_config(5,tmp_path,'all')
++    r=config['knu_batch_runner']['ros__parameters']
++    u=config['upper_planner_node']['ros__parameters']
++    assert r['road_grid_positive_is_drivable']==u['grid_positive_is_drivable']
++    assert r['road_grid_value_threshold']==u['grid_value_threshold']
++    assert r['road_expected_grid_frame']==u['expected_grid_frame_id']
++    assert r['road_enable_waypoint_bias']==u['enable_waypoint_bias']
++    assert r['road_waypoint_yaw_bias_rad']==u['waypoint_yaw_bias_rad']

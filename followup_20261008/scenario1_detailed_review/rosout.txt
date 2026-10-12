@@ -1,0 +1,1908 @@
+17:33:07.557 rosbag2_recorder Press SPACE for pausing/resuming
+17:33:07.557 rosbag2_recorder Listening for topics...
+17:33:07.557 rosbag2_recorder Event publisher thread: Starting
+17:33:07.557 rosbag2_recorder Subscribed to topic '/rosout'
+17:33:07.557 rosbag2_recorder Subscribed to topic '/parameter_events'
+17:33:07.557 rosbag2_recorder Recording...
+17:33:07.668 rosbag2_recorder Subscribed to topic '/bev/occupancy_grid'
+17:33:07.729 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:33:07.729 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:33:07.729 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:33:07.729 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:33:07.729 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:33:07.835 upper_planner_node planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+17:33:07.856 px4_odom_map_bridge PX4 odom map bridge ready: input=/px4/sih/odom (yaw scalar z) odom=/motive/vehicle/odom_map pose=/motive/vehicle/pose route=scenario1 target=(150.000, -140.000, 0.000) target_yaw=2.066348 rad odom_yaw=orientation.z scalar
+17:33:07.886 rosbag2_recorder Subscribed to topic '/planner/goal_reached'
+17:33:07.891 upper_planner_node k1 lane constraint trial: skip_front_clipped_k1_lane_constraints=false
+17:33:07.891 upper_planner_node Egocentric MIQP planner ready: rate=2.00Hz pred_dt=0.750s Nmax=6 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+17:33:07.891 upper_planner_node upper branch model: cumulative_increment=1 turn_window_at_split=1 turn_target_absolute=1 split_continuity=6.75m r_dpsi=3.000 lambda_turn=0.600
+17:33:07.896 rosbag2_recorder Subscribed to topic '/debug/upper_branch_event'
+17:33:07.905 rosbag2_recorder Subscribed to topic '/debug/upper_interval_info'
+17:33:07.911 lower_tracking_mpc_node MAVLink UDP bound at 0.0.0.0:14540; waiting for MAVProxy --out peer
+17:33:07.912 lower_tracking_mpc_node LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=30 path=/planner/lower_reference_path scale=fullscale wheelbase=2.80m rear_offset=1.40m command_scale=0.350rad actuator_model=1 delay=0.00s tau=0.74s backend=mavlink_udp virtual=/cmd_control
+17:33:07.921 rosbag2_recorder Subscribed to topic '/debug/upper_interval_centering_state'
+17:33:07.927 rosbag2_recorder Subscribed to topic '/debug/upper_miqp_trace'
+17:33:07.934 rosbag2_recorder Subscribed to topic '/motive/vehicle/odom_map'
+17:33:07.944 rosbag2_recorder Subscribed to topic '/planner/lower_reference_path/with_arclength'
+17:33:07.962 lower_tracking_mpc_node MAVLink peer unknown; check MAVProxy --out=127.0.0.1:14540
+17:33:08.013 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:33:08.053 rosbag2_recorder Subscribed to topic '/debug/lower_mpc_trace'
+17:33:08.061 rosbag2_recorder Subscribed to topic '/debug/upper_stage_timing'
+17:33:08.155 px4_odom_map_bridge Waiting for valid PX4 source pose on /px4/sih/odom
+17:33:08.390 upper_planner_node planner waiting for pose
+17:33:08.547 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:33:08.680 rosbag2_recorder Subscribed to topic '/controller/reset'
+17:33:08.684 rosbag2_recorder Subscribed to topic '/knu_batch/status'
+17:33:08.687 rosbag2_recorder Subscribed to topic '/navigation/global_path'
+17:33:08.690 rosbag2_recorder Subscribed to topic '/knu_batch/active_route'
+17:33:08.694 knu_batch_runner 10 SIH routes; results: /home/imac/ros2_ws/drive_batches/20261008_173306_scenario1_756dad/results/20261008_173308_20bccc8584
+17:33:08.862 lower_tracking_mpc_node MAVLink peer detected: 127.0.0.1:40257
+17:33:08.912 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:33:09.014 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:33:09.912 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:33:10.113 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:33:10.255 px4_odom_map_bridge Waiting for valid PX4 source pose on /px4/sih/odom
+17:33:10.533 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:33:10.890 upper_planner_node planner waiting for pose
+17:33:10.913 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:33:11.120 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:33:11.131 px4_ekf_bridge PX4 EKF bridge configured: input=disabled odom=/px4/ekf_odom yaw_scalar_pose=/px4/sih/odom connection=udpin:0.0.0.0:14541 @ 921600, EV=50.0 Hz (vision_position_estimate), ENU(+X east,+Y north,+Z up) <-> NED/FRD
+17:33:11.131 px4_ekf_bridge Start with the vehicle disarmed and stationary. PX4 EKF parameter changes marked as reboot-required need a Pixhawk reboot before fusion is tested.
+17:33:11.131 px4_ekf_bridge Opening MAVLink connection udpin:0.0.0.0:14541 (baud=921600)
+17:33:11.131 px4_ekf_bridge SIH heading check: settling (EKF-SIH=-0.6256998259332867 deg); pose output blocked
+17:33:11.131 px4_ekf_bridge PX4 heartbeat detected: target=1:1
+17:33:11.131 px4_ekf_bridge Requested PX4 LOCAL_POSITION_NED at 30.0 Hz
+17:33:11.131 px4_ekf_bridge Requested PX4 ATTITUDE at 30.0 Hz
+17:33:11.132 px4_ekf_bridge Requested PX4 HIL_STATE_QUATERNION at 30.0 Hz
+17:33:11.200 px4_ekf_bridge SIH heading check: ok (EKF-SIH=-0.6114930324596601 deg); pose output enabled
+17:33:11.377 px4_odom_map_bridge Map alignment initialized once: source=(-466.899506, -323.208069, 0.230286, yaw=-1.513507) yaw_delta=-2.703330 input_frame='map' (treated as PX4 local)
+17:33:11.390 upper_planner_node planner waiting for global path
+17:33:11.455 knu_batch_runner [1/10] scenario1
+17:33:11.962 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:33:12.214 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:33:12.547 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:33:12.866 px4_odom_map_bridge Map alignment initialized once: source=(-466.897003, -323.217957, 0.230103, yaw=-1.513803) yaw_delta=-2.703034 input_frame='map' (treated as PX4 local)
+17:33:12.962 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:33:13.313 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:33:13.891 upper_planner_node planner waiting for global path
+17:33:13.963 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:33:14.254 upper_planner_node mission cleared; awaiting path; revision=1
+17:33:14.254 lower_tracking_mpc_node Rejected lower path: fewer than two distinct path points
+17:33:14.312 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:33:14.357 knu_batch_runner 20bccc8584:0:scenario1: mission cleared; awaiting path; revision=1
+17:33:14.362 upper_planner_node reference path loaded from /navigation/global_path: 6 points frame=map waypoint_bias=disabled
+17:33:14.391 upper_planner_node waypoint pair advanced: [0,1] -> [1,2]; previous reference retained
+17:33:14.414 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:33:14.414 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:33:14.557 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:33:15.012 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:33:15.414 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:33:15.513 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:33:16.012 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:33:16.593 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:33:17.013 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:33:18.062 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:33:18.604 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:33:19.063 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:33:20.064 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:33:20.622 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:33:21.113 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:33:22.163 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:33:22.637 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:33:23.164 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:33:24.163 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:33:24.691 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:33:24.892 upper_planner_node waypoint pair advanced: [1,2] -> [2,3]; previous reference retained
+17:33:25.214 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:33:26.214 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:33:26.713 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:33:27.263 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:33:28.264 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:33:28.727 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:33:29.314 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:33:29.914 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:33:30.364 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:33:30.762 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:33:31.413 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:33:32.413 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:33:32.784 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:33:32.891 upper_planner_node waypoint pair advanced: [2,3] -> [3,4]; previous reference retained
+17:33:33.413 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:33:33.914 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:33:34.417 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:33:34.789 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:33:35.466 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:33:36.515 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:33:36.793 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:33:37.564 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:33:38.616 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:33:38.810 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:33:38.893 upper_planner_node waypoint pair advanced: [3,4] -> [4,5]; previous reference retained
+17:33:39.614 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:33:40.413 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:33:40.614 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:33:40.823 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:33:41.414 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:33:41.666 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:33:41.913 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:33:42.664 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:33:42.838 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:33:43.666 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:33:44.664 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:33:44.879 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:33:45.664 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:33:46.664 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:33:46.887 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:33:47.714 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:33:48.765 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:33:48.906 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:33:49.814 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:33:50.866 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:33:50.912 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:33:51.914 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:33:52.914 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:33:52.924 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:33:53.965 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:33:54.062 knu_batch_runner scenario1: completed 
+17:33:54.115 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:33:54.415 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:33:54.958 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:33:55.014 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:33:55.115 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:33:55.893 upper_planner_node interval_diag step=6 reason=3 ref_body=(26.993,-0.608) heading_deg=-1.33 center_cell=(86,62) center_value=100 line_free=0 blocked=400 unknown=0 outside=2 longest_run=0 min_run=2 grid_free=1418 zero=1418 positive=14966 unknown=0 topic=/bev/occupancy_grid frame=Vehicle origin=(0.000,-20.000) origin_yaw_deg=0.00 size=128x128 res=0.3125 positive_is_drivable=0 threshold=1 waypoint_bias=0 previous=1
+17:33:55.894 upper_planner_node no valid preview interval at step=6; usable horizon=5 reason=3
+17:33:55.894 upper_planner_node horizon_diag configured=6 extent_limit=6 requested=6 usable=5 reserve=1 restore=1 step_m=4.500 previous=1
+17:33:56.064 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:33:56.214 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:33:56.399 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.327; retaining last published path
+17:33:56.957 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:33:57.114 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:33:57.217 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:33:57.894 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.322; retaining last published path
+17:33:58.114 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:33:58.316 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:33:58.970 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:33:59.114 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:33:59.394 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.321; retaining last published path
+17:33:59.415 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:34:00.114 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:34:00.393 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:34:00.395 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.312; retaining last published path
+17:34:00.518 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:34:00.895 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:34:00.993 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:34:01.115 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:34:01.393 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:34:01.615 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:34:01.896 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:34:01.897 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.303; retaining last published path
+17:34:02.165 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:34:02.394 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:34:02.616 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:34:02.893 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:34:02.894 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.324; retaining last published path
+17:34:02.996 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:34:03.166 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:34:03.393 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:34:03.715 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:34:03.892 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:34:04.166 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:34:04.395 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:34:04.396 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.315; retaining last published path
+17:34:04.715 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:34:04.892 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:34:05.009 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:34:05.215 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:34:05.394 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:34:05.816 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:34:05.894 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:34:05.895 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.329; retaining last published path
+17:34:06.266 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:34:06.392 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:34:06.896 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:34:06.896 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.330; retaining last published path
+17:34:06.916 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:34:07.011 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:34:07.315 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:34:07.393 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:34:07.895 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:34:07.896 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.319; retaining last published path
+17:34:08.017 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:34:08.317 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:34:08.397 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:34:08.894 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:34:08.896 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.337; retaining last published path
+17:34:09.016 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:34:09.115 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:34:09.365 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:34:09.393 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:34:09.894 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:34:10.216 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:34:10.394 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:34:10.396 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.302; retaining last published path
+17:34:10.416 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:34:10.893 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:34:11.025 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:34:11.216 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:34:11.393 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:34:11.415 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:34:11.893 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:34:11.895 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.324; retaining last published path
+17:34:12.316 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:34:12.393 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:34:12.464 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:34:12.894 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:34:13.043 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:34:13.393 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:34:13.394 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.325; retaining last published path
+17:34:13.416 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:34:13.465 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:34:13.893 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:34:14.393 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:34:14.516 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:34:14.517 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:34:14.895 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:34:14.895 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.291; retaining last published path
+17:34:15.045 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:34:15.395 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:34:15.468 knu_batch_runner [2/10] scenario1
+17:34:15.516 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:34:15.617 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:34:15.894 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:34:15.895 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.320; retaining last published path
+17:34:16.393 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:34:16.564 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:34:16.617 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:34:16.874 px4_odom_map_bridge Map alignment initialized once: source=(-580.400208, -421.818512, 1.088165, yaw=2.648415) yaw_delta=-0.582067 input_frame='map' (treated as PX4 local)
+17:34:16.894 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:34:16.894 upper_planner_node interval_diag step=1 reason=3 ref_body=(3.553,-2.762) heading_deg=-37.86 center_cell=(11,55) center_value=100 line_free=0 blocked=347 unknown=0 outside=1 longest_run=0 min_run=2 grid_free=521 zero=521 positive=15863 unknown=0 topic=/bev/occupancy_grid frame=Vehicle origin=(0.000,-20.000) origin_yaw_deg=0.00 size=128x128 res=0.3125 positive_is_drivable=0 threshold=1 waypoint_bias=0 previous=0
+17:34:16.895 upper_planner_node no valid preview interval at step=1; usable horizon=0 reason=3
+17:34:16.895 upper_planner_node no valid preview interval at step=4; usable horizon=0 reason=3
+17:34:16.900 upper_planner_node no valid preview interval at step=5; usable horizon=0 reason=3
+17:34:16.900 upper_planner_node no valid preview interval at step=6; usable horizon=0 reason=3
+17:34:16.900 upper_planner_node horizon_diag configured=6 extent_limit=6 requested=6 usable=0 reserve=1 restore=1 step_m=4.500 previous=0
+17:34:16.900 upper_planner_node empty valid interval prefix; retaining the last published path
+17:34:16.915 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:34:17.096 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:34:17.416 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:34:17.566 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:34:17.716 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:34:18.255 upper_planner_node mission cleared; awaiting path; revision=3
+17:34:18.257 lower_tracking_mpc_node Rejected lower path: fewer than two distinct path points
+17:34:18.318 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:34:18.358 knu_batch_runner 20bccc8584:1:scenario1: mission cleared; awaiting path; revision=3
+17:34:18.365 upper_planner_node reference path loaded from /navigation/global_path: 6 points frame=map waypoint_bias=disabled
+17:34:18.393 upper_planner_node waypoint pair advanced: [0,1] -> [1,2]; previous reference retained
+17:34:18.415 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:34:18.616 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:34:18.816 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:34:19.062 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:34:19.516 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:34:19.616 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:34:20.665 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:34:21.076 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:34:21.665 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:34:22.715 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:34:23.090 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:34:23.766 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:34:24.765 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:34:25.132 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:34:25.766 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:34:26.765 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:34:27.113 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:34:27.768 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:34:28.817 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:34:28.894 upper_planner_node waypoint pair advanced: [1,2] -> [2,3]; previous reference retained
+17:34:29.118 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:34:29.866 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:34:30.918 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:34:31.143 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:34:31.918 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:34:32.918 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:34:33.152 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:34:33.915 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:34:33.966 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:34:35.017 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:34:35.167 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:34:36.066 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:34:36.894 upper_planner_node waypoint pair advanced: [2,3] -> [3,4]; previous reference retained
+17:34:37.116 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:34:37.165 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:34:38.116 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:34:38.417 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:34:39.164 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:34:39.165 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:34:40.166 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:34:41.174 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:34:41.216 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:34:42.266 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:34:42.895 upper_planner_node waypoint pair advanced: [3,4] -> [4,5]; previous reference retained
+17:34:43.186 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:34:43.266 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:34:43.916 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:34:44.267 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:34:44.418 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:34:45.202 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:34:45.266 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:34:45.417 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:34:45.919 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:34:46.269 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:34:47.219 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:34:47.267 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:34:48.317 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:34:49.260 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:34:49.316 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:34:50.366 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:34:51.326 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:34:51.366 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:34:52.367 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:34:53.375 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:34:53.416 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:34:54.417 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:34:55.316 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:34:55.418 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:34:56.466 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:34:57.329 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:34:57.466 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:34:58.163 knu_batch_runner scenario1: completed 
+17:34:58.217 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:34:58.517 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:34:59.219 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:34:59.387 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:34:59.518 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:34:59.895 upper_planner_node interval_diag step=6 reason=3 ref_body=(26.961,-1.380) heading_deg=-3.29 center_cell=(86,59) center_value=100 line_free=0 blocked=401 unknown=0 outside=1 longest_run=0 min_run=2 grid_free=1426 zero=1426 positive=14958 unknown=0 topic=/bev/occupancy_grid frame=Vehicle origin=(0.000,-20.000) origin_yaw_deg=0.00 size=128x128 res=0.3125 positive_is_drivable=0 threshold=1 waypoint_bias=0 previous=1
+17:34:59.896 upper_planner_node no valid preview interval at step=6; usable horizon=5 reason=3
+17:34:59.896 upper_planner_node horizon_diag configured=6 extent_limit=6 requested=6 usable=5 reserve=1 restore=1 step_m=4.500 previous=1
+17:35:00.317 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:35:00.397 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.335; retaining last published path
+17:35:00.566 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:35:01.317 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:35:01.361 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:35:01.566 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:35:01.901 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.328; retaining last published path
+17:35:02.318 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:35:02.616 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:35:03.396 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.335; retaining last published path
+17:35:03.404 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:35:03.418 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:35:03.618 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:35:04.395 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:35:04.398 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.340; retaining last published path
+17:35:04.418 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:35:04.666 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:35:04.897 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:35:05.396 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:35:05.424 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:35:05.518 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:35:05.667 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:35:05.894 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:35:05.896 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.153; retaining last published path
+17:35:06.395 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:35:06.518 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:35:06.667 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:35:06.895 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:35:06.897 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.334; retaining last published path
+17:35:07.395 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:35:07.427 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:35:07.619 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:35:07.667 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:35:07.896 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:35:08.397 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:35:08.398 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.332; retaining last published path
+17:35:08.668 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:35:08.718 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:35:08.895 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:35:09.398 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:35:09.398 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.319; retaining last published path
+17:35:09.435 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:35:09.718 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:35:09.720 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:35:09.896 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:35:10.399 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:35:10.400 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.316; retaining last published path
+17:35:10.770 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:35:10.818 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:35:10.895 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:35:11.396 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:35:11.445 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:35:11.818 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:35:11.820 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:35:11.896 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:35:11.897 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.315; retaining last published path
+17:35:12.397 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:35:12.867 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:35:12.896 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:35:12.918 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:35:13.395 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:35:13.396 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.155; retaining last published path
+17:35:13.454 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:35:13.868 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:35:13.895 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:35:13.918 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:35:14.396 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:35:14.398 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.323; retaining last published path
+17:35:14.868 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:35:14.896 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:35:14.919 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:35:15.396 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:35:15.397 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.336; retaining last published path
+17:35:15.457 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:35:15.868 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:35:15.896 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:35:15.918 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:35:16.396 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:35:16.899 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:35:16.899 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.308; retaining last published path
+17:35:16.917 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:35:17.018 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:35:17.395 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:35:17.456 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:35:17.896 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:35:17.917 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:35:18.118 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:35:18.396 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:35:18.397 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.320; retaining last published path
+17:35:18.896 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:35:18.918 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:35:19.118 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:35:19.397 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:35:19.397 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.317; retaining last published path
+17:35:19.482 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:35:19.566 knu_batch_runner [3/10] scenario1
+17:35:19.896 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:35:19.967 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:35:20.218 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:35:20.396 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:35:20.398 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.326; retaining last published path
+17:35:20.895 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:35:20.967 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:35:20.969 px4_odom_map_bridge Map alignment initialized once: source=(-604.662537, -273.546387, 0.573822, yaw=0.548835) yaw_delta=1.517513 input_frame='map' (treated as PX4 local)
+17:35:21.017 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:35:21.218 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:35:21.419 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:35:21.510 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:35:21.968 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:35:22.218 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:35:22.358 upper_planner_node mission cleared; awaiting path; revision=5
+17:35:22.358 lower_tracking_mpc_node Rejected lower path: fewer than two distinct path points
+17:35:22.398 upper_planner_node planner waiting for global path
+17:35:22.418 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:35:22.455 knu_batch_runner 20bccc8584:2:scenario1: mission cleared; awaiting path; revision=5
+17:35:22.457 upper_planner_node reference path loaded from /navigation/global_path: 6 points frame=map waypoint_bias=disabled
+17:35:22.517 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:35:22.897 upper_planner_node waypoint pair advanced: [0,1] -> [1,2]; previous reference retained
+17:35:22.919 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:35:23.018 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:35:23.318 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:35:23.504 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:35:23.618 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:35:24.068 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:35:25.118 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:35:25.513 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:35:26.167 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:35:27.168 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:35:27.521 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:35:28.218 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:35:29.270 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:35:29.529 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:35:30.268 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:35:31.318 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:35:31.532 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:35:32.318 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:35:32.895 upper_planner_node waypoint pair advanced: [1,2] -> [2,3]; previous reference retained
+17:35:33.368 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:35:33.533 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:35:34.368 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:35:35.368 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:35:35.553 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:35:36.368 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:35:37.418 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:35:37.552 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:35:38.418 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:35:38.468 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:35:39.520 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:35:39.562 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:35:40.568 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:35:41.397 upper_planner_node waypoint pair advanced: [2,3] -> [3,4]; previous reference retained
+17:35:41.587 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:35:41.618 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:35:42.420 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:35:42.619 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:35:43.595 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:35:43.619 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:35:44.669 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:35:45.618 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:35:45.668 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:35:46.670 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:35:47.400 upper_planner_node waypoint pair advanced: [3,4] -> [4,5]; previous reference retained
+17:35:47.639 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:35:47.669 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:35:48.668 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:35:49.419 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:35:49.640 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:35:49.719 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:35:49.922 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:35:50.419 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:35:50.769 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:35:51.651 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:35:51.769 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:35:52.419 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:35:52.819 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:35:53.419 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:35:53.665 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:35:53.819 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:35:54.869 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:35:54.919 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:35:55.689 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:35:55.871 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:35:56.919 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:35:57.707 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:35:57.969 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:35:59.019 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:35:59.749 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:36:00.020 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:36:01.069 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:36:01.732 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:36:02.069 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:36:03.069 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:36:03.165 knu_batch_runner scenario1: completed 
+17:36:03.221 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:36:03.419 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:36:03.743 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:36:04.119 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:36:04.321 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:36:04.900 upper_planner_node interval_diag step=6 reason=3 ref_body=(26.905,-2.213) heading_deg=-4.69 center_cell=(86,56) center_value=100 line_free=0 blocked=402 unknown=0 outside=1 longest_run=0 min_run=2 grid_free=1436 zero=1436 positive=14948 unknown=0 topic=/bev/occupancy_grid frame=Vehicle origin=(0.000,-20.000) origin_yaw_deg=0.00 size=128x128 res=0.3125 positive_is_drivable=0 threshold=1 waypoint_bias=0 previous=1
+17:36:04.901 upper_planner_node no valid preview interval at step=6; usable horizon=5 reason=3
+17:36:04.901 upper_planner_node horizon_diag configured=6 extent_limit=6 requested=6 usable=5 reserve=1 restore=1 step_m=4.500 previous=1
+17:36:05.119 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:36:05.320 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:36:05.399 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.308; retaining last published path
+17:36:05.747 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:36:06.119 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:36:06.400 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.340; retaining last published path
+17:36:06.420 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:36:07.119 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:36:07.400 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.321; retaining last published path
+17:36:07.520 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:36:07.748 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:36:08.120 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:36:08.401 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.308; retaining last published path
+17:36:08.521 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:36:09.121 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:36:09.400 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:36:09.402 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.348; retaining last published path
+17:36:09.620 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:36:09.757 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:36:09.900 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:36:10.169 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:36:10.398 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:36:10.620 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:36:10.898 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:36:10.899 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.314; retaining last published path
+17:36:11.169 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:36:11.398 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:36:11.719 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:36:11.770 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:36:11.899 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:36:12.169 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:36:12.402 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:36:12.402 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.326; retaining last published path
+17:36:12.720 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:36:12.898 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:36:13.170 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:36:13.398 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:36:13.401 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.327; retaining last published path
+17:36:13.721 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:36:13.786 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:36:13.899 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:36:14.169 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:36:14.398 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:36:14.821 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:36:14.898 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:36:14.903 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.293; retaining last published path
+17:36:15.169 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:36:15.398 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:36:15.807 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:36:15.899 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:36:15.900 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.336; retaining last published path
+17:36:15.921 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:36:16.170 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:36:16.398 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:36:16.901 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:36:17.020 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:36:17.170 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:36:17.398 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:36:17.401 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.335; retaining last published path
+17:36:17.825 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:36:17.898 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:36:18.020 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:36:18.170 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:36:18.399 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:36:18.403 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.401; retaining last published path
+17:36:18.900 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:36:19.120 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:36:19.220 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:36:19.398 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:36:19.846 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:36:19.899 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:36:19.900 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.285; retaining last published path
+17:36:20.121 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:36:20.274 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:36:20.400 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:36:20.899 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:36:20.901 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.290; retaining last published path
+17:36:21.121 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:36:21.270 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:36:21.398 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:36:21.900 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:36:21.906 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:36:22.121 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:36:22.269 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:36:22.398 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:36:22.401 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.326; retaining last published path
+17:36:22.900 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:36:23.220 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:36:23.270 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:36:23.401 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:36:23.402 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.301; retaining last published path
+17:36:23.879 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:36:23.903 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:36:24.164 knu_batch_runner [4/10] scenario1
+17:36:24.221 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:36:24.269 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:36:24.400 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:36:24.900 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:36:24.902 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.212; retaining last published path
+17:36:25.271 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:36:25.320 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:36:25.398 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:36:25.565 px4_odom_map_bridge Map alignment initialized once: source=(-463.486267, -325.738831, 0.384583, yaw=-1.538071) yaw_delta=-2.678766 input_frame='map' (treated as PX4 local)
+17:36:25.621 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:36:25.894 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:36:25.920 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:36:26.320 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:36:26.320 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:36:26.955 upper_planner_node mission cleared; awaiting path; revision=7
+17:36:26.955 lower_tracking_mpc_node Rejected lower path: fewer than two distinct path points
+17:36:27.021 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:36:27.057 knu_batch_runner 20bccc8584:3:scenario1: mission cleared; awaiting path; revision=7
+17:36:27.062 upper_planner_node reference path loaded from /navigation/global_path: 6 points frame=map waypoint_bias=disabled
+17:36:27.121 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:36:27.320 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:36:27.321 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:36:27.398 upper_planner_node waypoint pair advanced: [0,1] -> [1,2]; previous reference retained
+17:36:27.422 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:36:27.901 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:36:28.221 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:36:28.369 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:36:29.370 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:36:29.908 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:36:30.369 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:36:31.370 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:36:31.940 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:36:32.370 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:36:33.421 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:36:33.964 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:36:34.421 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:36:35.423 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:36:35.958 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:36:36.470 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:36:37.399 upper_planner_node waypoint pair advanced: [1,2] -> [2,3]; previous reference retained
+17:36:37.470 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:36:37.965 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:36:38.471 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:36:39.470 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:36:39.978 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:36:40.471 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:36:41.470 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:36:41.990 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:36:42.421 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:36:42.471 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:36:43.522 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:36:43.993 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:36:44.571 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:36:45.621 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:36:45.899 upper_planner_node waypoint pair advanced: [2,3] -> [3,4]; previous reference retained
+17:36:46.012 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:36:46.621 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:36:46.921 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:36:47.621 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:36:48.034 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:36:48.671 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:36:49.721 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:36:50.031 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:36:50.770 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:36:51.770 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:36:51.899 upper_planner_node waypoint pair advanced: [3,4] -> [4,5]; previous reference retained
+17:36:52.040 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:36:52.821 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:36:53.422 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:36:53.872 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:36:54.050 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:36:54.422 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:36:54.871 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:36:54.922 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:36:55.420 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:36:55.921 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:36:56.108 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:36:56.921 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:36:56.970 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:36:57.420 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:36:57.971 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:36:58.084 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:36:59.022 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:37:00.071 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:37:01.071 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:37:01.678 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:37:02.121 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:37:02.122 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:37:03.121 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:37:03.860 knu_batch_runner scenario1: off_route 
+17:37:03.921 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:37:04.170 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:37:04.564 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=0.735 sec
+17:37:04.924 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:37:06.022 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:37:06.174 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:37:06.664 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=2.836 sec
+17:37:06.899 upper_planner_node planner pose is stale
+17:37:07.121 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:37:07.899 upper_planner_node planner pose is stale
+17:37:08.121 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:37:08.178 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:37:08.763 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=4.936 sec
+17:37:08.867 px4_ekf_bridge PX4 heartbeat timeout; waiting for reconnection
+17:37:08.898 upper_planner_node planner pose is stale
+17:37:09.221 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:37:09.899 upper_planner_node planner pose is stale
+17:37:10.189 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:37:10.221 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:37:10.863 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=7.036 sec
+17:37:10.898 upper_planner_node planner pose is stale
+17:37:11.221 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:37:11.899 upper_planner_node planner pose is stale
+17:37:12.199 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:37:12.222 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:37:12.900 upper_planner_node planner pose is stale
+17:37:12.965 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=9.136 sec
+17:37:13.321 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:37:14.230 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:37:14.322 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:37:14.399 upper_planner_node planner pose is stale
+17:37:15.064 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=11.236 sec
+17:37:15.322 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:37:15.899 upper_planner_node planner pose is stale
+17:37:16.262 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:37:16.322 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:37:17.164 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=13.336 sec
+17:37:17.322 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:37:17.400 upper_planner_node planner pose is stale
+17:37:18.315 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:37:18.422 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:37:18.899 upper_planner_node planner pose is stale
+17:37:19.265 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=15.436 sec
+17:37:19.422 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:37:20.328 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:37:20.399 upper_planner_node planner pose is stale
+17:37:20.422 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:37:21.364 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=17.536 sec
+17:37:21.400 upper_planner_node planner pose is stale
+17:37:21.522 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:37:22.309 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:37:22.400 upper_planner_node planner pose is stale
+17:37:22.622 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:37:23.399 upper_planner_node planner pose is stale
+17:37:23.464 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=19.636 sec
+17:37:23.722 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:37:24.324 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:37:24.400 upper_planner_node planner pose is stale
+17:37:24.822 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:37:25.399 upper_planner_node planner pose is stale
+17:37:25.565 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=21.736 sec
+17:37:25.822 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:37:26.371 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:37:26.900 upper_planner_node planner pose is stale
+17:37:26.922 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:37:27.665 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=23.836 sec
+17:37:27.900 upper_planner_node planner pose is stale
+17:37:27.922 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:37:28.336 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:37:29.022 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:37:29.400 upper_planner_node planner pose is stale
+17:37:29.765 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=25.936 sec
+17:37:30.022 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:37:30.353 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:37:30.399 upper_planner_node planner pose is stale
+17:37:31.122 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:37:31.400 upper_planner_node planner pose is stale
+17:37:31.865 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=28.037 sec
+17:37:32.122 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:37:32.374 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:37:32.400 upper_planner_node planner pose is stale
+17:37:33.222 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:37:33.400 upper_planner_node planner pose is stale
+17:37:33.965 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=30.137 sec
+17:37:34.222 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:37:34.360 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:37:34.400 upper_planner_node planner pose is stale
+17:37:35.222 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:37:35.371 px4_ekf_bridge SIH heading check: settling (EKF-SIH=1.1390151208326855 deg); pose output blocked
+17:37:35.372 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:37:35.400 upper_planner_node planner pose is stale
+17:37:35.598 px4_ekf_bridge PX4 heartbeat detected: target=1:1
+17:37:35.603 px4_ekf_bridge PX4: GCS connection regained	
+17:37:35.618 px4_ekf_bridge Requested PX4 LOCAL_POSITION_NED at 30.0 Hz
+17:37:35.619 px4_ekf_bridge Requested PX4 ATTITUDE at 30.0 Hz
+17:37:35.620 px4_ekf_bridge Requested PX4 HIL_STATE_QUATERNION at 30.0 Hz
+17:37:35.622 lower_tracking_mpc_node PX4 STATUSTEXT severity=6 text=GCS connection regained	
+17:37:36.066 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=32.237 sec
+17:37:36.223 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:37:36.395 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:37:36.403 upper_planner_node planner pose is stale
+17:37:36.422 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:37:37.224 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:37:37.395 px4_ekf_bridge SIH heading check: ok (EKF-SIH=-1.1315019471893486 deg); pose output enabled
+17:37:37.424 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:37:37.427 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:37:37.902 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.304; retaining last published path
+17:37:38.324 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:37:38.404 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:37:38.424 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:37:38.465 knu_batch_runner [5/10] scenario1
+17:37:38.902 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.316; retaining last published path
+17:37:39.324 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:37:39.473 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:37:39.760 px4_odom_map_bridge Map alignment initialized once: source=(-548.729553, -494.234100, -0.415100, yaw=-2.592888) yaw_delta=-1.623949 input_frame='map' (treated as PX4 local)
+17:37:39.823 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:37:39.923 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:37:40.414 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:37:40.423 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:37:40.423 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:37:40.473 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:37:41.157 upper_planner_node mission cleared; awaiting path; revision=9
+17:37:41.157 lower_tracking_mpc_node Rejected lower path: fewer than two distinct path points
+17:37:41.223 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:37:41.259 knu_batch_runner 20bccc8584:4:scenario1: mission cleared; awaiting path; revision=9
+17:37:41.263 upper_planner_node reference path loaded from /navigation/global_path: 6 points frame=map waypoint_bias=disabled
+17:37:41.324 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:37:41.400 upper_planner_node waypoint pair advanced: [0,1] -> [1,2]; previous reference retained
+17:37:41.423 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:37:41.424 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:37:41.523 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:37:42.422 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:37:42.429 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:37:42.524 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:37:43.573 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:37:44.455 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:37:44.622 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:37:45.623 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:37:46.517 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:37:46.672 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:37:47.673 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:37:48.487 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:37:48.723 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:37:49.723 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:37:50.525 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:37:50.774 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:37:51.402 upper_planner_node waypoint pair advanced: [1,2] -> [2,3]; previous reference retained
+17:37:51.773 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:37:52.537 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:37:52.823 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:37:53.823 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:37:54.539 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:37:54.823 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:37:55.872 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:37:56.556 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:37:56.873 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:37:56.923 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:37:58.266 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=0.641 sec
+17:37:58.324 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:37:58.580 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:37:59.423 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:38:00.366 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=2.741 sec
+17:38:00.423 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:38:00.581 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:38:00.901 upper_planner_node planner pose is stale
+17:38:01.524 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:38:01.901 upper_planner_node planner pose is stale
+17:38:02.369 px4_ekf_bridge PX4 heartbeat timeout; waiting for reconnection
+17:38:02.466 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=4.841 sec
+17:38:02.524 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:38:02.609 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:38:02.901 upper_planner_node planner pose is stale
+17:38:03.624 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:38:04.400 upper_planner_node planner pose is stale
+17:38:04.566 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=6.941 sec
+17:38:04.640 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:38:04.723 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:38:05.401 upper_planner_node planner pose is stale
+17:38:05.823 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:38:06.643 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:38:06.666 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=9.041 sec
+17:38:06.901 upper_planner_node planner pose is stale
+17:38:06.924 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:38:07.656 knu_batch_runner scenario1: pose_timeout 
+17:38:07.901 upper_planner_node planner pose is stale
+17:38:08.025 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:38:08.650 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:38:08.766 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=11.141 sec
+17:38:08.901 upper_planner_node planner pose is stale
+17:38:09.123 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:38:09.901 upper_planner_node planner pose is stale
+17:38:10.125 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:38:10.654 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:38:10.866 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=13.241 sec
+17:38:10.901 upper_planner_node planner pose is stale
+17:38:11.224 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:38:11.901 upper_planner_node planner pose is stale
+17:38:12.324 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:38:12.662 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:38:12.901 upper_planner_node planner pose is stale
+17:38:12.966 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=15.342 sec
+17:38:13.324 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:38:13.901 upper_planner_node planner pose is stale
+17:38:14.424 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:38:14.671 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:38:14.901 upper_planner_node planner pose is stale
+17:38:15.066 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=17.442 sec
+17:38:15.524 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:38:15.901 upper_planner_node planner pose is stale
+17:38:16.524 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:38:16.681 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:38:17.166 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=19.542 sec
+17:38:17.402 upper_planner_node planner pose is stale
+17:38:17.624 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:38:18.624 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:38:18.686 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:38:18.901 upper_planner_node planner pose is stale
+17:38:19.266 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=21.642 sec
+17:38:19.624 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:38:19.901 upper_planner_node planner pose is stale
+17:38:20.624 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:38:20.695 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:38:20.902 upper_planner_node planner pose is stale
+17:38:21.367 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=23.742 sec
+17:38:21.724 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:38:21.901 upper_planner_node planner pose is stale
+17:38:22.705 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:38:22.724 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:38:22.902 upper_planner_node planner pose is stale
+17:38:23.467 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=25.842 sec
+17:38:23.724 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:38:24.402 upper_planner_node planner pose is stale
+17:38:24.713 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:38:24.724 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:38:25.401 upper_planner_node planner pose is stale
+17:38:25.567 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=27.942 sec
+17:38:25.725 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:38:26.403 upper_planner_node planner pose is stale
+17:38:26.726 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:38:26.824 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:38:27.667 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=30.042 sec
+17:38:27.902 upper_planner_node planner pose is stale
+17:38:27.924 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:38:28.730 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:38:28.925 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:38:29.402 upper_planner_node planner pose is stale
+17:38:29.767 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=32.142 sec
+17:38:30.024 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:38:30.402 upper_planner_node planner pose is stale
+17:38:30.740 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:38:31.024 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:38:31.402 upper_planner_node planner pose is stale
+17:38:31.867 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=34.242 sec
+17:38:32.124 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:38:32.768 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:38:32.903 upper_planner_node planner pose is stale
+17:38:33.125 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:38:33.967 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=36.342 sec
+17:38:34.224 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:38:34.402 upper_planner_node planner pose is stale
+17:38:34.777 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:38:35.324 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:38:35.375 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:38:35.384 px4_ekf_bridge SIH heading check: missing_or_stale_sih (EKF-SIH=None deg); pose output blocked
+17:38:35.402 px4_ekf_bridge SIH heading check: settling (EKF-SIH=1.0038605771966667 deg); pose output blocked
+17:38:35.405 upper_planner_node planner pose is stale
+17:38:35.557 px4_ekf_bridge PX4 heartbeat detected: target=1:1
+17:38:35.574 lower_tracking_mpc_node PX4 STATUSTEXT severity=6 text=GCS connection regained	
+17:38:35.578 px4_ekf_bridge PX4: GCS connection regained	
+17:38:35.618 px4_ekf_bridge Requested PX4 LOCAL_POSITION_NED at 30.0 Hz
+17:38:35.620 px4_ekf_bridge Requested PX4 ATTITUDE at 30.0 Hz
+17:38:35.622 px4_ekf_bridge Requested PX4 HIL_STATE_QUATERNION at 30.0 Hz
+17:38:36.067 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=38.442 sec
+17:38:36.326 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:38:36.425 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:38:36.803 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:38:36.903 upper_planner_node planner pose is stale
+17:38:37.410 px4_ekf_bridge SIH heading check: ok (EKF-SIH=-0.33283455805487244 deg); pose output enabled
+17:38:37.425 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:38:37.428 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:38:37.475 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:38:37.906 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=4 solve_ms=0.614; retaining last published path
+17:38:38.524 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:38:38.525 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:38:38.563 knu_batch_runner [6/10] scenario1
+17:38:38.798 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:38:39.405 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=4 solve_ms=1.211; retaining last published path
+17:38:39.525 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:38:39.526 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:38:39.876 px4_odom_map_bridge Map alignment initialized once: source=(-651.660156, -550.815552, -0.181213, yaw=-2.696221) yaw_delta=-1.520616 input_frame='map' (treated as PX4 local)
+17:38:39.924 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:38:40.425 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:38:40.525 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:38:40.526 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:38:40.805 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:38:41.256 upper_planner_node mission cleared; awaiting path; revision=11
+17:38:41.257 lower_tracking_mpc_node Rejected lower path: fewer than two distinct path points
+17:38:41.324 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:38:41.355 knu_batch_runner 20bccc8584:5:scenario1: mission cleared; awaiting path; revision=11
+17:38:41.357 upper_planner_node reference path loaded from /navigation/global_path: 6 points frame=map waypoint_bias=disabled
+17:38:41.402 upper_planner_node waypoint pair advanced: [0,1] -> [1,2]; previous reference retained
+17:38:41.425 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:38:41.574 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:38:41.625 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:38:42.525 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:38:42.575 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:38:42.831 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:38:43.626 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:38:44.624 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:38:44.831 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:38:45.675 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:38:46.675 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:38:46.833 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:38:47.675 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:38:48.725 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:38:48.835 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:38:49.725 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:38:50.725 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:38:50.857 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:38:51.776 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:38:51.903 upper_planner_node waypoint pair advanced: [1,2] -> [2,3]; previous reference retained
+17:38:52.825 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:38:52.870 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:38:53.825 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:38:54.876 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:38:54.882 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:38:55.875 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:38:56.875 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:38:56.882 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:38:57.425 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:38:57.925 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: stale pose
+17:38:57.968 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=0.659 sec
+17:38:58.025 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:38:58.890 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:38:59.125 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:39:00.068 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=2.759 sec
+17:39:00.125 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:39:00.403 upper_planner_node planner pose is stale
+17:39:00.897 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:39:01.225 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:39:01.403 upper_planner_node planner pose is stale
+17:39:01.619 px4_ekf_bridge PX4 heartbeat timeout; waiting for reconnection
+17:39:02.168 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=4.859 sec
+17:39:02.325 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:39:02.403 upper_planner_node planner pose is stale
+17:39:02.905 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:39:03.326 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:39:03.903 upper_planner_node planner pose is stale
+17:39:04.269 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=6.959 sec
+17:39:04.425 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:39:04.903 upper_planner_node planner pose is stale
+17:39:04.912 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:39:05.426 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:39:05.903 upper_planner_node planner pose is stale
+17:39:06.368 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=9.059 sec
+17:39:06.525 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:39:06.903 upper_planner_node planner pose is stale
+17:39:06.916 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:39:07.359 knu_batch_runner scenario1: pose_timeout 
+17:39:07.527 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:39:07.903 upper_planner_node planner pose is stale
+17:39:08.468 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=11.159 sec
+17:39:08.625 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:39:08.922 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:39:09.403 upper_planner_node planner pose is stale
+17:39:09.626 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:39:10.403 upper_planner_node planner pose is stale
+17:39:10.568 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=13.259 sec
+17:39:10.726 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:39:10.930 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:39:11.403 upper_planner_node planner pose is stale
+17:39:11.826 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:39:12.668 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=15.359 sec
+17:39:12.826 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:39:12.903 upper_planner_node planner pose is stale
+17:39:12.937 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:39:13.903 upper_planner_node planner pose is stale
+17:39:13.926 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:39:14.769 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=17.459 sec
+17:39:14.903 upper_planner_node planner pose is stale
+17:39:14.926 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:39:14.944 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:39:15.904 upper_planner_node planner pose is stale
+17:39:16.026 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:39:16.868 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=19.559 sec
+17:39:16.903 upper_planner_node planner pose is stale
+17:39:16.959 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:39:17.126 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:39:17.903 upper_planner_node planner pose is stale
+17:39:18.226 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:39:18.903 upper_planner_node planner pose is stale
+17:39:18.955 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:39:18.968 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=21.659 sec
+17:39:19.226 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:39:19.904 upper_planner_node planner pose is stale
+17:39:20.326 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:39:20.904 upper_planner_node planner pose is stale
+17:39:20.960 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:39:21.069 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=23.760 sec
+17:39:21.326 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:39:21.904 upper_planner_node planner pose is stale
+17:39:22.328 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:39:22.904 upper_planner_node planner pose is stale
+17:39:22.968 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:39:23.169 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=25.860 sec
+17:39:23.426 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:39:24.404 upper_planner_node planner pose is stale
+17:39:24.426 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:39:24.978 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:39:25.269 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=27.960 sec
+17:39:25.404 upper_planner_node planner pose is stale
+17:39:25.426 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:39:26.526 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:39:26.904 upper_planner_node planner pose is stale
+17:39:26.981 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:39:27.369 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=30.060 sec
+17:39:27.626 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:39:27.904 upper_planner_node planner pose is stale
+17:39:28.626 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:39:28.990 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:39:29.404 upper_planner_node planner pose is stale
+17:39:29.469 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=32.160 sec
+17:39:29.626 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:39:30.404 upper_planner_node planner pose is stale
+17:39:30.626 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:39:30.994 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:39:31.404 upper_planner_node planner pose is stale
+17:39:31.569 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=34.260 sec
+17:39:31.626 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:39:32.404 upper_planner_node planner pose is stale
+17:39:32.627 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:39:33.001 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:39:33.404 upper_planner_node planner pose is stale
+17:39:33.626 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:39:33.669 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=36.360 sec
+17:39:34.404 upper_planner_node planner pose is stale
+17:39:34.726 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:39:35.005 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:39:35.378 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:39:35.390 px4_ekf_bridge SIH heading check: missing_or_stale_sih (EKF-SIH=None deg); pose output blocked
+17:39:35.405 upper_planner_node planner pose is stale
+17:39:35.414 px4_ekf_bridge PX4 heartbeat detected: target=1:1
+17:39:35.420 px4_ekf_bridge SIH heading check: settling (EKF-SIH=1.6512557251830313 deg); pose output blocked
+17:39:35.617 px4_ekf_bridge PX4: GCS connection regained	
+17:39:35.620 px4_ekf_bridge Requested PX4 LOCAL_POSITION_NED at 30.0 Hz
+17:39:35.621 px4_ekf_bridge Requested PX4 ATTITUDE at 30.0 Hz
+17:39:35.622 px4_ekf_bridge Requested PX4 HIL_STATE_QUATERNION at 30.0 Hz
+17:39:35.626 lower_tracking_mpc_node PX4 STATUSTEXT severity=6 text=GCS connection regained	
+17:39:35.726 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:39:35.769 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=38.460 sec
+17:39:36.035 px4_ekf_bridge SIH heading check: missing_or_stale_sih (EKF-SIH=None deg); pose output blocked
+17:39:36.070 px4_ekf_bridge SIH heading check: settling (EKF-SIH=-0.5426379003314445 deg); pose output blocked
+17:39:36.429 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:39:36.728 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:39:36.906 upper_planner_node planner pose is stale
+17:39:37.030 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:39:37.427 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:39:37.829 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:39:37.876 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=40.560 sec
+17:39:38.080 px4_ekf_bridge SIH heading check: ok (EKF-SIH=-0.1443627396388309 deg); pose output enabled
+17:39:38.128 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:39:38.407 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=4 solve_ms=0.447; retaining last published path
+17:39:38.477 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:39:38.927 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:39:39.044 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:39:39.164 knu_batch_runner [7/10] scenario1
+17:39:39.477 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:39:39.907 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=4 solve_ms=0.467; retaining last published path
+17:39:39.927 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:39:40.478 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:39:40.592 px4_odom_map_bridge Map alignment initialized once: source=(-751.926514, -596.299316, 0.089691, yaw=-2.740431) yaw_delta=-1.476406 input_frame='map' (treated as PX4 local)
+17:39:40.626 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:39:40.927 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:39:40.927 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:39:41.042 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:39:41.428 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:39:41.527 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:39:41.956 upper_planner_node mission cleared; awaiting path; revision=13
+17:39:41.958 lower_tracking_mpc_node Rejected lower path: fewer than two distinct path points
+17:39:42.027 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:39:42.027 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:39:42.058 knu_batch_runner 20bccc8584:6:scenario1: mission cleared; awaiting path; revision=13
+17:39:42.063 upper_planner_node reference path loaded from /navigation/global_path: 6 points frame=map waypoint_bias=disabled
+17:39:42.127 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:39:42.404 upper_planner_node waypoint pair advanced: [0,1] -> [1,2]; previous reference retained
+17:39:42.427 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:39:42.527 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:39:43.067 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:39:43.128 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:39:43.227 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:39:43.527 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:39:44.580 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:39:45.110 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:39:45.627 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:39:46.627 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:39:47.130 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:39:47.628 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:39:48.628 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:39:49.155 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:39:49.677 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:39:50.679 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:39:51.170 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:39:51.727 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:39:52.409 upper_planner_node waypoint pair advanced: [1,2] -> [2,3]; previous reference retained
+17:39:52.778 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:39:53.183 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:39:53.828 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:39:54.877 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:39:55.191 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:39:55.877 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:39:56.878 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:39:57.207 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:39:57.930 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:39:57.930 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:39:59.127 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: stale pose
+17:39:59.170 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=0.660 sec
+17:39:59.208 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:39:59.228 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:40:00.328 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:40:01.211 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:40:01.270 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=2.760 sec
+17:40:01.427 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:40:01.905 upper_planner_node planner pose is stale
+17:40:02.427 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:40:02.905 upper_planner_node planner pose is stale
+17:40:03.214 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:40:03.370 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=4.860 sec
+17:40:03.427 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:40:03.619 px4_ekf_bridge PX4 heartbeat timeout; waiting for reconnection
+17:40:03.905 upper_planner_node planner pose is stale
+17:40:04.527 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:40:04.905 upper_planner_node planner pose is stale
+17:40:05.257 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:40:05.471 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=6.961 sec
+17:40:05.527 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:40:05.905 upper_planner_node planner pose is stale
+17:40:06.528 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:40:06.905 upper_planner_node planner pose is stale
+17:40:07.258 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:40:07.528 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:40:07.570 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=9.060 sec
+17:40:07.906 upper_planner_node planner pose is stale
+17:40:08.560 knu_batch_runner scenario1: pose_timeout 
+17:40:08.628 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:40:08.905 upper_planner_node planner pose is stale
+17:40:09.322 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:40:09.670 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=11.161 sec
+17:40:09.728 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:40:09.905 upper_planner_node planner pose is stale
+17:40:10.828 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:40:10.905 upper_planner_node planner pose is stale
+17:40:11.331 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:40:11.770 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=13.261 sec
+17:40:11.906 upper_planner_node planner pose is stale
+17:40:11.928 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:40:12.905 upper_planner_node planner pose is stale
+17:40:12.928 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:40:13.303 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:40:13.870 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=15.361 sec
+17:40:14.028 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:40:14.406 upper_planner_node planner pose is stale
+17:40:15.028 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:40:15.325 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:40:15.405 upper_planner_node planner pose is stale
+17:40:15.971 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=17.461 sec
+17:40:16.028 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:40:16.905 upper_planner_node planner pose is stale
+17:40:17.128 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:40:17.360 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:40:17.906 upper_planner_node planner pose is stale
+17:40:18.071 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=19.561 sec
+17:40:18.230 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:40:18.906 upper_planner_node planner pose is stale
+17:40:19.228 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:40:19.325 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:40:20.171 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=21.661 sec
+17:40:20.228 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:40:20.406 upper_planner_node planner pose is stale
+17:40:21.328 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:40:21.328 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:40:21.905 upper_planner_node planner pose is stale
+17:40:22.271 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=23.761 sec
+17:40:22.428 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:40:22.906 upper_planner_node planner pose is stale
+17:40:23.392 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:40:23.428 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:40:24.371 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=25.861 sec
+17:40:24.406 upper_planner_node planner pose is stale
+17:40:24.428 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:40:25.375 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:40:25.528 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:40:25.905 upper_planner_node planner pose is stale
+17:40:26.471 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=27.961 sec
+17:40:26.528 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:40:26.906 upper_planner_node planner pose is stale
+17:40:27.377 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:40:27.628 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:40:27.906 upper_planner_node planner pose is stale
+17:40:28.571 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=30.061 sec
+17:40:28.629 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:40:29.399 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:40:29.406 upper_planner_node planner pose is stale
+17:40:29.728 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:40:30.406 upper_planner_node planner pose is stale
+17:40:30.671 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=32.161 sec
+17:40:30.728 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:40:31.400 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:40:31.406 upper_planner_node planner pose is stale
+17:40:31.728 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:40:32.771 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=34.261 sec
+17:40:32.828 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:40:32.906 upper_planner_node planner pose is stale
+17:40:33.442 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:40:33.906 upper_planner_node planner pose is stale
+17:40:33.928 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:40:34.872 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=36.361 sec
+17:40:34.906 upper_planner_node planner pose is stale
+17:40:34.929 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:40:35.367 px4_ekf_bridge SIH heading check: missing_or_stale_sih (EKF-SIH=None deg); pose output blocked
+17:40:35.379 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:40:35.395 px4_ekf_bridge SIH heading check: settling (EKF-SIH=1.5515182469352276 deg); pose output blocked
+17:40:35.444 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:40:35.594 px4_ekf_bridge PX4 heartbeat detected: target=1:1
+17:40:35.597 px4_ekf_bridge PX4: GCS connection regained	
+17:40:35.619 px4_ekf_bridge Requested PX4 LOCAL_POSITION_NED at 30.0 Hz
+17:40:35.621 px4_ekf_bridge Requested PX4 ATTITUDE at 30.0 Hz
+17:40:35.622 px4_ekf_bridge Requested PX4 HIL_STATE_QUATERNION at 30.0 Hz
+17:40:35.629 lower_tracking_mpc_node PX4 STATUSTEXT severity=6 text=GCS connection regained	
+17:40:35.906 upper_planner_node planner pose is stale
+17:40:35.929 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:40:36.155 px4_ekf_bridge SIH heading check: missing_or_stale_sih (EKF-SIH=None deg); pose output blocked
+17:40:36.194 px4_ekf_bridge SIH heading check: settling (EKF-SIH=-0.5398793850359747 deg); pose output blocked
+17:40:36.429 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:40:36.907 upper_planner_node planner pose is stale
+17:40:36.930 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:40:36.972 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=38.462 sec
+17:40:37.429 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:40:37.466 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:40:38.031 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:40:38.224 px4_ekf_bridge SIH heading check: ok (EKF-SIH=-0.23577204243032687 deg); pose output enabled
+17:40:38.329 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:40:38.409 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=12 solve_ms=0.839; retaining last published path
+17:40:38.478 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:40:39.129 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:40:39.265 knu_batch_runner [8/10] scenario1
+17:40:39.417 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=24 solve_ms=1.206; retaining last published path
+17:40:39.477 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:40:39.478 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:40:40.231 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:40:40.479 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:40:40.689 px4_odom_map_bridge Map alignment initialized once: source=(-859.699280, -636.753967, 0.174774, yaw=-2.841045) yaw_delta=-1.375792 input_frame='map' (treated as PX4 local)
+17:40:40.729 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:40:40.930 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:40:41.229 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:40:41.430 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:40:41.507 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:40:41.529 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:40:42.155 upper_planner_node mission cleared; awaiting path; revision=15
+17:40:42.155 lower_tracking_mpc_node Rejected lower path: fewer than two distinct path points
+17:40:42.229 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:40:42.229 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:40:42.259 knu_batch_runner 20bccc8584:7:scenario1: mission cleared; awaiting path; revision=15
+17:40:42.263 upper_planner_node reference path loaded from /navigation/global_path: 6 points frame=map waypoint_bias=disabled
+17:40:42.329 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:40:42.407 upper_planner_node waypoint pair advanced: [0,1] -> [1,2]; previous reference retained
+17:40:42.429 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:40:42.529 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:40:43.329 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:40:43.430 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:40:43.520 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:40:43.579 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:40:44.579 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:40:45.537 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:40:45.629 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:40:46.629 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:40:47.603 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:40:47.679 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:40:48.679 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:40:49.647 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:40:49.679 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:40:50.679 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:40:51.655 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:40:51.729 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:40:52.779 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:40:52.907 upper_planner_node waypoint pair advanced: [1,2] -> [2,3]; previous reference retained
+17:40:53.666 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:40:53.830 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:40:54.879 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:40:55.737 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:40:55.929 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:40:56.929 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:40:57.773 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:40:57.929 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:40:58.429 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: stale pose
+17:40:58.530 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:40:58.572 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=0.789 sec
+17:40:59.629 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:40:59.810 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:41:00.630 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:41:00.672 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=2.889 sec
+17:41:00.907 upper_planner_node planner pose is stale
+17:41:01.730 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:41:01.834 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:41:02.408 upper_planner_node planner pose is stale
+17:41:02.617 px4_ekf_bridge PX4 heartbeat timeout; waiting for reconnection
+17:41:02.772 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=4.989 sec
+17:41:02.829 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:41:03.854 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:41:03.907 upper_planner_node planner pose is stale
+17:41:03.929 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:41:04.872 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=7.089 sec
+17:41:04.907 upper_planner_node planner pose is stale
+17:41:04.930 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:41:05.856 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:41:06.029 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:41:06.407 upper_planner_node planner pose is stale
+17:41:06.972 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=9.189 sec
+17:41:07.030 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:41:07.408 upper_planner_node planner pose is stale
+17:41:07.861 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:41:07.862 knu_batch_runner scenario1: pose_timeout 
+17:41:08.030 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:41:08.907 upper_planner_node planner pose is stale
+17:41:09.030 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:41:09.072 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=11.289 sec
+17:41:09.858 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:41:09.907 upper_planner_node planner pose is stale
+17:41:10.030 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:41:10.908 upper_planner_node planner pose is stale
+17:41:11.130 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:41:11.172 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=13.389 sec
+17:41:11.884 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:41:11.907 upper_planner_node planner pose is stale
+17:41:12.229 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:41:12.907 upper_planner_node planner pose is stale
+17:41:13.230 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:41:13.272 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=15.490 sec
+17:41:13.889 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:41:13.907 upper_planner_node planner pose is stale
+17:41:14.230 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:41:14.907 upper_planner_node planner pose is stale
+17:41:15.330 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:41:15.372 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=17.590 sec
+17:41:15.894 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:41:15.907 upper_planner_node planner pose is stale
+17:41:16.330 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:41:16.907 upper_planner_node planner pose is stale
+17:41:17.330 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:41:17.472 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=19.690 sec
+17:41:17.898 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:41:18.330 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:41:18.407 upper_planner_node planner pose is stale
+17:41:19.407 upper_planner_node planner pose is stale
+17:41:19.430 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:41:19.573 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=21.790 sec
+17:41:19.967 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:41:20.408 upper_planner_node planner pose is stale
+17:41:20.430 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:41:21.407 upper_planner_node planner pose is stale
+17:41:21.530 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:41:21.673 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=23.890 sec
+17:41:21.974 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:41:22.407 upper_planner_node planner pose is stale
+17:41:22.630 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:41:23.407 upper_planner_node planner pose is stale
+17:41:23.630 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:41:23.773 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=25.990 sec
+17:41:23.979 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:41:24.408 upper_planner_node planner pose is stale
+17:41:24.730 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:41:25.730 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:41:25.873 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=28.090 sec
+17:41:25.907 upper_planner_node planner pose is stale
+17:41:25.986 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:41:26.730 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:41:26.908 upper_planner_node planner pose is stale
+17:41:27.830 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:41:27.908 upper_planner_node planner pose is stale
+17:41:27.973 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=30.190 sec
+17:41:27.993 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:41:28.830 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:41:28.908 upper_planner_node planner pose is stale
+17:41:29.908 upper_planner_node planner pose is stale
+17:41:29.931 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:41:30.001 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:41:30.073 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=32.290 sec
+17:41:30.908 upper_planner_node planner pose is stale
+17:41:31.030 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:41:31.908 upper_planner_node planner pose is stale
+17:41:32.006 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:41:32.030 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:41:32.173 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=34.390 sec
+17:41:33.031 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:41:33.408 upper_planner_node planner pose is stale
+17:41:34.012 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:41:34.131 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:41:34.273 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=36.490 sec
+17:41:34.908 upper_planner_node planner pose is stale
+17:41:35.131 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:41:35.302 px4_ekf_bridge SIH heading check: missing_or_stale_sih (EKF-SIH=None deg); pose output blocked
+17:41:35.320 px4_ekf_bridge SIH heading check: settling (EKF-SIH=1.3315601846999034 deg); pose output blocked
+17:41:35.331 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:41:35.470 px4_ekf_bridge PX4 heartbeat detected: target=1:1
+17:41:35.569 px4_ekf_bridge PX4: GCS connection regained	
+17:41:35.581 lower_tracking_mpc_node PX4 STATUSTEXT severity=6 text=GCS connection regained	
+17:41:35.621 px4_ekf_bridge Requested PX4 LOCAL_POSITION_NED at 30.0 Hz
+17:41:35.621 px4_ekf_bridge Requested PX4 ATTITUDE at 30.0 Hz
+17:41:35.621 px4_ekf_bridge Requested PX4 HIL_STATE_QUATERNION at 30.0 Hz
+17:41:35.908 upper_planner_node planner pose is stale
+17:41:36.020 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:41:36.131 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:41:36.197 px4_ekf_bridge SIH heading check: missing_or_stale_sih (EKF-SIH=None deg); pose output blocked
+17:41:36.275 px4_ekf_bridge SIH heading check: settling (EKF-SIH=-0.6543188279112564 deg); pose output blocked
+17:41:36.373 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=38.590 sec
+17:41:36.380 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:41:36.908 upper_planner_node planner pose is stale
+17:41:37.132 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:41:37.381 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:41:37.908 upper_planner_node planner pose is stale
+17:41:38.033 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:41:38.131 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:41:38.285 px4_ekf_bridge SIH heading check: ok (EKF-SIH=-0.18951079451354866 deg); pose output enabled
+17:41:38.331 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:41:38.381 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:41:38.412 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.993; retaining last published path
+17:41:39.231 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:41:39.366 knu_batch_runner [9/10] scenario1
+17:41:39.431 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:41:39.911 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=2 solve_ms=0.408; retaining last published path
+17:41:40.032 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:41:40.231 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:41:40.481 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:41:40.684 px4_odom_map_bridge Map alignment initialized once: source=(-967.087891, -668.064331, 0.235046, yaw=-2.876304) yaw_delta=-1.340533 input_frame='map' (treated as PX4 local)
+17:41:40.731 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:41:40.931 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:41:41.331 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:41:41.431 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:41:41.482 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:41:42.037 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:41:42.056 upper_planner_node mission cleared; awaiting path; revision=17
+17:41:42.056 lower_tracking_mpc_node Rejected lower path: fewer than two distinct path points
+17:41:42.131 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:41:42.160 knu_batch_runner 20bccc8584:8:scenario1: mission cleared; awaiting path; revision=17
+17:41:42.164 upper_planner_node reference path loaded from /navigation/global_path: 6 points frame=map waypoint_bias=disabled
+17:41:42.232 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:41:42.332 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:41:42.409 upper_planner_node waypoint pair advanced: [0,1] -> [1,2]; previous reference retained
+17:41:42.430 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:41:42.481 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:41:43.330 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:41:43.481 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:41:44.053 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:41:44.531 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:41:45.581 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:41:46.087 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:41:46.581 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:41:47.582 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:41:48.093 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:41:48.631 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:41:49.631 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:41:50.121 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:41:50.632 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:41:51.683 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:41:52.189 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:41:52.415 upper_planner_node waypoint pair advanced: [1,2] -> [2,3]; previous reference retained
+17:41:52.682 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:41:53.681 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:41:54.181 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:41:54.731 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:41:55.731 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:41:56.208 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:41:56.731 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:41:57.782 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:41:57.932 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:41:58.232 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:41:58.931 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: stale pose
+17:41:59.031 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:41:59.174 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=0.855 sec
+17:42:00.131 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:42:00.320 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:42:01.132 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:42:01.274 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=2.955 sec
+17:42:01.409 upper_planner_node planner pose is stale
+17:42:02.131 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:42:02.247 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:42:02.909 upper_planner_node planner pose is stale
+17:42:03.231 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:42:03.370 px4_ekf_bridge PX4 heartbeat timeout; waiting for reconnection
+17:42:03.374 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=5.055 sec
+17:42:03.909 upper_planner_node planner pose is stale
+17:42:04.231 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:42:04.294 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:42:04.909 upper_planner_node planner pose is stale
+17:42:05.332 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:42:05.475 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=7.155 sec
+17:42:05.909 upper_planner_node planner pose is stale
+17:42:06.332 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:42:06.431 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:42:06.909 upper_planner_node planner pose is stale
+17:42:07.435 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:42:07.574 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=9.255 sec
+17:42:08.292 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:42:08.360 knu_batch_runner scenario1: pose_timeout 
+17:42:08.409 upper_planner_node planner pose is stale
+17:42:08.432 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:42:09.532 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:42:09.674 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=11.355 sec
+17:42:09.909 upper_planner_node planner pose is stale
+17:42:10.294 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:42:10.532 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:42:10.909 upper_planner_node planner pose is stale
+17:42:11.631 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:42:11.774 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=13.455 sec
+17:42:11.909 upper_planner_node planner pose is stale
+17:42:12.372 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:42:12.632 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:42:12.909 upper_planner_node planner pose is stale
+17:42:13.632 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:42:13.874 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=15.555 sec
+17:42:13.909 upper_planner_node planner pose is stale
+17:42:14.415 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:42:14.732 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:42:14.909 upper_planner_node planner pose is stale
+17:42:15.732 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:42:15.975 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=17.655 sec
+17:42:16.310 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:42:16.409 upper_planner_node planner pose is stale
+17:42:16.732 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:42:17.409 upper_planner_node planner pose is stale
+17:42:17.732 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:42:18.075 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=19.755 sec
+17:42:18.352 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:42:18.409 upper_planner_node planner pose is stale
+17:42:18.732 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:42:19.409 upper_planner_node planner pose is stale
+17:42:19.832 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:42:20.174 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=21.856 sec
+17:42:20.410 upper_planner_node planner pose is stale
+17:42:20.415 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:42:20.937 px4_ekf_bridge SIH heading check: missing_or_stale_sih (EKF-SIH=None deg); pose output blocked
+17:42:20.937 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:42:20.937 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:42:20.946 px4_ekf_bridge SIH heading check: settling (EKF-SIH=1.3440399460583785 deg); pose output blocked
+17:42:21.132 lower_tracking_mpc_node PX4 STATUSTEXT severity=6 text=GCS connection regained	
+17:42:21.133 px4_ekf_bridge PX4 heartbeat detected: target=1:1
+17:42:21.136 px4_ekf_bridge PX4: GCS connection regained	
+17:42:21.368 px4_ekf_bridge Requested PX4 LOCAL_POSITION_NED at 30.0 Hz
+17:42:21.370 px4_ekf_bridge Requested PX4 ATTITUDE at 30.0 Hz
+17:42:21.372 px4_ekf_bridge Requested PX4 HIL_STATE_QUATERNION at 30.0 Hz
+17:42:21.409 upper_planner_node planner pose is stale
+17:42:21.578 px4_ekf_bridge SIH heading check: missing_or_stale_sih (EKF-SIH=None deg); pose output blocked
+17:42:21.829 px4_ekf_bridge SIH heading check: settling (EKF-SIH=-0.6045123165136164 deg); pose output blocked
+17:42:21.982 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:42:22.032 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:42:22.276 px4_odom_map_bridge PX4 source pose is stale: topic=/px4/sih/odom age=23.956 sec
+17:42:22.370 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:42:22.409 upper_planner_node planner pose is stale
+17:42:22.983 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:42:23.034 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:42:23.411 upper_planner_node planner pose is stale
+17:42:23.860 px4_ekf_bridge SIH heading check: ok (EKF-SIH=-0.6847670392612663 deg); pose output enabled
+17:42:23.912 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.283; retaining last published path
+17:42:23.932 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:42:24.033 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:42:24.133 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:42:24.385 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:42:24.915 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=4 solve_ms=0.494; retaining last published path
+17:42:24.963 knu_batch_runner [10/10] scenario1
+17:42:25.033 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:42:25.133 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:42:26.035 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:42:26.233 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:42:26.366 px4_odom_map_bridge Map alignment initialized once: source=(-1077.535645, -694.592224, -0.473846, yaw=-2.932641) yaw_delta=-1.284196 input_frame='map' (treated as PX4 local)
+17:42:26.400 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:42:26.438 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:42:26.932 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:42:27.082 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:42:27.332 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:42:27.755 upper_planner_node mission cleared; awaiting path; revision=19
+17:42:27.755 lower_tracking_mpc_node Rejected lower path: fewer than two distinct path points
+17:42:27.832 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:42:27.858 knu_batch_runner 20bccc8584:9:scenario1: mission cleared; awaiting path; revision=19
+17:42:27.863 upper_planner_node reference path loaded from /navigation/global_path: 6 points frame=map waypoint_bias=disabled
+17:42:27.911 upper_planner_node waypoint pair advanced: [0,1] -> [1,2]; previous reference retained
+17:42:27.933 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:42:28.082 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:42:28.333 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:42:28.393 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:42:29.032 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:42:29.132 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:42:30.183 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:42:30.417 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:42:31.182 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:42:32.182 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:42:32.435 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:42:33.233 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:42:34.232 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:42:34.429 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:42:35.282 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:42:36.283 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:42:36.462 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:42:37.283 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:42:38.282 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:42:38.410 upper_planner_node waypoint pair advanced: [1,2] -> [2,3]; previous reference retained
+17:42:38.476 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:42:39.332 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:42:40.382 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:42:40.465 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:42:41.383 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:42:42.384 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:42:42.490 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:42:43.433 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:42:43.433 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:42:44.482 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:42:44.508 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:42:45.484 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:42:46.530 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:42:46.533 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:42:46.910 upper_planner_node waypoint pair advanced: [2,3] -> [3,4]; previous reference retained
+17:42:47.535 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:42:47.933 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:42:48.535 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:42:48.583 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:42:49.583 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:42:50.547 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:42:50.633 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:42:51.633 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:42:52.584 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:42:52.633 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:42:53.418 upper_planner_node waypoint pair advanced: [3,4] -> [4,5]; previous reference retained
+17:42:53.685 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:42:54.608 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:42:54.733 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:42:55.434 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:42:55.783 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:42:55.936 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:42:56.436 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:42:56.615 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:42:56.783 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:42:57.783 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:42:58.622 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:42:58.783 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:42:59.433 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:42:59.833 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:43:00.414 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=24 solve_ms=1.337; retaining last published path
+17:43:00.638 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:43:00.833 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:43:00.933 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:43:01.833 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:43:02.434 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:43:02.643 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:43:02.884 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:43:03.884 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:43:04.656 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:43:04.883 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:43:05.883 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:43:05.935 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:43:06.434 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:43:06.677 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:43:06.885 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:43:06.933 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+17:43:07.934 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:43:08.708 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:43:08.933 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:43:09.869 knu_batch_runner scenario1: completed 
+17:43:09.934 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:43:09.934 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:43:10.704 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:43:10.983 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:43:11.034 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:43:11.913 upper_planner_node interval_diag step=6 reason=3 ref_body=(26.958,-1.343) heading_deg=-2.27 center_cell=(86,59) center_value=100 line_free=0 blocked=401 unknown=0 outside=1 longest_run=0 min_run=2 grid_free=1442 zero=1442 positive=14942 unknown=0 topic=/bev/occupancy_grid frame=Vehicle origin=(0.000,-20.000) origin_yaw_deg=0.00 size=128x128 res=0.3125 positive_is_drivable=0 threshold=1 waypoint_bias=0 previous=1
+17:43:11.913 upper_planner_node no valid preview interval at step=6; usable horizon=5 reason=3
+17:43:11.914 upper_planner_node horizon_diag configured=6 extent_limit=6 requested=6 usable=5 reserve=1 restore=1 step_m=4.500 previous=1
+17:43:11.983 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:43:12.035 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:43:12.413 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.337; retaining last published path
+17:43:12.719 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:43:12.984 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:43:13.135 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:43:13.913 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.318; retaining last published path
+17:43:13.984 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:43:14.134 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:43:14.744 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:43:14.985 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:43:15.234 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:43:15.414 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.330; retaining last published path
+17:43:16.034 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:43:16.335 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:43:16.413 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.365; retaining last published path
+17:43:16.751 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:43:17.034 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:43:17.336 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:43:17.413 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:43:17.413 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.329; retaining last published path
+17:43:17.912 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:43:18.034 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:43:18.335 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:43:18.413 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:43:18.414 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.337; retaining last published path
+17:43:18.770 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:43:18.911 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:43:19.084 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:43:19.412 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:43:19.414 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.334; retaining last published path
+17:43:19.434 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:43:19.913 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:43:20.084 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:43:20.413 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:43:20.535 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:43:20.778 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:43:20.912 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:43:20.915 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.332; retaining last published path
+17:43:21.086 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:43:21.414 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:43:21.634 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:43:21.912 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:43:21.914 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.323; retaining last published path
+17:43:22.134 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:43:22.413 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:43:22.634 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:43:22.777 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:43:22.912 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:43:22.914 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.311; retaining last published path
+17:43:23.135 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:43:23.413 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:43:23.735 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:43:23.914 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:43:24.185 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:43:24.412 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:43:24.414 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.322; retaining last published path
+17:43:24.736 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:43:24.826 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:43:24.912 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:43:25.234 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:43:25.412 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:43:25.414 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.322; retaining last published path
+17:43:25.835 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:43:25.912 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:43:26.234 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:43:26.414 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:43:26.836 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:43:26.913 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:43:26.914 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.322; retaining last published path
+17:43:26.935 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:43:27.234 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:43:27.413 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:43:27.912 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:43:28.035 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:43:28.283 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:43:28.414 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:43:28.414 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.323; retaining last published path
+17:43:28.834 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:43:28.912 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:43:29.036 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:43:29.284 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:43:29.413 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:43:29.913 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:43:29.913 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.162; retaining last published path
+17:43:30.134 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:43:30.284 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:43:30.413 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:43:30.463 knu_batch_runner Batch finished; results: /home/imac/ros2_ws/drive_batches/20261008_173306_scenario1_756dad/results/20261008_173308_20bccc8584/summary.csv
+17:43:30.836 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+17:43:30.913 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+17:43:30.914 upper_planner_node egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.314; retaining last published path
+17:43:31.135 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+17:43:31.284 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+17:43:31.413 upper_planner_node no valid interval at the measured k=0 state; retaining future horizon=6 reason=3

@@ -1,0 +1,55 @@
+2026-10-08 시나리오1·2 각10회 반복 실행 지원
+
+결과
+/home/imac/ros2_ws/run_scenario1_10.sh
+/home/imac/ros2_ws/run_scenario2_10.sh
+기존 /home/imac/ros2_ws/run_scenario3_10.sh 도 그대로 사용한다.
+원하는 시나리오를 하나씩 실행한다. 기본10회, --runs N, --check 지원.
+운영 도메인1, 같은 잠금으로 중복 실행 방지. 별도 빌드 불필요.
+실제 주행/ARM/하드웨어·PX4 설정 변경/운영 노드 시작·중지 없음.
+
+변경
+- repeat_drive_session.py에 --scenario scenario1|scenario2|scenario3 추가. 기본scenario3.
+- 기존3번 반복 overlay와 launch를 재사용하고 선택 시나리오를 routes/route_name에 반영.
+  px4_odom_map_bridge 출발점 정렬과 runner 경로 선택이 함께 변경된다.
+- 기록 폴더/화면 안내/manifest에 실제 선택 시나리오 표시.
+  경로 CSV와 출발점 테이블, 공통 배치 설정 해시도 manifest에 기록.
+- 새 run_scenario1_10.sh, run_scenario2_10.sh는 기존 실행기/잠금을 공유한다.
+- 시나리오1_2_3_10회_사용법.txt 추가, 기존3번 사용법에 새 명령 추가.
+- test_repeat_drive_setup.py: 세 시나리오 경로 선택·기존 안전/초기화 설정·비용 유지 검사.
+
+유지
+상위 reset_mission와 runner 응답 대기, 정지→정렬→새지도→초기화→새참조→출발 순서,
+조향 비용/참조 생성·계승/B·soft/k6/기존 측면보호, 하위 제어 로직은 수정하지 않았다.
+기존 경로 CSV와 출발점 테이블 유지. 시나리오2의 원본 waypoint와 보정 출발점도 유지.
+앞선 boundary_soft_separation 후보 소스/패치는 운영 미적용 상태 유지.
+completed는 목표 영역 접근이며 정확한 목표 정차 성공 판정이 아니다.
+
+검증
+- ROS_DOMAIN_ID177/localhost 격리 환경에서 pytest82개 통과(2.07s).
+  반복 설정/기록 형식, 경로 로딩, 출발점 정합, 배치 판정 검사.
+- 수정 전 사본과 기본scenario3 전체 effective_config 동일 확인.
+- 설치된 scenario1/2/3 경로 파일과 소스 파일 바이트 동일 확인.
+- tracking_control.cpp 및 기본/반복 YAML 해시가 이전 작업 시작 상태와 동일.
+- 세 진입 스크립트 문법 검사, CLI --help 확인. 운영 --check는 실행하지 않았다.
+- 실제SIH/PX4 반복 주행과 시나리오1·2 주행 성공률은 이번 작업에서 검증하지 않았다.
+
+파일
+신규: run_scenario1_10.sh, run_scenario2_10.sh, 시나리오1_2_3_10회_사용법.txt
+수정: src/virtual_control/scripts/repeat_drive_session.py,
+      src/virtual_control/test/test_repeat_drive_setup.py,
+      시나리오3_10회_사용법.txt
+자료: 이 폴더의 tests.txt, help.txt, change.patch, after_sha256.json
+
+SSH 실행 예
+/home/imac/ros2_ws/run_scenario1_10.sh --check
+/home/imac/ros2_ws/run_scenario1_10.sh
+또는
+/home/imac/ros2_ws/run_scenario2_10.sh --check
+/home/imac/ros2_ws/run_scenario2_10.sh
+기존5개제어/경로노드와 별도bag기록기는 먼저 종료하고 MAVProxy/Isaac/BEV는 유지한다.
+
+복원(실행기를 종료한 상태에서 사용)
+python3 /home/imac/ros2_ws/rollback/20261008_repeat_scenario12/restore.py --restore
+이 변경분만 복원하며, 이후 수정된 파일이 있으면 해시 검사로 덮어쓰기를 거부한다.
+기존 미커밋 수정은 수정 전 사본에 포함해 보존했다.

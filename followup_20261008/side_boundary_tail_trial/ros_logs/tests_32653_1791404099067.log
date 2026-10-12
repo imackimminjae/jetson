@@ -1,0 +1,5 @@
+[INFO] [1791404099.079349516] [upper_planner_node]: planner state input: Odometry topic=/px4/sih/odom_map yaw=quaternion
+[INFO] [1791404099.083524166] [upper_planner_node]: k1 lane constraint trial: skip_front_clipped_k1_lane_constraints=false
+[INFO] [1791404099.083826511] [upper_planner_node]: Egocentric MIQP planner ready: rate=2.00Hz pred_dt=1.000s Nmax=7 lower_dt=0.100s target_v=3.000m/s scale=model wheelbase=0.30m length=0.42m bev=1.50m margin=2.00m state=odom grid=/grid_map sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791404099.083904977] [upper_planner_node]: upper branch model: cumulative_increment=0 turn_window_at_split=0 turn_target_absolute=0 split_continuity=6.75m r_dpsi=1.000 lambda_turn=0.900
+[WARN] [1791404099.084698377] [upper_planner_node]: planner waiting for pose

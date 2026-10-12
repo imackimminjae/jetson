@@ -1,0 +1,84 @@
+Running main() from /opt/ros/humble/src/gtest_vendor/src/gtest_main.cc
+[==========] Running 9 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 8 tests from LowerPathGeneration
+[ RUN      ] LowerPathGeneration.SideLossRequiresReferenceConnectedMapEdgeAndMissingTail
+[INFO] [1791404516.020509351] [upper_planner_node]: planner state input: Odometry topic=/px4/sih/odom_map yaw=quaternion
+[INFO] [1791404516.038053142] [upper_planner_node]: k1 lane constraint trial: skip_front_clipped_k1_lane_constraints=false
+[INFO] [1791404516.039339037] [upper_planner_node]: Egocentric MIQP planner ready: rate=2.00Hz pred_dt=1.000s Nmax=7 lower_dt=0.100s target_v=3.000m/s scale=model wheelbase=0.30m length=0.42m bev=1.50m margin=2.00m state=odom grid=/grid_map sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791404516.039606117] [upper_planner_node]: upper branch model: cumulative_increment=0 turn_window_at_split=0 turn_target_absolute=0 split_continuity=6.75m r_dpsi=1.000 lambda_turn=0.900
+[INFO] [1791404516.076764546] [upper_planner_node]: planner state input: Odometry topic=/px4/sih/odom_map yaw=quaternion
+[INFO] [1791404516.079552342] [upper_planner_node]: k1 lane constraint trial: skip_front_clipped_k1_lane_constraints=false
+[INFO] [1791404516.079743516] [upper_planner_node]: Egocentric MIQP planner ready: rate=2.00Hz pred_dt=1.000s Nmax=7 lower_dt=0.100s target_v=3.000m/s scale=model wheelbase=0.30m length=0.42m bev=1.50m margin=2.00m state=odom grid=/grid_map sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791404516.079813470] [upper_planner_node]: upper branch model: cumulative_increment=0 turn_window_at_split=0 turn_target_absolute=0 split_continuity=6.75m r_dpsi=1.000 lambda_turn=0.900
+[       OK ] LowerPathGeneration.SideLossRequiresReferenceConnectedMapEdgeAndMissingTail (154 ms)
+[ RUN      ] LowerPathGeneration.SideTailOmissionKeepsEarlierRoadAndAllVehicleLimits
+[INFO] [1791404516.107226006] [upper_planner_node]: planner state input: Odometry topic=/px4/sih/odom_map yaw=quaternion
+[INFO] [1791404516.110885508] [upper_planner_node]: k1 lane constraint trial: skip_front_clipped_k1_lane_constraints=false
+[INFO] [1791404516.111436564] [upper_planner_node]: Egocentric MIQP planner ready: rate=2.00Hz pred_dt=1.000s Nmax=7 lower_dt=0.100s target_v=3.000m/s scale=model wheelbase=0.30m length=0.42m bev=1.50m margin=2.00m state=odom grid=/grid_map sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791404516.111653147] [upper_planner_node]: upper branch model: cumulative_increment=0 turn_window_at_split=0 turn_target_absolute=0 split_continuity=6.75m r_dpsi=1.000 lambda_turn=0.900
+[INFO] [1791404516.137130553] [upper_planner_node]: planner state input: Odometry topic=/px4/sih/odom_map yaw=quaternion
+[INFO] [1791404516.140692644] [upper_planner_node]: k1 lane constraint trial: skip_front_clipped_k1_lane_constraints=false
+[INFO] [1791404516.141145425] [upper_planner_node]: Egocentric MIQP planner ready: rate=2.00Hz pred_dt=1.000s Nmax=7 lower_dt=0.100s target_v=3.000m/s scale=model wheelbase=0.30m length=0.42m bev=1.50m margin=2.00m state=odom grid=/grid_map sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791404516.141352343] [upper_planner_node]: upper branch model: cumulative_increment=0 turn_window_at_split=0 turn_target_absolute=0 split_continuity=6.75m r_dpsi=1.000 lambda_turn=0.900
+[       OK ] LowerPathGeneration.SideTailOmissionKeepsEarlierRoadAndAllVehicleLimits (59 ms)
+[ RUN      ] LowerPathGeneration.K1TrialOnlyMarksObservedFrontClippedCandidates
+[INFO] [1791404516.166310470] [upper_planner_node]: planner state input: Odometry topic=/px4/sih/odom_map yaw=quaternion
+[INFO] [1791404516.171346461] [upper_planner_node]: k1 lane constraint trial: skip_front_clipped_k1_lane_constraints=false
+[INFO] [1791404516.171855468] [upper_planner_node]: Egocentric MIQP planner ready: rate=2.00Hz pred_dt=1.000s Nmax=7 lower_dt=0.100s target_v=3.000m/s scale=model wheelbase=0.30m length=0.42m bev=1.50m margin=2.00m state=odom grid=/grid_map sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791404516.172059858] [upper_planner_node]: upper branch model: cumulative_increment=0 turn_window_at_split=0 turn_target_absolute=0 split_continuity=6.75m r_dpsi=1.000 lambda_turn=0.900
+[INFO] [1791404516.194833695] [upper_planner_node]: planner state input: Odometry topic=/px4/sih/odom_map yaw=quaternion
+[INFO] [1791404516.199662512] [upper_planner_node]: k1 lane constraint trial: skip_front_clipped_k1_lane_constraints=true
+[INFO] [1791404516.200371621] [upper_planner_node]: Egocentric MIQP planner ready: rate=2.00Hz pred_dt=1.000s Nmax=7 lower_dt=0.100s target_v=3.000m/s scale=model wheelbase=0.30m length=0.42m bev=1.50m margin=2.00m state=odom grid=/grid_map sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791404516.200594668] [upper_planner_node]: upper branch model: cumulative_increment=0 turn_window_at_split=0 turn_target_absolute=0 split_continuity=6.75m r_dpsi=1.000 lambda_turn=0.900
+[       OK ] LowerPathGeneration.K1TrialOnlyMarksObservedFrontClippedCandidates (60 ms)
+[ RUN      ] LowerPathGeneration.K1TrialRetainsLaterRoadAndVehicleInputConstraints
+[INFO] [1791404516.224787395] [upper_planner_node]: planner state input: Odometry topic=/px4/sih/odom_map yaw=quaternion
+[INFO] [1791404516.229764569] [upper_planner_node]: k1 lane constraint trial: skip_front_clipped_k1_lane_constraints=false
+[INFO] [1791404516.229938174] [upper_planner_node]: Egocentric MIQP planner ready: rate=2.00Hz pred_dt=1.000s Nmax=7 lower_dt=0.100s target_v=3.000m/s scale=model wheelbase=0.30m length=0.42m bev=1.50m margin=2.00m state=odom grid=/grid_map sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791404516.229992032] [upper_planner_node]: upper branch model: cumulative_increment=0 turn_window_at_split=0 turn_target_absolute=0 split_continuity=6.75m r_dpsi=1.000 lambda_turn=0.900
+[INFO] [1791404516.252587111] [upper_planner_node]: planner state input: Odometry topic=/px4/sih/odom_map yaw=quaternion
+[INFO] [1791404516.256400090] [upper_planner_node]: k1 lane constraint trial: skip_front_clipped_k1_lane_constraints=true
+[INFO] [1791404516.256544862] [upper_planner_node]: Egocentric MIQP planner ready: rate=2.00Hz pred_dt=1.000s Nmax=7 lower_dt=0.100s target_v=3.000m/s scale=model wheelbase=0.30m length=0.42m bev=1.50m margin=2.00m state=odom grid=/grid_map sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791404516.256609376] [upper_planner_node]: upper branch model: cumulative_increment=0 turn_window_at_split=0 turn_target_absolute=0 split_continuity=6.75m r_dpsi=1.000 lambda_turn=0.900
+[       OK ] LowerPathGeneration.K1TrialRetainsLaterRoadAndVehicleInputConstraints (52 ms)
+[ RUN      ] LowerPathGeneration.GridOriginTrialChangesCellCoordinatesOnlyWhenEnabled
+[INFO] [1791404516.276421203] [upper_planner_node]: planner state input: Odometry topic=/px4/sih/odom_map yaw=quaternion
+[INFO] [1791404516.279505168] [upper_planner_node]: k1 lane constraint trial: skip_front_clipped_k1_lane_constraints=false
+[INFO] [1791404516.279728343] [upper_planner_node]: Egocentric MIQP planner ready: rate=2.00Hz pred_dt=1.000s Nmax=7 lower_dt=0.100s target_v=3.000m/s scale=model wheelbase=0.30m length=0.42m bev=1.50m margin=2.00m state=odom grid=/grid_map sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791404516.279844570] [upper_planner_node]: upper branch model: cumulative_increment=0 turn_window_at_split=0 turn_target_absolute=0 split_continuity=6.75m r_dpsi=1.000 lambda_turn=0.900
+[INFO] [1791404516.298680785] [upper_planner_node]: planner state input: Odometry topic=/px4/sih/odom_map yaw=quaternion
+[INFO] [1791404516.302426209] [upper_planner_node]: k1 lane constraint trial: skip_front_clipped_k1_lane_constraints=false
+[INFO] [1791404516.302837806] [upper_planner_node]: Egocentric MIQP planner ready: rate=2.00Hz pred_dt=1.000s Nmax=7 lower_dt=0.100s target_v=3.000m/s scale=model wheelbase=0.30m length=0.42m bev=1.50m margin=2.00m state=odom grid=/grid_map sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791404516.303027955] [upper_planner_node]: upper branch model: cumulative_increment=0 turn_window_at_split=0 turn_target_absolute=0 split_continuity=6.75m r_dpsi=1.000 lambda_turn=0.900
+[WARN] [1791404516.303125430] [upper_planner_node]: grid origin experiment: received_x=2.950 effective_x=0.000 shift_x=-2.950; cell data unchanged
+[       OK ] LowerPathGeneration.GridOriginTrialChangesCellCoordinatesOnlyWhenEnabled (48 ms)
+[ RUN      ] LowerPathGeneration.DensifierPublishesOriginalCoordinatesWithSamePathSnapshot
+[INFO] [1791404516.325885954] [upper_planner_node]: planner state input: Odometry topic=/px4/sih/odom_map yaw=quaternion
+[INFO] [1791404516.329197190] [upper_planner_node]: k1 lane constraint trial: skip_front_clipped_k1_lane_constraints=false
+[INFO] [1791404516.329605170] [upper_planner_node]: Egocentric MIQP planner ready: rate=2.00Hz pred_dt=1.000s Nmax=7 lower_dt=0.100s target_v=3.000m/s scale=model wheelbase=0.30m length=0.42m bev=1.50m margin=2.00m state=odom grid=/grid_map sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791404516.329735862] [upper_planner_node]: upper branch model: cumulative_increment=0 turn_window_at_split=0 turn_target_absolute=0 split_continuity=6.75m r_dpsi=1.000 lambda_turn=0.900
+[       OK ] LowerPathGeneration.DensifierPublishesOriginalCoordinatesWithSamePathSnapshot (33 ms)
+[ RUN      ] LowerPathGeneration.StageReportSurvivesMissingInputEarlyReturn
+[INFO] [1791404516.358711069] [upper_planner_node]: planner state input: Odometry topic=/px4/sih/odom_map yaw=quaternion
+[INFO] [1791404516.362278344] [upper_planner_node]: k1 lane constraint trial: skip_front_clipped_k1_lane_constraints=false
+[INFO] [1791404516.362650771] [upper_planner_node]: Egocentric MIQP planner ready: rate=2.00Hz pred_dt=1.000s Nmax=7 lower_dt=0.100s target_v=3.000m/s scale=model wheelbase=0.30m length=0.42m bev=1.50m margin=2.00m state=odom grid=/grid_map sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791404516.362779095] [upper_planner_node]: upper branch model: cumulative_increment=0 turn_window_at_split=0 turn_target_absolute=0 split_continuity=6.75m r_dpsi=1.000 lambda_turn=0.900
+[WARN] [1791404516.363271302] [upper_planner_node]: planner waiting for pose
+[       OK ] LowerPathGeneration.StageReportSurvivesMissingInputEarlyReturn (31 ms)
+[ RUN      ] LowerPathGeneration.RoadCanRequireTurnBeyondRemovedInitialHeadingLimit
+[INFO] [1791404516.390531129] [upper_planner_node]: planner state input: Odometry topic=/px4/sih/odom_map yaw=quaternion
+[INFO] [1791404516.394446415] [upper_planner_node]: k1 lane constraint trial: skip_front_clipped_k1_lane_constraints=false
+[INFO] [1791404516.394622356] [upper_planner_node]: Egocentric MIQP planner ready: rate=2.00Hz pred_dt=1.000s Nmax=7 lower_dt=0.100s target_v=3.000m/s scale=model wheelbase=0.30m length=0.42m bev=1.50m margin=2.00m state=odom grid=/grid_map sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791404516.394689654] [upper_planner_node]: upper branch model: cumulative_increment=0 turn_window_at_split=0 turn_target_absolute=0 split_continuity=6.75m r_dpsi=1.000 lambda_turn=0.900
+[       OK ] LowerPathGeneration.RoadCanRequireTurnBeyondRemovedInitialHeadingLimit (26 ms)
+[----------] 8 tests from LowerPathGeneration (465 ms total)
+
+[----------] 1 test from PlannerStageTimer
+[ RUN      ] PlannerStageTimer.BlockingTimeIsNotChargedAsCpuWork
+[       OK ] PlannerStageTimer.BlockingTimeIsNotChargedAsCpuWork (31 ms)
+[----------] 1 test from PlannerStageTimer (31 ms total)
+
+[----------] Global test environment tear-down
+[==========] 9 tests from 2 test suites ran. (496 ms total)
+[  PASSED  ] 9 tests.

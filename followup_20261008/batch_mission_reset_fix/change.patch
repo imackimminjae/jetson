@@ -1,0 +1,563 @@
+--- before/src/virtual_control/include/virtual_control/tracking_control.hpp
++++ after/src/virtual_control/include/virtual_control/tracking_control.hpp
+@@ -11,6 +11,7 @@
+ #include <std_msgs/msg/float64.hpp>
+ #include <std_msgs/msg/float64_multi_array.hpp>
+ #include <std_msgs/msg/string.hpp>
++#include <std_srvs/srv/trigger.hpp>
+ 
+ #include <Eigen/Dense>
+ 
+@@ -358,6 +359,7 @@
+   std::string csv_global_path_file_{"local_map.csv"};
+   bool allow_topic_path_override_when_csv_loaded_{false};
+   bool reset_waypoint_on_path_update_{false};
++  bool enable_batch_mission_reset_{false};
+ 
+   // V8 straight preview and BEV interval extraction.
+   double preview_min_target_distance_m_{1e-6};
+@@ -436,6 +438,7 @@
+   rclcpp::Subscription<geometry_msgs::msg::PoseStamped>::SharedPtr pose_sub_;
+   rclcpp::Subscription<nav_msgs::msg::Path>::SharedPtr global_path_sub_;
+   rclcpp::Subscription<nav_msgs::msg::OccupancyGrid>::SharedPtr grid_sub_;
++  rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr mission_reset_service_;
+ 
+   rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr sparse_path_pub_;
+   rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr dense_path_pub_;
+--- before/src/virtual_control/src/tracking_control.cpp
++++ after/src/virtual_control/src/tracking_control.cpp
+@@ -375,6 +375,7 @@
+     "allow_topic_path_override_when_csv_loaded",
+     allow_topic_path_override_when_csv_loaded_);
+   declare_parameter<bool>("reset_waypoint_on_path_update", reset_waypoint_on_path_update_);
++  declare_parameter<bool>("enable_batch_mission_reset", enable_batch_mission_reset_);
+ 
+   declare_parameter<double>(
+     "preview_min_target_distance_m", preview_min_target_distance_m_);
+@@ -482,6 +483,7 @@
+     "allow_topic_path_override_when_csv_loaded",
+     allow_topic_path_override_when_csv_loaded_);
+   get_parameter("reset_waypoint_on_path_update", reset_waypoint_on_path_update_);
++  get_parameter("enable_batch_mission_reset", enable_batch_mission_reset_);
+ 
+   get_parameter("preview_min_target_distance_m", preview_min_target_distance_m_);
+   get_parameter("preview_line_sample_m", preview_line_sample_m_);
+@@ -705,6 +707,53 @@
+     "/debug/upper_solver_timing", 10);
+   upper_solver_time_pub_ = create_publisher<std_msgs::msg::Float64>(
+     "/debug/upper_solver_time_ms", 10);
++  if (enable_batch_mission_reset_) {
++    // The timer, subscriptions and service share the default mutually-exclusive
++    // callback group. No solve can overlap the reset or its acknowledgement.
++    mission_reset_service_ = create_service<std_srvs::srv::Trigger>(
++      "~/reset_mission",
++      [this](const std::shared_ptr<std_srvs::srv::Trigger::Request>,
++      std::shared_ptr<std_srvs::srv::Trigger::Response> response) {
++        PoseSnapshot pose;
++        {
++          std::lock_guard<std::mutex> lock(pose_mtx_);
++          pose = pose_;
++        }
++        const double age = (now() - pose.received).seconds();
++        if (!pose.valid || !pose.speed_valid || age < 0.0 || age > 0.6 ||
++          pose.speed_mps >= 0.2 || use_csv_global_path_)
++        {
++          response->success = false;
++          response->message = "mission reset requires fresh stationary odometry and topic path";
++          return;
++        }
++        std::string frame;
++        {
++          std::lock_guard<std::mutex> lock(path_mtx_);
++          frame = global_path_frame_id_;
++          global_path_.clear();  // Wait for the new mission path, even if its coordinates repeat.
++          wp0_index_ = 0;
++          wp1_index_ = 1;
++          goal_reached_ = false;
++          ++planning_revision_;
++        }
++        invalidatePreviousReference();
++        interval_centering_state_ = IntervalCenteringState{};
++        nav_msgs::msg::Path empty;
++        empty.header.frame_id = frame;
++        empty.header.stamp = now();
++        sparse_path_pub_->publish(empty);
++        dense_path_pub_->publish(empty);
++        imac_interfaces::msg::PathWithArcLength empty_arc;
++        empty_arc.path = empty;
++        dense_arc_path_pub_->publish(empty_arc);
++        publishGoalReached(false);
++        response->success = true;
++        response->message = "mission cleared; awaiting path; revision=" +
++          std::to_string(planning_revision_);
++        RCLCPP_INFO(get_logger(), "%s", response->message.c_str());
++      });
++  }
+ }
+ 
+ void SdMapUpperPlannerNode::odomCallback(const nav_msgs::msg::Odometry::SharedPtr msg)
+--- before/src/virtual_control/CMakeLists.txt
++++ after/src/virtual_control/CMakeLists.txt
+@@ -72,6 +72,7 @@
+   nav_msgs
+   geometry_msgs
+   std_msgs
++  std_srvs
+   tf2
+   ament_index_cpp
+   mpclib_vendor
+@@ -180,6 +181,10 @@
+   ament_add_pytest_test(test_knu_batch_ros
+     test/test_knu_batch_ros.py
+   )
++  ament_add_pytest_test(test_batch_real_upper_reset
++    test/test_batch_real_upper_reset.py
++    TIMEOUT 200
++  )
+   set(ament_cmakecopyright_FOUND TRUE)
+   set(ament_cmakecpplint_FOUND TRUE)
+   ament_lint_auto_find_test_dependencies()
+@@ -208,7 +213,7 @@
+     VIRTUAL_CONTROL_UPPER_PLANNER_NO_MAIN
+   )
+   ament_target_dependencies(test_interval_centering_state
+-    rclcpp nav_msgs geometry_msgs imac_interfaces std_msgs tf2 ament_index_cpp mpclib_vendor
++    rclcpp nav_msgs geometry_msgs imac_interfaces std_msgs std_srvs tf2 ament_index_cpp mpclib_vendor
+   )
+   target_include_directories(test_interval_centering_state PUBLIC
+     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+@@ -225,7 +230,7 @@
+     test/test_lower_path_generation.cpp src/tracking_control.cpp)
+   target_compile_definitions(test_lower_path_generation PRIVATE VIRTUAL_CONTROL_UPPER_PLANNER_NO_MAIN)
+   ament_target_dependencies(test_lower_path_generation
+-    rclcpp nav_msgs geometry_msgs imac_interfaces std_msgs tf2 ament_index_cpp mpclib_vendor)
++    rclcpp nav_msgs geometry_msgs imac_interfaces std_msgs std_srvs tf2 ament_index_cpp mpclib_vendor)
+   target_include_directories(test_lower_path_generation PRIVATE include ${EIGEN3_INCLUDE_DIRS})
+   if(TARGET mpclib_vendor::MIQPLib)
+     target_link_libraries(test_lower_path_generation mpclib_vendor::MIQPLib)
+--- before/src/virtual_control/scripts/knu_batch_runner.py
++++ after/src/virtual_control/scripts/knu_batch_runner.py
+@@ -18,6 +18,7 @@
+ from rclpy.parameter import Parameter
+ from rclpy.qos import DurabilityPolicy, QoSProfile, ReliabilityPolicy
+ from std_msgs.msg import Bool, String
++from std_srvs.srv import Trigger
+ 
+ from knu_batch_monitor import Limits, RouteMonitor
+ from knu_global_path_publisher import load_route, load_start_positions
+@@ -39,6 +40,7 @@
+             'require_matlab_ack': False,
+             'repeat_count': 1,
+             'require_recorder': False,
++            'reset_upper_each_attempt': False,
+             'recorder_timeout_sec': 2.0,
+             'stationary_timeout_sec': 60.0,
+             'startup_timeout_sec': 120.0, 'setup_timeout_sec': 30.0,
+@@ -86,6 +88,9 @@
+         self.recorder_seen = False
+         self.client = self.create_client(
+             SetParametersAtomically, '/px4_odom_map_bridge/set_parameters_atomically')
++        self.upper_reset_client = self.create_client(Trigger, '/upper_planner_node/reset_mission')
++        self.upper_reset_future = None
++        self.reference_not_before_ns = 0
+         self.pose = None
+         self.pose_at = self.grid_at = self.reference_at = -math.inf
+         self.pause_ack_token = None
+@@ -153,7 +158,9 @@
+             self.grid_at = time.monotonic()
+ 
+     def on_reference(self, msg):
+-        if len(msg.poses) >= 2 and msg.header.frame_id.lstrip('/') == 'map':
++        stamp = msg.header.stamp.sec * 1000000000 + msg.header.stamp.nanosec
++        if (len(msg.poses) >= 2 and msg.header.frame_id.lstrip('/') == 'map'
++                and stamp >= self.reference_not_before_ns):
+             self.reference_at = time.monotonic()
+ 
+     def on_ack(self, msg):
+@@ -204,6 +211,7 @@
+         self.monitor = None
+         self.ack = None
+         self.future = None
++        self.upper_reset_future = None
+         self.stationary_since = None
+         self.attempt_started = time.monotonic()
+         self.set_phase('stopping')
+@@ -278,7 +286,9 @@
+             self.abort('recorder heartbeat lost or recording/storage unavailable')
+         if self.phase == 'startup':
+             ready = (self.client.service_is_ready() and pose_fresh and grid_fresh
+-                     and recorder_fresh and self.permission_pub.get_subscription_count() >= 1)
++                     and recorder_fresh and self.permission_pub.get_subscription_count() >= 1
++                     and (not self.settings['reset_upper_each_attempt'] or
++                          self.upper_reset_client.service_is_ready()))
+             if ready:
+                 self.next_route()
+             elif now-self.entered >= self.settings['startup_timeout_sec']:
+@@ -303,9 +313,12 @@
+                     self.abort('stop_timeout: no fresh stationary pose; no further reanchor')
+                 self.set_phase('aborted')
+             return
+-        if self.phase in ('pausing', 'aligning', 'map', 'reference'):
++        if self.phase in ('pausing', 'aligning', 'map', 'resetting', 'reference'):
+             if now-self.entered >= self.settings['setup_timeout_sec']:
+-                self.fail_or_finish('setup_timeout', self.phase)
++                if self.phase == 'resetting':
++                    self.abort('upper mission reset acknowledgement timeout')
++                else:
++                    self.fail_or_finish('setup_timeout', self.phase)
+                 return
+         if self.phase == 'pausing':
+             self.logger_required = (self.logger_required or
+@@ -352,6 +365,30 @@
+             if self.settings['require_matlab_ack']:
+                 ready = ready and self.ack is not None and self.ack_at > self.entered
+             if ready:
++                if self.settings['reset_upper_each_attempt']:
++                    self.set_phase('resetting')
++                    return
++                self.reset_pub.publish(Bool(data=True))
++                self.send_path()
++                self.set_phase('reference')
++            return
++        if self.phase == 'resetting':
++            if self.upper_reset_future is None:
++                if self.upper_reset_client.service_is_ready():
++                    self.upper_reset_future = self.upper_reset_client.call_async(Trigger.Request())
++            elif self.upper_reset_future.done():
++                try:
++                    response = self.upper_reset_future.result()
++                    if not response.success:
++                        self.abort('upper mission reset rejected: '+response.message)
++                        return
++                except Exception as error:
++                    self.abort('upper mission reset failed: '+str(error))
++                    return
++                # Queued or latched references from the preceding attempt cannot authorize driving.
++                self.reference_at = -math.inf
++                self.reference_not_before_ns = self.get_clock().now().nanoseconds
++                self.get_logger().info(f'{self.token}: {response.message}')
+                 self.reset_pub.publish(Bool(data=True))
+                 self.send_path()
+                 self.set_phase('reference')
+--- before/src/virtual_control/scripts/repeat_drive_session.py
++++ after/src/virtual_control/scripts/repeat_drive_session.py
+@@ -27,7 +27,8 @@
+                'rosbag2_recorder', 'repeat_drive_session'}
+ PHASE_LABELS = {'startup': '입력·기록 준비', 'stopping': '출발 전 정지 확인',
+                 'pausing': '회차 전환 준비', 'aligning': '출발점 정렬',
+-                'map': '새 지도 대기', 'reference': '경로 준비', 'running': '주행 중',
++                'map': '새 지도 대기', 'resetting': '새 회차 상태 초기화',
++                'reference': '경로 준비', 'running': '주행 중',
+                 'coasting': '회차 종료·정지 대기', 'aborting': '중단·정지 대기',
+                 'aborted': '중단됨', 'done': '전체 완료'}
+ 
+--- before/src/virtual_control/config/scenario3_repeat.yaml
++++ after/src/virtual_control/config/scenario3_repeat.yaml
+@@ -23,6 +23,7 @@
+     grid_value_threshold: 1
+     use_csv_global_path: false
+     reset_waypoint_on_path_update: true
++    enable_batch_mission_reset: true
+     # Batch checks route progress AND distance; upper's remaining=0 is insufficient.
+     goal_stop_distance_m: -1.0
+ lower_tracking_mpc_node:
+@@ -45,6 +46,7 @@
+     routes: ["scenario3"]
+     repeat_count: 10
+     require_recorder: true
++    reset_upper_each_attempt: true
+     recorder_timeout_sec: 2.0
+     stationary_timeout_sec: 60.0
+     route_timeout_sec: 180.0
+--- before/src/virtual_control/test/test_repeat_drive_ros.py
++++ after/src/virtual_control/test/test_repeat_drive_ros.py
+@@ -23,6 +23,7 @@
+     from nav_msgs.msg import Odometry, OccupancyGrid, Path as PathMsg
+     from geometry_msgs.msg import PoseStamped
+     from std_msgs.msg import Bool
++    from std_srvs.srv import Trigger
+     import knu_batch_runner as module
+     clock = [100.0]
+     monkeypatch.setattr(module, 'time', SimpleNamespace(monotonic=lambda: clock[0]))
+@@ -32,9 +33,19 @@
+     runner = module.KnuBatchRunner(parameter_overrides=[
+         Parameter('routes', value=['scenario3']), Parameter('repeat_count', value=10),
+         Parameter('require_recorder', value=True),
++        Parameter('reset_upper_each_attempt', value=True),
+         Parameter('results_directory', value=str(tmp_path))])
+     runner.timer.cancel()  # Deterministic accelerated time; DDS is still real.
+     alignments = []
++    resets = []
++
++    def reset_upper(request, response):
++        resets.append(runner.token)
++        response.success = True
++        response.message = 'fake upper cleared'
++        return response
++
++    fake.create_service(Trigger, '/upper_planner_node/reset_mission', reset_upper)
+ 
+     def changed(parameters):
+         assert parameters[0].value == 'scenario3'
+@@ -60,19 +71,22 @@
+         grid = OccupancyGrid(); grid.info.width = grid.info.height = 2
+         grid.info.resolution = 1.0; grid.data = [0]*4
+         reference = PathMsg(); reference.header.frame_id = 'map'
++        reference.header.stamp = fake.get_clock().now().to_msg()
+         reference.poses = [PoseStamped(), PoseStamped()]
+         odom_pub.publish(msg); grid_pub.publish(grid); ref_pub.publish(reference)
+         # Callbacks use the same data; actual DDS discovery and parameter calls remain live.
+-        runner.on_pose(msg); runner.on_grid(grid); runner.on_reference(reference)
+         if recorder is not None:
+             runner.on_recorder(Bool(data=recorder))
+         for _ in range(2):
+             rclpy.spin_once(fake, timeout_sec=0.002)
+             rclpy.spin_once(runner, timeout_sec=0.002)
++        # The accelerated clock must see this step's sample, not a delayed DDS
++        # callback from a previous simulated step under host CPU load.
++        runner.on_pose(msg); runner.on_grid(grid); runner.on_reference(reference)
+         runner.tick()
+ 
+     value = SimpleNamespace(runner=runner, fake=fake, step=step, clock=clock,
+-                            alignments=alignments, permissions=permissions)
++                            alignments=alignments, resets=resets, permissions=permissions)
+     try:
+         yield value
+     finally:
+@@ -113,6 +127,7 @@
+         assert runner.rows[-1]['stop_status'] == 'stationary'
+     assert runner.phase == 'done'
+     assert len(runner.rows) == len(h.alignments) == len(set(h.alignments)) == 10
++    assert h.resets == h.alignments
+     assert all(row['route'] == 'scenario3' for row in runner.rows)
+     assert len((runner.output/'summary.csv').read_text().splitlines()) == 11
+ 
+@@ -191,7 +206,9 @@
+             pubs['/bev/occupancy_grid'].publish(msg)
+             unlisted.publish(String(data='must not be recorded'))
+             rclpy.spin_once(node, timeout_sec=0.04)
+-        deadline = time.monotonic()+0.5
++        from rclpy.duration import Duration
++        assert pubs['/bev/occupancy_grid'].wait_for_all_acked(Duration(seconds=5))
++        deadline = time.monotonic()+2.0
+         while time.monotonic() < deadline:
+             rclpy.spin_once(node, timeout_sec=0.05)
+     finally:
+--- before/시나리오3_10회_사용법.txt
++++ after/시나리오3_10회_사용법.txt
+@@ -15,7 +15,11 @@
+ - ARM, 강제 ARM, 모드 자동 전환, PX4 파라미터 설정은 하지 않는다.
+   기존의 사용자 설정 운전 가능 상태가 필요하다.
+ - 주행 → 회차 결과 기록 → 실제 속도 0.2 m/s 미만 1초 확인 →
+-  맵 좌표의 출발점/방향 재정렬 → 새 BEV와 참조 경로 수신 → 다음 주행 순서다.
++  맵 좌표의 출발점/방향 재정렬 → 새 BEV 수신 → 상위 임무 초기화 응답 확인 →
++  새 참조 경로 수신 → 다음 주행 순서다.
++- 상위 초기화는 새 회차에만 waypoint·이전 계획·B를 비운다.
++  주행 중 같은 전역 경로를 재발행하는 heartbeat는 기존처럼 무시한다.
++  초기화 전 타임스탬프의 참조나 초기화 실패 응답으로는 출발하지 않는다.
+ - 맵 좌표 재정렬은 SIH 반복 시험용이다. 실제 차량을 원위치로 옮기는 기능이 아니다.
+   Isaac/BEV 쪽은 기존처럼 정렬된 /motive/vehicle/pose 또는 odom_map을 따라야 한다.
+ - 마지막 10회차도 정지를 확인하고 기록을 닫는다. 실패도 1회 시도로 센다.
+@@ -26,7 +30,7 @@
+ 
+ 판정과 변경 범위
+ - 상위 비용, 참조 생성/이어받기, B/soft, k=6 및 측면 말단 보호 설정은 그대로다.
+-- 회차 전환 때 경로와 제어 상태만 초기화한다.
++- 회차 전환 때 상위 임무 상태와 하위 제어 상태를 초기화한다.
+ - 배치에서는 상위의 remaining=0 도착 판정을 끄고 기존 배치 판정기를 사용한다.
+   completed는 경로 진행률 85% 이상, 남은 경로 12m 이하, 목표와 거리 8m 이하를
+   함께 만족한 “목표 영역 접근”이다. 정확한 목표점 정차나 정분기 확정 판정이 아니다.
+@@ -66,7 +70,9 @@
+   --start-sec / --end-sec 로 bag 수신 시각 범위를 제한할 수 있다.
+ 
+ 검증
+-- 차량 연결 없이 진행한 단위 검사 37개, 분리 도메인 ROS 검사 6개 통과.
++- 기존 가짜 참조 시험만으로 놓쳤던 동일 경로 재출발 결함을 수정했다.
++  실제 upper_planner_node와 반복 실행기를 연결해 동일 시나리오를 10회 전환하고,
++  매 회차 waypoint 재시작·B 초기화·새 계획 생성·중복 경로 무시를 검사한다.
+ - 같은 시나리오 10회, 회차 사이 22초 관성 주행, 마지막 회차 정지,
+   기록기 신호 상실, 정지 시간 초과 및 기존 노드 중복 차단을 확인했다.
+ - 실제 기록기에 합성 지도 90장을 발행해 전체 메시지 필드·순서·분할 파일 읽기를 확인했다.
+@@ -75,3 +81,5 @@
+ 
+ 검증 자료: /home/imac/ros2_ws/followup_20261008/repeat10_setup/
+ 복원 자료: /home/imac/ros2_ws/rollback/20261008_repeat10_setup/
++동일 경로 초기화 수정 검증: /home/imac/ros2_ws/followup_20261008/batch_mission_reset_fix/
++이번 수정 복원: /home/imac/ros2_ws/rollback/20261008_batch_mission_reset/
+--- before/src/virtual_control/test/test_batch_real_upper_reset.py
++++ after/src/virtual_control/test/test_batch_real_upper_reset.py
+@@ -0,0 +1,174 @@
++"""Actual upper + runner, recorded start BEV, fake vehicle/bridge; no actuator node."""
++import json
++import math
++import os
++from pathlib import Path
++import signal
++import subprocess
++import sys
++import time
++
++import pytest
++
++pytestmark = pytest.mark.skipif(os.environ.get('KNU_BATCH_ROS_TEST') != '1',
++                                reason='opt-in isolated ROS integration')
++PACKAGE = Path(__file__).resolve().parents[1]
++ROOT = PACKAGE.parents[1]
++sys.path.insert(0, str(PACKAGE/'scripts'))
++
++
++def recorded_start_grid():
++    import rosbag2_py
++    from rclpy.serialization import deserialize_message
++    from nav_msgs.msg import OccupancyGrid
++    if not (ROOT/'drive_batches/20261008_055617_scenario3_73cb2c/bag/metadata.yaml').exists():
++        pytest.skip('recorded scenario3 regression fixture not available')
++    reader = rosbag2_py.SequentialReader()
++    reader.open(rosbag2_py.StorageOptions(uri=str(ROOT/
++        'drive_batches/20261008_055617_scenario3_73cb2c/bag'), storage_id='mcap'),
++        rosbag2_py.ConverterOptions('', ''))
++    reader.set_filter(rosbag2_py.StorageFilter(topics=['/bev/occupancy_grid']))
++    while reader.has_next():
++        _, blob, stamp = reader.read_next()
++        if stamp/1e9 >= 1791406585.9:
++            return deserialize_message(blob, OccupancyGrid)
++    raise AssertionError('recorded start grid missing')
++
++
++def test_actual_upper_ten_repeated_missions_and_heartbeat(tmp_path):
++    import numpy as np
++    import rclpy
++    from rclpy.node import Node
++    from rclpy.parameter import Parameter
++    from rcl_interfaces.msg import SetParametersResult
++    from nav_msgs.msg import Odometry, OccupancyGrid, Path as PathMsg
++    from std_msgs.msg import Bool, String, Float64MultiArray
++    from std_srvs.srv import Trigger
++    import yaml
++    from knu_batch_runner import KnuBatchRunner
++    from repeat_drive_session import effective_config
++
++    assert os.environ.get('ROS_DOMAIN_ID') not in (None, '0', '1')
++    grid = recorded_start_grid()
++    rclpy.init()
++    fake = Node('px4_odom_map_bridge')
++    fake.declare_parameter('route_name', 'scenario3')
++    runner = KnuBatchRunner(parameter_overrides=[
++        Parameter('routes', value=['scenario3']), Parameter('repeat_count', value=10),
++        Parameter('reset_upper_each_attempt', value=True),
++        Parameter('results_directory', value=str(tmp_path/'results'))])
++    upper_config = effective_config(10, tmp_path)['upper_planner_node']
++    upper_config['ros__parameters']['upper_planner_rate_hz'] = 10.0
++    config = tmp_path/'upper.yaml'
++    config.write_text(yaml.safe_dump({'upper_planner_node': upper_config}))
++    log = (tmp_path/'upper.log').open('w')
++    executable = os.environ.get('BATCH_TEST_UPPER', str(ROOT/'build/virtual_control/upper_planner_node'))
++    process = subprocess.Popen([executable, '--ros-args', '--params-file', str(config)],
++                               stdout=log, stderr=log)
++    odom_pub = fake.create_publisher(Odometry, '/motive/vehicle/odom_map', 10)
++    grid_pub = fake.create_publisher(OccupancyGrid, '/bev/occupancy_grid', 10)
++    permissions = []
++    fake.create_subscription(Bool, '/knu_batch/run_permission',
++                             lambda m: permissions.append(m.data), 10)
++    events, widths, references, alignments = [], [], [], []
++    fake.create_subscription(String, '/debug/upper_branch_event',
++                             lambda m: events.append(json.loads(m.data)), 100)
++    fake.create_subscription(Float64MultiArray, '/debug/upper_interval_centering_state',
++                             lambda m: widths.append(list(m.data)), 100)
++    fake.create_subscription(PathMsg, '/planner/lower_reference_path', references.append, runner.qos)
++    reset_client = fake.create_client(Trigger, '/upper_planner_node/reset_mission')
++    points = runner.points['scenario3']
++    lengths = [math.dist(a[:2], b[:2]) for a, b in zip(points, points[1:])]
++    state = dict(distance=0.0, position=points[0][:2], yaw=-math.pi/2,
++                 last_running=False)
++
++    def changed(parameters):
++        assert parameters[0].value == 'scenario3'
++        assert runner.pose[2] < 0.2
++        state.update(distance=0.0, position=points[0][:2], yaw=-math.pi/2)
++        alignments.append(runner.token)
++        return SetParametersResult(successful=True)
++
++    fake.add_on_set_parameters_callback(changed)
++    first_events = {}; heartbeat_checks = set(); rejected_moving_reset = False
++    moving_reset = None; clock_previous = 0.0; deadline = time.monotonic()+160
++    started_running = {}; end_pairs = {}; baselines = []; stale_checked = False
++    try:
++        while runner.phase not in ('done', 'aborted') and time.monotonic() < deadline:
++            now = time.monotonic()
++            assert process.poll() is None, (tmp_path/'upper.log').read_text()
++            if now-clock_previous >= 0.05:
++                clock_previous = now
++                running = runner.phase == 'running'
++                if running:
++                    started_running.setdefault(runner.index, now)
++                    # Exercise duplicate path heartbeats while the mission is in progress.
++                    if runner.index not in heartbeat_checks and now-started_running[runner.index] > .3:
++                        revision = events[-1]['path_revision']
++                        runner.send_path()
++                        heartbeat_checks.add(runner.index)
++                        baselines.append((runner.index, revision))
++                    state['distance'] += 3.0
++                    distance = state['distance']
++                    for a, b, length in zip(points, points[1:], lengths):
++                        if distance <= length:
++                            state['position'] = [a[i]+(b[i]-a[i])*distance/length for i in range(2)]
++                            state['yaw'] = math.atan2(b[1]-a[1], b[0]-a[0])
++                            break
++                        distance -= length
++                    else:
++                        state['position'] = points[-1][:2]
++                elif state['last_running']:
++                    end_pairs[runner.index] = [events[-1]['wp0'], events[-1]['wp1']]
++                state['last_running'] = running
++                msg = Odometry(); msg.header.frame_id = 'map'
++                msg.header.stamp = fake.get_clock().now().to_msg()
++                msg.pose.pose.position.x, msg.pose.pose.position.y = map(float, state['position'])
++                msg.pose.pose.orientation.z = float(state['yaw'])
++                msg.twist.twist.linear.x = 6.0 if running else 0.0
++                odom_pub.publish(msg)
++                grid.header.stamp = msg.header.stamp; grid_pub.publish(grid)
++                if running and runner.index == 0 and now-started_running[0] > 1 and moving_reset is None:
++                    moving_reset = reset_client.call_async(Trigger.Request())
++            if moving_reset is not None and moving_reset.done():
++                assert not moving_reset.result().success
++                rejected_moving_reset = True
++            if runner.phase == 'reference' and not stale_checked:
++                stale = PathMsg(); stale.header.frame_id = 'map'
++                from geometry_msgs.msg import PoseStamped
++                stale.poses = [PoseStamped(), PoseStamped()]
++                old = runner.reference_at
++                runner.on_reference(stale)
++                assert runner.reference_at == old
++                stale_checked = True
++            rclpy.spin_once(fake, timeout_sec=0.003)
++            rclpy.spin_once(runner, timeout_sec=0.003)
++            for e in events:
++                first_events.setdefault(e['path_revision'], e)
++        assert runner.phase == 'done', (runner.phase, runner.rows)
++        assert len(runner.rows) == len(set(alignments)) == 10
++        assert all(row['outcome'] == 'completed' for row in runner.rows)
++        assert all(row['stop_status'] == 'stationary' for row in runner.rows)
++        assert len(first_events) == 10  # Heartbeats never create extra missions.
++        assert len(heartbeat_checks) == 10 and rejected_moving_reset and stale_checked
++        assert all(pair == [6, 7] for pair in end_pairs.values())
++        plans = []
++        for revision, event in sorted(first_events.items()):
++            assert event['valid_plan'] and event['wp0'] <= 1 and event['wp1'] <= 2
++            assert event['x'] == pytest.approx(points[0][0], abs=1e-6)
++            assert event['y'] == pytest.approx(points[0][1], abs=1e-6)
++            state_row = min(widths, key=lambda row: abs(row[0]-event['t_emit']))
++            assert state_row[1] == 0.0  # B starts empty on every new mission.
++            plans.append(event['published_world'])
++        for plan in plans[1:]:
++            np.testing.assert_allclose(plan, plans[0], atol=1e-7, rtol=0)
++        for index, revision in baselines:
++            assert revision in first_events
++        (tmp_path/'evidence.json').write_text(json.dumps({
++            'first_events': first_events, 'end_pairs': end_pairs, 'rows': runner.rows,
++            'moving_reset_rejected': rejected_moving_reset, 'old_reference_rejected': stale_checked,
++            'heartbeat_missions': len(first_events)}, indent=2))
++    finally:
++        process.send_signal(signal.SIGINT)
++        process.wait(timeout=10)
++        log.close(); runner.destroy_node(); fake.destroy_node(); rclpy.shutdown()

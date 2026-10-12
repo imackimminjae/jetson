@@ -1,0 +1,36 @@
+--- a/src/virtual_control/src/tracking_control.cpp
++++ b/src/virtual_control/src/tracking_control.cpp
+@@ -1677,8 +1677,31 @@
+       const Eigen::Vector2d p1 = output.pMk[step][candidate];
+       const double raw_length = info.observation.length;
+       const Eigen::Vector2d direction = (p1 - p0) / raw_length;
+-      const Eigen::Vector2d processed_start = p0 + info.treatment.inset * direction;
+-      const Eigen::Vector2d processed_end = p1 - info.treatment.inset * direction;
++      double start_inset = info.treatment.inset;
++      double end_inset = info.treatment.inset;
++      // A lateral map edge is not an observed road boundary. Omit contraction
++      // at that edge only when it would exclude the inherited reference.
++      // Preserve the observed-side margin, raw corridor, B, and reference.
++      if (k > 0 && grid && grid->valid && info.treatment.centering_on &&
++        info.observation.reference_inside && !info.observation.nominal_fallback)
++      {
++        const auto excludes_at_side_edge = [&](const Eigen::Vector2d & point,
++            bool observed, double reference_clearance) {
++            if (observed || reference_clearance >= info.treatment.inset) return false;
++            const Eigen::Vector2d q = point - grid->origin_body;
++            const double local_y = -std::sin(grid->origin_yaw_rad) * q.x() +
++              std::cos(grid->origin_yaw_rad) * q.y();
++            return std::min(std::abs(local_y),
++              std::abs(local_y - grid->height * grid->resolution)) <=
++              preview_line_sample_m_ + 1e-6;
++          };
++        if (excludes_at_side_edge(p0, info.observation.start_boundary_observed,
++          (output.prk[step] - p0).dot(direction))) start_inset = 0.0;
++        if (excludes_at_side_edge(p1, info.observation.end_boundary_observed,
++          (p1 - output.prk[step]).dot(direction))) end_inset = 0.0;
++      }
++      const Eigen::Vector2d processed_start = p0 + start_inset * direction;
++      const Eigen::Vector2d processed_end = p1 - end_inset * direction;
+       info.processed_length = (processed_end - processed_start).norm();
+       if (!finitePoint(processed_start) || !finitePoint(processed_end) ||
+         !std::isfinite(info.processed_length) || info.processed_length <= 1e-8)

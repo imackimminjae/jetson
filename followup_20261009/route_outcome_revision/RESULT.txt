@@ -1,0 +1,64 @@
+2026-10-12 주행 결과 판정 보완: road_route_v1
+
+요청
+시나리오 경로가 관측 지도상 주행 가능한 도로와 맞지 않는 경우를 off_route와 구분.
+제어/참조 생성/이전 계획 계승/soft 폭/B/reset_mission은 변경하지 않음.
+
+적용
+knu_batch_monitor.py에 RoadRouteCheck/RoadLimits 추가, runner에 결과 판정 연결.
+run_all_scenarios_5.sh의 기존 호출 흐름 그대로 다음 새 실행에서 적용된다.
+설치된 Python runner/monitor는 원본 소스에 연결된 symlink여서 재빌드 불필요.
+실행 중인 프로세스의 코드를 교체하거나 주행을 시작하지 않았다.
+
+새 결과 route_unavailable
+- 전방20m의 실제 상위 waypoint 편향을 반영한 경로 주변 ±3m를0.5m 간격 표본 검사.
+- 먼저 차량의 중심/앞쪽 표본이 주행 가능하고, 경로 주변에 주행 가능 표본이
+  2m 이상 이어진 뒤 모든 횡방향 표본이 알려진 비주행 가능인 구간이5m 이상이면 후보.
+- 같은 지도 좌표의 비주행 구간을3초 이상, 최소3회 새 지도 수신에서 재확인해야 종료.
+  처음 확인한 주행 가능 구간이 앞쪽 BEV 밖으로 나가도 같은 비주행 구간을 계속 검사.
+  지도 밖/unknown만으로 막힘을 판정하지 않음. 관측 갱신 간격>0.6초면 후보 초기화.
+- 알려진 비주행 가능 값은 장애물 등도 포함할 수 있다. 물리적인 도로 끝이나 원인 확정이
+  아닌 경로/관측 지도 불일치 결과다. 주행을 잘했다는 인증/목표 성공 판정이 아니다.
+- 판정 후 기존 run_permission 해제 → 관성 이동 → stationary 확인 → 다음 회차.
+  일반 주행 결과로 분류하여 해당 시나리오 남은 회차를 스킵하지 않는다.
+- 기존 off_route 거리15m/3초, completed 및 입력/계산 감시는 유지.
+  completed/pose_jump/invalid_pose/wrong_direction과 시스템 이상 판정을 덮어쓰지 않음.
+  지도 근거가 부족하면 기존 정지 결과 유지, detail에 근거 부족 이유를 남김.
+
+시각/좌표/설정
+- odom orientation.z는 scalar yaw. grid origin orientation은 표준 quaternion으로 해석.
+- 시각이 있는 grid는 pose와 차이<=0.25초, 이전보다 증가하는 header 시각을 요구.
+- 실제 보존 BEV grid header 시각은0. 기존 입력 감시처럼 수신 시각을 기준으로 검사하며,
+  수신0.25초 이내 pose를 사용. 촬영/획득 시각의 동기화는 검증할 수 없는 한계가 있다.
+  road_allow_unstamped_grids=false로 수신 시각 대체를 비활성화할 수 있다.
+- detail의 acquisition_stamp_available/clock_source로 이 한계를 구분한다.
+- 값의 free/blocked convention, threshold, grid frame, waypoint bias는 실행 상위 설정 복사.
+  제어 설정 자체는 바꾸지 않음. grid origin override 실험 사용 시 추가 판정 비활성화.
+- 기록마다 outcome_policy=road_route_v1, waypoint_guard_result, road_evidence를 보관.
+  기준/설정은 settings.json과 effective_config.yaml에, monitor hash도 새 manifest에 기록.
+
+검증
+- ROS_DOMAIN_ID=177, ROS_LOCALHOST_ONLY=1, 로그 출력은 /tmp 내부.
+- 82개 테스트 통과: 테스트용 격리 runner만 사용, PX4/차량 제어 노드 없음.
+- 정상 완료/이탈/정체/초기화 및 시스템 이상 스킵 회귀, 새 결과 후 정지/반복 확인.
+- unknown/지도 밖/중복 시각/관측 공백/좌표 회전/값 convention/연속 막힘/근거 초기화 확인.
+- 기존 전체60회 지도는 최대5Hz로 한 장씩 읽어 관측 근거 검사. 재생/ROS publish 없음.
+  보존 grid는 단일 메시지씩만 디코딩하고 캐시는 만들지 않음.
+- 그 궤적에서 새 기준 확인은 S2 A2(원래 stopped_10s)와 A5(원래 off_route), 2회.
+  각각 약73.8%/73.7% 진행 위치에서 관측 근거가 확인됨. 실제 주행의 종료 지점과 다름.
+- 기존 completed25회에서는 추가 종료 근거0회. 이는 해당 기록에 한정된 검증 결과이며
+  향후 오판정이 없다는 보장이나 실제 조기 종료 주행 결과 검증은 아니다.
+- S2 A1/A3/A4는 지속 관측 근거가 충분하지 않음. S2 전체를 성공/도로 끝으로 바꾸지 않음.
+- 원본 결과25/33/2 및 기존 보고/그림 보존. 기존 결과를 소급 변경하지 않았다.
+- 원본 배치 hash 확인, 요청 외 tracked 파일의 hash 보존 확인.
+  tests.log, replay_summary.json, offline_evidence_by_attempt.csv, validation.json 참조.
+
+변경/복원
+변경 diff: changes.patch (이번 요청 시작 시점 대비. 기존 미커밋 변경을 포함하지 않음).
+이번 요청 직전 사본: before/; 원래 Git 브랜치와 미커밋 작업은 그대로 유지.
+추가 파일: test_road_route_check.py, 이 변경/검증 폴더. Git commit/push 수행하지 않음.
+복원 확인: python3 /home/imac/ros2_ws/followup_20261009/route_outcome_revision/restore.py
+실제 복원: 위 명령에 --apply. 이후 추가 변경이 생긴 파일은 덮어쓰지 않고 중단한다.
+원본 파일을 요청 직전 사본으로 복원하므로 이전 미커밋 작업은 보존한다.
+새 테스트/검증/보고 자료는 복원 시에도 삭제하지 않는다.
+운영 ROS_DOMAIN_ID=1, ARM/임의 주행/하드웨어/PX4 설정 변경 없음.

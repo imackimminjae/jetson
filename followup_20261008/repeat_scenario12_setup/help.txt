@@ -1,0 +1,11 @@
+usage: repeat_drive_session.py [-h]
+                               [--scenario {scenario1,scenario2,scenario3}]
+                               [--runs RUNS] [--check]
+
+Scenario 1/2/3 repeated SIH attempts with compressed logs
+
+options:
+  -h, --help            show this help message and exit
+  --scenario {scenario1,scenario2,scenario3}
+  --runs RUNS
+  --check               Read-only readiness check; no driving nodes

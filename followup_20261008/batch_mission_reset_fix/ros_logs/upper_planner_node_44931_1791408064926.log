@@ -1,0 +1,145 @@
+[INFO] [1791408064.967054282] [upper_planner_node]: planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+[INFO] [1791408064.975523340] [upper_planner_node]: k1 lane constraint trial: skip_front_clipped_k1_lane_constraints=false
+[INFO] [1791408064.975787764] [upper_planner_node]: Egocentric MIQP planner ready: rate=10.00Hz pred_dt=0.750s Nmax=6 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791408064.975860182] [upper_planner_node]: upper branch model: cumulative_increment=1 turn_window_at_split=1 turn_target_absolute=1 split_continuity=6.75m r_dpsi=3.000 lambda_turn=0.600
+[WARN] [1791408065.076333356] [upper_planner_node]: planner waiting for pose
+[WARN] [1791408065.176907685] [upper_planner_node]: planner waiting for global path
+[WARN] [1791408067.276153737] [upper_planner_node]: planner waiting for global path
+[INFO] [1791408067.843122439] [upper_planner_node]: mission cleared; awaiting path; revision=1
+[INFO] [1791408067.947581398] [upper_planner_node]: reference path loaded from /navigation/global_path: 8 points frame=map waypoint_bias=disabled
+[INFO] [1791408067.976265696] [upper_planner_node]: waypoint pair advanced: [0,1] -> [1,2]; previous reference retained
+[INFO] [1791408069.476251662] [upper_planner_node]: waypoint pair advanced: [1,2] -> [2,3]; previous reference retained
+[INFO] [1791408069.876560053] [upper_planner_node]: waypoint pair advanced: [2,3] -> [3,4]; previous reference retained
+[INFO] [1791408070.276191239] [upper_planner_node]: waypoint pair advanced: [3,4] -> [4,5]; previous reference retained
+[INFO] [1791408070.776363696] [upper_planner_node]: waypoint pair advanced: [4,5] -> [5,6]; previous reference retained
+[INFO] [1791408071.176475537] [upper_planner_node]: waypoint pair advanced: [5,6] -> [6,7]; previous reference retained
+[WARN] [1791408071.278174700] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.305; retaining last published path
+[WARN] [1791408072.278366747] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.283; retaining last published path
+[WARN] [1791408073.377996672] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.255; retaining last published path
+[WARN] [1791408074.378381684] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.275; retaining last published path
+[WARN] [1791408075.478245792] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.320; retaining last published path
+[INFO] [1791408075.943941870] [upper_planner_node]: mission cleared; awaiting path; revision=3
+[WARN] [1791408075.976377131] [upper_planner_node]: planner waiting for global path
+[INFO] [1791408076.047260859] [upper_planner_node]: reference path loaded from /navigation/global_path: 8 points frame=map waypoint_bias=disabled
+[INFO] [1791408076.076597625] [upper_planner_node]: waypoint pair advanced: [0,1] -> [1,2]; previous reference retained
+[INFO] [1791408077.576583877] [upper_planner_node]: waypoint pair advanced: [1,2] -> [2,3]; previous reference retained
+[INFO] [1791408077.976517087] [upper_planner_node]: waypoint pair advanced: [2,3] -> [3,4]; previous reference retained
+[INFO] [1791408078.376620063] [upper_planner_node]: waypoint pair advanced: [3,4] -> [4,5]; previous reference retained
+[INFO] [1791408078.876569474] [upper_planner_node]: waypoint pair advanced: [4,5] -> [5,6]; previous reference retained
+[INFO] [1791408079.176591416] [upper_planner_node]: waypoint pair advanced: [5,6] -> [6,7]; previous reference retained
+[WARN] [1791408079.378240408] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.299; retaining last published path
+[WARN] [1791408080.378437126] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.263; retaining last published path
+[WARN] [1791408081.478406836] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.269; retaining last published path
+[WARN] [1791408082.478412315] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.272; retaining last published path
+[WARN] [1791408083.578562478] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.291; retaining last published path
+[INFO] [1791408084.548581924] [upper_planner_node]: mission cleared; awaiting path; revision=5
+[WARN] [1791408084.576622394] [upper_planner_node]: planner waiting for global path
+[INFO] [1791408084.648232544] [upper_planner_node]: reference path loaded from /navigation/global_path: 8 points frame=map waypoint_bias=disabled
+[INFO] [1791408084.676810951] [upper_planner_node]: waypoint pair advanced: [0,1] -> [1,2]; previous reference retained
+[INFO] [1791408086.176706126] [upper_planner_node]: waypoint pair advanced: [1,2] -> [2,3]; previous reference retained
+[INFO] [1791408086.576975154] [upper_planner_node]: waypoint pair advanced: [2,3] -> [3,4]; previous reference retained
+[INFO] [1791408087.077001622] [upper_planner_node]: waypoint pair advanced: [3,4] -> [4,5]; previous reference retained
+[INFO] [1791408087.476973426] [upper_planner_node]: waypoint pair advanced: [4,5] -> [5,6]; previous reference retained
+[INFO] [1791408087.877018031] [upper_planner_node]: waypoint pair advanced: [5,6] -> [6,7]; previous reference retained
+[WARN] [1791408087.978665544] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.314; retaining last published path
+[WARN] [1791408088.978855829] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.303; retaining last published path
+[WARN] [1791408090.077928037] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.135; retaining last published path
+[WARN] [1791408091.078672546] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.269; retaining last published path
+[WARN] [1791408092.078698281] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.325; retaining last published path
+[INFO] [1791408092.644698950] [upper_planner_node]: mission cleared; awaiting path; revision=7
+[WARN] [1791408092.676860666] [upper_planner_node]: planner waiting for global path
+[INFO] [1791408092.751799590] [upper_planner_node]: reference path loaded from /navigation/global_path: 8 points frame=map waypoint_bias=disabled
+[INFO] [1791408092.776884194] [upper_planner_node]: waypoint pair advanced: [0,1] -> [1,2]; previous reference retained
+[INFO] [1791408094.277150578] [upper_planner_node]: waypoint pair advanced: [1,2] -> [2,3]; previous reference retained
+[INFO] [1791408094.677065932] [upper_planner_node]: waypoint pair advanced: [2,3] -> [3,4]; previous reference retained
+[INFO] [1791408095.077207660] [upper_planner_node]: waypoint pair advanced: [3,4] -> [4,5]; previous reference retained
+[INFO] [1791408095.477223816] [upper_planner_node]: waypoint pair advanced: [4,5] -> [5,6]; previous reference retained
+[INFO] [1791408095.977205354] [upper_planner_node]: waypoint pair advanced: [5,6] -> [6,7]; previous reference retained
+[WARN] [1791408096.178740422] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.330; retaining last published path
+[WARN] [1791408097.178907473] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.306; retaining last published path
+[WARN] [1791408098.179233919] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.294; retaining last published path
+[WARN] [1791408099.278795678] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.303; retaining last published path
+[WARN] [1791408100.279155437] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.317; retaining last published path
+[INFO] [1791408100.843140397] [upper_planner_node]: mission cleared; awaiting path; revision=9
+[WARN] [1791408100.877117880] [upper_planner_node]: planner waiting for global path
+[INFO] [1791408100.947494648] [upper_planner_node]: reference path loaded from /navigation/global_path: 8 points frame=map waypoint_bias=disabled
+[INFO] [1791408100.977141536] [upper_planner_node]: waypoint pair advanced: [0,1] -> [1,2]; previous reference retained
+[INFO] [1791408102.477461488] [upper_planner_node]: waypoint pair advanced: [1,2] -> [2,3]; previous reference retained
+[INFO] [1791408102.877463211] [upper_planner_node]: waypoint pair advanced: [2,3] -> [3,4]; previous reference retained
+[INFO] [1791408103.377436940] [upper_planner_node]: waypoint pair advanced: [3,4] -> [4,5]; previous reference retained
+[INFO] [1791408103.777265538] [upper_planner_node]: waypoint pair advanced: [4,5] -> [5,6]; previous reference retained
+[INFO] [1791408104.177433794] [upper_planner_node]: waypoint pair advanced: [5,6] -> [6,7]; previous reference retained
+[WARN] [1791408104.279156574] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.307; retaining last published path
+[WARN] [1791408105.378540662] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.166; retaining last published path
+[WARN] [1791408106.378580058] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.196; retaining last published path
+[WARN] [1791408107.379186544] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.272; retaining last published path
+[WARN] [1791408108.479052502] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.277; retaining last published path
+[INFO] [1791408108.943165106] [upper_planner_node]: mission cleared; awaiting path; revision=11
+[WARN] [1791408108.977330979] [upper_planner_node]: planner waiting for global path
+[INFO] [1791408109.051821569] [upper_planner_node]: reference path loaded from /navigation/global_path: 8 points frame=map waypoint_bias=disabled
+[INFO] [1791408109.077454382] [upper_planner_node]: waypoint pair advanced: [0,1] -> [1,2]; previous reference retained
+[INFO] [1791408110.477433227] [upper_planner_node]: waypoint pair advanced: [1,2] -> [2,3]; previous reference retained
+[INFO] [1791408110.977536784] [upper_planner_node]: waypoint pair advanced: [2,3] -> [3,4]; previous reference retained
+[INFO] [1791408111.377594124] [upper_planner_node]: waypoint pair advanced: [3,4] -> [4,5]; previous reference retained
+[INFO] [1791408111.777531173] [upper_planner_node]: waypoint pair advanced: [4,5] -> [5,6]; previous reference retained
+[INFO] [1791408112.177724773] [upper_planner_node]: waypoint pair advanced: [5,6] -> [6,7]; previous reference retained
+[WARN] [1791408112.379310211] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.294; retaining last published path
+[WARN] [1791408113.479413103] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.278; retaining last published path
+[WARN] [1791408114.479445811] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.286; retaining last published path
+[WARN] [1791408115.479611226] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.293; retaining last published path
+[WARN] [1791408116.579133268] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.290; retaining last published path
+[INFO] [1791408116.945874425] [upper_planner_node]: mission cleared; awaiting path; revision=13
+[WARN] [1791408116.977727556] [upper_planner_node]: planner waiting for global path
+[INFO] [1791408117.049599730] [upper_planner_node]: reference path loaded from /navigation/global_path: 8 points frame=map waypoint_bias=disabled
+[INFO] [1791408117.077846094] [upper_planner_node]: waypoint pair advanced: [0,1] -> [1,2]; previous reference retained
+[INFO] [1791408118.577847409] [upper_planner_node]: waypoint pair advanced: [1,2] -> [2,3]; previous reference retained
+[INFO] [1791408118.977778601] [upper_planner_node]: waypoint pair advanced: [2,3] -> [3,4]; previous reference retained
+[INFO] [1791408119.377848101] [upper_planner_node]: waypoint pair advanced: [3,4] -> [4,5]; previous reference retained
+[INFO] [1791408119.777717948] [upper_planner_node]: waypoint pair advanced: [4,5] -> [5,6]; previous reference retained
+[INFO] [1791408120.177952541] [upper_planner_node]: waypoint pair advanced: [5,6] -> [6,7]; previous reference retained
+[WARN] [1791408120.379666686] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.301; retaining last published path
+[WARN] [1791408121.381898180] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.281; retaining last published path
+[WARN] [1791408122.479792075] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.279; retaining last published path
+[WARN] [1791408123.479931088] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.284; retaining last published path
+[WARN] [1791408124.579408456] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.293; retaining last published path
+[INFO] [1791408124.943140401] [upper_planner_node]: mission cleared; awaiting path; revision=15
+[WARN] [1791408124.977944853] [upper_planner_node]: planner waiting for global path
+[INFO] [1791408125.050272465] [upper_planner_node]: reference path loaded from /navigation/global_path: 8 points frame=map waypoint_bias=disabled
+[INFO] [1791408125.077987453] [upper_planner_node]: waypoint pair advanced: [0,1] -> [1,2]; previous reference retained
+[INFO] [1791408126.578153987] [upper_planner_node]: waypoint pair advanced: [1,2] -> [2,3]; previous reference retained
+[INFO] [1791408126.978245312] [upper_planner_node]: waypoint pair advanced: [2,3] -> [3,4]; previous reference retained
+[INFO] [1791408127.378057524] [upper_planner_node]: waypoint pair advanced: [3,4] -> [4,5]; previous reference retained
+[INFO] [1791408127.778239763] [upper_planner_node]: waypoint pair advanced: [4,5] -> [5,6]; previous reference retained
+[INFO] [1791408128.178015174] [upper_planner_node]: waypoint pair advanced: [5,6] -> [6,7]; previous reference retained
+[WARN] [1791408128.379925197] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.306; retaining last published path
+[WARN] [1791408129.380049489] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.291; retaining last published path
+[WARN] [1791408130.479857970] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.284; retaining last published path
+[WARN] [1791408131.479974261] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.260; retaining last published path
+[WARN] [1791408132.579834135] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.300; retaining last published path
+[INFO] [1791408132.949365392] [upper_planner_node]: mission cleared; awaiting path; revision=17
+[WARN] [1791408132.978006009] [upper_planner_node]: planner waiting for global path
+[INFO] [1791408133.047823432] [upper_planner_node]: reference path loaded from /navigation/global_path: 8 points frame=map waypoint_bias=disabled
+[INFO] [1791408133.078154052] [upper_planner_node]: waypoint pair advanced: [0,1] -> [1,2]; previous reference retained
+[INFO] [1791408134.578375849] [upper_planner_node]: waypoint pair advanced: [1,2] -> [2,3]; previous reference retained
+[INFO] [1791408134.978471558] [upper_planner_node]: waypoint pair advanced: [2,3] -> [3,4]; previous reference retained
+[INFO] [1791408135.378243224] [upper_planner_node]: waypoint pair advanced: [3,4] -> [4,5]; previous reference retained
+[INFO] [1791408135.878486847] [upper_planner_node]: waypoint pair advanced: [4,5] -> [5,6]; previous reference retained
+[INFO] [1791408136.278422294] [upper_planner_node]: waypoint pair advanced: [5,6] -> [6,7]; previous reference retained
+[WARN] [1791408136.380287414] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.334; retaining last published path
+[WARN] [1791408137.480313564] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.322; retaining last published path
+[WARN] [1791408138.580813584] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.288; retaining last published path
+[WARN] [1791408139.679935706] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.278; retaining last published path
+[WARN] [1791408140.680257699] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.299; retaining last published path
+[WARN] [1791408141.680407462] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.317; retaining last published path
+[INFO] [1791408142.246407135] [upper_planner_node]: mission cleared; awaiting path; revision=19
+[WARN] [1791408142.278389678] [upper_planner_node]: planner waiting for global path
+[INFO] [1791408142.350327069] [upper_planner_node]: reference path loaded from /navigation/global_path: 8 points frame=map waypoint_bias=disabled
+[INFO] [1791408142.378568761] [upper_planner_node]: waypoint pair advanced: [0,1] -> [1,2]; previous reference retained
+[INFO] [1791408143.878690394] [upper_planner_node]: waypoint pair advanced: [1,2] -> [2,3]; previous reference retained
+[INFO] [1791408144.278512910] [upper_planner_node]: waypoint pair advanced: [2,3] -> [3,4]; previous reference retained
+[INFO] [1791408144.679172379] [upper_planner_node]: waypoint pair advanced: [3,4] -> [4,5]; previous reference retained
+[INFO] [1791408145.178613289] [upper_planner_node]: waypoint pair advanced: [4,5] -> [5,6]; previous reference retained
+[INFO] [1791408145.578817543] [upper_planner_node]: waypoint pair advanced: [5,6] -> [6,7]; previous reference retained
+[WARN] [1791408145.680023378] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.198; retaining last published path
+[WARN] [1791408146.680706309] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.313; retaining last published path
+[INFO] [1791408147.512831273] [rclcpp]: signal_handler(SIGINT/SIGTERM)

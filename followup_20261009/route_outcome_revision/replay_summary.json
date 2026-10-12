@@ -1,0 +1,917 @@
+{
+  "run_id": "20261009_070714_all_d8c3cf",
+  "method": "One grid at a time, sampled <=5Hz; pose scalar yaw, original nominal routes and recorded grid convention. Fixed evidence thresholds; original results untouched.",
+  "per_attempt": [
+    {
+      "token": "a918ef5454:0:scenario1",
+      "original_scenario": "scenario1",
+      "original_outcome": "off_route",
+      "first_confirmed_epoch_s": null,
+      "first_confirmed_progress_ratio": null,
+      "evidence_counts": {
+        "unavailable": 149,
+        "reason:unknown/outside route samples": 143,
+        "supported": 6,
+        "reason:no confirmed route blockage": 6,
+        "route_unavailable": 2,
+        "reason:observed supported-to-blocked route corridor": 1,
+        "reason:same previously supported-to-blocked corridor reobserved": 1,
+        "reason:vehicle patch not confirmed free": 6
+      },
+      "note": "Counterfactual classification along recorded positions; no replayed driving and no original relabeling."
+    },
+    {
+      "token": "a918ef5454:1:scenario1",
+      "original_scenario": "scenario1",
+      "original_outcome": "completed",
+      "first_confirmed_epoch_s": null,
+      "first_confirmed_progress_ratio": null,
+      "evidence_counts": {
+        "unavailable": 162,
+        "reason:unknown/outside route samples": 162,
+        "supported": 7,
+        "reason:no confirmed route blockage": 7
+      },
+      "note": "Counterfactual classification along recorded positions; no replayed driving and no original relabeling."
+    },
+    {
+      "token": "a918ef5454:2:scenario1",
+      "original_scenario": "scenario1",
+      "original_outcome": "completed",
+      "first_confirmed_epoch_s": null,
+      "first_confirmed_progress_ratio": null,
+      "evidence_counts": {
+        "unavailable": 161,
+        "reason:unknown/outside route samples": 161,
+        "supported": 13,
+        "reason:no confirmed route blockage": 13
+      },
+      "note": "Counterfactual classification along recorded positions; no replayed driving and no original relabeling."
+    },
+    {
+      "token": "a918ef5454:3:scenario1",
+      "original_scenario": "scenario1",
+      "original_outcome": "completed",
+      "first_confirmed_epoch_s": null,
+      "first_confirmed_progress_ratio": null,
+      "evidence_counts": {
+        "unavailable": 167,
+        "reason:unknown/outside route samples": 167,
+        "supported": 4,
+        "reason:no confirmed route blockage": 4
+      },
+      "note": "Counterfactual classification along recorded positions; no replayed driving and no original relabeling."
+    },
+    {
+      "token": "a918ef5454:4:scenario1",
+      "original_scenario": "scenario1",
+      "original_outcome": "completed",
+      "first_confirmed_epoch_s": null,
+      "first_confirmed_progress_ratio": null,
+      "evidence_counts": {
+        "unavailable": 156,
+        "reason:unknown/outside route samples": 156,
+        "supported": 12,
+        "reason:no confirmed route blockage": 12,
+        "route_unavailable": 4,
+        "reason:observed supported-to-blocked route corridor": 2,
+        "reason:same previously supported-to-blocked corridor reobserved": 2
+      },
+      "note": "Counterfactual classification along recorded positions; no replayed driving and no original relabeling."
+    },
+    {
+      "token": "a918ef5454:5:scenario2",
+      "original_scenario": "scenario2",
+      "original_outcome": "stopped_10s",
+      "first_confirmed_epoch_s": null,
+      "first_confirmed_progress_ratio": null,
+      "evidence_counts": {
+        "supported": 48,
+        "reason:no confirmed route blockage": 48,
+        "route_unavailable": 22,
+        "reason:observed supported-to-blocked route corridor": 8,
+        "unavailable": 238,
+        "reason:unknown/outside route samples": 115,
+        "reason:same previously supported-to-blocked corridor reobserved": 14,
+        "reason:vehicle patch not confirmed free": 123
+      },
+      "note": "Counterfactual classification along recorded positions; no replayed driving and no original relabeling."
+    },
+    {
+      "token": "a918ef5454:6:scenario2",
+      "original_scenario": "scenario2",
+      "original_outcome": "stopped_10s",
+      "first_confirmed_epoch_s": 1791497684.5802321,
+      "first_confirmed_progress_ratio": 0.7375623664506038,
+      "evidence_counts": {
+        "supported": 53,
+        "reason:no confirmed route blockage": 53,
+        "route_unavailable": 15,
+        "reason:observed supported-to-blocked route corridor": 3,
+        "unavailable": 239,
+        "reason:unknown/outside route samples": 117,
+        "reason:same previously supported-to-blocked corridor reobserved": 12,
+        "reason:vehicle patch not confirmed free": 122
+      },
+      "note": "Counterfactual classification along recorded positions; no replayed driving and no original relabeling."
+    },
+    {
+      "token": "a918ef5454:7:scenario2",
+      "original_scenario": "scenario2",
+      "original_outcome": "off_route",
+      "first_confirmed_epoch_s": null,
+      "first_confirmed_progress_ratio": null,
+      "evidence_counts": {
+        "supported": 44,
+        "reason:no confirmed route blockage": 44,
+        "route_unavailable": 19,
+        "reason:observed supported-to-blocked route corridor": 4,
+        "reason:same previously supported-to-blocked corridor reobserved": 15,
+        "unavailable": 179,
+        "reason:unknown/outside route samples": 127,
+        "reason:vehicle patch not confirmed free": 52
+      },
+      "note": "Counterfactual classification along recorded positions; no replayed driving and no original relabeling."
+    },
+    {
+      "token": "a918ef5454:8:scenario2",
+      "original_scenario": "scenario2",
+      "original_outcome": "off_route",
+      "first_confirmed_epoch_s": null,
+      "first_confirmed_progress_ratio": null,
+      "evidence_counts": {
+        "supported": 35,
+        "reason:no confirmed route blockage": 35,
+        "route_unavailable": 8,
+        "reason:observed supported-to-blocked route corridor": 6,
+        "reason:same previously supported-to-blocked corridor reobserved": 2,
+        "unavailable": 114,
+        "reason:unknown/outside route samples": 114
+      },
+      "note": "Counterfactual classification along recorded positions; no replayed driving and no original relabeling."
+    },
+    {
+      "token": "a918ef5454:9:scenario2",
+      "original_scenario": "scenario2",
+      "original_outcome": "off_route",
+      "first_confirmed_epoch_s": 1791497900.503866,
+      "first_confirmed_progress_ratio": 0.737211619441999,
+      "evidence_counts": {
+        "supported": 47,
+        "reason:no confirmed route blockage": 47,
+        "route_unavailable": 26,
+        "reason:observed supported-to-blocked route corridor": 8,
+        "unavailable": 175,
+        "reason:unknown/outside route samples": 123,
+        "reason:same previously supported-to-blocked corridor reobserved": 18,
+        "reason:vehicle patch not confirmed free": 52
+      },
+      "note": "Counterfactual classification along recorded positions; no replayed driving and no original relabeling."
+    },
+    {
+      "token": "a918ef5454:10:scenario3",
+      "original_scenario": "scenario3",
+      "original_outcome": "off_route",
+      "first_confirmed_epoch_s": null,
+      "first_confirmed_progress_ratio": null,
+      "evidence_counts": {
+        "unavailable": 149,
+        "reason:unknown/outside route samples": 143,
+        "supported": 1,
+        "reason:no confirmed route blockage": 1,
+        "reason:vehicle patch not confirmed free": 6
+      },
+      "note": "Counterfactual classification along recorded positions; no replayed driving and no original relabeling."
+    },
+    {
+      "token": "a918ef5454:11:scenario3",
+      "original_scenario": "scenario3",
+      "original_outcome": "off_route",
+      "first_confirmed_epoch_s": null,
+      "first_confirmed_progress_ratio": null,
+      "evidence_counts": {
+        "unavailable": 140,
+        "reason:unknown/outside route samples": 140,
+        "supported": 2,
+        "reason:no confirmed route blockage": 2
+      },
+      "note": "Counterfactual classification along recorded positions; no replayed driving and no original relabeling."
+    },
+    {
+      "token": "a918ef5454:12:scenario3",
+      "original_scenario": "scenario3",
+      "original_outcome": "off_route",
+      "first_confirmed_epoch_s": null,
+      "first_confirmed_progress_ratio": null,
+      "evidence_counts": {
+        "supported": 3,
+        "reason:no confirmed route blockage": 3,
+        "unavailable": 141,
+        "reason:unknown/outside route samples": 101,
+        "reason:vehicle patch not confirmed free": 40,
+        "route_unavailable": 8,
+        "reason:observed supported-to-blocked route corridor": 1,
+        "reason:same previously supported-to-blocked corridor reobserved": 7
+      },
+      "note": "Counterfactual classification along recorded positions; no replayed driving and no original relabeling."
+    },
+    {
+      "token": "a918ef5454:13:scenario3",
+      "original_scenario": "scenario3",
+      "original_outcome": "off_route",
+      "first_confirmed_epoch_s": null,
+      "first_confirmed_progress_ratio": null,
+      "evidence_counts": {
+        "unavailable": 162,
+        "reason:unknown/outside route samples": 114,
+        "supported": 2,
+        "reason:no confirmed route blockage": 2,
+        "route_unavailable": 1,
+        "reason:observed supported-to-blocked route corridor": 1,
+        "reason:vehicle patch not confirmed free": 48
+      },
+      "note": "Counterfactual classification along recorded positions; no replayed driving and no original relabeling."
+    },
+    {
+      "token": "a918ef5454:14:scenario3",
+      "original_scenario": "scenario3",
+      "original_outcome": "off_route",
+      "first_confirmed_epoch_s": null,
+      "first_confirmed_progress_ratio": null,
+      "evidence_counts": {
+        "unavailable": 144,
+        "reason:unknown/outside route samples": 136,
+        "supported": 2,
+        "reason:no confirmed route blockage": 2,
+        "reason:vehicle patch not confirmed free": 8
+      },
+      "note": "Counterfactual classification along recorded positions; no replayed driving and no original relabeling."
+    },
+    {
+      "token": "a918ef5454:15:scenario4",
+      "original_scenario": "scenario4",
+      "original_outcome": "completed",
+      "first_confirmed_epoch_s": null,
+      "first_confirmed_progress_ratio": null,
+      "evidence_counts": {
+        "unavailable": 179,
+        "reason:unknown/outside route samples": 174,
+        "supported": 6,
+        "reason:no confirmed route blockage": 6,
+        "reason:vehicle patch not confirmed free": 5
+      },
+      "note": "Counterfactual classification along recorded positions; no replayed driving and no original relabeling."
+    },
+    {
+      "token": "a918ef5454:16:scenario4",
+      "original_scenario": "scenario4",
+      "original_outcome": "completed",
+      "first_confirmed_epoch_s": null,
+      "first_confirmed_progress_ratio": null,
+      "evidence_counts": {
+        "unavailable": 176,
+        "reason:unknown/outside route samples": 170,
+        "supported": 5,
+        "reason:no confirmed route blockage": 5,
+        "reason:vehicle patch not confirmed free": 6
+      },
+      "note": "Counterfactual classification along recorded positions; no replayed driving and no original relabeling."
+    },
+    {
+      "token": "a918ef5454:17:scenario4",
+      "original_scenario": "scenario4",
+      "original_outcome": "completed",
+      "first_confirmed_epoch_s": null,
+      "first_confirmed_progress_ratio": null,
+      "evidence_counts": {
+        "unavailable": 179,
+        "reason:unknown/outside route samples": 175,
+        "supported": 5,
+        "reason:no confirmed route blockage": 5,
+        "reason:vehicle patch not confirmed free": 4
+      },
+      "note": "Counterfactual classification along recorded positions; no replayed driving and no original relabeling."
+    },
+    {
+      "token": "a918ef5454:18:scenario4",
+      "original_scenario": "scenario4",
+      "original_outcome": "completed",
+      "first_confirmed_epoch_s": null,
+      "first_confirmed_progress_ratio": null,
+      "evidence_counts": {
+        "unavailable": 186,
+        "reason:unknown/outside route samples": 181,
+        "supported": 4,
+        "reason:no confirmed route blockage": 4,
+        "reason:vehicle patch not confirmed free": 5
+      },
+      "note": "Counterfactual classification along recorded positions; no replayed driving and no original relabeling."
+    },
+    {
+      "token": "a918ef5454:19:scenario4",
+      "original_scenario": "scenario4",
+      "original_outcome": "completed",
+      "first_confirmed_epoch_s": null,
+      "first_confirmed_progress_ratio": null,
+      "evidence_counts": {
+        "unavailable": 182,
+        "reason:unknown/outside route samples": 174,
+        "reason:unsynchronized grid/pose stamps": 1,
+        "supported": 4,
+        "reason:no confirmed route blockage": 4,
+        "reason:vehicle patch not confirmed free": 7
+      },
+      "note": "Counterfactual classification along recorded positions; no replayed driving and no original relabeling."
+    },
+    {
+      "token": "a918ef5454:20:scenario5",
+      "original_scenario": "scenario5",
+      "original_outcome": "completed",
+      "first_confirmed_epoch_s": null,
+      "first_confirmed_progress_ratio": null,
+      "evidence_counts": {
+        "supported": 2,
+        "reason:no confirmed route blockage": 2,
+        "unavailable": 135,
+        "reason:unknown/outside route samples": 135
+      },
+      "note": "Counterfactual classification along recorded positions; no replayed driving and no original relabeling."
+    },
+    {
+      "token": "a918ef5454:21:scenario5",
+      "original_scenario": "scenario5",
+      "original_outcome": "completed",
+      "first_confirmed_epoch_s": null,
+      "first_confirmed_progress_ratio": null,
+      "evidence_counts": {
+        "unavailable": 138,
+        "reason:unknown/outside route samples": 138
+      },
+      "note": "Counterfactual classification along recorded positions; no replayed driving and no original relabeling."
+    },
+    {
+      "token": "a918ef5454:22:scenario5",
+      "original_scenario": "scenario5",
+      "original_outcome": "completed",
+      "first_confirmed_epoch_s": null,
+      "first_confirmed_progress_ratio": null,
+      "evidence_counts": {
+        "unavailable": 136,
+        "reason:unknown/outside route samples": 136
+      },
+      "note": "Counterfactual classification along recorded positions; no replayed driving and no original relabeling."
+    },
+    {
+      "token": "a918ef5454:23:scenario5",
+      "original_scenario": "scenario5",
+      "original_outcome": "completed",
+      "first_confirmed_epoch_s": null,
+      "first_confirmed_progress_ratio": null,
+      "evidence_counts": {
+        "unavailable": 141,
+        "reason:unknown/outside route samples": 141
+      },
+      "note": "Counterfactual classification along recorded positions; no replayed driving and no original relabeling."
+    },
+    {
+      "token": "a918ef5454:24:scenario5",
+      "original_scenario": "scenario5",
+      "original_outcome": "completed",
+      "first_confirmed_epoch_s": null,
+      "first_confirmed_progress_ratio": null,
+      "evidence_counts": {
+        "unavailable": 135,
+        "reason:unknown/outside route samples": 135
+      },
+      "note": "Counterfactual classification along recorded positions; no replayed driving and no original relabeling."
+    },
+    {
+      "token": "a918ef5454:25:scenario6",
+      "original_scenario": "scenario6",
+      "original_outcome": "completed",
+      "first_confirmed_epoch_s": null,
+      "first_confirmed_progress_ratio": null,
+      "evidence_counts": {
+        "unavailable": 162,
+        "reason:unknown/outside route samples": 162,
+        "supported": 9,
+        "reason:no confirmed route blockage": 9
+      },
+      "note": "Counterfactual classification along recorded positions; no replayed driving and no original relabeling."
+    },
+    {
+      "token": "a918ef5454:26:scenario6",
+      "original_scenario": "scenario6",
+      "original_outcome": "completed",
+      "first_confirmed_epoch_s": null,
+      "first_confirmed_progress_ratio": null,
+      "evidence_counts": {
+        "unavailable": 159,
+        "reason:unknown/outside route samples": 159,
+        "supported": 9,
+        "reason:no confirmed route blockage": 9
+      },
+      "note": "Counterfactual classification along recorded positions; no replayed driving and no original relabeling."
+    },
+    {
+      "token": "a918ef5454:27:scenario6",
+      "original_scenario": "scenario6",
+      "original_outcome": "completed",
+      "first_confirmed_epoch_s": null,
+      "first_confirmed_progress_ratio": null,
+      "evidence_counts": {
+        "unavailable": 162,
+        "reason:unknown/outside route samples": 162,
+        "supported": 2,
+        "reason:no confirmed route blockage": 2
+      },
+      "note": "Counterfactual classification along recorded positions; no replayed driving and no original relabeling."
+    },
+    {
+      "token": "a918ef5454:28:scenario6",
+      "original_scenario": "scenario6",
+      "original_outcome": "completed",
+      "first_confirmed_epoch_s": null,
+      "first_confirmed_progress_ratio": null,
+      "evidence_counts": {
+        "unavailable": 163,
+        "reason:unknown/outside route samples": 163,
+        "supported": 6,
+        "reason:no confirmed route blockage": 6
+      },
+      "note": "Counterfactual classification along recorded positions; no replayed driving and no original relabeling."
+    },
+    {
+      "token": "a918ef5454:29:scenario6",
+      "original_scenario": "scenario6",
+      "original_outcome": "off_route",
+      "first_confirmed_epoch_s": null,
+      "first_confirmed_progress_ratio": null,
+      "evidence_counts": {
+        "unavailable": 94,
+        "reason:unknown/outside route samples": 88,
+        "reason:vehicle patch not confirmed free": 6
+      },
+      "note": "Counterfactual classification along recorded positions; no replayed driving and no original relabeling."
+    },
+    {
+      "token": "a918ef5454:30:scenario7",
+      "original_scenario": "scenario7",
+      "original_outcome": "off_route",
+      "first_confirmed_epoch_s": null,
+      "first_confirmed_progress_ratio": null,
+      "evidence_counts": {
+        "unavailable": 105,
+        "reason:unknown/outside route samples": 105,
+        "supported": 1,
+        "reason:no confirmed route blockage": 1,
+        "route_unavailable": 4,
+        "reason:observed supported-to-blocked route corridor": 1,
+        "reason:same previously supported-to-blocked corridor reobserved": 3
+      },
+      "note": "Counterfactual classification along recorded positions; no replayed driving and no original relabeling."
+    },
+    {
+      "token": "a918ef5454:31:scenario7",
+      "original_scenario": "scenario7",
+      "original_outcome": "off_route",
+      "first_confirmed_epoch_s": null,
+      "first_confirmed_progress_ratio": null,
+      "evidence_counts": {
+        "unavailable": 139,
+        "reason:unknown/outside route samples": 93,
+        "reason:vehicle patch not confirmed free": 46,
+        "supported": 4,
+        "reason:no confirmed route blockage": 4
+      },
+      "note": "Counterfactual classification along recorded positions; no replayed driving and no original relabeling."
+    },
+    {
+      "token": "a918ef5454:32:scenario7",
+      "original_scenario": "scenario7",
+      "original_outcome": "off_route",
+      "first_confirmed_epoch_s": null,
+      "first_confirmed_progress_ratio": null,
+      "evidence_counts": {
+        "unavailable": 108,
+        "reason:unknown/outside route samples": 108,
+        "route_unavailable": 4,
+        "reason:observed supported-to-blocked route corridor": 1,
+        "reason:same previously supported-to-blocked corridor reobserved": 3
+      },
+      "note": "Counterfactual classification along recorded positions; no replayed driving and no original relabeling."
+    },
+    {
+      "token": "a918ef5454:33:scenario7",
+      "original_scenario": "scenario7",
+      "original_outcome": "off_route",
+      "first_confirmed_epoch_s": null,
+      "first_confirmed_progress_ratio": null,
+      "evidence_counts": {
+        "unavailable": 103,
+        "reason:unknown/outside route samples": 103,
+        "route_unavailable": 4,
+        "reason:observed supported-to-blocked route corridor": 2,
+        "reason:same previously supported-to-blocked corridor reobserved": 2
+      },
+      "note": "Counterfactual classification along recorded positions; no replayed driving and no original relabeling."
+    },
+    {
+      "token": "a918ef5454:34:scenario7",
+      "original_scenario": "scenario7",
+      "original_outcome": "off_route",
+      "first_confirmed_epoch_s": null,
+      "first_confirmed_progress_ratio": null,
+      "evidence_counts": {
+        "unavailable": 103,
+        "reason:unknown/outside route samples": 103,
+        "route_unavailable": 5,
+        "reason:observed supported-to-blocked route corridor": 1,
+        "reason:same previously supported-to-blocked corridor reobserved": 4
+      },
+      "note": "Counterfactual classification along recorded positions; no replayed driving and no original relabeling."
+    },
+    {
+      "token": "a918ef5454:35:scenario8",
+      "original_scenario": "scenario8",
+      "original_outcome": "off_route",
+      "first_confirmed_epoch_s": null,
+      "first_confirmed_progress_ratio": null,
+      "evidence_counts": {
+        "unavailable": 129,
+        "reason:unknown/outside route samples": 112,
+        "route_unavailable": 6,
+        "reason:observed supported-to-blocked route corridor": 3,
+        "reason:same previously supported-to-blocked corridor reobserved": 3,
+        "reason:vehicle patch not confirmed free": 17
+      },
+      "note": "Counterfactual classification along recorded positions; no replayed driving and no original relabeling."
+    },
+    {
+      "token": "a918ef5454:36:scenario8",
+      "original_scenario": "scenario8",
+      "original_outcome": "off_route",
+      "first_confirmed_epoch_s": null,
+      "first_confirmed_progress_ratio": null,
+      "evidence_counts": {
+        "unavailable": 124,
+        "reason:unknown/outside route samples": 120,
+        "route_unavailable": 7,
+        "reason:observed supported-to-blocked route corridor": 4,
+        "reason:same previously supported-to-blocked corridor reobserved": 3,
+        "reason:vehicle patch not confirmed free": 4
+      },
+      "note": "Counterfactual classification along recorded positions; no replayed driving and no original relabeling."
+    },
+    {
+      "token": "a918ef5454:37:scenario8",
+      "original_scenario": "scenario8",
+      "original_outcome": "off_route",
+      "first_confirmed_epoch_s": null,
+      "first_confirmed_progress_ratio": null,
+      "evidence_counts": {
+        "unavailable": 126,
+        "reason:unknown/outside route samples": 124,
+        "route_unavailable": 7,
+        "reason:observed supported-to-blocked route corridor": 5,
+        "reason:same previously supported-to-blocked corridor reobserved": 2,
+        "reason:vehicle patch not confirmed free": 2
+      },
+      "note": "Counterfactual classification along recorded positions; no replayed driving and no original relabeling."
+    },
+    {
+      "token": "a918ef5454:38:scenario8",
+      "original_scenario": "scenario8",
+      "original_outcome": "off_route",
+      "first_confirmed_epoch_s": null,
+      "first_confirmed_progress_ratio": null,
+      "evidence_counts": {
+        "unavailable": 126,
+        "reason:unknown/outside route samples": 125,
+        "route_unavailable": 6,
+        "reason:observed supported-to-blocked route corridor": 5,
+        "reason:same previously supported-to-blocked corridor reobserved": 1,
+        "reason:vehicle patch not confirmed free": 1
+      },
+      "note": "Counterfactual classification along recorded positions; no replayed driving and no original relabeling."
+    },
+    {
+      "token": "a918ef5454:39:scenario8",
+      "original_scenario": "scenario8",
+      "original_outcome": "off_route",
+      "first_confirmed_epoch_s": null,
+      "first_confirmed_progress_ratio": null,
+      "evidence_counts": {
+        "unavailable": 117,
+        "reason:unknown/outside route samples": 117,
+        "route_unavailable": 9,
+        "reason:observed supported-to-blocked route corridor": 6,
+        "reason:same previously supported-to-blocked corridor reobserved": 3
+      },
+      "note": "Counterfactual classification along recorded positions; no replayed driving and no original relabeling."
+    },
+    {
+      "token": "a918ef5454:40:scenario9",
+      "original_scenario": "scenario9",
+      "original_outcome": "completed",
+      "first_confirmed_epoch_s": null,
+      "first_confirmed_progress_ratio": null,
+      "evidence_counts": {
+        "unavailable": 111,
+        "reason:unknown/outside route samples": 111
+      },
+      "note": "Counterfactual classification along recorded positions; no replayed driving and no original relabeling."
+    },
+    {
+      "token": "a918ef5454:41:scenario9",
+      "original_scenario": "scenario9",
+      "original_outcome": "completed",
+      "first_confirmed_epoch_s": null,
+      "first_confirmed_progress_ratio": null,
+      "evidence_counts": {
+        "unavailable": 114,
+        "reason:unknown/outside route samples": 114,
+        "supported": 1,
+        "reason:no confirmed route blockage": 1
+      },
+      "note": "Counterfactual classification along recorded positions; no replayed driving and no original relabeling."
+    },
+    {
+      "token": "a918ef5454:42:scenario9",
+      "original_scenario": "scenario9",
+      "original_outcome": "completed",
+      "first_confirmed_epoch_s": null,
+      "first_confirmed_progress_ratio": null,
+      "evidence_counts": {
+        "unavailable": 114,
+        "reason:unknown/outside route samples": 114,
+        "supported": 2,
+        "reason:no confirmed route blockage": 2
+      },
+      "note": "Counterfactual classification along recorded positions; no replayed driving and no original relabeling."
+    },
+    {
+      "token": "a918ef5454:43:scenario9",
+      "original_scenario": "scenario9",
+      "original_outcome": "completed",
+      "first_confirmed_epoch_s": null,
+      "first_confirmed_progress_ratio": null,
+      "evidence_counts": {
+        "unavailable": 113,
+        "reason:unknown/outside route samples": 113
+      },
+      "note": "Counterfactual classification along recorded positions; no replayed driving and no original relabeling."
+    },
+    {
+      "token": "a918ef5454:44:scenario9",
+      "original_scenario": "scenario9",
+      "original_outcome": "completed",
+      "first_confirmed_epoch_s": null,
+      "first_confirmed_progress_ratio": null,
+      "evidence_counts": {
+        "unavailable": 115,
+        "reason:unknown/outside route samples": 115,
+        "supported": 2,
+        "reason:no confirmed route blockage": 2
+      },
+      "note": "Counterfactual classification along recorded positions; no replayed driving and no original relabeling."
+    },
+    {
+      "token": "a918ef5454:45:scenario10",
+      "original_scenario": "scenario10",
+      "original_outcome": "off_route",
+      "first_confirmed_epoch_s": null,
+      "first_confirmed_progress_ratio": null,
+      "evidence_counts": {
+        "unavailable": 122,
+        "reason:unknown/outside route samples": 106,
+        "supported": 9,
+        "reason:no confirmed route blockage": 9,
+        "reason:vehicle patch not confirmed free": 16
+      },
+      "note": "Counterfactual classification along recorded positions; no replayed driving and no original relabeling."
+    },
+    {
+      "token": "a918ef5454:46:scenario10",
+      "original_scenario": "scenario10",
+      "original_outcome": "completed",
+      "first_confirmed_epoch_s": null,
+      "first_confirmed_progress_ratio": null,
+      "evidence_counts": {
+        "unavailable": 329,
+        "reason:unknown/outside route samples": 292,
+        "reason:vehicle patch not confirmed free": 37,
+        "supported": 8,
+        "reason:no confirmed route blockage": 8
+      },
+      "note": "Counterfactual classification along recorded positions; no replayed driving and no original relabeling."
+    },
+    {
+      "token": "a918ef5454:47:scenario10",
+      "original_scenario": "scenario10",
+      "original_outcome": "off_route",
+      "first_confirmed_epoch_s": null,
+      "first_confirmed_progress_ratio": null,
+      "evidence_counts": {
+        "unavailable": 116,
+        "reason:unknown/outside route samples": 102,
+        "reason:vehicle patch not confirmed free": 14,
+        "supported": 6,
+        "reason:no confirmed route blockage": 6
+      },
+      "note": "Counterfactual classification along recorded positions; no replayed driving and no original relabeling."
+    },
+    {
+      "token": "a918ef5454:48:scenario10",
+      "original_scenario": "scenario10",
+      "original_outcome": "off_route",
+      "first_confirmed_epoch_s": null,
+      "first_confirmed_progress_ratio": null,
+      "evidence_counts": {
+        "unavailable": 119,
+        "reason:unknown/outside route samples": 106,
+        "supported": 3,
+        "reason:no confirmed route blockage": 3,
+        "reason:vehicle patch not confirmed free": 13
+      },
+      "note": "Counterfactual classification along recorded positions; no replayed driving and no original relabeling."
+    },
+    {
+      "token": "a918ef5454:49:scenario10",
+      "original_scenario": "scenario10",
+      "original_outcome": "off_route",
+      "first_confirmed_epoch_s": null,
+      "first_confirmed_progress_ratio": null,
+      "evidence_counts": {
+        "unavailable": 125,
+        "reason:unknown/outside route samples": 105,
+        "reason:vehicle patch not confirmed free": 20
+      },
+      "note": "Counterfactual classification along recorded positions; no replayed driving and no original relabeling."
+    },
+    {
+      "token": "a918ef5454:50:scenario11",
+      "original_scenario": "scenario11",
+      "original_outcome": "completed",
+      "first_confirmed_epoch_s": null,
+      "first_confirmed_progress_ratio": null,
+      "evidence_counts": {
+        "unavailable": 280,
+        "reason:unknown/outside route samples": 267,
+        "reason:vehicle patch not confirmed free": 13,
+        "supported": 3,
+        "reason:no confirmed route blockage": 3,
+        "route_unavailable": 1,
+        "reason:observed supported-to-blocked route corridor": 1
+      },
+      "note": "Counterfactual classification along recorded positions; no replayed driving and no original relabeling."
+    },
+    {
+      "token": "a918ef5454:51:scenario11",
+      "original_scenario": "scenario11",
+      "original_outcome": "off_route",
+      "first_confirmed_epoch_s": null,
+      "first_confirmed_progress_ratio": null,
+      "evidence_counts": {
+        "unavailable": 264,
+        "reason:unknown/outside route samples": 258,
+        "reason:vehicle patch not confirmed free": 6,
+        "supported": 1,
+        "reason:no confirmed route blockage": 1
+      },
+      "note": "Counterfactual classification along recorded positions; no replayed driving and no original relabeling."
+    },
+    {
+      "token": "a918ef5454:52:scenario11",
+      "original_scenario": "scenario11",
+      "original_outcome": "off_route",
+      "first_confirmed_epoch_s": null,
+      "first_confirmed_progress_ratio": null,
+      "evidence_counts": {
+        "unavailable": 267,
+        "reason:unknown/outside route samples": 255,
+        "reason:vehicle patch not confirmed free": 12,
+        "supported": 4,
+        "reason:no confirmed route blockage": 4
+      },
+      "note": "Counterfactual classification along recorded positions; no replayed driving and no original relabeling."
+    },
+    {
+      "token": "a918ef5454:53:scenario11",
+      "original_scenario": "scenario11",
+      "original_outcome": "off_route",
+      "first_confirmed_epoch_s": null,
+      "first_confirmed_progress_ratio": null,
+      "evidence_counts": {
+        "unavailable": 264,
+        "reason:unknown/outside route samples": 250,
+        "reason:vehicle patch not confirmed free": 14,
+        "route_unavailable": 2,
+        "reason:observed supported-to-blocked route corridor": 1,
+        "reason:same previously supported-to-blocked corridor reobserved": 1,
+        "supported": 5,
+        "reason:no confirmed route blockage": 5
+      },
+      "note": "Counterfactual classification along recorded positions; no replayed driving and no original relabeling."
+    },
+    {
+      "token": "a918ef5454:54:scenario11",
+      "original_scenario": "scenario11",
+      "original_outcome": "off_route",
+      "first_confirmed_epoch_s": null,
+      "first_confirmed_progress_ratio": null,
+      "evidence_counts": {
+        "unavailable": 261,
+        "reason:unknown/outside route samples": 245,
+        "reason:vehicle patch not confirmed free": 16,
+        "supported": 3,
+        "reason:no confirmed route blockage": 3
+      },
+      "note": "Counterfactual classification along recorded positions; no replayed driving and no original relabeling."
+    },
+    {
+      "token": "a918ef5454:55:scenario12",
+      "original_scenario": "scenario12",
+      "original_outcome": "off_route",
+      "first_confirmed_epoch_s": null,
+      "first_confirmed_progress_ratio": null,
+      "evidence_counts": {
+        "unavailable": 141,
+        "reason:unknown/outside route samples": 109,
+        "reason:vehicle patch not confirmed free": 32,
+        "supported": 1,
+        "reason:no confirmed route blockage": 1
+      },
+      "note": "Counterfactual classification along recorded positions; no replayed driving and no original relabeling."
+    },
+    {
+      "token": "a918ef5454:56:scenario12",
+      "original_scenario": "scenario12",
+      "original_outcome": "off_route",
+      "first_confirmed_epoch_s": null,
+      "first_confirmed_progress_ratio": null,
+      "evidence_counts": {
+        "unavailable": 136,
+        "reason:unknown/outside route samples": 115,
+        "reason:vehicle patch not confirmed free": 21,
+        "route_unavailable": 5,
+        "reason:observed supported-to-blocked route corridor": 1,
+        "reason:same previously supported-to-blocked corridor reobserved": 4
+      },
+      "note": "Counterfactual classification along recorded positions; no replayed driving and no original relabeling."
+    },
+    {
+      "token": "a918ef5454:57:scenario12",
+      "original_scenario": "scenario12",
+      "original_outcome": "off_route",
+      "first_confirmed_epoch_s": null,
+      "first_confirmed_progress_ratio": null,
+      "evidence_counts": {
+        "unavailable": 137,
+        "reason:unknown/outside route samples": 92,
+        "reason:vehicle patch not confirmed free": 45,
+        "supported": 1,
+        "reason:no confirmed route blockage": 1,
+        "route_unavailable": 7,
+        "reason:observed supported-to-blocked route corridor": 1,
+        "reason:same previously supported-to-blocked corridor reobserved": 6
+      },
+      "note": "Counterfactual classification along recorded positions; no replayed driving and no original relabeling."
+    },
+    {
+      "token": "a918ef5454:58:scenario12",
+      "original_scenario": "scenario12",
+      "original_outcome": "off_route",
+      "first_confirmed_epoch_s": null,
+      "first_confirmed_progress_ratio": null,
+      "evidence_counts": {
+        "unavailable": 140,
+        "reason:unknown/outside route samples": 90,
+        "reason:vehicle patch not confirmed free": 50
+      },
+      "note": "Counterfactual classification along recorded positions; no replayed driving and no original relabeling."
+    },
+    {
+      "token": "a918ef5454:59:scenario12",
+      "original_scenario": "scenario12",
+      "original_outcome": "off_route",
+      "first_confirmed_epoch_s": null,
+      "first_confirmed_progress_ratio": null,
+      "evidence_counts": {
+        "unavailable": 136,
+        "reason:unknown/outside route samples": 126,
+        "reason:vehicle patch not confirmed free": 10,
+        "route_unavailable": 2,
+        "reason:observed supported-to-blocked route corridor": 2
+      },
+      "note": "Counterfactual classification along recorded positions; no replayed driving and no original relabeling."
+    }
+  ],
+  "confirmed_by_original_outcome": {
+    "stopped_10s": 1,
+    "off_route": 1
+  },
+  "samples": 9946,
+  "sampling_max_ms": 3.467817999990075,
+  "confirmed_attempts": 2
+}

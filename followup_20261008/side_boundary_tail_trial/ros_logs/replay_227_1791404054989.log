@@ -1,0 +1,37 @@
+[INFO] [1791404056.234508245] [upper_planner_node]: planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+[INFO] [1791404056.240936113] [upper_planner_node]: k1 lane constraint trial: skip_front_clipped_k1_lane_constraints=false
+[INFO] [1791404056.241210009] [upper_planner_node]: Egocentric MIQP planner ready: rate=1.00Hz pred_dt=0.750s Nmax=7 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791404056.241361597] [upper_planner_node]: upper branch model: cumulative_increment=1 turn_window_at_split=1 turn_target_absolute=1 split_continuity=6.75m r_dpsi=3.000 lambda_turn=0.600
+[INFO] [1791404056.286857073] [upper_planner_node]: planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+[INFO] [1791404056.291123917] [upper_planner_node]: k1 lane constraint trial: skip_front_clipped_k1_lane_constraints=false
+[INFO] [1791404056.291265042] [upper_planner_node]: Egocentric MIQP planner ready: rate=1.00Hz pred_dt=0.750s Nmax=7 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791404056.291337076] [upper_planner_node]: upper branch model: cumulative_increment=1 turn_window_at_split=1 turn_target_absolute=1 split_continuity=6.75m r_dpsi=3.000 lambda_turn=0.600
+[INFO] [1791404056.328437649] [upper_planner_node]: planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+[INFO] [1791404056.331597742] [upper_planner_node]: k1 lane constraint trial: skip_front_clipped_k1_lane_constraints=false
+[INFO] [1791404056.331729746] [upper_planner_node]: Egocentric MIQP planner ready: rate=1.00Hz pred_dt=0.750s Nmax=7 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791404056.331805908] [upper_planner_node]: upper branch model: cumulative_increment=1 turn_window_at_split=1 turn_target_absolute=1 split_continuity=6.75m r_dpsi=3.000 lambda_turn=0.600
+[WARN] [1791404056.348253365] [upper_planner_node]: interval_diag step=7 reason=3 ref_body=(31.382,2.646) heading_deg=5.11 center_cell=(100,72) center_value=100 line_free=0 blocked=367 unknown=35 outside=1 longest_run=0 min_run=2 grid_free=2238 zero=2238 positive=10906 unknown=3240 topic=/bev/occupancy_grid frame=Vehicle origin=(0.000,-20.000) origin_yaw_deg=0.00 size=128x128 res=0.3125 positive_is_drivable=0 threshold=0 waypoint_bias=0 previous=1
+[WARN] [1791404056.348575327] [upper_planner_node]: no valid preview interval at step=7; usable horizon=6 reason=3
+[WARN] [1791404056.349030924] [upper_planner_node]: no valid preview interval at step=5; usable horizon=4 reason=3
+[WARN] [1791404056.349160784] [upper_planner_node]: no valid preview interval at step=6; usable horizon=4 reason=3
+[WARN] [1791404056.349267571] [upper_planner_node]: no valid preview interval at step=7; usable horizon=4 reason=3
+[WARN] [1791404056.349557916] [upper_planner_node]: no valid preview interval at step=2; usable horizon=1 reason=3
+[WARN] [1791404056.349678463] [upper_planner_node]: no valid preview interval at step=3; usable horizon=1 reason=3
+[WARN] [1791404056.349782530] [upper_planner_node]: no valid preview interval at step=4; usable horizon=1 reason=3
+[WARN] [1791404056.349921126] [upper_planner_node]: no valid preview interval at step=5; usable horizon=1 reason=3
+[WARN] [1791404056.350044938] [upper_planner_node]: no valid preview interval at step=6; usable horizon=1 reason=3
+[WARN] [1791404056.350157997] [upper_planner_node]: no valid preview interval at step=7; usable horizon=1 reason=3
+[INFO] [1791404056.370451679] [upper_planner_node]: planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+[INFO] [1791404056.373209648] [upper_planner_node]: k1 lane constraint trial: skip_front_clipped_k1_lane_constraints=false
+[INFO] [1791404056.373426326] [upper_planner_node]: Egocentric MIQP planner ready: rate=1.00Hz pred_dt=0.750s Nmax=7 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791404056.373495096] [upper_planner_node]: upper branch model: cumulative_increment=1 turn_window_at_split=1 turn_target_absolute=1 split_continuity=6.75m r_dpsi=3.000 lambda_turn=0.600
+[WARN] [1791404056.389714067] [upper_planner_node]: no valid preview interval at step=7; usable horizon=6 reason=3
+[WARN] [1791404056.390420455] [upper_planner_node]: no valid preview interval at step=5; usable horizon=4 reason=3
+[WARN] [1791404056.390592140] [upper_planner_node]: no valid preview interval at step=6; usable horizon=4 reason=3
+[WARN] [1791404056.390708176] [upper_planner_node]: no valid preview interval at step=7; usable horizon=4 reason=3
+[WARN] [1791404056.391001976] [upper_planner_node]: no valid preview interval at step=2; usable horizon=1 reason=3
+[WARN] [1791404056.391126684] [upper_planner_node]: no valid preview interval at step=3; usable horizon=1 reason=3
+[WARN] [1791404056.391233631] [upper_planner_node]: no valid preview interval at step=4; usable horizon=1 reason=3
+[WARN] [1791404056.391337474] [upper_planner_node]: no valid preview interval at step=5; usable horizon=1 reason=3
+[WARN] [1791404056.391440837] [upper_planner_node]: no valid preview interval at step=6; usable horizon=1 reason=3
+[WARN] [1791404056.391543528] [upper_planner_node]: no valid preview interval at step=7; usable horizon=1 reason=3

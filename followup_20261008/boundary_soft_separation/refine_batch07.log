@@ -1,0 +1,115 @@
+getifaddrs: Operation not permitted
+getifaddrs: Operation not permitted
+getifaddrs: Operation not permitted
+getifaddrs: Operation not permitted
+[37;1m2026-10-08 16:26:19.952 [31;1m[[37;1mTRANSPORT[31;1m Error] [37mAll whitelist interfaces were filtered out[34;1m -> Function [36mUDPv4Transport[m
+[37;1m2026-10-08 16:26:19.952 [31;1m[[37;1mTRANSPORT_UDP[31;1m Error] [37mError creating socket: Operation not permitted[34;1m -> Function [36minit[m
+[37;1m2026-10-08 16:26:19.952 [31;1m[[37;1mRTPS_PARTICIPANT[31;1m Error] [37mUser transport failed to register.[34;1m -> Function [36mRTPSParticipantImpl[m
+[INFO] [1791444379.976591420] [upper_planner_node]: planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+[INFO] [1791444379.982038430] [upper_planner_node]: k1 lane constraint trial: skip_front_clipped_k1_lane_constraints=false
+[INFO] [1791444379.982160832] [upper_planner_node]: Egocentric MIQP planner ready: rate=2.00Hz pred_dt=0.750s Nmax=6 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791444379.982229153] [upper_planner_node]: upper branch model: cumulative_increment=1 turn_window_at_split=1 turn_target_absolute=1 split_continuity=6.75m r_dpsi=3.000 lambda_turn=0.600
+[WARN] [1791444380.018460092] [upper_planner_node]: interval_diag step=1 reason=3 ref_body=(3.047,3.911) heading_deg=52.08 center_cell=(9,76) center_value=100 line_free=0 blocked=428 unknown=0 outside=1 longest_run=0 min_run=2 grid_free=940 zero=940 positive=15444 unknown=0 topic=/bev/occupancy_grid frame=Vehicle origin=(0.000,-20.000) origin_yaw_deg=0.00 size=128x128 res=0.3125 positive_is_drivable=0 threshold=1 waypoint_bias=0 previous=1
+[WARN] [1791444380.018621854] [upper_planner_node]: no valid preview interval at step=1; usable horizon=0 reason=3
+[WARN] [1791444380.018754080] [upper_planner_node]: no valid preview interval at step=2; usable horizon=0 reason=3
+[WARN] [1791444380.018863617] [upper_planner_node]: no valid preview interval at step=3; usable horizon=0 reason=3
+[WARN] [1791444380.018992579] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791444380.020393396] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791444380.020903642] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791444380.021376640] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791444380.021826917] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791444380.022279307] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791444380.022742257] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+getifaddrs: Operation not permitted
+getifaddrs: Operation not permitted
+[37;1m2026-10-08 16:26:20.034 [31;1m[[37;1mTRANSPORT[31;1m Error] [37mAll whitelist interfaces were filtered out[34;1m -> Function [36mUDPv4Transport[m
+[37;1m2026-10-08 16:26:20.034 [31;1m[[37;1mTRANSPORT_UDP[31;1m Error] [37mError creating socket: Operation not permitted[34;1m -> Function [36minit[m
+[37;1m2026-10-08 16:26:20.034 [31;1m[[37;1mRTPS_PARTICIPANT[31;1m Error] [37mUser transport failed to register.[34;1m -> Function [36mRTPSParticipantImpl[m
+[INFO] [1791444380.043872307] [upper_planner_node]: planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+[INFO] [1791444380.046781719] [upper_planner_node]: k1 lane constraint trial: skip_front_clipped_k1_lane_constraints=false
+[INFO] [1791444380.046860984] [upper_planner_node]: Egocentric MIQP planner ready: rate=2.00Hz pred_dt=0.750s Nmax=6 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791444380.046970713] [upper_planner_node]: upper branch model: cumulative_increment=1 turn_window_at_split=1 turn_target_absolute=1 split_continuity=6.75m r_dpsi=3.000 lambda_turn=0.600
+[WARN] [1791444380.082514412] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+[WARN] [1791444380.082703630] [upper_planner_node]: no valid preview interval at step=4; usable horizon=2 reason=3
+[WARN] [1791444380.082823504] [upper_planner_node]: no valid preview interval at step=5; usable horizon=2 reason=3
+[WARN] [1791444380.083104371] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791444380.083288853] [upper_planner_node]: no valid preview interval at step=2; usable horizon=1 reason=3
+[WARN] [1791444380.083453496] [upper_planner_node]: no valid preview interval at step=4; usable horizon=1 reason=3
+[WARN] [1791444380.083561689] [upper_planner_node]: no valid preview interval at step=5; usable horizon=1 reason=3
+[WARN] [1791444380.084082687] [upper_planner_node]: no valid preview interval at step=4; usable horizon=3 reason=3
+[WARN] [1791444380.084199073] [upper_planner_node]: no valid preview interval at step=5; usable horizon=3 reason=3
+[WARN] [1791444380.084298402] [upper_planner_node]: no valid preview interval at step=6; usable horizon=3 reason=3
+[WARN] [1791444380.084632806] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791444380.086022199] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791444380.086505501] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791444380.086962882] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791444380.087424168] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791444380.087893678] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791444380.088368980] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791444380.089053180] [upper_planner_node]: no valid preview interval at step=6; usable horizon=5 reason=3
+[WARN] [1791444380.089541538] [upper_planner_node]: no valid preview interval at step=5; usable horizon=4 reason=3
+[WARN] [1791444380.089658339] [upper_planner_node]: no valid preview interval at step=6; usable horizon=4 reason=3
+[WARN] [1791444380.090098409] [upper_planner_node]: no valid preview interval at step=5; usable horizon=4 reason=3
+[WARN] [1791444380.090214410] [upper_planner_node]: no valid preview interval at step=6; usable horizon=4 reason=3
+[WARN] [1791444380.090664496] [upper_planner_node]: no valid preview interval at step=4; usable horizon=3 reason=3
+[WARN] [1791444380.090782641] [upper_planner_node]: no valid preview interval at step=5; usable horizon=3 reason=3
+[WARN] [1791444380.090891091] [upper_planner_node]: no valid preview interval at step=6; usable horizon=3 reason=3
+[WARN] [1791444380.091289719] [upper_planner_node]: no valid preview interval at step=4; usable horizon=3 reason=3
+[WARN] [1791444380.091407673] [upper_planner_node]: no valid preview interval at step=5; usable horizon=3 reason=3
+[WARN] [1791444380.091519802] [upper_planner_node]: no valid preview interval at step=6; usable horizon=3 reason=3
+getifaddrs: Operation not permitted
+getifaddrs: Operation not permitted
+[37;1m2026-10-08 16:26:20.099 [31;1m[[37;1mTRANSPORT[31;1m Error] [37mAll whitelist interfaces were filtered out[34;1m -> Function [36mUDPv4Transport[m
+[37;1m2026-10-08 16:26:20.099 [31;1m[[37;1mTRANSPORT_UDP[31;1m Error] [37mError creating socket: Operation not permitted[34;1m -> Function [36minit[m
+[37;1m2026-10-08 16:26:20.099 [31;1m[[37;1mRTPS_PARTICIPANT[31;1m Error] [37mUser transport failed to register.[34;1m -> Function [36mRTPSParticipantImpl[m
+[INFO] [1791444380.108655020] [upper_planner_node]: planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+[INFO] [1791444380.111565328] [upper_planner_node]: k1 lane constraint trial: skip_front_clipped_k1_lane_constraints=false
+[INFO] [1791444380.111653233] [upper_planner_node]: Egocentric MIQP planner ready: rate=2.00Hz pred_dt=0.750s Nmax=6 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791444380.111712529] [upper_planner_node]: upper branch model: cumulative_increment=1 turn_window_at_split=1 turn_target_absolute=1 split_continuity=6.75m r_dpsi=3.000 lambda_turn=0.600
+[WARN] [1791444380.147672649] [upper_planner_node]: no valid preview interval at step=1; usable horizon=0 reason=3
+[WARN] [1791444380.147865324] [upper_planner_node]: no valid preview interval at step=2; usable horizon=0 reason=3
+[WARN] [1791444380.147978253] [upper_planner_node]: no valid preview interval at step=3; usable horizon=0 reason=3
+[WARN] [1791444380.148105231] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791444380.149477919] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791444380.149973958] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791444380.150429835] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791444380.150948017] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791444380.151415031] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791444380.151888317] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+getifaddrs: Operation not permitted
+getifaddrs: Operation not permitted
+[37;1m2026-10-08 16:26:20.161 [31;1m[[37;1mTRANSPORT[31;1m Error] [37mAll whitelist interfaces were filtered out[34;1m -> Function [36mUDPv4Transport[m
+[37;1m2026-10-08 16:26:20.161 [31;1m[[37;1mTRANSPORT_UDP[31;1m Error] [37mError creating socket: Operation not permitted[34;1m -> Function [36minit[m
+[37;1m2026-10-08 16:26:20.161 [31;1m[[37;1mRTPS_PARTICIPANT[31;1m Error] [37mUser transport failed to register.[34;1m -> Function [36mRTPSParticipantImpl[m
+[INFO] [1791444380.170797028] [upper_planner_node]: planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+[INFO] [1791444380.173729512] [upper_planner_node]: k1 lane constraint trial: skip_front_clipped_k1_lane_constraints=false
+[INFO] [1791444380.173816393] [upper_planner_node]: Egocentric MIQP planner ready: rate=2.00Hz pred_dt=0.750s Nmax=6 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[INFO] [1791444380.173877258] [upper_planner_node]: upper branch model: cumulative_increment=1 turn_window_at_split=1 turn_target_absolute=1 split_continuity=6.75m r_dpsi=3.000 lambda_turn=0.600
+[WARN] [1791444380.209267739] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+[WARN] [1791444380.209448029] [upper_planner_node]: no valid preview interval at step=4; usable horizon=2 reason=3
+[WARN] [1791444380.209549855] [upper_planner_node]: no valid preview interval at step=5; usable horizon=2 reason=3
+[WARN] [1791444380.209820130] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791444380.209979140] [upper_planner_node]: no valid preview interval at step=2; usable horizon=1 reason=3
+[WARN] [1791444380.210171526] [upper_planner_node]: no valid preview interval at step=4; usable horizon=1 reason=3
+[WARN] [1791444380.210270695] [upper_planner_node]: no valid preview interval at step=5; usable horizon=1 reason=3
+[WARN] [1791444380.210688108] [upper_planner_node]: no valid preview interval at step=4; usable horizon=3 reason=3
+[WARN] [1791444380.210800366] [upper_planner_node]: no valid preview interval at step=5; usable horizon=3 reason=3
+[WARN] [1791444380.210893199] [upper_planner_node]: no valid preview interval at step=6; usable horizon=3 reason=3
+[WARN] [1791444380.211236915] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791444380.212612772] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791444380.213089962] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791444380.213565232] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791444380.214008213] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791444380.214460347] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791444380.214938113] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=6 reason=3
+[WARN] [1791444380.215627689] [upper_planner_node]: no valid preview interval at step=6; usable horizon=5 reason=3
+[WARN] [1791444380.216107791] [upper_planner_node]: no valid preview interval at step=5; usable horizon=4 reason=3
+[WARN] [1791444380.216234064] [upper_planner_node]: no valid preview interval at step=6; usable horizon=4 reason=3
+[WARN] [1791444380.216680566] [upper_planner_node]: no valid preview interval at step=5; usable horizon=4 reason=3
+[WARN] [1791444380.216800055] [upper_planner_node]: no valid preview interval at step=6; usable horizon=4 reason=3
+[WARN] [1791444380.217255517] [upper_planner_node]: no valid preview interval at step=4; usable horizon=3 reason=3
+[WARN] [1791444380.217372894] [upper_planner_node]: no valid preview interval at step=5; usable horizon=3 reason=3
+[WARN] [1791444380.217506208] [upper_planner_node]: no valid preview interval at step=6; usable horizon=3 reason=3
+[WARN] [1791444380.217879588] [upper_planner_node]: no valid preview interval at step=4; usable horizon=3 reason=3
+[WARN] [1791444380.217994086] [upper_planner_node]: no valid preview interval at step=5; usable horizon=3 reason=3
+[WARN] [1791444380.218095879] [upper_planner_node]: no valid preview interval at step=6; usable horizon=3 reason=3

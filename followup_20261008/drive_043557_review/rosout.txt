@@ -1,0 +1,551 @@
+04:35:57.967 px4_ekf_bridge Requested PX4 HIL_STATE_QUATERNION at 30.0 Hz
+04:35:57.968 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:35:57.968 lower_tracking_mpc_node lower control invalid: neutral steering/throttle: waiting for pose
+04:35:57.968 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:35:57.982 px4_odom_map_bridge PX4 odom map bridge ready: input=/px4/sih/odom (yaw scalar z) odom=/motive/vehicle/odom_map pose=/motive/vehicle/pose route=scenario1 target=(150.000, -140.000, 0.000) target_yaw=2.066348 rad odom_yaw=orientation.z scalar
+04:35:57.983 px4_odom_map_bridge Waiting for valid PX4 source pose on /px4/sih/odom
+04:35:57.983 px4_odom_map_bridge Map alignment initialized once: source=(144.355423, 204.385727, -0.157654, yaw=0.534140) yaw_delta=1.532208 input_frame='map' (treated as PX4 local)
+04:35:58.013 rosbag2_recorder Listening for topics...
+04:35:58.013 rosbag2_recorder Event publisher thread: Starting
+04:35:58.013 rosbag2_recorder Subscribed to topic '/px4_ekf_bridge/status'
+04:35:58.013 rosbag2_recorder Subscribed to topic '/rosout'
+04:35:58.013 rosbag2_recorder Subscribed to topic '/motive/vehicle/odom_map'
+04:35:58.013 rosbag2_recorder Subscribed to topic '/debug/lower_mpc_trace'
+04:35:58.013 rosbag2_recorder Subscribed to topic '/px4/ekf_odom'
+04:35:58.013 rosbag2_recorder Subscribed to topic '/navigation/global_path'
+04:35:58.014 rosbag2_recorder Subscribed to topic '/control/applied_cmd'
+04:35:58.014 rosbag2_recorder Recording...
+04:35:58.039 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:35:58.039 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:35:58.039 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:35:58.039 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:35:58.039 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:35:58.075 rosbag2_recorder Subscribed to topic '/bev/occupancy_grid'
+04:35:58.777 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:35:59.435 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:35:59.826 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:36:00.875 rosbag2_recorder Subscribed to topic '/debug/upper_stage_timing'
+04:36:00.876 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:36:00.881 rosbag2_recorder Subscribed to topic '/debug/upper_solver_timing'
+04:36:00.887 rosbag2_recorder Subscribed to topic '/debug/upper_miqp_trace'
+04:36:00.893 rosbag2_recorder Subscribed to topic '/debug/upper_interval_centering_state'
+04:36:00.899 rosbag2_recorder Subscribed to topic '/debug/upper_constraint_intervals'
+04:36:00.909 rosbag2_recorder Subscribed to topic '/planner/lower_reference_path/with_arclength'
+04:36:00.914 rosbag2_recorder Subscribed to topic '/debug/upper_interval_info'
+04:36:00.919 rosbag2_recorder Subscribed to topic '/debug/upper_branch_event'
+04:36:00.923 rosbag2_recorder Subscribed to topic '/planner/goal_reached'
+04:36:00.927 rosbag2_recorder Subscribed to topic '/planner/upper_path_sparse'
+04:36:00.939 upper_planner_node planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+04:36:00.940 upper_planner_node k1 lane constraint trial: skip_front_clipped_k1_lane_constraints=false
+04:36:00.940 upper_planner_node Egocentric MIQP planner ready: rate=2.00Hz pred_dt=0.750s Nmax=6 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+04:36:00.940 upper_planner_node upper branch model: cumulative_increment=1 turn_window_at_split=1 turn_target_absolute=1 split_continuity=6.75m r_dpsi=3.000 lambda_turn=0.600
+04:36:00.940 upper_planner_node reference path loaded from /navigation/global_path: 6 points frame=map waypoint_bias=disabled
+04:36:00.940 upper_planner_node waypoint pair advanced: [0,1] -> [1,2]; previous reference retained
+04:36:01.447 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:36:01.876 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:36:02.876 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:36:03.451 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:36:03.877 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:36:04.877 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:36:05.462 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:36:05.929 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:36:06.820 upper_planner_node waypoint pair advanced: [1,2] -> [2,3]; previous reference retained
+04:36:06.977 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:36:07.469 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:36:08.027 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:36:09.027 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:36:09.474 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:36:10.077 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:36:11.077 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:36:11.497 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:36:12.128 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:36:13.177 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:36:13.497 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:36:14.177 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:36:15.177 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:36:15.320 upper_planner_node waypoint pair advanced: [2,3] -> [3,4]; previous reference retained
+04:36:15.503 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:36:16.177 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:36:17.178 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:36:17.532 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:36:18.227 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:36:19.277 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:36:19.547 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:36:20.277 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:36:20.320 upper_planner_node waypoint pair advanced: [3,4] -> [4,5]; previous reference retained
+04:36:21.331 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:36:21.575 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:36:22.330 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:36:23.377 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:36:23.587 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:36:24.428 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:36:25.429 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:36:25.603 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:36:26.477 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:36:27.477 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:36:27.649 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:36:28.478 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:36:29.478 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:36:29.670 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:36:30.478 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:36:31.478 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:36:31.671 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:36:32.477 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:36:33.528 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:36:33.683 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:36:34.577 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:36:34.820 upper_planner_node goal reached: remaining=0.000 direct=1.665
+04:36:34.828 lower_tracking_mpc_node lower MPC state reset: path/mission/pose/reset event
+04:36:34.828 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:36:35.579 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:36:35.684 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:36:35.928 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:36:36.320 upper_planner_node goal reached: remaining=0.000 direct=10.197
+04:36:36.628 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:36:36.928 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:36:37.322 upper_planner_node goal reached: remaining=0.000 direct=15.187
+04:36:37.678 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:36:37.710 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:36:38.028 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:36:38.728 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:36:38.820 upper_planner_node goal reached: remaining=0.000 direct=21.623
+04:36:39.029 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:36:39.728 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:36:39.795 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:36:39.821 upper_planner_node goal reached: remaining=0.000 direct=25.336
+04:36:40.129 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:36:40.728 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:36:40.822 upper_planner_node goal reached: remaining=0.000 direct=28.660
+04:36:41.228 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:36:41.759 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:36:41.777 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:36:42.230 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:36:42.320 upper_planner_node goal reached: remaining=0.000 direct=33.021
+04:36:42.778 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:36:43.328 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:36:43.772 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:36:43.821 upper_planner_node goal reached: remaining=0.000 direct=36.730
+04:36:43.828 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:36:44.429 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:36:44.821 upper_planner_node goal reached: remaining=0.000 direct=38.893
+04:36:44.829 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:36:45.430 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:36:45.807 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:36:45.877 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:36:46.321 upper_planner_node goal reached: remaining=0.000 direct=41.720
+04:36:46.529 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:36:46.878 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:36:47.629 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:36:47.797 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:36:47.820 upper_planner_node goal reached: remaining=0.000 direct=44.076
+04:36:47.928 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:36:48.729 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:36:48.928 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:36:49.320 upper_planner_node goal reached: remaining=0.000 direct=46.015
+04:36:49.828 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:36:49.883 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:36:49.978 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:36:50.321 upper_planner_node goal reached: remaining=0.000 direct=47.042
+04:36:50.829 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:36:51.029 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:36:51.322 upper_planner_node goal reached: remaining=0.000 direct=47.993
+04:36:51.870 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:36:51.928 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:36:52.029 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:36:52.322 upper_planner_node goal reached: remaining=0.000 direct=48.736
+04:36:53.029 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:36:53.079 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:36:53.820 upper_planner_node goal reached: remaining=0.000 direct=49.560
+04:36:53.875 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:36:54.032 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:36:54.078 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:36:54.821 upper_planner_node goal reached: remaining=0.000 direct=49.937
+04:36:55.129 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:36:55.131 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:36:55.895 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:36:56.178 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:36:56.230 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:36:56.322 upper_planner_node goal reached: remaining=0.000 direct=50.218
+04:36:57.178 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:36:57.232 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:36:57.821 upper_planner_node goal reached: remaining=0.000 direct=50.238
+04:36:57.919 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:36:58.178 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:36:58.329 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:36:59.178 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:36:59.321 upper_planner_node goal reached: remaining=0.000 direct=50.262
+04:36:59.430 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:36:59.955 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:37:00.179 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:37:00.321 upper_planner_node goal reached: remaining=0.000 direct=50.271
+04:37:00.530 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:37:01.179 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:37:01.530 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:37:01.820 upper_planner_node goal reached: remaining=0.000 direct=50.275
+04:37:01.947 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:37:02.179 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:37:02.530 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:37:02.822 upper_planner_node goal reached: remaining=0.000 direct=50.274
+04:37:03.178 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:37:03.629 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:37:03.821 upper_planner_node goal reached: remaining=0.000 direct=50.269
+04:37:03.966 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:37:04.179 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:37:04.629 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:37:05.179 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:37:05.321 upper_planner_node goal reached: remaining=0.000 direct=50.276
+04:37:05.630 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:37:06.009 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:37:06.179 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:37:06.321 upper_planner_node goal reached: remaining=0.000 direct=50.274
+04:37:06.636 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:37:07.229 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:37:07.731 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:37:07.822 upper_planner_node goal reached: remaining=0.000 direct=50.269
+04:37:08.057 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:37:08.229 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:37:08.730 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:37:09.279 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:37:09.321 upper_planner_node goal reached: remaining=0.000 direct=50.272
+04:37:09.829 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:37:10.070 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:37:10.279 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:37:10.322 upper_planner_node goal reached: remaining=0.000 direct=50.268
+04:37:10.829 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:37:11.279 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:37:11.821 upper_planner_node goal reached: remaining=0.000 direct=50.261
+04:37:11.930 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:37:12.097 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:37:12.279 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:37:12.823 upper_planner_node goal reached: remaining=0.000 direct=50.262
+04:37:13.028 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:37:13.279 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:37:14.030 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:37:14.109 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:37:14.321 upper_planner_node goal reached: remaining=0.000 direct=50.267
+04:37:14.329 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:37:15.130 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:37:15.321 upper_planner_node goal reached: remaining=0.000 direct=50.268
+04:37:15.379 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:37:16.131 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:37:16.132 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:37:16.322 upper_planner_node goal reached: remaining=0.000 direct=50.268
+04:37:16.429 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:37:17.130 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:37:17.323 upper_planner_node goal reached: remaining=0.000 direct=50.264
+04:37:17.479 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:37:18.152 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:37:18.230 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:37:18.479 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:37:18.822 upper_planner_node goal reached: remaining=0.000 direct=50.258
+04:37:19.230 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:37:19.529 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:37:20.171 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:37:20.321 upper_planner_node goal reached: remaining=0.000 direct=50.264
+04:37:20.329 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:37:20.578 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:37:21.323 upper_planner_node goal reached: remaining=0.000 direct=50.265
+04:37:21.329 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:37:21.579 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:37:22.192 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:37:22.322 upper_planner_node goal reached: remaining=0.000 direct=50.266
+04:37:22.330 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:37:22.579 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:37:23.322 upper_planner_node goal reached: remaining=0.000 direct=50.266
+04:37:23.331 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:37:23.579 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:37:24.212 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:37:24.322 upper_planner_node goal reached: remaining=0.000 direct=50.263
+04:37:24.430 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:37:24.630 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:37:25.430 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:37:25.629 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:37:25.821 upper_planner_node goal reached: remaining=0.000 direct=50.257
+04:37:26.234 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:37:26.530 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:37:26.629 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:37:26.823 upper_planner_node goal reached: remaining=0.000 direct=50.258
+04:37:27.630 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:37:27.632 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:37:28.256 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:37:28.322 upper_planner_node goal reached: remaining=0.000 direct=50.263
+04:37:28.631 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:37:28.632 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:37:29.679 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:37:29.732 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:37:29.822 upper_planner_node goal reached: remaining=0.000 direct=50.261
+04:37:30.276 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:37:30.679 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:37:30.829 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:37:31.322 upper_planner_node goal reached: remaining=0.000 direct=50.262
+04:37:31.679 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:37:31.829 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:37:32.322 upper_planner_node goal reached: remaining=0.000 direct=50.259
+04:37:32.325 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:37:32.679 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:37:32.830 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:37:33.730 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:37:33.822 upper_planner_node goal reached: remaining=0.000 direct=50.257
+04:37:33.830 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:37:34.343 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:37:34.730 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:37:34.823 upper_planner_node goal reached: remaining=0.000 direct=50.259
+04:37:34.934 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:37:35.779 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:37:35.822 upper_planner_node goal reached: remaining=0.000 direct=50.259
+04:37:36.031 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:37:36.367 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:37:36.779 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:37:36.823 upper_planner_node goal reached: remaining=0.000 direct=50.261
+04:37:37.031 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:37:37.822 upper_planner_node goal reached: remaining=0.000 direct=50.259
+04:37:37.829 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:37:38.131 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:37:38.439 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:37:38.879 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:37:39.233 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:37:39.322 upper_planner_node goal reached: remaining=0.000 direct=50.258
+04:37:39.880 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:37:40.231 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:37:40.444 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:37:40.822 upper_planner_node goal reached: remaining=0.000 direct=50.257
+04:37:40.929 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:37:41.330 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:37:41.822 upper_planner_node goal reached: remaining=0.000 direct=50.259
+04:37:41.930 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:37:42.330 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:37:42.429 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:37:42.823 upper_planner_node goal reached: remaining=0.000 direct=50.258
+04:37:42.980 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:37:43.431 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:37:43.980 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:37:44.322 upper_planner_node goal reached: remaining=0.000 direct=50.265
+04:37:44.431 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:37:44.452 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:37:44.980 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:37:45.322 upper_planner_node goal reached: remaining=0.000 direct=50.261
+04:37:45.531 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:37:46.030 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:37:46.322 upper_planner_node goal reached: remaining=0.000 direct=50.258
+04:37:46.476 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:37:46.532 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:37:47.031 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:37:47.323 upper_planner_node goal reached: remaining=0.000 direct=50.262
+04:37:47.631 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:37:48.080 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:37:48.504 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:37:48.631 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:37:48.822 upper_planner_node goal reached: remaining=0.000 direct=50.259
+04:37:49.080 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:37:49.731 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:37:49.824 upper_planner_node goal reached: remaining=0.000 direct=50.258
+04:37:50.130 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:37:50.522 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:37:50.830 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:37:51.322 upper_planner_node goal reached: remaining=0.000 direct=50.264
+04:37:52.545 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:37:54.277 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:37:54.277 upper_planner_node goal reached: remaining=0.000 direct=50.264
+04:37:54.277 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:37:54.568 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:37:55.280 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:37:55.323 upper_planner_node goal reached: remaining=0.000 direct=50.261
+04:37:55.330 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:37:56.331 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:37:56.332 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:37:56.568 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:37:56.823 upper_planner_node goal reached: remaining=0.000 direct=50.258
+04:37:57.381 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:37:57.431 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:37:57.823 upper_planner_node goal reached: remaining=0.000 direct=50.261
+04:37:58.380 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:37:58.531 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:37:58.594 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:37:59.322 upper_planner_node goal reached: remaining=0.000 direct=50.261
+04:37:59.380 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:37:59.531 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:38:00.323 upper_planner_node goal reached: remaining=0.000 direct=50.258
+04:38:00.430 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:38:00.619 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:38:00.631 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:38:01.430 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:38:01.633 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:38:01.823 upper_planner_node goal reached: remaining=0.000 direct=50.256
+04:38:02.480 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:38:02.670 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:38:02.732 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:38:02.824 upper_planner_node goal reached: remaining=0.000 direct=50.259
+04:38:03.480 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:38:03.731 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:38:04.324 upper_planner_node goal reached: remaining=0.000 direct=50.264
+04:38:04.480 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:38:04.694 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:38:04.832 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:38:05.324 upper_planner_node goal reached: remaining=0.000 direct=50.264
+04:38:05.480 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:38:05.831 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:38:06.531 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:38:06.722 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:38:06.824 upper_planner_node goal reached: remaining=0.000 direct=50.253
+04:38:06.932 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:38:07.532 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:38:08.031 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:38:08.324 upper_planner_node goal reached: remaining=0.000 direct=50.262
+04:38:08.532 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:38:08.752 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:38:09.032 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:38:09.324 upper_planner_node goal reached: remaining=0.000 direct=50.261
+04:38:09.580 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:38:10.133 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:38:10.581 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:38:10.768 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:38:10.824 upper_planner_node goal reached: remaining=0.000 direct=50.258
+04:38:11.232 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:38:11.580 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:38:12.233 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:38:12.323 upper_planner_node goal reached: remaining=0.000 direct=50.264
+04:38:12.581 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:38:12.804 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:38:13.331 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:38:13.630 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:38:13.824 upper_planner_node goal reached: remaining=0.000 direct=50.253
+04:38:14.333 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:38:14.632 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:38:14.795 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:38:14.824 upper_planner_node goal reached: remaining=0.000 direct=50.255
+04:38:15.332 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:38:15.632 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:38:15.823 upper_planner_node goal reached: remaining=0.000 direct=50.256
+04:38:16.432 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:38:16.680 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:38:16.823 upper_planner_node goal reached: remaining=0.000 direct=50.259
+04:38:16.866 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:38:17.531 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:38:17.680 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:38:18.325 upper_planner_node goal reached: remaining=0.000 direct=50.264
+04:38:18.631 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:38:18.681 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:38:18.855 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:38:19.731 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:38:19.823 upper_planner_node goal reached: remaining=0.000 direct=50.259
+04:38:20.843 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:38:22.868 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:38:23.074 upper_planner_node planner pose is stale
+04:38:23.074 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:38:23.182 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:38:23.325 upper_planner_node goal reached: remaining=0.000 direct=50.261
+04:38:24.131 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:38:24.231 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:38:24.823 upper_planner_node goal reached: remaining=0.000 direct=50.258
+04:38:24.893 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:38:25.132 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:38:25.231 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:38:25.823 upper_planner_node goal reached: remaining=0.000 direct=50.261
+04:38:26.231 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:38:26.232 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:38:26.920 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:38:27.233 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:38:27.233 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:38:27.323 upper_planner_node goal reached: remaining=0.000 direct=50.261
+04:38:28.282 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:38:28.324 upper_planner_node goal reached: remaining=0.000 direct=50.258
+04:38:28.332 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:38:28.943 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:38:29.324 upper_planner_node goal reached: remaining=0.000 direct=50.262
+04:38:29.332 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:38:29.333 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:38:30.381 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:38:30.432 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:38:30.824 upper_planner_node goal reached: remaining=0.000 direct=50.259
+04:38:30.970 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:38:31.381 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:38:31.432 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:38:31.824 upper_planner_node goal reached: remaining=0.000 direct=50.258
+04:38:32.381 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:38:32.432 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:38:32.989 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:38:33.325 upper_planner_node goal reached: remaining=0.000 direct=50.265
+04:38:33.431 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:38:33.433 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:38:34.324 upper_planner_node goal reached: remaining=0.000 direct=50.261
+04:38:34.481 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:38:34.533 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:38:35.015 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:38:35.324 upper_planner_node goal reached: remaining=0.000 direct=50.258
+04:38:35.481 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:38:35.535 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:38:36.481 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:38:36.632 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:38:36.825 upper_planner_node goal reached: remaining=0.000 direct=50.257
+04:38:37.015 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:38:37.481 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:38:37.734 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:38:37.825 upper_planner_node goal reached: remaining=0.000 direct=50.259
+04:38:38.532 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:38:38.833 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:38:39.067 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:38:39.323 upper_planner_node goal reached: remaining=0.000 direct=50.264
+04:38:39.581 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:38:39.932 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:38:40.324 upper_planner_node goal reached: remaining=0.000 direct=50.265
+04:38:40.581 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:38:41.033 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:38:41.089 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:38:41.581 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:38:41.825 upper_planner_node goal reached: remaining=0.000 direct=50.253
+04:38:42.032 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:38:42.581 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:38:42.824 upper_planner_node goal reached: remaining=0.000 direct=50.255
+04:38:43.113 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:38:43.132 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:38:43.631 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:38:44.133 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:38:44.324 upper_planner_node goal reached: remaining=0.000 direct=50.262
+04:38:44.631 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:38:45.135 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:38:45.232 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:38:45.324 upper_planner_node goal reached: remaining=0.000 direct=50.263
+04:38:45.681 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:38:46.332 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:38:46.682 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:38:46.824 upper_planner_node goal reached: remaining=0.000 direct=50.261
+04:38:47.136 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:38:47.431 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:38:47.682 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:38:48.324 upper_planner_node goal reached: remaining=0.000 direct=50.261
+04:38:48.433 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:38:48.731 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:38:49.185 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:38:49.325 upper_planner_node goal reached: remaining=0.000 direct=50.258
+04:38:49.433 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:38:49.732 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:38:50.534 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:38:50.782 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:38:50.824 upper_planner_node goal reached: remaining=0.000 direct=50.257
+04:38:51.200 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:38:51.632 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:38:51.831 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:38:52.324 upper_planner_node goal reached: remaining=0.000 direct=50.263
+04:38:52.732 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:38:52.831 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:38:53.221 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:38:53.824 upper_planner_node goal reached: remaining=0.000 direct=50.261
+04:38:53.831 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:38:55.227 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:38:55.275 upper_planner_node goal reached: remaining=0.000 direct=50.261
+04:38:55.276 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:38:55.333 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:38:56.324 upper_planner_node goal reached: remaining=0.000 direct=50.258
+04:38:56.331 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:38:56.381 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:38:57.241 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:38:57.325 upper_planner_node goal reached: remaining=0.000 direct=50.262
+04:38:57.333 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:38:57.382 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:38:58.325 upper_planner_node goal reached: remaining=0.000 direct=50.262
+04:38:58.332 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+04:38:58.382 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:38:59.255 rgb_to_occupancy Published occupancy grid 128x128 data.size=16384 expected=16384 x[0.00, 40.00] y[-20.00, 20.00] res=0.3125
+04:38:59.325 upper_planner_node goal reached: remaining=0.000 direct=50.263
+04:38:59.432 lower_tracking_mpc_node MAVLink COMMAND_ACK command=187 result=0
+04:38:59.433 lower_tracking_mpc_node goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral

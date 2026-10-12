@@ -1,0 +1,19 @@
+knu_batch_runner:
+  ros__parameters:
+    stop_sec: 10.0
+    movement_m: 0.5
+    off_route_m: 15.0
+    off_route_sec: 3.0
+    reverse_m: 8.0
+    reverse_sec: 3.0
+    no_progress_sec: 30.0
+    goal_radius_m: 8.0
+    finish_remaining_m: 12.0
+    min_progress_ratio: 0.85
+    route_timeout_sec: 900.0
+    startup_timeout_sec: 120.0
+    setup_timeout_sec: 30.0
+    pose_loss_sec: 10.0
+    grid_loss_sec: 10.0
+    pose_fresh_sec: 0.6
+    grid_fresh_sec: 2.0
