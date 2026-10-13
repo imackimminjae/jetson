@@ -1,0 +1,42 @@
+시나리오3 재실행 확인 (2026-10-13)
+
+대상: drive_batches/20261013_035103_scenario3_b9c2c6
+5회 모두 completed(목표 영역 접근), 5회 모두 stationary 확인.
+세션 done/failure 빈 값, 시스템 스킵0회. 기록28701개는 bag metadata와 일치한다.
+직전024858 배치와 effective_config 차이는 결과 저장 경로뿐이다.
+dt0.5, 호리즌7, target_speed6m/s, BEV40×40m, soft_ratio0.7, yaw bias 비활성 유지.
+직전3/5회와 이번5/5회를 합치면 같은 설정에서 목표 접근8/10회이다.
+이번 전 회차 접근을 반복 실패 문제가 완전히 해결됐다는 근거로 일반화하지 않는다.
+
+계획 진단
+회차별 새 유효 계획 생성 실패3,2,2,2,2주기. 모두 solver_rejected.
+후보 없음0회, 예측 최소 단계는4,5,5,5,5이며 이후 복구됐다.
+연속 실패는1회 최대3주기, 나머지 최대2주기였다.
+앞서 실패한 초기 회전과 마지막 북동쪽 분기를 이번에는 모두 통과했다.
+매회 첫 참조 waypoint1→2, 첫 B_before0 확인.
+
+시간 지연 기록
+4회차 running 약14.96~16.96초에 하위 trace 수신 공백2.000914초.
+trace 자체 시각 공백2.000425초. 직전 valid/mode0, 직후 invalid/mode4로 기록됐다.
+이는 하위2초 감시 임계에 근접한 관측이므로 시간 이상이 전혀 없었다고 표시하지 않는다.
+세션 기록에는 계산 갱신 이상에 따른 생략·중단이 없었다. 공백만으로 실제 감시 판단을 재구성하지 않는다.
+상위 한 주기 wall time965.36ms, CPU time7.79ms, 결과success.
+waypoints_and_previous_reference 단계 wall957.34ms/CPU0.332ms였고 QP 호출은5.25ms였다.
+따라서 이 지연을 QP 연산량 증가라고 단정하지 않는다. 대기·스케줄링 등의 원인은 미확정이다.
+상위 진단 수신 최대 공백1.460초. 지연과 목표 접근 결과를 별도 항목으로 기록했다.
+
+정지와 해석
+completed는 목표 영역 접근이며 목표 정차 성공이 아니다.
+판정 시 목표거리7.55~7.97m, 최종 정지거리는34.38~36.01m이다.
+조향 trace는 출력 명령이며 실제 바퀴각 측정값이 아니다.
+odom orientation.z는 scalar yaw로 해석했다.
+
+자료·검증
+scenario3_overview.png, scenario3_all5.png/pdf, SCENARIO3_DT05_H7_REVIEW.pdf.
+per_attempt.csv, attempt_diagnostics.json, branch_timeline.csv: 이번5회 결과·실패·복구 진단.
+config_diff.json: 직전 배치 설정 비교.
+sources_sha256.json, validation.json: 원본 보존·메시지 수·PNG 검증.
+occupancy grid 디코딩·캐시는 생성하지 않았다.
+운영 주행·ARM·하드웨어/PX4 실행·설정 변경이나 튜닝은 하지 않았다.
+오프라인 ROS_DOMAIN_ID177/localhost로 격리했고 기존 미커밋 변경을 보존했다.
+참조 생성·이전 계획 계승은 유지했고12m soft 폭 상한을 재적용하지 않았다.

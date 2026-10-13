@@ -1,0 +1,499 @@
+[INFO] [1791826643.760126342] [lower_tracking_mpc_node]: MAVLink UDP bound at 0.0.0.0:14540; waiting for MAVProxy --out peer
+[INFO] [1791826643.760669655] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=30 path=/planner/lower_reference_path scale=fullscale wheelbase=2.80m rear_offset=1.40m command_scale=0.350rad actuator_model=1 delay=0.00s tau=0.74s backend=mavlink_udp virtual=/cmd_control
+[WARN] [1791826643.811059183] [lower_tracking_mpc_node]: MAVLink peer unknown; check MAVProxy --out=127.0.0.1:14540
+[INFO] [1791826643.861445063] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826644.310976619] [lower_tracking_mpc_node]: MAVLink peer detected: 127.0.0.1:36594
+[INFO] [1791826644.361029370] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826644.861517256] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826645.411024261] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826645.961376220] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826646.411074790] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826646.961422173] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826647.411074151] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826647.961481121] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826648.461022068] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826648.961524996] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826649.461064760] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826649.961616043] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[WARN] [1791826650.057603691] [lower_tracking_mpc_node]: Rejected lower path: fewer than two distinct path points
+[WARN] [1791826650.061309115] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[WARN] [1791826650.161297013] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[WARN] [1791826650.261279087] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826650.461068988] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826650.961665809] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[WARN] [1791826651.261325877] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826651.461095938] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826652.461132458] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826653.461133585] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826654.461205788] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826655.461238726] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[WARN] [1791826655.761396507] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[WARN] [1791826656.261464131] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826656.511303616] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826657.561253368] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826658.561289350] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[WARN] [1791826658.761522467] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826659.561414264] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826660.611441045] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826661.611457190] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[WARN] [1791826662.261663582] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826662.611506585] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826663.661465400] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826664.661501196] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826665.661546050] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826666.661564921] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826667.711630527] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826668.711664504] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826669.711691890] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[WARN] [1791826670.261955829] [lower_tracking_mpc_node]: lower control invalid: neutral steering/throttle: stale lower path
+[INFO] [1791826670.711735853] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[WARN] [1791826670.761848991] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[WARN] [1791826671.261969776] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826671.711757161] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[WARN] [1791826671.761890619] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[WARN] [1791826672.262027853] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826672.711800294] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[WARN] [1791826673.262019145] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826673.711821028] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[WARN] [1791826673.761984663] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826674.711859171] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826675.711910436] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826676.711918372] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826677.711964263] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826678.712278163] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826679.761968059] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826680.762043714] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826680.962641583] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826681.762071401] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826682.062560208] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826682.762075471] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826683.062574199] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826683.762123832] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826684.062665953] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826684.812224563] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826685.162703145] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826685.812278718] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826686.162792150] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826686.812281865] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826687.162815010] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826687.812331702] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826688.262865453] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826688.812410405] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826689.362828024] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826689.862261181] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826690.462881254] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826690.862303278] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826691.462927607] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826691.862347967] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826692.562922406] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826692.862357392] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826693.662902197] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826693.862403715] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826694.663035244] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826694.912496136] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826695.663035552] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826695.912536285] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826696.663060437] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826696.962508897] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826697.663071083] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826697.962526391] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826698.663084386] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826698.962546799] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826699.663087770] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826699.962553735] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826700.663152725] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826700.962582817] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826701.663344564] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826702.012697806] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826702.763113799] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826703.012751627] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[WARN] [1791826703.062912416] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[WARN] [1791826703.262910655] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826703.763458605] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826704.062682901] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[WARN] [1791826704.356101836] [lower_tracking_mpc_node]: Rejected lower path: fewer than two distinct path points
+[WARN] [1791826704.362946076] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[WARN] [1791826704.462982045] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[WARN] [1791826704.762941082] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826704.763473227] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826705.062742580] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[WARN] [1791826705.563009755] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826706.062794547] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826707.112878181] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826708.112891941] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826709.112911271] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[WARN] [1791826709.763094558] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826710.113387447] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826711.162949981] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826712.213039348] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[WARN] [1791826712.763168651] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826713.213084859] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826714.263002831] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826715.263051799] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826716.313102001] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826717.313183645] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826718.363138646] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826719.363172994] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[WARN] [1791826719.763392237] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826720.363197039] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826721.363238237] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826722.363280012] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826723.413367022] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[WARN] [1791826723.763627371] [lower_tracking_mpc_node]: lower control invalid: neutral steering/throttle: stale lower path
+[WARN] [1791826724.263542961] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826724.413368862] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[WARN] [1791826724.763626300] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826725.413422768] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[WARN] [1791826725.763547978] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826726.413429922] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[WARN] [1791826727.263603175] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826727.413438517] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[WARN] [1791826727.763584528] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[WARN] [1791826728.263903972] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826728.413523819] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826729.413571649] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[WARN] [1791826729.763615802] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826730.463480773] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826731.463624608] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826732.513632105] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826733.563588753] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826734.563624940] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826735.464235638] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826735.563676488] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826736.464281171] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826736.563731269] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826737.464368145] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826737.563751618] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826738.563790688] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826738.564611993] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826739.613828817] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826739.664458613] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826740.613859728] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826740.664532119] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826741.613892337] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826741.664844512] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826742.614004662] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826742.764425655] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826743.663909414] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826743.764441530] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826744.663918089] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826744.764510399] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826745.663969486] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826745.764526435] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826746.663979379] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826746.864520939] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826747.664014682] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826747.864767128] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826748.664090018] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826748.964547228] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826749.714224608] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826749.964660871] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826750.764239867] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826750.964730962] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826751.814189684] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826751.964755356] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826752.814200127] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826752.964756454] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826753.814232875] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826753.964841844] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826754.814278040] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826754.964910274] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826755.814318854] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826756.064957301] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826756.814382486] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826757.164870949] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[WARN] [1791826757.564547438] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[WARN] [1791826757.764558999] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826757.814392773] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826758.164931478] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[WARN] [1791826758.264607024] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[WARN] [1791826758.764569351] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826758.814429077] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[WARN] [1791826758.856124587] [lower_tracking_mpc_node]: Rejected lower path: fewer than two distinct path points
+[WARN] [1791826758.864513610] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[WARN] [1791826758.964595537] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[WARN] [1791826759.264603680] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826759.265165905] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826759.814506376] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[WARN] [1791826760.064642152] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826760.814509401] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826761.864477469] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826762.914521892] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826763.914621307] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826764.964553185] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[WARN] [1791826765.264746327] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[WARN] [1791826765.764771890] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826765.964615960] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826767.014758246] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826768.064650349] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826769.064747497] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826770.114809559] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826771.164723233] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[WARN] [1791826771.264991760] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826772.164768190] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826773.164932159] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826774.214902318] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826775.214921133] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826776.214949164] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826777.214994093] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826778.215048111] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[WARN] [1791826778.765200456] [lower_tracking_mpc_node]: lower control invalid: neutral steering/throttle: stale lower path
+[INFO] [1791826779.215072401] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[WARN] [1791826779.265246058] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[WARN] [1791826779.765207946] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826780.264968804] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[WARN] [1791826780.265535285] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826781.265025352] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[WARN] [1791826781.765314899] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826782.265090446] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[WARN] [1791826782.765364857] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[WARN] [1791826783.265263640] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826783.315169513] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826784.315171919] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[WARN] [1791826785.265413065] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826785.315216598] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[WARN] [1791826786.265442289] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826786.315247263] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826787.315288840] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[WARN] [1791826787.765485599] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826788.315324978] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826789.315388094] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826789.765891295] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826790.315392009] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826790.865692715] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[WARN] [1791826791.265594439] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826791.315399221] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826791.865881341] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826792.315431010] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826792.865935532] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826793.315449168] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826793.865938105] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826794.315500287] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826794.865996330] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826795.315523407] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826795.866082395] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826796.315564224] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826796.966081876] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826797.315568976] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826798.066026443] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826798.315644100] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826799.066116832] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826799.315647286] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826800.066170772] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826800.315679210] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826801.066209129] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826801.315712351] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826802.066213246] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826802.315727284] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826803.066232051] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826803.315746442] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826804.066318092] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826804.315799714] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826805.166400622] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826805.315807161] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826806.266445840] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826806.315866963] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826807.315887852] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826807.366459314] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826808.315909734] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826808.466567192] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826809.315928705] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826809.566434679] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826810.316021215] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826810.566468404] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826811.316024443] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[WARN] [1791826811.466281153] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826811.566513393] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[WARN] [1791826811.766187130] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826812.316028408] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826812.566521774] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[WARN] [1791826812.656277791] [lower_tracking_mpc_node]: Rejected lower path: fewer than two distinct path points
+[WARN] [1791826812.666342450] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[WARN] [1791826812.766297882] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[WARN] [1791826813.266307721] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826813.316074839] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826813.566620239] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[WARN] [1791826813.866331074] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826814.366050313] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826815.366073001] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826816.366129259] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826817.366181869] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826818.416225605] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[WARN] [1791826819.266509713] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826819.416351531] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[WARN] [1791826819.766473441] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826820.416402928] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826821.466257220] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[WARN] [1791826822.266532541] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826822.466351884] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826823.516338918] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826824.516353645] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[WARN] [1791826825.266630738] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826825.516441559] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826826.516517537] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826827.566651939] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826828.616507229] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826829.616557193] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826830.616576213] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[WARN] [1791826831.266792049] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826831.616610658] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826832.616653296] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[WARN] [1791826832.766861142] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[WARN] [1791826833.266863917] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826833.616687742] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[WARN] [1791826833.766860644] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[WARN] [1791826834.266902300] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826834.616702765] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826835.616756029] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[WARN] [1791826835.766981733] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[WARN] [1791826836.267003901] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826836.616793742] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[WARN] [1791826836.766956148] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826837.616829600] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[WARN] [1791826837.767008774] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826838.616862546] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[WARN] [1791826838.767029848] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826839.616889381] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826840.616983611] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826841.666907938] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826842.666924022] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826843.467584712] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826843.666941580] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826844.567501575] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826844.666995715] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826845.567619553] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826845.667013563] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826846.567691899] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826846.667020978] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826847.567715251] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826847.667101805] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826848.567730189] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826848.717129308] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826849.667772820] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826849.717183768] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826850.717216467] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826850.767846012] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826851.717218126] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826851.867764801] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826852.717242859] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826852.867819647] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826853.717276552] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826853.867826652] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826854.717302822] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826854.867858362] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826855.717335365] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826855.867968924] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826856.717421703] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826856.967921766] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826857.767401692] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826857.967951783] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826858.767417661] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826859.067942004] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826859.767474048] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826860.068384706] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826860.767514691] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826861.168106505] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826861.767515589] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826862.268083032] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826862.767603403] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826863.268120221] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826863.817567589] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826864.268217764] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826864.817593770] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826865.268226121] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[WARN] [1791826865.367809354] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[WARN] [1791826865.767882978] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826865.817619472] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826866.268277009] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[WARN] [1791826866.656788712] [lower_tracking_mpc_node]: Rejected lower path: fewer than two distinct path points
+[WARN] [1791826866.667973117] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[WARN] [1791826866.767920969] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826866.817693625] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[WARN] [1791826867.267974670] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826867.269899689] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826867.817713280] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[WARN] [1791826867.867940222] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826868.817738056] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826869.817820563] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826870.867803699] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826871.867852894] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826872.917872288] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[WARN] [1791826873.268249740] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826873.917900524] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826874.917972250] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826875.967965853] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826876.968000588] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826877.968099517] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[WARN] [1791826878.768328598] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826879.018037953] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826880.018047057] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826881.018144132] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826882.018156533] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[WARN] [1791826882.268446483] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826883.018255914] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826884.068244051] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[WARN] [1791826884.268470168] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[WARN] [1791826884.768561028] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826885.068341641] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826886.068434496] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[WARN] [1791826886.268599651] [lower_tracking_mpc_node]: lower control invalid: neutral steering/throttle: stale lower path
+[WARN] [1791826886.768583788] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826887.118285191] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[WARN] [1791826887.268570486] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[WARN] [1791826887.768582977] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826888.118324190] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826889.118369909] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[WARN] [1791826889.768623310] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826890.118373676] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[WARN] [1791826890.768675335] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[INFO] [1791826891.118405732] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826892.118511647] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826893.168388235] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826894.168498088] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826895.168628710] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826896.218621496] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826896.969186734] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826897.218626836] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826898.069068662] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826898.218651089] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826899.069189526] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826899.218671822] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826900.069236341] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826900.218725325] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826901.069267540] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826901.269064686] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826902.169357637] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826902.318759547] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826903.169372549] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826903.318797148] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826904.169378022] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826904.318800060] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826905.169405863] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826905.318848670] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826906.269435962] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826906.318871937] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826907.269442268] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826907.319008391] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826908.269461087] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826908.368964769] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826909.269515429] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826909.368971780] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826910.269580523] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826910.369032170] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826911.269581520] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826911.369035727] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826912.269616566] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826912.369043957] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826913.270066410] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826913.369126942] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826914.369790841] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826914.370636019] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826915.419216871] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826915.469659821] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826916.469675798] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826916.470423181] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826917.519259723] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826917.569772371] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826918.569208971] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[INFO] [1791826918.570106343] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[INFO] [1791826919.358904632] [rclcpp]: signal_handler(SIGINT/SIGTERM)

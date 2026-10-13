@@ -1,0 +1,50 @@
+{
+  "domain": "1",
+  "runs": 5,
+  "scenario": "scenario7",
+  "routes": [
+    "scenario7"
+  ],
+  "planned_attempts": 5,
+  "repeat_per_route": false,
+  "skip_system_fault_scenarios": false,
+  "require_compute_heartbeat": false,
+  "upper_compute_timeout_sec": 5.0,
+  "lower_compute_timeout_sec": 2.0,
+  "topics": [
+    "/bev/occupancy_grid",
+    "/motive/vehicle/odom_map",
+    "/navigation/global_path",
+    "/planner/lower_reference_path/with_arclength",
+    "/planner/goal_reached",
+    "/debug/lower_mpc_trace",
+    "/debug/upper_branch_event",
+    "/debug/upper_miqp_trace",
+    "/debug/upper_interval_info",
+    "/debug/upper_interval_centering_state",
+    "/debug/upper_stage_timing",
+    "/debug/bev_source_timing",
+    "/controller/reset",
+    "/knu_batch/status",
+    "/knu_batch/active_route",
+    "/parameter_events",
+    "/rosout"
+  ],
+  "format": "MCAP Zstd lossless",
+  "max_session_bytes": 536870912,
+  "min_free_bytes": 1073741824,
+  "sha256": {
+    "/home/imac/ros2_ws/src/virtual_control/config/tracking_control_split.yaml": "487da476d657735e406d260dd5c54e2837c82736025c6e588b3bdc03b58033cc",
+    "/home/imac/ros2_ws/src/virtual_control/config/scenario3_repeat.yaml": "90228e918d21d5228e89b18bbff0adb51b3b92e6cb54a336c265451f8dad63be",
+    "/home/imac/ros2_ws/src/virtual_control/scripts/repeat_drive_session.py": "6cabb42cae7fc20d485d49a2c9f457750a003011019111e3e7621d03830f55b7",
+    "/home/imac/ros2_ws/src/virtual_control/scripts/knu_batch_runner.py": "4e0afb4390d88727a4cd34b0ad730b69b77e54c9273ba81ad678cc57e83893e8",
+    "/home/imac/ros2_ws/src/virtual_control/config/knu_batch.yaml": "bb8b482284a440f74fde0724cc9a3c17dcbbb3b5084b3450e402fe324b8e5c23",
+    "/home/imac/ros2_ws/src/virtual_control/scripts/knu_batch_monitor.py": "0eb8a55e5e5e274c75f6b4d0e4606b54dd0e69ad9381c1a09516d200c6affdce",
+    "/home/imac/ros2_ws/src/virtual_control/data/knu_routes/knu_batch_profile.json": "a7c3515ee32652d0b74b47ab34884b23f69a6eaaceba1bf8f12b1f8997184ebd",
+    "/home/imac/ros2_ws/src/virtual_control/data/knu_routes/knu_start_poses.json": "a9fea3b8bd72df11619bcf5e1fbbdffa432d6cd9a1a6e317a3667ede7f1c69e5",
+    "/home/imac/ros2_ws/src/virtual_control/data/knu_routes/scenario7.csv": "576f652e4b0909b2c44835f76826115c1c09999ae191cf584e5fb52604198843",
+    "/home/imac/ros2_ws/install/virtual_control/lib/virtual_control/upper_planner_node": "a2c5418e85a5c3ca0fa8afb8226d986824dd4a1d7dac13fa200fdd93677bcacd",
+    "/home/imac/ros2_ws/install/virtual_control/lib/virtual_control/lower_tracking_mpc_node": "04c31c5ef5bdf804281a944c17bb4c3fe1e3a738c195573a161e4ac718a2ba55",
+    "/home/imac/ros2_ws/install/virtual_control/lib/virtual_control/px4_odom_map_bridge": "4aef7103970ff4d8eadf2f2558bb27f85f6351b2528efbcbbcc7e227f83820a6"
+  }
+}

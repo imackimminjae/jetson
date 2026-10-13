@@ -1,0 +1,76 @@
+[
+  {
+    "attempt": 1,
+    "outcome": "completed",
+    "horizon_min": 7,
+    "horizon_max": 7,
+    "failure_reasons": {},
+    "failed_runs": []
+  },
+  {
+    "attempt": 2,
+    "outcome": "completed",
+    "horizon_min": 7,
+    "horizon_max": 7,
+    "failure_reasons": {},
+    "failed_runs": []
+  },
+  {
+    "attempt": 3,
+    "outcome": "completed",
+    "horizon_min": 7,
+    "horizon_max": 7,
+    "failure_reasons": {
+      "solver_rejected": 5
+    },
+    "failed_runs": [
+      {
+        "cycles": 3,
+        "first_elapsed_s": 29.948896646499634,
+        "last_elapsed_s": 30.94760274887085,
+        "recovery_elapsed_s": 31.447688579559326,
+        "until_recovery_s": 1.4987919330596924
+      },
+      {
+        "cycles": 1,
+        "first_elapsed_s": 33.44770336151123,
+        "last_elapsed_s": 33.44770336151123,
+        "recovery_elapsed_s": 33.94769024848938,
+        "until_recovery_s": 0.4999868869781494
+      },
+      {
+        "cycles": 1,
+        "first_elapsed_s": 35.44775390625,
+        "last_elapsed_s": 35.44775390625,
+        "recovery_elapsed_s": 35.947741746902466,
+        "until_recovery_s": 0.4999878406524658
+      }
+    ]
+  },
+  {
+    "attempt": 4,
+    "outcome": "off_route",
+    "horizon_min": 7,
+    "horizon_max": 7,
+    "failure_reasons": {
+      "solver_rejected": 1
+    },
+    "failed_runs": [
+      {
+        "cycles": 1,
+        "first_elapsed_s": 30.84782910346985,
+        "last_elapsed_s": 30.84782910346985,
+        "recovery_elapsed_s": 31.347800731658936,
+        "until_recovery_s": 0.4999716281890869
+      }
+    ]
+  },
+  {
+    "attempt": 5,
+    "outcome": "completed",
+    "horizon_min": 7,
+    "horizon_max": 7,
+    "failure_reasons": {},
+    "failed_runs": []
+  }
+]

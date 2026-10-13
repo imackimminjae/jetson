@@ -1,0 +1,30 @@
+2026-10-13 실패 다발 시나리오 개별5회 준비
+대상/순서: 7→8→12→10→11, 각5회. 예정25회, 시스템 이상시 남은 회차 생략 가능.
+GitHub 전체60회 기준: 7/8/12 각5회 off_route,10/11 각4회 off_route+1회 목표접근.
+최근1~3 재확인했으므로 이번목록제외. baseline 원격주소 selection.json.
+
+변경
+repeat_drive_session.py: --guarded 옵션으로 단독시나리오도 기존all 감시/복구/회차생략정책 사용.
+상위5초/하위2초 갱신 감시, 입력/준비/계산 이상 복구·정지 후 잔여회차생략.
+일반 주행실패 계속. QP실패자체는 생략사유 아님. 복구/정지/기록기/저장공간 이상시 세션중단.
+manifest는 실제runner설정의 정책·시간값 기록. 생략되는값은runner기본값과일치.
+기존옵션없는 단독명령/all 설정은 그대로. 제어/B/soft/참조생성·계승/매회reset/PX4변경없음.
+사용자가 명령을 한개씩 직접실행하며 이 작업에서 실제주행/ARM/운영ROS실행안함.
+명령: COMMANDS_KO.txt 및 /home/imac/ros2_ws/실패많은시나리오_5회_사용법.txt.
+
+검증
+DOMAIN177/localhost 격리 가상runner:39passed,1skipped.
+단독 upper/lower계산중단→주행허용해제→정지전대기→복구전대기→나머지4회생략 확인.
+단독일반주행실패5회모두진행 확인. 기존60회/복구/중복진단/도로근거회귀통과.
+선정5개config에서감시만변경, 제어/bridge값동일. 기존13선택(all포함)config와작업직전사본완전동일.
+--help/Bash구문검사통과. 스킵은이미GitHub로보관후삭제된로컬SQLitefixture가없기때문.
+최초검증은기본값테스트가누락값을직접읽고,ROS패키지환경경로/샌드박스소켓제한으로실패.
+기본값처리를고치고ROS설정로드+분리DOMAIN으로검증통과. tests_initial.log 보관.
+
+변경범위/복원
+tracked변경2개:repeat_drive_session.py,test_all_scenarios_repeat.py.
+기존미커밋없음/작업브랜치유지,Gitcommit/push없음. before/ 사본 및 before/afterSHA보관.
+restore.py는기본확인만. --apply는현재내용이이번작업후SHA와같을때만작업직전사본으로복원.
+추가작업물/주행로그삭제안함. 주행실행중에는복원하지않음.
+
+이후 자료참조:최신은로컬새drive_batches,과거는GitHub. completed는목표접근이며목표정차성공아님.

@@ -1,0 +1,34 @@
+실패가 많았던 시나리오 재확인: 7 → 8 → 12 → 10 → 11, 각각5회
+
+기준: GitHub logs/archive-20261006, ec9fbc5163c7c5db9a8cdeb7e0bf3acf7196a8d1
+기존 전체60회: 7/8/12 각5회 off_route; 10/11 각4회 off_route,1회 목표 접근.
+1~3은 최근 재확인했으므로 이번 목록에서 제외. 예정25회, 실제 출발 횟수는 시스템 이상 시 줄어들 수 있음.
+
+아래 명령은 한 개씩 직접 실행. 해당 세션의 종료·정지를 확인한 뒤 다음 명령을 실행.
+시스템 이상으로 스킵/중단됐다면 이상·복구·정지 상태를 확인하고 다음 시나리오 실행 여부 판단.
+
+# 시나리오7,5회
+/home/imac/ros2_ws/run_scenario3_10.sh --scenario scenario7 --runs 5 --guarded
+
+# 시나리오8,5회
+/home/imac/ros2_ws/run_scenario3_10.sh --scenario scenario8 --runs 5 --guarded
+
+# 시나리오12,5회
+/home/imac/ros2_ws/run_scenario3_10.sh --scenario scenario12 --runs 5 --guarded
+
+# 시나리오10,5회
+/home/imac/ros2_ws/run_scenario3_10.sh --scenario scenario10 --runs 5 --guarded
+
+# 시나리오11,5회
+/home/imac/ros2_ws/run_scenario3_10.sh --scenario scenario11 --runs 5 --guarded
+
+--guarded: 단독 시나리오에도 상위5초/하위2초 계산 갱신 감시와 시스템 이상 남은 회차 생략 정책 활성화.
+일반 주행 실패(off_route/정체)는 정지 후 남은 회차 계속. QP실패 자체는 회차 생략 사유가 아님.
+입력·준비 이상/장시간 계산 갱신 중단은 복구·정지 확인 후 남은 회차 생략.
+정지/복구 확인 불가, 기록기/저장공간/초기화 응답 문제는 세션 중단.
+기존 --guarded 없는 단독 명령의 설정은 유지. all은 기존대로 감시 활성.
+제어/B/soft/참조생성·계승/매회reset/PX4/ARM 설정은 변경하지 않음.
+운영 ROS_DOMAIN_ID=1. 이 준비 작업에서 실제 주행·ARM·운영 ROS 노드를 실행하지 않았음.
+
+최신 주행은 로컬 drive_batches에 새로 저장. 과거 원본은 GitHub 보관 자료로 확인.
+completed는 목표 영역 접근이며 목표 정차 성공이 아님.

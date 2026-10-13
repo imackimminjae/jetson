@@ -1,0 +1,16 @@
+2026-10-12 시나리오1 21:52 배치 확인
+배치: /home/imac/ros2_ws/drive_batches/20261012_215236_scenario1_9e41f2
+원본 결과: /home/imac/ros2_ws/drive_batches/20261012_215236_scenario1_9e41f2/results/20261012_215238_c6113e6634/summary.csv
+5회 모두 completed(목표 접근), 5회 stationary 확인. session done, failure 빈 문자열.
+기록기 정상 종료. odom/status 기록 수 metadata 일치, 원본 SHA256 보존 확인.
+직전21:29 배치도 목표 접근5회. 두 배치에서 총10회 목표 접근이며 목표 정차 성공을 뜻하지 않음.
+실행 설정 차이는 결과 저장 경로뿐; manifest source hash 및 경로 CSV 동일.
+회차 | 판정 시 목표거리(m) | 정지 시 목표거리(m)
+1 | 7.5891 | 35.5822
+2 | 7.8628 | 33.04
+3 | 7.7098 | 34.5897
+4 | 7.8302 | 33.999
+5 | 7.7275 | 31.3666
+그림: 원래 waypoint/5회 running/관성 이동/판정/정지 위치. 누적 지도 사용 없음.
+ROS 노드/주행/ARM/하드웨어·PX4 설정 변경 없음. occupancy grid 디코딩·캐시 없음.
+원인 분석·튜닝 수행 안 함.

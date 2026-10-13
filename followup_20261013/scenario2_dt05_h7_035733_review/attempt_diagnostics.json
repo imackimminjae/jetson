@@ -1,0 +1,99 @@
+[
+  {
+    "attempt": 1,
+    "outcome": "stopped_10s",
+    "horizon_min": 0,
+    "horizon_max": 7,
+    "failure_reasons": {
+      "no_candidate": 60
+    },
+    "failed_runs": [
+      {
+        "cycles": 60,
+        "first_elapsed_s": 40.391199350357056,
+        "last_elapsed_s": 69.89217829704285,
+        "recovery_elapsed_s": null,
+        "until_recovery_s": null
+      }
+    ]
+  },
+  {
+    "attempt": 2,
+    "outcome": "stopped_10s",
+    "horizon_min": 7,
+    "horizon_max": 7,
+    "failure_reasons": {
+      "solver_rejected": 62
+    },
+    "failed_runs": [
+      {
+        "cycles": 1,
+        "first_elapsed_s": 26.79503631591797,
+        "last_elapsed_s": 26.79503631591797,
+        "recovery_elapsed_s": 27.295042753219604,
+        "until_recovery_s": 0.5000064373016357
+      },
+      {
+        "cycles": 61,
+        "first_elapsed_s": 28.295087575912476,
+        "last_elapsed_s": 58.29591178894043,
+        "recovery_elapsed_s": null,
+        "until_recovery_s": null
+      }
+    ]
+  },
+  {
+    "attempt": 3,
+    "outcome": "off_route",
+    "horizon_min": 7,
+    "horizon_max": 7,
+    "failure_reasons": {
+      "solver_rejected": 5
+    },
+    "failed_runs": [
+      {
+        "cycles": 5,
+        "first_elapsed_s": 32.490180015563965,
+        "last_elapsed_s": 34.490222692489624,
+        "recovery_elapsed_s": null,
+        "until_recovery_s": null
+      }
+    ]
+  },
+  {
+    "attempt": 4,
+    "outcome": "stopped_10s",
+    "horizon_min": 0,
+    "horizon_max": 7,
+    "failure_reasons": {
+      "no_candidate": 61
+    },
+    "failed_runs": [
+      {
+        "cycles": 61,
+        "first_elapsed_s": 40.99832463264465,
+        "last_elapsed_s": 70.99912929534912,
+        "recovery_elapsed_s": null,
+        "until_recovery_s": null
+      }
+    ]
+  },
+  {
+    "attempt": 5,
+    "outcome": "off_route",
+    "horizon_min": 7,
+    "horizon_max": 7,
+    "failure_reasons": {
+      "solver_rejected": 2
+    },
+    "failed_runs": [
+      {
+        "cycles": 2,
+        "first_elapsed_s": 32.90138649940491,
+        "last_elapsed_s": 33.400774002075195,
+        "recovery_elapsed_s": 33.90080738067627,
+        "until_recovery_s": 0.9994208812713623
+      }
+    ]
+  }
+]

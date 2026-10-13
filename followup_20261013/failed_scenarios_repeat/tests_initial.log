@@ -1,0 +1,1689 @@
+.FFFFFEEEEEEEEEEEEEEEEEEEEEEEEEE.......s                                 [100%]
+==================================== ERRORS ====================================
+_ ERROR at setup of test_guarded_single_waits_for_stop_and_recovery_before_skipping[upper-5.0-scenario7] _
+
+package_name = 'virtual_control'
+
+    def get_package_prefix(package_name):
+        """
+        Return the installation prefix directory of the given package.
+    
+        For example, if you install the package 'foo' into
+        '/home/user/ros2_ws/install' and you called this function with 'foo' as the
+        argument, then it will return that directory.
+    
+        :param str package_name: name of the package to locate
+        :returns: installation prefix of the package
+        :raises: :exc:`PackageNotFoundError` if the package is not found
+        :raises: :exc:`ValueError` if the package name is invalid
+        """
+        # This regex checks for a valid package name as defined by REP-127 including the recommended
+        #  exemptions. See https://ros.org/reps/rep-0127.html#name
+        if re.fullmatch('[a-zA-Z0-9][a-zA-Z0-9_-]+', package_name, re.ASCII) is None:
+            raise ValueError(
+                "'{}' is not a valid package name".format(package_name))
+        try:
+>           content, package_prefix = get_resource('packages', package_name)
+
+/opt/ros/humble/lib/python3.10/site-packages/ament_index_python/packages.py:58: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+resource_type = 'packages', resource_name = 'virtual_control'
+
+    def get_resource(resource_type, resource_name):
+        """
+        Get the content of a specific resource and its prefix path.
+    
+        :param resource_type: the type of the resource
+        :type resource_type: str
+        :param resource_names: the name of the resource
+        :type resource_name: str
+        :returns: a tuple of the content (bytes) of the resource and its prefix path
+        :raises: :exc:`EnvironmentError`
+        :raises: :exc:`OSError`
+        :raises: :exc:`LookupError`
+        :raises: :exc:`InvalidResourceTypeNameError`
+        :raises: :exc:`InvalidResourceNameError`
+        """
+        assert resource_type, 'The resource type must not be empty'
+        assert resource_name, 'The resource name must not be empty'
+        if _name_is_invalid(resource_type):
+            raise InvalidResourceTypeNameError(
+                "Resource type '%s' is invalid" % resource_type)
+        if _name_is_invalid(resource_name):
+            raise InvalidResourceNameError(
+                "Resource name '%s' is invalid" % resource_name)
+        for path in get_search_paths():
+            resource_path = os.path.join(path, RESOURCE_INDEX_SUBFOLDER, resource_type, resource_name)
+            if os.path.isfile(resource_path):
+                try:
+                    with open(resource_path, 'r') as h:
+                        content = h.read()
+                except OSError as e:
+                    raise OSError(
+                        "Could not open the resource '%s' of type '%s':\n%s"
+                        % (resource_name, resource_type, e))
+                return content, path
+>       raise LookupError(
+            "Could not find the resource '%s' of type '%s'" % (resource_name, resource_type))
+E       LookupError: Could not find the resource 'virtual_control' of type 'packages'
+
+/opt/ros/humble/lib/python3.10/site-packages/ament_index_python/resources.py:86: LookupError
+
+During handling of the above exception, another exception occurred:
+
+tmp_path = PosixPath('/tmp/pytest-of-imac/pytest-0/test_guarded_single_waits_for_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xffffba285d20>
+request = <SubRequest 'supervisor' for <Function test_guarded_single_waits_for_stop_and_recovery_before_skipping[upper-5.0-scenario7]>>
+
+    @pytest.fixture
+    def supervisor(tmp_path, monkeypatch, request):
+        if os.environ.get('KNU_BATCH_ROS_TEST') != '1':
+            pytest.skip('isolated ROS opt-in required')
+        assert os.environ.get('ROS_DOMAIN_ID') == '177'
+        assert os.environ.get('ROS_LOCALHOST_ONLY') == '1'
+        import rclpy
+        from rclpy.parameter import Parameter
+        import knu_batch_runner as module
+        clock = [100.0]
+        monkeypatch.setattr(module, 'time', SimpleNamespace(monotonic=lambda: clock[0]))
+        scenario = getattr(request, 'param', 'all')
+        config = effective_config(5, tmp_path, scenario, guarded=True)
+        settings = config['knu_batch_runner']['ros__parameters']
+        rclpy.init()
+>       runner = module.KnuBatchRunner(parameter_overrides=[
+            *[Parameter(name, value=settings[name]) for name in (
+                'routes', 'repeat_count', 'repeat_per_route',
+                'skip_system_fault_scenarios', 'require_compute_heartbeat',
+                'upper_compute_timeout_sec', 'lower_compute_timeout_sec')],
+            Parameter('results_directory', value=str(tmp_path))])
+
+src/virtual_control/test/test_all_scenarios_repeat.py:45: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/virtual_control/scripts/knu_batch_runner.py:38: in __init__
+    directory = Path(get_package_share_directory('virtual_control')) / 'data/knu_routes'
+/opt/ros/humble/lib/python3.10/site-packages/ament_index_python/packages.py:80: in get_package_share_directory
+    path = os.path.join(get_package_prefix(package_name), 'share', package_name)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+package_name = 'virtual_control'
+
+    def get_package_prefix(package_name):
+        """
+        Return the installation prefix directory of the given package.
+    
+        For example, if you install the package 'foo' into
+        '/home/user/ros2_ws/install' and you called this function with 'foo' as the
+        argument, then it will return that directory.
+    
+        :param str package_name: name of the package to locate
+        :returns: installation prefix of the package
+        :raises: :exc:`PackageNotFoundError` if the package is not found
+        :raises: :exc:`ValueError` if the package name is invalid
+        """
+        # This regex checks for a valid package name as defined by REP-127 including the recommended
+        #  exemptions. See https://ros.org/reps/rep-0127.html#name
+        if re.fullmatch('[a-zA-Z0-9][a-zA-Z0-9_-]+', package_name, re.ASCII) is None:
+            raise ValueError(
+                "'{}' is not a valid package name".format(package_name))
+        try:
+            content, package_prefix = get_resource('packages', package_name)
+        except LookupError:
+>           raise PackageNotFoundError(
+                "package '{}' not found, searching: {}".format(package_name, get_search_paths()))
+E           ament_index_python.packages.PackageNotFoundError: "package 'virtual_control' not found, searching: ['/opt/ros/humble']"
+
+/opt/ros/humble/lib/python3.10/site-packages/ament_index_python/packages.py:60: PackageNotFoundError
+---------------------------- Captured stdout setup -----------------------------
+[37;1m2026-10-13 01:34:13.950 [31;1m[[37;1mTRANSPORT[31;1m Error] [37mAll whitelist interfaces were filtered out[34;1m -> Function [36mUDPv4Transport[m
+[37;1m2026-10-13 01:34:13.950 [31;1m[[37;1mTRANSPORT_UDP[31;1m Error] [37mError creating socket: Operation not permitted[34;1m -> Function [36minit[m
+[37;1m2026-10-13 01:34:13.950 [31;1m[[37;1mRTPS_PARTICIPANT[31;1m Error] [37mUser transport failed to register.[34;1m -> Function [36mRTPSParticipantImpl[m
+---------------------------- Captured stderr setup -----------------------------
+getifaddrs: Operation not permitted
+getifaddrs: Operation not permitted
+getifaddrs: Operation not permitted
+getifaddrs: Operation not permitted
+_ ERROR at setup of test_guarded_single_waits_for_stop_and_recovery_before_skipping[lower-2.0-scenario7] _
+
+tmp_path = PosixPath('/tmp/pytest-of-imac/pytest-0/test_guarded_single_waits_for_1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xffffa8194100>
+request = <SubRequest 'supervisor' for <Function test_guarded_single_waits_for_stop_and_recovery_before_skipping[lower-2.0-scenario7]>>
+
+    @pytest.fixture
+    def supervisor(tmp_path, monkeypatch, request):
+        if os.environ.get('KNU_BATCH_ROS_TEST') != '1':
+            pytest.skip('isolated ROS opt-in required')
+        assert os.environ.get('ROS_DOMAIN_ID') == '177'
+        assert os.environ.get('ROS_LOCALHOST_ONLY') == '1'
+        import rclpy
+        from rclpy.parameter import Parameter
+        import knu_batch_runner as module
+        clock = [100.0]
+        monkeypatch.setattr(module, 'time', SimpleNamespace(monotonic=lambda: clock[0]))
+        scenario = getattr(request, 'param', 'all')
+        config = effective_config(5, tmp_path, scenario, guarded=True)
+        settings = config['knu_batch_runner']['ros__parameters']
+>       rclpy.init()
+
+src/virtual_control/test/test_all_scenarios_repeat.py:44: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py:88: in init
+    context.init(args, domain_id=domain_id)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <rclpy.context.Context object at 0xffffaa6f7e50>, args = None
+
+    def init(self,
+             args: Optional[List[str]] = None,
+             *,
+             initialize_logging: bool = True,
+             domain_id: Optional[int] = None):
+        """
+        Initialize ROS communications for a given context.
+    
+        :param args: List of command line arguments.
+        """
+        # imported locally to avoid loading extensions on module import
+        from rclpy.impl.implementation_singleton import rclpy_implementation as _rclpy
+    
+        global g_logging_ref_count
+        with self._lock:
+            if domain_id is not None and domain_id < 0:
+                raise RuntimeError(
+                    'Domain id ({}) should not be lower than zero.'
+                    .format(domain_id))
+    
+            if self.__context is not None:
+>               raise RuntimeError('Context.init() must only be called once')
+E               RuntimeError: Context.init() must only be called once
+
+/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/context.py:70: RuntimeError
+_ ERROR at setup of test_guarded_single_driving_failures_continue_all_five[scenario7] _
+
+tmp_path = PosixPath('/tmp/pytest-of-imac/pytest-0/test_guarded_single_driving_fa0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xffffaa79e2f0>
+request = <SubRequest 'supervisor' for <Function test_guarded_single_driving_failures_continue_all_five[scenario7]>>
+
+    @pytest.fixture
+    def supervisor(tmp_path, monkeypatch, request):
+        if os.environ.get('KNU_BATCH_ROS_TEST') != '1':
+            pytest.skip('isolated ROS opt-in required')
+        assert os.environ.get('ROS_DOMAIN_ID') == '177'
+        assert os.environ.get('ROS_LOCALHOST_ONLY') == '1'
+        import rclpy
+        from rclpy.parameter import Parameter
+        import knu_batch_runner as module
+        clock = [100.0]
+        monkeypatch.setattr(module, 'time', SimpleNamespace(monotonic=lambda: clock[0]))
+        scenario = getattr(request, 'param', 'all')
+        config = effective_config(5, tmp_path, scenario, guarded=True)
+        settings = config['knu_batch_runner']['ros__parameters']
+>       rclpy.init()
+
+src/virtual_control/test/test_all_scenarios_repeat.py:44: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py:88: in init
+    context.init(args, domain_id=domain_id)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <rclpy.context.Context object at 0xffffaa6f7e50>, args = None
+
+    def init(self,
+             args: Optional[List[str]] = None,
+             *,
+             initialize_logging: bool = True,
+             domain_id: Optional[int] = None):
+        """
+        Initialize ROS communications for a given context.
+    
+        :param args: List of command line arguments.
+        """
+        # imported locally to avoid loading extensions on module import
+        from rclpy.impl.implementation_singleton import rclpy_implementation as _rclpy
+    
+        global g_logging_ref_count
+        with self._lock:
+            if domain_id is not None and domain_id < 0:
+                raise RuntimeError(
+                    'Domain id ({}) should not be lower than zero.'
+                    .format(domain_id))
+    
+            if self.__context is not None:
+>               raise RuntimeError('Context.init() must only be called once')
+E               RuntimeError: Context.init() must only be called once
+
+/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/context.py:70: RuntimeError
+____ ERROR at setup of test_driving_failures_still_attempt_all_sixty_slots _____
+
+tmp_path = PosixPath('/tmp/pytest-of-imac/pytest-0/test_driving_failures_still_at0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xffffaa661420>
+request = <SubRequest 'supervisor' for <Function test_driving_failures_still_attempt_all_sixty_slots>>
+
+    @pytest.fixture
+    def supervisor(tmp_path, monkeypatch, request):
+        if os.environ.get('KNU_BATCH_ROS_TEST') != '1':
+            pytest.skip('isolated ROS opt-in required')
+        assert os.environ.get('ROS_DOMAIN_ID') == '177'
+        assert os.environ.get('ROS_LOCALHOST_ONLY') == '1'
+        import rclpy
+        from rclpy.parameter import Parameter
+        import knu_batch_runner as module
+        clock = [100.0]
+        monkeypatch.setattr(module, 'time', SimpleNamespace(monotonic=lambda: clock[0]))
+        scenario = getattr(request, 'param', 'all')
+        config = effective_config(5, tmp_path, scenario, guarded=True)
+        settings = config['knu_batch_runner']['ros__parameters']
+>       rclpy.init()
+
+src/virtual_control/test/test_all_scenarios_repeat.py:44: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py:88: in init
+    context.init(args, domain_id=domain_id)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <rclpy.context.Context object at 0xffffaa6f7e50>, args = None
+
+    def init(self,
+             args: Optional[List[str]] = None,
+             *,
+             initialize_logging: bool = True,
+             domain_id: Optional[int] = None):
+        """
+        Initialize ROS communications for a given context.
+    
+        :param args: List of command line arguments.
+        """
+        # imported locally to avoid loading extensions on module import
+        from rclpy.impl.implementation_singleton import rclpy_implementation as _rclpy
+    
+        global g_logging_ref_count
+        with self._lock:
+            if domain_id is not None and domain_id < 0:
+                raise RuntimeError(
+                    'Domain id ({}) should not be lower than zero.'
+                    .format(domain_id))
+    
+            if self.__context is not None:
+>               raise RuntimeError('Context.init() must only be called once')
+E               RuntimeError: Context.init() must only be called once
+
+/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/context.py:70: RuntimeError
+_ ERROR at setup of test_only_faulted_scenario_skipped_after_stop_and_recovery[pose_timeout] _
+
+tmp_path = PosixPath('/tmp/pytest-of-imac/pytest-0/test_only_faulted_scenario_ski0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xffffa819ca30>
+request = <SubRequest 'supervisor' for <Function test_only_faulted_scenario_skipped_after_stop_and_recovery[pose_timeout]>>
+
+    @pytest.fixture
+    def supervisor(tmp_path, monkeypatch, request):
+        if os.environ.get('KNU_BATCH_ROS_TEST') != '1':
+            pytest.skip('isolated ROS opt-in required')
+        assert os.environ.get('ROS_DOMAIN_ID') == '177'
+        assert os.environ.get('ROS_LOCALHOST_ONLY') == '1'
+        import rclpy
+        from rclpy.parameter import Parameter
+        import knu_batch_runner as module
+        clock = [100.0]
+        monkeypatch.setattr(module, 'time', SimpleNamespace(monotonic=lambda: clock[0]))
+        scenario = getattr(request, 'param', 'all')
+        config = effective_config(5, tmp_path, scenario, guarded=True)
+        settings = config['knu_batch_runner']['ros__parameters']
+>       rclpy.init()
+
+src/virtual_control/test/test_all_scenarios_repeat.py:44: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py:88: in init
+    context.init(args, domain_id=domain_id)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <rclpy.context.Context object at 0xffffaa6f7e50>, args = None
+
+    def init(self,
+             args: Optional[List[str]] = None,
+             *,
+             initialize_logging: bool = True,
+             domain_id: Optional[int] = None):
+        """
+        Initialize ROS communications for a given context.
+    
+        :param args: List of command line arguments.
+        """
+        # imported locally to avoid loading extensions on module import
+        from rclpy.impl.implementation_singleton import rclpy_implementation as _rclpy
+    
+        global g_logging_ref_count
+        with self._lock:
+            if domain_id is not None and domain_id < 0:
+                raise RuntimeError(
+                    'Domain id ({}) should not be lower than zero.'
+                    .format(domain_id))
+    
+            if self.__context is not None:
+>               raise RuntimeError('Context.init() must only be called once')
+E               RuntimeError: Context.init() must only be called once
+
+/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/context.py:70: RuntimeError
+_ ERROR at setup of test_only_faulted_scenario_skipped_after_stop_and_recovery[grid_timeout] _
+
+tmp_path = PosixPath('/tmp/pytest-of-imac/pytest-0/test_only_faulted_scenario_ski1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xffffaa745f30>
+request = <SubRequest 'supervisor' for <Function test_only_faulted_scenario_skipped_after_stop_and_recovery[grid_timeout]>>
+
+    @pytest.fixture
+    def supervisor(tmp_path, monkeypatch, request):
+        if os.environ.get('KNU_BATCH_ROS_TEST') != '1':
+            pytest.skip('isolated ROS opt-in required')
+        assert os.environ.get('ROS_DOMAIN_ID') == '177'
+        assert os.environ.get('ROS_LOCALHOST_ONLY') == '1'
+        import rclpy
+        from rclpy.parameter import Parameter
+        import knu_batch_runner as module
+        clock = [100.0]
+        monkeypatch.setattr(module, 'time', SimpleNamespace(monotonic=lambda: clock[0]))
+        scenario = getattr(request, 'param', 'all')
+        config = effective_config(5, tmp_path, scenario, guarded=True)
+        settings = config['knu_batch_runner']['ros__parameters']
+>       rclpy.init()
+
+src/virtual_control/test/test_all_scenarios_repeat.py:44: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py:88: in init
+    context.init(args, domain_id=domain_id)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <rclpy.context.Context object at 0xffffaa6f7e50>, args = None
+
+    def init(self,
+             args: Optional[List[str]] = None,
+             *,
+             initialize_logging: bool = True,
+             domain_id: Optional[int] = None):
+        """
+        Initialize ROS communications for a given context.
+    
+        :param args: List of command line arguments.
+        """
+        # imported locally to avoid loading extensions on module import
+        from rclpy.impl.implementation_singleton import rclpy_implementation as _rclpy
+    
+        global g_logging_ref_count
+        with self._lock:
+            if domain_id is not None and domain_id < 0:
+                raise RuntimeError(
+                    'Domain id ({}) should not be lower than zero.'
+                    .format(domain_id))
+    
+            if self.__context is not None:
+>               raise RuntimeError('Context.init() must only be called once')
+E               RuntimeError: Context.init() must only be called once
+
+/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/context.py:70: RuntimeError
+_ ERROR at setup of test_only_faulted_scenario_skipped_after_stop_and_recovery[setup_timeout] _
+
+tmp_path = PosixPath('/tmp/pytest-of-imac/pytest-0/test_only_faulted_scenario_ski2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xffffaa7a0fa0>
+request = <SubRequest 'supervisor' for <Function test_only_faulted_scenario_skipped_after_stop_and_recovery[setup_timeout]>>
+
+    @pytest.fixture
+    def supervisor(tmp_path, monkeypatch, request):
+        if os.environ.get('KNU_BATCH_ROS_TEST') != '1':
+            pytest.skip('isolated ROS opt-in required')
+        assert os.environ.get('ROS_DOMAIN_ID') == '177'
+        assert os.environ.get('ROS_LOCALHOST_ONLY') == '1'
+        import rclpy
+        from rclpy.parameter import Parameter
+        import knu_batch_runner as module
+        clock = [100.0]
+        monkeypatch.setattr(module, 'time', SimpleNamespace(monotonic=lambda: clock[0]))
+        scenario = getattr(request, 'param', 'all')
+        config = effective_config(5, tmp_path, scenario, guarded=True)
+        settings = config['knu_batch_runner']['ros__parameters']
+>       rclpy.init()
+
+src/virtual_control/test/test_all_scenarios_repeat.py:44: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py:88: in init
+    context.init(args, domain_id=domain_id)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <rclpy.context.Context object at 0xffffaa6f7e50>, args = None
+
+    def init(self,
+             args: Optional[List[str]] = None,
+             *,
+             initialize_logging: bool = True,
+             domain_id: Optional[int] = None):
+        """
+        Initialize ROS communications for a given context.
+    
+        :param args: List of command line arguments.
+        """
+        # imported locally to avoid loading extensions on module import
+        from rclpy.impl.implementation_singleton import rclpy_implementation as _rclpy
+    
+        global g_logging_ref_count
+        with self._lock:
+            if domain_id is not None and domain_id < 0:
+                raise RuntimeError(
+                    'Domain id ({}) should not be lower than zero.'
+                    .format(domain_id))
+    
+            if self.__context is not None:
+>               raise RuntimeError('Context.init() must only be called once')
+E               RuntimeError: Context.init() must only be called once
+
+/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/context.py:70: RuntimeError
+_ ERROR at setup of test_only_faulted_scenario_skipped_after_stop_and_recovery[alignment_failed] _
+
+tmp_path = PosixPath('/tmp/pytest-of-imac/pytest-0/test_only_faulted_scenario_ski3')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xffffaa776bc0>
+request = <SubRequest 'supervisor' for <Function test_only_faulted_scenario_skipped_after_stop_and_recovery[alignment_failed]>>
+
+    @pytest.fixture
+    def supervisor(tmp_path, monkeypatch, request):
+        if os.environ.get('KNU_BATCH_ROS_TEST') != '1':
+            pytest.skip('isolated ROS opt-in required')
+        assert os.environ.get('ROS_DOMAIN_ID') == '177'
+        assert os.environ.get('ROS_LOCALHOST_ONLY') == '1'
+        import rclpy
+        from rclpy.parameter import Parameter
+        import knu_batch_runner as module
+        clock = [100.0]
+        monkeypatch.setattr(module, 'time', SimpleNamespace(monotonic=lambda: clock[0]))
+        scenario = getattr(request, 'param', 'all')
+        config = effective_config(5, tmp_path, scenario, guarded=True)
+        settings = config['knu_batch_runner']['ros__parameters']
+>       rclpy.init()
+
+src/virtual_control/test/test_all_scenarios_repeat.py:44: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py:88: in init
+    context.init(args, domain_id=domain_id)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <rclpy.context.Context object at 0xffffaa6f7e50>, args = None
+
+    def init(self,
+             args: Optional[List[str]] = None,
+             *,
+             initialize_logging: bool = True,
+             domain_id: Optional[int] = None):
+        """
+        Initialize ROS communications for a given context.
+    
+        :param args: List of command line arguments.
+        """
+        # imported locally to avoid loading extensions on module import
+        from rclpy.impl.implementation_singleton import rclpy_implementation as _rclpy
+    
+        global g_logging_ref_count
+        with self._lock:
+            if domain_id is not None and domain_id < 0:
+                raise RuntimeError(
+                    'Domain id ({}) should not be lower than zero.'
+                    .format(domain_id))
+    
+            if self.__context is not None:
+>               raise RuntimeError('Context.init() must only be called once')
+E               RuntimeError: Context.init() must only be called once
+
+/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/context.py:70: RuntimeError
+_ ERROR at setup of test_only_faulted_scenario_skipped_after_stop_and_recovery[upper_compute_timeout] _
+
+tmp_path = PosixPath('/tmp/pytest-of-imac/pytest-0/test_only_faulted_scenario_ski4')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xffffaa79e770>
+request = <SubRequest 'supervisor' for <Function test_only_faulted_scenario_skipped_after_stop_and_recovery[upper_compute_timeout]>>
+
+    @pytest.fixture
+    def supervisor(tmp_path, monkeypatch, request):
+        if os.environ.get('KNU_BATCH_ROS_TEST') != '1':
+            pytest.skip('isolated ROS opt-in required')
+        assert os.environ.get('ROS_DOMAIN_ID') == '177'
+        assert os.environ.get('ROS_LOCALHOST_ONLY') == '1'
+        import rclpy
+        from rclpy.parameter import Parameter
+        import knu_batch_runner as module
+        clock = [100.0]
+        monkeypatch.setattr(module, 'time', SimpleNamespace(monotonic=lambda: clock[0]))
+        scenario = getattr(request, 'param', 'all')
+        config = effective_config(5, tmp_path, scenario, guarded=True)
+        settings = config['knu_batch_runner']['ros__parameters']
+>       rclpy.init()
+
+src/virtual_control/test/test_all_scenarios_repeat.py:44: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py:88: in init
+    context.init(args, domain_id=domain_id)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <rclpy.context.Context object at 0xffffaa6f7e50>, args = None
+
+    def init(self,
+             args: Optional[List[str]] = None,
+             *,
+             initialize_logging: bool = True,
+             domain_id: Optional[int] = None):
+        """
+        Initialize ROS communications for a given context.
+    
+        :param args: List of command line arguments.
+        """
+        # imported locally to avoid loading extensions on module import
+        from rclpy.impl.implementation_singleton import rclpy_implementation as _rclpy
+    
+        global g_logging_ref_count
+        with self._lock:
+            if domain_id is not None and domain_id < 0:
+                raise RuntimeError(
+                    'Domain id ({}) should not be lower than zero.'
+                    .format(domain_id))
+    
+            if self.__context is not None:
+>               raise RuntimeError('Context.init() must only be called once')
+E               RuntimeError: Context.init() must only be called once
+
+/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/context.py:70: RuntimeError
+_ ERROR at setup of test_only_faulted_scenario_skipped_after_stop_and_recovery[lower_compute_timeout] _
+
+tmp_path = PosixPath('/tmp/pytest-of-imac/pytest-0/test_only_faulted_scenario_ski5')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xffffaa6ebc10>
+request = <SubRequest 'supervisor' for <Function test_only_faulted_scenario_skipped_after_stop_and_recovery[lower_compute_timeout]>>
+
+    @pytest.fixture
+    def supervisor(tmp_path, monkeypatch, request):
+        if os.environ.get('KNU_BATCH_ROS_TEST') != '1':
+            pytest.skip('isolated ROS opt-in required')
+        assert os.environ.get('ROS_DOMAIN_ID') == '177'
+        assert os.environ.get('ROS_LOCALHOST_ONLY') == '1'
+        import rclpy
+        from rclpy.parameter import Parameter
+        import knu_batch_runner as module
+        clock = [100.0]
+        monkeypatch.setattr(module, 'time', SimpleNamespace(monotonic=lambda: clock[0]))
+        scenario = getattr(request, 'param', 'all')
+        config = effective_config(5, tmp_path, scenario, guarded=True)
+        settings = config['knu_batch_runner']['ros__parameters']
+>       rclpy.init()
+
+src/virtual_control/test/test_all_scenarios_repeat.py:44: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py:88: in init
+    context.init(args, domain_id=domain_id)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <rclpy.context.Context object at 0xffffaa6f7e50>, args = None
+
+    def init(self,
+             args: Optional[List[str]] = None,
+             *,
+             initialize_logging: bool = True,
+             domain_id: Optional[int] = None):
+        """
+        Initialize ROS communications for a given context.
+    
+        :param args: List of command line arguments.
+        """
+        # imported locally to avoid loading extensions on module import
+        from rclpy.impl.implementation_singleton import rclpy_implementation as _rclpy
+    
+        global g_logging_ref_count
+        with self._lock:
+            if domain_id is not None and domain_id < 0:
+                raise RuntimeError(
+                    'Domain id ({}) should not be lower than zero.'
+                    .format(domain_id))
+    
+            if self.__context is not None:
+>               raise RuntimeError('Context.init() must only be called once')
+E               RuntimeError: Context.init() must only be called once
+
+/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/context.py:70: RuntimeError
+_ ERROR at setup of test_completion_watchdog_stops_then_waits_for_recovery[upper-5.0] _
+
+tmp_path = PosixPath('/tmp/pytest-of-imac/pytest-0/test_completion_watchdog_stops0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xffffaa7a0460>
+request = <SubRequest 'supervisor' for <Function test_completion_watchdog_stops_then_waits_for_recovery[upper-5.0]>>
+
+    @pytest.fixture
+    def supervisor(tmp_path, monkeypatch, request):
+        if os.environ.get('KNU_BATCH_ROS_TEST') != '1':
+            pytest.skip('isolated ROS opt-in required')
+        assert os.environ.get('ROS_DOMAIN_ID') == '177'
+        assert os.environ.get('ROS_LOCALHOST_ONLY') == '1'
+        import rclpy
+        from rclpy.parameter import Parameter
+        import knu_batch_runner as module
+        clock = [100.0]
+        monkeypatch.setattr(module, 'time', SimpleNamespace(monotonic=lambda: clock[0]))
+        scenario = getattr(request, 'param', 'all')
+        config = effective_config(5, tmp_path, scenario, guarded=True)
+        settings = config['knu_batch_runner']['ros__parameters']
+>       rclpy.init()
+
+src/virtual_control/test/test_all_scenarios_repeat.py:44: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py:88: in init
+    context.init(args, domain_id=domain_id)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <rclpy.context.Context object at 0xffffaa6f7e50>, args = None
+
+    def init(self,
+             args: Optional[List[str]] = None,
+             *,
+             initialize_logging: bool = True,
+             domain_id: Optional[int] = None):
+        """
+        Initialize ROS communications for a given context.
+    
+        :param args: List of command line arguments.
+        """
+        # imported locally to avoid loading extensions on module import
+        from rclpy.impl.implementation_singleton import rclpy_implementation as _rclpy
+    
+        global g_logging_ref_count
+        with self._lock:
+            if domain_id is not None and domain_id < 0:
+                raise RuntimeError(
+                    'Domain id ({}) should not be lower than zero.'
+                    .format(domain_id))
+    
+            if self.__context is not None:
+>               raise RuntimeError('Context.init() must only be called once')
+E               RuntimeError: Context.init() must only be called once
+
+/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/context.py:70: RuntimeError
+_ ERROR at setup of test_completion_watchdog_stops_then_waits_for_recovery[lower-2.0] _
+
+tmp_path = PosixPath('/tmp/pytest-of-imac/pytest-0/test_completion_watchdog_stops1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xffffa81a7f40>
+request = <SubRequest 'supervisor' for <Function test_completion_watchdog_stops_then_waits_for_recovery[lower-2.0]>>
+
+    @pytest.fixture
+    def supervisor(tmp_path, monkeypatch, request):
+        if os.environ.get('KNU_BATCH_ROS_TEST') != '1':
+            pytest.skip('isolated ROS opt-in required')
+        assert os.environ.get('ROS_DOMAIN_ID') == '177'
+        assert os.environ.get('ROS_LOCALHOST_ONLY') == '1'
+        import rclpy
+        from rclpy.parameter import Parameter
+        import knu_batch_runner as module
+        clock = [100.0]
+        monkeypatch.setattr(module, 'time', SimpleNamespace(monotonic=lambda: clock[0]))
+        scenario = getattr(request, 'param', 'all')
+        config = effective_config(5, tmp_path, scenario, guarded=True)
+        settings = config['knu_batch_runner']['ros__parameters']
+>       rclpy.init()
+
+src/virtual_control/test/test_all_scenarios_repeat.py:44: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py:88: in init
+    context.init(args, domain_id=domain_id)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <rclpy.context.Context object at 0xffffaa6f7e50>, args = None
+
+    def init(self,
+             args: Optional[List[str]] = None,
+             *,
+             initialize_logging: bool = True,
+             domain_id: Optional[int] = None):
+        """
+        Initialize ROS communications for a given context.
+    
+        :param args: List of command line arguments.
+        """
+        # imported locally to avoid loading extensions on module import
+        from rclpy.impl.implementation_singleton import rclpy_implementation as _rclpy
+    
+        global g_logging_ref_count
+        with self._lock:
+            if domain_id is not None and domain_id < 0:
+                raise RuntimeError(
+                    'Domain id ({}) should not be lower than zero.'
+                    .format(domain_id))
+    
+            if self.__context is not None:
+>               raise RuntimeError('Context.init() must only be called once')
+E               RuntimeError: Context.init() must only be called once
+
+/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/context.py:70: RuntimeError
+_ ERROR at setup of test_persistent_system_loss_aborts_instead_of_burning_next_scenarios[pose] _
+
+tmp_path = PosixPath('/tmp/pytest-of-imac/pytest-0/test_persistent_system_loss_ab0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xffffaacb3550>
+request = <SubRequest 'supervisor' for <Function test_persistent_system_loss_aborts_instead_of_burning_next_scenarios[pose]>>
+
+    @pytest.fixture
+    def supervisor(tmp_path, monkeypatch, request):
+        if os.environ.get('KNU_BATCH_ROS_TEST') != '1':
+            pytest.skip('isolated ROS opt-in required')
+        assert os.environ.get('ROS_DOMAIN_ID') == '177'
+        assert os.environ.get('ROS_LOCALHOST_ONLY') == '1'
+        import rclpy
+        from rclpy.parameter import Parameter
+        import knu_batch_runner as module
+        clock = [100.0]
+        monkeypatch.setattr(module, 'time', SimpleNamespace(monotonic=lambda: clock[0]))
+        scenario = getattr(request, 'param', 'all')
+        config = effective_config(5, tmp_path, scenario, guarded=True)
+        settings = config['knu_batch_runner']['ros__parameters']
+>       rclpy.init()
+
+src/virtual_control/test/test_all_scenarios_repeat.py:44: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py:88: in init
+    context.init(args, domain_id=domain_id)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <rclpy.context.Context object at 0xffffaa6f7e50>, args = None
+
+    def init(self,
+             args: Optional[List[str]] = None,
+             *,
+             initialize_logging: bool = True,
+             domain_id: Optional[int] = None):
+        """
+        Initialize ROS communications for a given context.
+    
+        :param args: List of command line arguments.
+        """
+        # imported locally to avoid loading extensions on module import
+        from rclpy.impl.implementation_singleton import rclpy_implementation as _rclpy
+    
+        global g_logging_ref_count
+        with self._lock:
+            if domain_id is not None and domain_id < 0:
+                raise RuntimeError(
+                    'Domain id ({}) should not be lower than zero.'
+                    .format(domain_id))
+    
+            if self.__context is not None:
+>               raise RuntimeError('Context.init() must only be called once')
+E               RuntimeError: Context.init() must only be called once
+
+/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/context.py:70: RuntimeError
+_ ERROR at setup of test_persistent_system_loss_aborts_instead_of_burning_next_scenarios[grid] _
+
+tmp_path = PosixPath('/tmp/pytest-of-imac/pytest-0/test_persistent_system_loss_ab1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xffffaa776380>
+request = <SubRequest 'supervisor' for <Function test_persistent_system_loss_aborts_instead_of_burning_next_scenarios[grid]>>
+
+    @pytest.fixture
+    def supervisor(tmp_path, monkeypatch, request):
+        if os.environ.get('KNU_BATCH_ROS_TEST') != '1':
+            pytest.skip('isolated ROS opt-in required')
+        assert os.environ.get('ROS_DOMAIN_ID') == '177'
+        assert os.environ.get('ROS_LOCALHOST_ONLY') == '1'
+        import rclpy
+        from rclpy.parameter import Parameter
+        import knu_batch_runner as module
+        clock = [100.0]
+        monkeypatch.setattr(module, 'time', SimpleNamespace(monotonic=lambda: clock[0]))
+        scenario = getattr(request, 'param', 'all')
+        config = effective_config(5, tmp_path, scenario, guarded=True)
+        settings = config['knu_batch_runner']['ros__parameters']
+>       rclpy.init()
+
+src/virtual_control/test/test_all_scenarios_repeat.py:44: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py:88: in init
+    context.init(args, domain_id=domain_id)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <rclpy.context.Context object at 0xffffaa6f7e50>, args = None
+
+    def init(self,
+             args: Optional[List[str]] = None,
+             *,
+             initialize_logging: bool = True,
+             domain_id: Optional[int] = None):
+        """
+        Initialize ROS communications for a given context.
+    
+        :param args: List of command line arguments.
+        """
+        # imported locally to avoid loading extensions on module import
+        from rclpy.impl.implementation_singleton import rclpy_implementation as _rclpy
+    
+        global g_logging_ref_count
+        with self._lock:
+            if domain_id is not None and domain_id < 0:
+                raise RuntimeError(
+                    'Domain id ({}) should not be lower than zero.'
+                    .format(domain_id))
+    
+            if self.__context is not None:
+>               raise RuntimeError('Context.init() must only be called once')
+E               RuntimeError: Context.init() must only be called once
+
+/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/context.py:70: RuntimeError
+_ ERROR at setup of test_persistent_system_loss_aborts_instead_of_burning_next_scenarios[upper] _
+
+tmp_path = PosixPath('/tmp/pytest-of-imac/pytest-0/test_persistent_system_loss_ab2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xffffa819e620>
+request = <SubRequest 'supervisor' for <Function test_persistent_system_loss_aborts_instead_of_burning_next_scenarios[upper]>>
+
+    @pytest.fixture
+    def supervisor(tmp_path, monkeypatch, request):
+        if os.environ.get('KNU_BATCH_ROS_TEST') != '1':
+            pytest.skip('isolated ROS opt-in required')
+        assert os.environ.get('ROS_DOMAIN_ID') == '177'
+        assert os.environ.get('ROS_LOCALHOST_ONLY') == '1'
+        import rclpy
+        from rclpy.parameter import Parameter
+        import knu_batch_runner as module
+        clock = [100.0]
+        monkeypatch.setattr(module, 'time', SimpleNamespace(monotonic=lambda: clock[0]))
+        scenario = getattr(request, 'param', 'all')
+        config = effective_config(5, tmp_path, scenario, guarded=True)
+        settings = config['knu_batch_runner']['ros__parameters']
+>       rclpy.init()
+
+src/virtual_control/test/test_all_scenarios_repeat.py:44: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py:88: in init
+    context.init(args, domain_id=domain_id)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <rclpy.context.Context object at 0xffffaa6f7e50>, args = None
+
+    def init(self,
+             args: Optional[List[str]] = None,
+             *,
+             initialize_logging: bool = True,
+             domain_id: Optional[int] = None):
+        """
+        Initialize ROS communications for a given context.
+    
+        :param args: List of command line arguments.
+        """
+        # imported locally to avoid loading extensions on module import
+        from rclpy.impl.implementation_singleton import rclpy_implementation as _rclpy
+    
+        global g_logging_ref_count
+        with self._lock:
+            if domain_id is not None and domain_id < 0:
+                raise RuntimeError(
+                    'Domain id ({}) should not be lower than zero.'
+                    .format(domain_id))
+    
+            if self.__context is not None:
+>               raise RuntimeError('Context.init() must only be called once')
+E               RuntimeError: Context.init() must only be called once
+
+/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/context.py:70: RuntimeError
+_ ERROR at setup of test_persistent_system_loss_aborts_instead_of_burning_next_scenarios[lower] _
+
+tmp_path = PosixPath('/tmp/pytest-of-imac/pytest-0/test_persistent_system_loss_ab3')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xffffaa746350>
+request = <SubRequest 'supervisor' for <Function test_persistent_system_loss_aborts_instead_of_burning_next_scenarios[lower]>>
+
+    @pytest.fixture
+    def supervisor(tmp_path, monkeypatch, request):
+        if os.environ.get('KNU_BATCH_ROS_TEST') != '1':
+            pytest.skip('isolated ROS opt-in required')
+        assert os.environ.get('ROS_DOMAIN_ID') == '177'
+        assert os.environ.get('ROS_LOCALHOST_ONLY') == '1'
+        import rclpy
+        from rclpy.parameter import Parameter
+        import knu_batch_runner as module
+        clock = [100.0]
+        monkeypatch.setattr(module, 'time', SimpleNamespace(monotonic=lambda: clock[0]))
+        scenario = getattr(request, 'param', 'all')
+        config = effective_config(5, tmp_path, scenario, guarded=True)
+        settings = config['knu_batch_runner']['ros__parameters']
+>       rclpy.init()
+
+src/virtual_control/test/test_all_scenarios_repeat.py:44: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py:88: in init
+    context.init(args, domain_id=domain_id)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <rclpy.context.Context object at 0xffffaa6f7e50>, args = None
+
+    def init(self,
+             args: Optional[List[str]] = None,
+             *,
+             initialize_logging: bool = True,
+             domain_id: Optional[int] = None):
+        """
+        Initialize ROS communications for a given context.
+    
+        :param args: List of command line arguments.
+        """
+        # imported locally to avoid loading extensions on module import
+        from rclpy.impl.implementation_singleton import rclpy_implementation as _rclpy
+    
+        global g_logging_ref_count
+        with self._lock:
+            if domain_id is not None and domain_id < 0:
+                raise RuntimeError(
+                    'Domain id ({}) should not be lower than zero.'
+                    .format(domain_id))
+    
+            if self.__context is not None:
+>               raise RuntimeError('Context.init() must only be called once')
+E               RuntimeError: Context.init() must only be called once
+
+/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/context.py:70: RuntimeError
+_ ERROR at setup of test_failed_solver_cycles_are_heartbeats_but_duplicate_diagnostics_are_not _
+
+tmp_path = PosixPath('/tmp/pytest-of-imac/pytest-0/test_failed_solver_cycles_are_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xffffaaca1f00>
+request = <SubRequest 'supervisor' for <Function test_failed_solver_cycles_are_heartbeats_but_duplicate_diagnostics_are_not>>
+
+    @pytest.fixture
+    def supervisor(tmp_path, monkeypatch, request):
+        if os.environ.get('KNU_BATCH_ROS_TEST') != '1':
+            pytest.skip('isolated ROS opt-in required')
+        assert os.environ.get('ROS_DOMAIN_ID') == '177'
+        assert os.environ.get('ROS_LOCALHOST_ONLY') == '1'
+        import rclpy
+        from rclpy.parameter import Parameter
+        import knu_batch_runner as module
+        clock = [100.0]
+        monkeypatch.setattr(module, 'time', SimpleNamespace(monotonic=lambda: clock[0]))
+        scenario = getattr(request, 'param', 'all')
+        config = effective_config(5, tmp_path, scenario, guarded=True)
+        settings = config['knu_batch_runner']['ros__parameters']
+>       rclpy.init()
+
+src/virtual_control/test/test_all_scenarios_repeat.py:44: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py:88: in init
+    context.init(args, domain_id=domain_id)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <rclpy.context.Context object at 0xffffaa6f7e50>, args = None
+
+    def init(self,
+             args: Optional[List[str]] = None,
+             *,
+             initialize_logging: bool = True,
+             domain_id: Optional[int] = None):
+        """
+        Initialize ROS communications for a given context.
+    
+        :param args: List of command line arguments.
+        """
+        # imported locally to avoid loading extensions on module import
+        from rclpy.impl.implementation_singleton import rclpy_implementation as _rclpy
+    
+        global g_logging_ref_count
+        with self._lock:
+            if domain_id is not None and domain_id < 0:
+                raise RuntimeError(
+                    'Domain id ({}) should not be lower than zero.'
+                    .format(domain_id))
+    
+            if self.__context is not None:
+>               raise RuntimeError('Context.init() must only be called once')
+E               RuntimeError: Context.init() must only be called once
+
+/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/context.py:70: RuntimeError
+_ ERROR at setup of test_late_alignment_cannot_reanchor_after_next_scenario_start _
+
+tmp_path = PosixPath('/tmp/pytest-of-imac/pytest-0/test_late_alignment_cannot_rea0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xffffa81a6bc0>
+request = <SubRequest 'supervisor' for <Function test_late_alignment_cannot_reanchor_after_next_scenario_start>>
+
+    @pytest.fixture
+    def supervisor(tmp_path, monkeypatch, request):
+        if os.environ.get('KNU_BATCH_ROS_TEST') != '1':
+            pytest.skip('isolated ROS opt-in required')
+        assert os.environ.get('ROS_DOMAIN_ID') == '177'
+        assert os.environ.get('ROS_LOCALHOST_ONLY') == '1'
+        import rclpy
+        from rclpy.parameter import Parameter
+        import knu_batch_runner as module
+        clock = [100.0]
+        monkeypatch.setattr(module, 'time', SimpleNamespace(monotonic=lambda: clock[0]))
+        scenario = getattr(request, 'param', 'all')
+        config = effective_config(5, tmp_path, scenario, guarded=True)
+        settings = config['knu_batch_runner']['ros__parameters']
+>       rclpy.init()
+
+src/virtual_control/test/test_all_scenarios_repeat.py:44: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py:88: in init
+    context.init(args, domain_id=domain_id)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <rclpy.context.Context object at 0xffffaa6f7e50>, args = None
+
+    def init(self,
+             args: Optional[List[str]] = None,
+             *,
+             initialize_logging: bool = True,
+             domain_id: Optional[int] = None):
+        """
+        Initialize ROS communications for a given context.
+    
+        :param args: List of command line arguments.
+        """
+        # imported locally to avoid loading extensions on module import
+        from rclpy.impl.implementation_singleton import rclpy_implementation as _rclpy
+    
+        global g_logging_ref_count
+        with self._lock:
+            if domain_id is not None and domain_id < 0:
+                raise RuntimeError(
+                    'Domain id ({}) should not be lower than zero.'
+                    .format(domain_id))
+    
+            if self.__context is not None:
+>               raise RuntimeError('Context.init() must only be called once')
+E               RuntimeError: Context.init() must only be called once
+
+/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/context.py:70: RuntimeError
+_ ERROR at setup of test_compute_stall_during_coasting_attributed_to_original_scenario _
+
+tmp_path = PosixPath('/tmp/pytest-of-imac/pytest-0/test_compute_stall_during_coas0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xffffa06b1cc0>
+request = <SubRequest 'supervisor' for <Function test_compute_stall_during_coasting_attributed_to_original_scenario>>
+
+    @pytest.fixture
+    def supervisor(tmp_path, monkeypatch, request):
+        if os.environ.get('KNU_BATCH_ROS_TEST') != '1':
+            pytest.skip('isolated ROS opt-in required')
+        assert os.environ.get('ROS_DOMAIN_ID') == '177'
+        assert os.environ.get('ROS_LOCALHOST_ONLY') == '1'
+        import rclpy
+        from rclpy.parameter import Parameter
+        import knu_batch_runner as module
+        clock = [100.0]
+        monkeypatch.setattr(module, 'time', SimpleNamespace(monotonic=lambda: clock[0]))
+        scenario = getattr(request, 'param', 'all')
+        config = effective_config(5, tmp_path, scenario, guarded=True)
+        settings = config['knu_batch_runner']['ros__parameters']
+>       rclpy.init()
+
+src/virtual_control/test/test_all_scenarios_repeat.py:44: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py:88: in init
+    context.init(args, domain_id=domain_id)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <rclpy.context.Context object at 0xffffaa6f7e50>, args = None
+
+    def init(self,
+             args: Optional[List[str]] = None,
+             *,
+             initialize_logging: bool = True,
+             domain_id: Optional[int] = None):
+        """
+        Initialize ROS communications for a given context.
+    
+        :param args: List of command line arguments.
+        """
+        # imported locally to avoid loading extensions on module import
+        from rclpy.impl.implementation_singleton import rclpy_implementation as _rclpy
+    
+        global g_logging_ref_count
+        with self._lock:
+            if domain_id is not None and domain_id < 0:
+                raise RuntimeError(
+                    'Domain id ({}) should not be lower than zero.'
+                    .format(domain_id))
+    
+            if self.__context is not None:
+>               raise RuntimeError('Context.init() must only be called once')
+E               RuntimeError: Context.init() must only be called once
+
+/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/context.py:70: RuntimeError
+_ ERROR at setup of test_long_completed_solve_not_hidden_by_fresh_diagnostic[upper] _
+
+tmp_path = PosixPath('/tmp/pytest-of-imac/pytest-0/test_long_completed_solve_not_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xffffaaca3df0>
+request = <SubRequest 'supervisor' for <Function test_long_completed_solve_not_hidden_by_fresh_diagnostic[upper]>>
+
+    @pytest.fixture
+    def supervisor(tmp_path, monkeypatch, request):
+        if os.environ.get('KNU_BATCH_ROS_TEST') != '1':
+            pytest.skip('isolated ROS opt-in required')
+        assert os.environ.get('ROS_DOMAIN_ID') == '177'
+        assert os.environ.get('ROS_LOCALHOST_ONLY') == '1'
+        import rclpy
+        from rclpy.parameter import Parameter
+        import knu_batch_runner as module
+        clock = [100.0]
+        monkeypatch.setattr(module, 'time', SimpleNamespace(monotonic=lambda: clock[0]))
+        scenario = getattr(request, 'param', 'all')
+        config = effective_config(5, tmp_path, scenario, guarded=True)
+        settings = config['knu_batch_runner']['ros__parameters']
+>       rclpy.init()
+
+src/virtual_control/test/test_all_scenarios_repeat.py:44: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py:88: in init
+    context.init(args, domain_id=domain_id)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <rclpy.context.Context object at 0xffffaa6f7e50>, args = None
+
+    def init(self,
+             args: Optional[List[str]] = None,
+             *,
+             initialize_logging: bool = True,
+             domain_id: Optional[int] = None):
+        """
+        Initialize ROS communications for a given context.
+    
+        :param args: List of command line arguments.
+        """
+        # imported locally to avoid loading extensions on module import
+        from rclpy.impl.implementation_singleton import rclpy_implementation as _rclpy
+    
+        global g_logging_ref_count
+        with self._lock:
+            if domain_id is not None and domain_id < 0:
+                raise RuntimeError(
+                    'Domain id ({}) should not be lower than zero.'
+                    .format(domain_id))
+    
+            if self.__context is not None:
+>               raise RuntimeError('Context.init() must only be called once')
+E               RuntimeError: Context.init() must only be called once
+
+/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/context.py:70: RuntimeError
+_ ERROR at setup of test_long_completed_solve_not_hidden_by_fresh_diagnostic[lower] _
+
+tmp_path = PosixPath('/tmp/pytest-of-imac/pytest-0/test_long_completed_solve_not_1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xffffaa7c26b0>
+request = <SubRequest 'supervisor' for <Function test_long_completed_solve_not_hidden_by_fresh_diagnostic[lower]>>
+
+    @pytest.fixture
+    def supervisor(tmp_path, monkeypatch, request):
+        if os.environ.get('KNU_BATCH_ROS_TEST') != '1':
+            pytest.skip('isolated ROS opt-in required')
+        assert os.environ.get('ROS_DOMAIN_ID') == '177'
+        assert os.environ.get('ROS_LOCALHOST_ONLY') == '1'
+        import rclpy
+        from rclpy.parameter import Parameter
+        import knu_batch_runner as module
+        clock = [100.0]
+        monkeypatch.setattr(module, 'time', SimpleNamespace(monotonic=lambda: clock[0]))
+        scenario = getattr(request, 'param', 'all')
+        config = effective_config(5, tmp_path, scenario, guarded=True)
+        settings = config['knu_batch_runner']['ros__parameters']
+>       rclpy.init()
+
+src/virtual_control/test/test_all_scenarios_repeat.py:44: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py:88: in init
+    context.init(args, domain_id=domain_id)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <rclpy.context.Context object at 0xffffaa6f7e50>, args = None
+
+    def init(self,
+             args: Optional[List[str]] = None,
+             *,
+             initialize_logging: bool = True,
+             domain_id: Optional[int] = None):
+        """
+        Initialize ROS communications for a given context.
+    
+        :param args: List of command line arguments.
+        """
+        # imported locally to avoid loading extensions on module import
+        from rclpy.impl.implementation_singleton import rclpy_implementation as _rclpy
+    
+        global g_logging_ref_count
+        with self._lock:
+            if domain_id is not None and domain_id < 0:
+                raise RuntimeError(
+                    'Domain id ({}) should not be lower than zero.'
+                    .format(domain_id))
+    
+            if self.__context is not None:
+>               raise RuntimeError('Context.init() must only be called once')
+E               RuntimeError: Context.init() must only be called once
+
+/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/context.py:70: RuntimeError
+_ ERROR at setup of test_route_unavailable_stops_and_continues_next_repetition[True] _
+
+tmp_path = PosixPath('/tmp/pytest-of-imac/pytest-0/test_route_unavailable_stops_a0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xffffaa7a0c70>
+request = <SubRequest 'supervisor' for <Function test_route_unavailable_stops_and_continues_next_repetition[True]>>
+
+    @pytest.fixture
+    def supervisor(tmp_path, monkeypatch, request):
+        if os.environ.get('KNU_BATCH_ROS_TEST') != '1':
+            pytest.skip('isolated ROS opt-in required')
+        assert os.environ.get('ROS_DOMAIN_ID') == '177'
+        assert os.environ.get('ROS_LOCALHOST_ONLY') == '1'
+        import rclpy
+        from rclpy.parameter import Parameter
+        import knu_batch_runner as module
+        clock = [100.0]
+        monkeypatch.setattr(module, 'time', SimpleNamespace(monotonic=lambda: clock[0]))
+        scenario = getattr(request, 'param', 'all')
+        config = effective_config(5, tmp_path, scenario, guarded=True)
+        settings = config['knu_batch_runner']['ros__parameters']
+>       rclpy.init()
+
+src/virtual_control/test/test_all_scenarios_repeat.py:44: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py:88: in init
+    context.init(args, domain_id=domain_id)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <rclpy.context.Context object at 0xffffaa6f7e50>, args = None
+
+    def init(self,
+             args: Optional[List[str]] = None,
+             *,
+             initialize_logging: bool = True,
+             domain_id: Optional[int] = None):
+        """
+        Initialize ROS communications for a given context.
+    
+        :param args: List of command line arguments.
+        """
+        # imported locally to avoid loading extensions on module import
+        from rclpy.impl.implementation_singleton import rclpy_implementation as _rclpy
+    
+        global g_logging_ref_count
+        with self._lock:
+            if domain_id is not None and domain_id < 0:
+                raise RuntimeError(
+                    'Domain id ({}) should not be lower than zero.'
+                    .format(domain_id))
+    
+            if self.__context is not None:
+>               raise RuntimeError('Context.init() must only be called once')
+E               RuntimeError: Context.init() must only be called once
+
+/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/context.py:70: RuntimeError
+_ ERROR at setup of test_route_unavailable_stops_and_continues_next_repetition[False] _
+
+tmp_path = PosixPath('/tmp/pytest-of-imac/pytest-0/test_route_unavailable_stops_a1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xffffaa775d20>
+request = <SubRequest 'supervisor' for <Function test_route_unavailable_stops_and_continues_next_repetition[False]>>
+
+    @pytest.fixture
+    def supervisor(tmp_path, monkeypatch, request):
+        if os.environ.get('KNU_BATCH_ROS_TEST') != '1':
+            pytest.skip('isolated ROS opt-in required')
+        assert os.environ.get('ROS_DOMAIN_ID') == '177'
+        assert os.environ.get('ROS_LOCALHOST_ONLY') == '1'
+        import rclpy
+        from rclpy.parameter import Parameter
+        import knu_batch_runner as module
+        clock = [100.0]
+        monkeypatch.setattr(module, 'time', SimpleNamespace(monotonic=lambda: clock[0]))
+        scenario = getattr(request, 'param', 'all')
+        config = effective_config(5, tmp_path, scenario, guarded=True)
+        settings = config['knu_batch_runner']['ros__parameters']
+>       rclpy.init()
+
+src/virtual_control/test/test_all_scenarios_repeat.py:44: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py:88: in init
+    context.init(args, domain_id=domain_id)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <rclpy.context.Context object at 0xffffaa6f7e50>, args = None
+
+    def init(self,
+             args: Optional[List[str]] = None,
+             *,
+             initialize_logging: bool = True,
+             domain_id: Optional[int] = None):
+        """
+        Initialize ROS communications for a given context.
+    
+        :param args: List of command line arguments.
+        """
+        # imported locally to avoid loading extensions on module import
+        from rclpy.impl.implementation_singleton import rclpy_implementation as _rclpy
+    
+        global g_logging_ref_count
+        with self._lock:
+            if domain_id is not None and domain_id < 0:
+                raise RuntimeError(
+                    'Domain id ({}) should not be lower than zero.'
+                    .format(domain_id))
+    
+            if self.__context is not None:
+>               raise RuntimeError('Context.init() must only be called once')
+E               RuntimeError: Context.init() must only be called once
+
+/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/context.py:70: RuntimeError
+________ ERROR at setup of test_duplicate_stamped_grids_cannot_confirm _________
+
+tmp_path = PosixPath('/tmp/pytest-of-imac/pytest-0/test_duplicate_stamped_grids_c0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xffffa06b1270>
+request = <SubRequest 'supervisor' for <Function test_duplicate_stamped_grids_cannot_confirm>>
+
+    @pytest.fixture
+    def supervisor(tmp_path, monkeypatch, request):
+        if os.environ.get('KNU_BATCH_ROS_TEST') != '1':
+            pytest.skip('isolated ROS opt-in required')
+        assert os.environ.get('ROS_DOMAIN_ID') == '177'
+        assert os.environ.get('ROS_LOCALHOST_ONLY') == '1'
+        import rclpy
+        from rclpy.parameter import Parameter
+        import knu_batch_runner as module
+        clock = [100.0]
+        monkeypatch.setattr(module, 'time', SimpleNamespace(monotonic=lambda: clock[0]))
+        scenario = getattr(request, 'param', 'all')
+        config = effective_config(5, tmp_path, scenario, guarded=True)
+        settings = config['knu_batch_runner']['ros__parameters']
+>       rclpy.init()
+
+src/virtual_control/test/test_all_scenarios_repeat.py:44: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py:88: in init
+    context.init(args, domain_id=domain_id)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <rclpy.context.Context object at 0xffffaa6f7e50>, args = None
+
+    def init(self,
+             args: Optional[List[str]] = None,
+             *,
+             initialize_logging: bool = True,
+             domain_id: Optional[int] = None):
+        """
+        Initialize ROS communications for a given context.
+    
+        :param args: List of command line arguments.
+        """
+        # imported locally to avoid loading extensions on module import
+        from rclpy.impl.implementation_singleton import rclpy_implementation as _rclpy
+    
+        global g_logging_ref_count
+        with self._lock:
+            if domain_id is not None and domain_id < 0:
+                raise RuntimeError(
+                    'Domain id ({}) should not be lower than zero.'
+                    .format(domain_id))
+    
+            if self.__context is not None:
+>               raise RuntimeError('Context.init() must only be called once')
+E               RuntimeError: Context.init() must only be called once
+
+/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/context.py:70: RuntimeError
+_ ERROR at setup of test_unknown_map_keeps_original_stop_with_evidence_detail __
+
+tmp_path = PosixPath('/tmp/pytest-of-imac/pytest-0/test_unknown_map_keeps_origina0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xffffa064b340>
+request = <SubRequest 'supervisor' for <Function test_unknown_map_keeps_original_stop_with_evidence_detail>>
+
+    @pytest.fixture
+    def supervisor(tmp_path, monkeypatch, request):
+        if os.environ.get('KNU_BATCH_ROS_TEST') != '1':
+            pytest.skip('isolated ROS opt-in required')
+        assert os.environ.get('ROS_DOMAIN_ID') == '177'
+        assert os.environ.get('ROS_LOCALHOST_ONLY') == '1'
+        import rclpy
+        from rclpy.parameter import Parameter
+        import knu_batch_runner as module
+        clock = [100.0]
+        monkeypatch.setattr(module, 'time', SimpleNamespace(monotonic=lambda: clock[0]))
+        scenario = getattr(request, 'param', 'all')
+        config = effective_config(5, tmp_path, scenario, guarded=True)
+        settings = config['knu_batch_runner']['ros__parameters']
+>       rclpy.init()
+
+src/virtual_control/test/test_all_scenarios_repeat.py:44: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py:88: in init
+    context.init(args, domain_id=domain_id)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <rclpy.context.Context object at 0xffffaa6f7e50>, args = None
+
+    def init(self,
+             args: Optional[List[str]] = None,
+             *,
+             initialize_logging: bool = True,
+             domain_id: Optional[int] = None):
+        """
+        Initialize ROS communications for a given context.
+    
+        :param args: List of command line arguments.
+        """
+        # imported locally to avoid loading extensions on module import
+        from rclpy.impl.implementation_singleton import rclpy_implementation as _rclpy
+    
+        global g_logging_ref_count
+        with self._lock:
+            if domain_id is not None and domain_id < 0:
+                raise RuntimeError(
+                    'Domain id ({}) should not be lower than zero.'
+                    .format(domain_id))
+    
+            if self.__context is not None:
+>               raise RuntimeError('Context.init() must only be called once')
+E               RuntimeError: Context.init() must only be called once
+
+/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/context.py:70: RuntimeError
+______ ERROR at setup of test_road_evidence_cannot_override_compute_stall ______
+
+tmp_path = PosixPath('/tmp/pytest-of-imac/pytest-0/test_road_evidence_cannot_over0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xffffa059d690>
+request = <SubRequest 'supervisor' for <Function test_road_evidence_cannot_override_compute_stall>>
+
+    @pytest.fixture
+    def supervisor(tmp_path, monkeypatch, request):
+        if os.environ.get('KNU_BATCH_ROS_TEST') != '1':
+            pytest.skip('isolated ROS opt-in required')
+        assert os.environ.get('ROS_DOMAIN_ID') == '177'
+        assert os.environ.get('ROS_LOCALHOST_ONLY') == '1'
+        import rclpy
+        from rclpy.parameter import Parameter
+        import knu_batch_runner as module
+        clock = [100.0]
+        monkeypatch.setattr(module, 'time', SimpleNamespace(monotonic=lambda: clock[0]))
+        scenario = getattr(request, 'param', 'all')
+        config = effective_config(5, tmp_path, scenario, guarded=True)
+        settings = config['knu_batch_runner']['ros__parameters']
+>       rclpy.init()
+
+src/virtual_control/test/test_all_scenarios_repeat.py:44: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py:88: in init
+    context.init(args, domain_id=domain_id)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <rclpy.context.Context object at 0xffffaa6f7e50>, args = None
+
+    def init(self,
+             args: Optional[List[str]] = None,
+             *,
+             initialize_logging: bool = True,
+             domain_id: Optional[int] = None):
+        """
+        Initialize ROS communications for a given context.
+    
+        :param args: List of command line arguments.
+        """
+        # imported locally to avoid loading extensions on module import
+        from rclpy.impl.implementation_singleton import rclpy_implementation as _rclpy
+    
+        global g_logging_ref_count
+        with self._lock:
+            if domain_id is not None and domain_id < 0:
+                raise RuntimeError(
+                    'Domain id ({}) should not be lower than zero.'
+                    .format(domain_id))
+    
+            if self.__context is not None:
+>               raise RuntimeError('Context.init() must only be called once')
+E               RuntimeError: Context.init() must only be called once
+
+/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/context.py:70: RuntimeError
+=================================== FAILURES ===================================
+____ test_guarded_single_preserves_route_and_controller_settings[scenario7] ____
+
+tmp_path = PosixPath('/tmp/pytest-of-imac/pytest-0/test_guarded_single_preserves_0')
+scenario = 'scenario7'
+
+    @pytest.mark.parametrize('scenario', ['scenario7', 'scenario8', 'scenario12',
+                                         'scenario10', 'scenario11'])
+    def test_guarded_single_preserves_route_and_controller_settings(tmp_path, scenario):
+        legacy = effective_config(5, tmp_path, scenario)
+        guarded = effective_config(5, tmp_path, scenario, guarded=True)
+        for node in legacy.keys()-{'knu_batch_runner'}:
+            assert legacy[node] == guarded[node]
+        original = legacy['knu_batch_runner']['ros__parameters']
+        selected = guarded['knu_batch_runner']['ros__parameters']
+        monitoring_keys = {'repeat_per_route', 'skip_system_fault_scenarios',
+                           'require_compute_heartbeat', 'upper_compute_timeout_sec',
+                           'lower_compute_timeout_sec'}
+        assert {k: v for k, v in original.items() if k not in monitoring_keys} == {
+            k: v for k, v in selected.items() if k not in monitoring_keys}
+        assert selected['routes'] == [scenario] and selected['repeat_count'] == 5
+        assert selected['require_compute_heartbeat'] and selected['skip_system_fault_scenarios']
+        assert selected['upper_compute_timeout_sec'] == 5.0
+        assert selected['lower_compute_timeout_sec'] == 2.0
+>       assert not original['require_compute_heartbeat']
+E       KeyError: 'require_compute_heartbeat'
+
+src/virtual_control/test/test_all_scenarios_repeat.py:94: KeyError
+____ test_guarded_single_preserves_route_and_controller_settings[scenario8] ____
+
+tmp_path = PosixPath('/tmp/pytest-of-imac/pytest-0/test_guarded_single_preserves_1')
+scenario = 'scenario8'
+
+    @pytest.mark.parametrize('scenario', ['scenario7', 'scenario8', 'scenario12',
+                                         'scenario10', 'scenario11'])
+    def test_guarded_single_preserves_route_and_controller_settings(tmp_path, scenario):
+        legacy = effective_config(5, tmp_path, scenario)
+        guarded = effective_config(5, tmp_path, scenario, guarded=True)
+        for node in legacy.keys()-{'knu_batch_runner'}:
+            assert legacy[node] == guarded[node]
+        original = legacy['knu_batch_runner']['ros__parameters']
+        selected = guarded['knu_batch_runner']['ros__parameters']
+        monitoring_keys = {'repeat_per_route', 'skip_system_fault_scenarios',
+                           'require_compute_heartbeat', 'upper_compute_timeout_sec',
+                           'lower_compute_timeout_sec'}
+        assert {k: v for k, v in original.items() if k not in monitoring_keys} == {
+            k: v for k, v in selected.items() if k not in monitoring_keys}
+        assert selected['routes'] == [scenario] and selected['repeat_count'] == 5
+        assert selected['require_compute_heartbeat'] and selected['skip_system_fault_scenarios']
+        assert selected['upper_compute_timeout_sec'] == 5.0
+        assert selected['lower_compute_timeout_sec'] == 2.0
+>       assert not original['require_compute_heartbeat']
+E       KeyError: 'require_compute_heartbeat'
+
+src/virtual_control/test/test_all_scenarios_repeat.py:94: KeyError
+___ test_guarded_single_preserves_route_and_controller_settings[scenario12] ____
+
+tmp_path = PosixPath('/tmp/pytest-of-imac/pytest-0/test_guarded_single_preserves_2')
+scenario = 'scenario12'
+
+    @pytest.mark.parametrize('scenario', ['scenario7', 'scenario8', 'scenario12',
+                                         'scenario10', 'scenario11'])
+    def test_guarded_single_preserves_route_and_controller_settings(tmp_path, scenario):
+        legacy = effective_config(5, tmp_path, scenario)
+        guarded = effective_config(5, tmp_path, scenario, guarded=True)
+        for node in legacy.keys()-{'knu_batch_runner'}:
+            assert legacy[node] == guarded[node]
+        original = legacy['knu_batch_runner']['ros__parameters']
+        selected = guarded['knu_batch_runner']['ros__parameters']
+        monitoring_keys = {'repeat_per_route', 'skip_system_fault_scenarios',
+                           'require_compute_heartbeat', 'upper_compute_timeout_sec',
+                           'lower_compute_timeout_sec'}
+        assert {k: v for k, v in original.items() if k not in monitoring_keys} == {
+            k: v for k, v in selected.items() if k not in monitoring_keys}
+        assert selected['routes'] == [scenario] and selected['repeat_count'] == 5
+        assert selected['require_compute_heartbeat'] and selected['skip_system_fault_scenarios']
+        assert selected['upper_compute_timeout_sec'] == 5.0
+        assert selected['lower_compute_timeout_sec'] == 2.0
+>       assert not original['require_compute_heartbeat']
+E       KeyError: 'require_compute_heartbeat'
+
+src/virtual_control/test/test_all_scenarios_repeat.py:94: KeyError
+___ test_guarded_single_preserves_route_and_controller_settings[scenario10] ____
+
+tmp_path = PosixPath('/tmp/pytest-of-imac/pytest-0/test_guarded_single_preserves_3')
+scenario = 'scenario10'
+
+    @pytest.mark.parametrize('scenario', ['scenario7', 'scenario8', 'scenario12',
+                                         'scenario10', 'scenario11'])
+    def test_guarded_single_preserves_route_and_controller_settings(tmp_path, scenario):
+        legacy = effective_config(5, tmp_path, scenario)
+        guarded = effective_config(5, tmp_path, scenario, guarded=True)
+        for node in legacy.keys()-{'knu_batch_runner'}:
+            assert legacy[node] == guarded[node]
+        original = legacy['knu_batch_runner']['ros__parameters']
+        selected = guarded['knu_batch_runner']['ros__parameters']
+        monitoring_keys = {'repeat_per_route', 'skip_system_fault_scenarios',
+                           'require_compute_heartbeat', 'upper_compute_timeout_sec',
+                           'lower_compute_timeout_sec'}
+        assert {k: v for k, v in original.items() if k not in monitoring_keys} == {
+            k: v for k, v in selected.items() if k not in monitoring_keys}
+        assert selected['routes'] == [scenario] and selected['repeat_count'] == 5
+        assert selected['require_compute_heartbeat'] and selected['skip_system_fault_scenarios']
+        assert selected['upper_compute_timeout_sec'] == 5.0
+        assert selected['lower_compute_timeout_sec'] == 2.0
+>       assert not original['require_compute_heartbeat']
+E       KeyError: 'require_compute_heartbeat'
+
+src/virtual_control/test/test_all_scenarios_repeat.py:94: KeyError
+___ test_guarded_single_preserves_route_and_controller_settings[scenario11] ____
+
+tmp_path = PosixPath('/tmp/pytest-of-imac/pytest-0/test_guarded_single_preserves_4')
+scenario = 'scenario11'
+
+    @pytest.mark.parametrize('scenario', ['scenario7', 'scenario8', 'scenario12',
+                                         'scenario10', 'scenario11'])
+    def test_guarded_single_preserves_route_and_controller_settings(tmp_path, scenario):
+        legacy = effective_config(5, tmp_path, scenario)
+        guarded = effective_config(5, tmp_path, scenario, guarded=True)
+        for node in legacy.keys()-{'knu_batch_runner'}:
+            assert legacy[node] == guarded[node]
+        original = legacy['knu_batch_runner']['ros__parameters']
+        selected = guarded['knu_batch_runner']['ros__parameters']
+        monitoring_keys = {'repeat_per_route', 'skip_system_fault_scenarios',
+                           'require_compute_heartbeat', 'upper_compute_timeout_sec',
+                           'lower_compute_timeout_sec'}
+        assert {k: v for k, v in original.items() if k not in monitoring_keys} == {
+            k: v for k, v in selected.items() if k not in monitoring_keys}
+        assert selected['routes'] == [scenario] and selected['repeat_count'] == 5
+        assert selected['require_compute_heartbeat'] and selected['skip_system_fault_scenarios']
+        assert selected['upper_compute_timeout_sec'] == 5.0
+        assert selected['lower_compute_timeout_sec'] == 2.0
+>       assert not original['require_compute_heartbeat']
+E       KeyError: 'require_compute_heartbeat'
+
+src/virtual_control/test/test_all_scenarios_repeat.py:94: KeyError
+=========================== short test summary info ============================
+FAILED src/virtual_control/test/test_all_scenarios_repeat.py::test_guarded_single_preserves_route_and_controller_settings[scenario7]
+FAILED src/virtual_control/test/test_all_scenarios_repeat.py::test_guarded_single_preserves_route_and_controller_settings[scenario8]
+FAILED src/virtual_control/test/test_all_scenarios_repeat.py::test_guarded_single_preserves_route_and_controller_settings[scenario12]
+FAILED src/virtual_control/test/test_all_scenarios_repeat.py::test_guarded_single_preserves_route_and_controller_settings[scenario10]
+FAILED src/virtual_control/test/test_all_scenarios_repeat.py::test_guarded_single_preserves_route_and_controller_settings[scenario11]
+ERROR src/virtual_control/test/test_all_scenarios_repeat.py::test_guarded_single_waits_for_stop_and_recovery_before_skipping[upper-5.0-scenario7]
+ERROR src/virtual_control/test/test_all_scenarios_repeat.py::test_guarded_single_waits_for_stop_and_recovery_before_skipping[lower-2.0-scenario7]
+ERROR src/virtual_control/test/test_all_scenarios_repeat.py::test_guarded_single_driving_failures_continue_all_five[scenario7]
+ERROR src/virtual_control/test/test_all_scenarios_repeat.py::test_driving_failures_still_attempt_all_sixty_slots
+ERROR src/virtual_control/test/test_all_scenarios_repeat.py::test_only_faulted_scenario_skipped_after_stop_and_recovery[pose_timeout]
+ERROR src/virtual_control/test/test_all_scenarios_repeat.py::test_only_faulted_scenario_skipped_after_stop_and_recovery[grid_timeout]
+ERROR src/virtual_control/test/test_all_scenarios_repeat.py::test_only_faulted_scenario_skipped_after_stop_and_recovery[setup_timeout]
+ERROR src/virtual_control/test/test_all_scenarios_repeat.py::test_only_faulted_scenario_skipped_after_stop_and_recovery[alignment_failed]
+ERROR src/virtual_control/test/test_all_scenarios_repeat.py::test_only_faulted_scenario_skipped_after_stop_and_recovery[upper_compute_timeout]
+ERROR src/virtual_control/test/test_all_scenarios_repeat.py::test_only_faulted_scenario_skipped_after_stop_and_recovery[lower_compute_timeout]
+ERROR src/virtual_control/test/test_all_scenarios_repeat.py::test_completion_watchdog_stops_then_waits_for_recovery[upper-5.0]
+ERROR src/virtual_control/test/test_all_scenarios_repeat.py::test_completion_watchdog_stops_then_waits_for_recovery[lower-2.0]
+ERROR src/virtual_control/test/test_all_scenarios_repeat.py::test_persistent_system_loss_aborts_instead_of_burning_next_scenarios[pose]
+ERROR src/virtual_control/test/test_all_scenarios_repeat.py::test_persistent_system_loss_aborts_instead_of_burning_next_scenarios[grid]
+ERROR src/virtual_control/test/test_all_scenarios_repeat.py::test_persistent_system_loss_aborts_instead_of_burning_next_scenarios[upper]
+ERROR src/virtual_control/test/test_all_scenarios_repeat.py::test_persistent_system_loss_aborts_instead_of_burning_next_scenarios[lower]
+ERROR src/virtual_control/test/test_all_scenarios_repeat.py::test_failed_solver_cycles_are_heartbeats_but_duplicate_diagnostics_are_not
+ERROR src/virtual_control/test/test_all_scenarios_repeat.py::test_late_alignment_cannot_reanchor_after_next_scenario_start
+ERROR src/virtual_control/test/test_all_scenarios_repeat.py::test_compute_stall_during_coasting_attributed_to_original_scenario
+ERROR src/virtual_control/test/test_all_scenarios_repeat.py::test_long_completed_solve_not_hidden_by_fresh_diagnostic[upper]
+ERROR src/virtual_control/test/test_all_scenarios_repeat.py::test_long_completed_solve_not_hidden_by_fresh_diagnostic[lower]
+ERROR src/virtual_control/test/test_all_scenarios_repeat.py::test_route_unavailable_stops_and_continues_next_repetition[True]
+ERROR src/virtual_control/test/test_all_scenarios_repeat.py::test_route_unavailable_stops_and_continues_next_repetition[False]
+ERROR src/virtual_control/test/test_all_scenarios_repeat.py::test_duplicate_stamped_grids_cannot_confirm
+ERROR src/virtual_control/test/test_all_scenarios_repeat.py::test_unknown_map_keeps_original_stop_with_evidence_detail
+ERROR src/virtual_control/test/test_all_scenarios_repeat.py::test_road_evidence_cannot_override_compute_stall
+5 failed, 8 passed, 1 skipped, 26 errors in 5.57s

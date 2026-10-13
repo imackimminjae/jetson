@@ -1,0 +1,971 @@
+[INFO] [launch]: All log files can be found below /home/imac/ros2_ws/drive_batches/20261013_041941_scenario2_173ca0/ros_logs/2026-10-13-04-19-41-962259-imac-desktop-79029
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [px4_ekf_bridge.py-1]: process started with pid [79059]
+[INFO] [px4_odom_map_bridge-2]: process started with pid [79061]
+[INFO] [upper_planner_node-3]: process started with pid [79063]
+[INFO] [lower_tracking_mpc_node-4]: process started with pid [79065]
+[INFO] [knu_batch_runner.py-5]: process started with pid [79067]
+[lower_tracking_mpc_node-4] [INFO] [1791832782.530149425] [lower_tracking_mpc_node]: MAVLink UDP bound at 0.0.0.0:14540; waiting for MAVProxy --out peer
+[lower_tracking_mpc_node-4] [INFO] [1791832782.530698569] [lower_tracking_mpc_node]: LowerTrackingMpcNode ready: rate=10.00Hz dt=0.100s N=30 path=/planner/lower_reference_path scale=fullscale wheelbase=2.80m rear_offset=1.40m command_scale=0.350rad actuator_model=1 delay=0.00s tau=0.74s backend=mavlink_udp virtual=/cmd_control
+[upper_planner_node-3] [INFO] [1791832782.576488616] [upper_planner_node]: planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
+[lower_tracking_mpc_node-4] [WARN] [1791832782.581688810] [lower_tracking_mpc_node]: MAVLink peer unknown; check MAVProxy --out=127.0.0.1:14540
+[px4_odom_map_bridge-2] [INFO] [1791832782.585998244] [px4_odom_map_bridge]: PX4 odom map bridge ready: input=/px4/sih/odom (yaw scalar z) odom=/motive/vehicle/odom_map pose=/motive/vehicle/pose route=scenario2 target=(-252.789, 93.548, 0.000) target_yaw=-0.170695 rad odom_yaw=orientation.z scalar
+[upper_planner_node-3] [INFO] [1791832782.623369495] [upper_planner_node]: k1 lane constraint trial: skip_front_clipped_k1_lane_constraints=false
+[upper_planner_node-3] [INFO] [1791832782.623616514] [upper_planner_node]: Egocentric MIQP planner ready: rate=2.00Hz pred_dt=0.500s Nmax=7 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
+[upper_planner_node-3] [INFO] [1791832782.623705445] [upper_planner_node]: upper branch model: cumulative_increment=1 turn_window_at_split=1 turn_target_absolute=1 split_continuity=6.75m r_dpsi=3.000 lambda_turn=0.600
+[lower_tracking_mpc_node-4] [INFO] [1791832782.631685055] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[px4_odom_map_bridge-2] [WARN] [1791832782.886190062] [px4_odom_map_bridge]: Waiting for valid PX4 source pose on /px4/sih/odom
+[upper_planner_node-3] [WARN] [1791832783.123871715] [upper_planner_node]: planner waiting for pose
+[knu_batch_runner.py-5] [INFO] [1791832783.136099156] [knu_batch_runner]: 5 SIH routes; results: /home/imac/ros2_ws/drive_batches/20261013_041941_scenario2_173ca0/results/20261013_041943_db1275c1d8
+[px4_ekf_bridge.py-1] [INFO] [1791832783.217349042] [px4_ekf_bridge]: PX4 EKF bridge configured: input=disabled odom=/px4/ekf_odom yaw_scalar_pose=/px4/sih/odom connection=udpin:0.0.0.0:14541 @ 921600, EV=50.0 Hz (vision_position_estimate), ENU(+X east,+Y north,+Z up) <-> NED/FRD
+[px4_ekf_bridge.py-1] [WARN] [1791832783.218530693] [px4_ekf_bridge]: Start with the vehicle disarmed and stationary. PX4 EKF parameter changes marked as reboot-required need a Pixhawk reboot before fusion is tested.
+[lower_tracking_mpc_node-4] [INFO] [1791832783.231049251] [lower_tracking_mpc_node]: MAVLink peer detected: 127.0.0.1:36594
+[lower_tracking_mpc_node-4] [INFO] [1791832783.281079417] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[px4_ekf_bridge.py-1] [INFO] [1791832783.429974183] [px4_ekf_bridge]: Opening MAVLink connection udpin:0.0.0.0:14541 (baud=921600)
+[px4_ekf_bridge.py-1] [WARN] [1791832783.475536092] [px4_ekf_bridge]: SIH heading check: missing_or_stale_sih (EKF-SIH=None deg); pose output blocked
+[px4_ekf_bridge.py-1] [WARN] [1791832783.510608234] [px4_ekf_bridge]: SIH heading check: settling (EKF-SIH=0.7713240881961035 deg); pose output blocked
+[lower_tracking_mpc_node-4] [INFO] [1791832783.731596554] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[px4_ekf_bridge.py-1] [INFO] [1791832784.235125902] [px4_ekf_bridge]: PX4 heartbeat detected: target=1:1
+[lower_tracking_mpc_node-4] [INFO] [1791832784.281081298] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[px4_ekf_bridge.py-1] [INFO] [1791832784.430415697] [px4_ekf_bridge]: Requested PX4 LOCAL_POSITION_NED at 30.0 Hz
+[px4_ekf_bridge.py-1] [INFO] [1791832784.432270337] [px4_ekf_bridge]: Requested PX4 ATTITUDE at 30.0 Hz
+[px4_ekf_bridge.py-1] [INFO] [1791832784.433873895] [px4_ekf_bridge]: Requested PX4 HIL_STATE_QUATERNION at 30.0 Hz
+[lower_tracking_mpc_node-4] [INFO] [1791832784.731693887] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[px4_odom_map_bridge-2] [WARN] [1791832784.986283209] [px4_odom_map_bridge]: Waiting for valid PX4 source pose on /px4/sih/odom
+[upper_planner_node-3] [WARN] [1791832785.123898090] [upper_planner_node]: planner waiting for pose
+[lower_tracking_mpc_node-4] [INFO] [1791832785.281130204] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[px4_ekf_bridge.py-1] [WARN] [1791832785.512229737] [px4_ekf_bridge]: SIH heading check: ok (EKF-SIH=0.7593507665810713 deg); pose output enabled
+[lower_tracking_mpc_node-4] [INFO] [1791832785.831810345] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[px4_odom_map_bridge-2] [INFO] [1791832785.975856224] [px4_odom_map_bridge]: Map alignment initialized once: source=(-2029.649658, 2025.191162, 0.272064, yaw=0.464692) yaw_delta=-0.635387 input_frame='map' (treated as PX4 local)
+[knu_batch_runner.py-5] [INFO] [1791832785.996111308] [knu_batch_runner]: [1/5] scenario2
+[upper_planner_node-3] [WARN] [1791832786.124341941] [upper_planner_node]: planner waiting for global path
+[lower_tracking_mpc_node-4] [INFO] [1791832786.281158610] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832786.931680275] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[lower_tracking_mpc_node-4] [INFO] [1791832787.281300315] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[px4_odom_map_bridge-2] [INFO] [1791832787.310083319] [px4_odom_map_bridge]: Map alignment initialized once: source=(-2029.646851, 2025.184570, 0.268677, yaw=0.465294) yaw_delta=-0.635989 input_frame='map' (treated as PX4 local)
+[lower_tracking_mpc_node-4] [INFO] [1791832787.931752461] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[lower_tracking_mpc_node-4] [INFO] [1791832788.331179511] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791832788.624101830] [upper_planner_node]: planner waiting for global path
+[upper_planner_node-3] [INFO] [1791832788.694765555] [upper_planner_node]: mission cleared; awaiting path; revision=1
+[lower_tracking_mpc_node-4] [WARN] [1791832788.695380846] [lower_tracking_mpc_node]: Rejected lower path: fewer than two distinct path points
+[lower_tracking_mpc_node-4] [WARN] [1791832788.731382817] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[knu_batch_runner.py-5] [INFO] [1791832788.795079553] [knu_batch_runner]: db1275c1d8:0:scenario2: mission cleared; awaiting path; revision=1
+[upper_planner_node-3] [INFO] [1791832788.797586189] [upper_planner_node]: reference path loaded from /navigation/global_path: 5 points frame=map waypoint_bias=disabled
+[lower_tracking_mpc_node-4] [WARN] [1791832788.831424387] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [INFO] [1791832788.932943589] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [INFO] [1791832789.124429268] [upper_planner_node]: waypoint pair advanced: [0,1] -> [1,2]; previous reference retained
+[lower_tracking_mpc_node-4] [WARN] [1791832789.131488485] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [INFO] [1791832789.331224919] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [WARN] [1791832789.931445080] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [INFO] [1791832790.331313926] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832791.381256683] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832792.381382615] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832793.381530739] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832794.431474270] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832795.431513969] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832796.431554769] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [WARN] [1791832796.631801600] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [INFO] [1791832797.431590367] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [WARN] [1791832798.131785271] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [INFO] [1791832798.431631228] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [WARN] [1791832798.631956647] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[upper_planner_node-3] [INFO] [1791832799.124734071] [upper_planner_node]: waypoint pair advanced: [1,2] -> [2,3]; previous reference retained
+[lower_tracking_mpc_node-4] [WARN] [1791832799.131881610] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [INFO] [1791832799.481666093] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832800.481690053] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832801.481769486] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [INFO] [1791832801.624933846] [upper_planner_node]: waypoint pair advanced: [2,3] -> [3,4]; previous reference retained
+[lower_tracking_mpc_node-4] [INFO] [1791832802.481802019] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832803.481842503] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832804.482623993] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832805.531950268] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832806.531986890] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832807.532020935] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832808.532048690] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832809.532127342] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832810.532208664] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832811.582189097] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832812.582240399] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832813.632310943] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [WARN] [1791832814.132552877] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [INFO] [1791832814.632311551] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832815.632347632] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832816.633813037] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [WARN] [1791832816.634459272] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [INFO] [1791832817.682606365] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [WARN] [1791832818.132643465] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [INFO] [1791832818.732506122] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832819.732568662] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832820.732570798] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832821.732625144] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832822.732686417] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832823.732733913] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832824.732767279] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791832825.626382851] [upper_planner_node]: interval_diag step=7 reason=3 ref_body=(20.965,0.883) heading_deg=3.24 center_cell=(67,66) center_value=100 line_free=0 blocked=401 unknown=0 outside=1 longest_run=0 min_run=2 grid_free=1510 zero=1510 positive=14874 unknown=0 topic=/bev/occupancy_grid frame=Vehicle origin=(0.000,-20.000) origin_yaw_deg=0.00 size=128x128 res=0.3125 positive_is_drivable=0 threshold=1 waypoint_bias=0 previous=1
+[upper_planner_node-3] [WARN] [1791832825.626688880] [upper_planner_node]: no valid preview interval at step=7; usable horizon=6 reason=3
+[upper_planner_node-3] [WARN] [1791832825.626789332] [upper_planner_node]: horizon_diag configured=7 extent_limit=7 requested=7 usable=6 reserve=1 restore=1 step_m=3.000 previous=1
+[lower_tracking_mpc_node-4] [INFO] [1791832825.782817701] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791832826.126370592] [upper_planner_node]: no valid preview interval at step=6; usable horizon=5 reason=3
+[upper_planner_node-3] [WARN] [1791832826.126758033] [upper_planner_node]: no valid preview interval at step=7; usable horizon=5 reason=3
+[knu_batch_runner.py-5] [INFO] [1791832826.497087483] [knu_batch_runner]: scenario2: completed {"outcome_policy": "road_route_v1", "road_evidence": {"acquisition_stamp_available": false, "blocked": 32, "clock_source": "receive_monotonic", "confirmed": false, "free": 191, "observations": 0, "outside": 11, "reason": "unknown/outside route samples", "state": "unavailable", "unknown": 0}, "waypoint_guard_result": "completed"}
+[lower_tracking_mpc_node-4] [INFO] [1791832826.533350978] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791832826.626421498] [upper_planner_node]: no valid preview interval at step=5; usable horizon=4 reason=3
+[upper_planner_node-3] [WARN] [1791832826.626817258] [upper_planner_node]: no valid preview interval at step=6; usable horizon=4 reason=3
+[upper_planner_node-3] [WARN] [1791832826.627057205] [upper_planner_node]: no valid preview interval at step=7; usable horizon=4 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791832826.782869561] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791832827.126409454] [upper_planner_node]: no valid preview interval at step=4; usable horizon=3 reason=3
+[upper_planner_node-3] [WARN] [1791832827.126818144] [upper_planner_node]: no valid preview interval at step=5; usable horizon=3 reason=3
+[upper_planner_node-3] [WARN] [1791832827.127048905] [upper_planner_node]: no valid preview interval at step=6; usable horizon=3 reason=3
+[upper_planner_node-3] [WARN] [1791832827.127256594] [upper_planner_node]: no valid preview interval at step=7; usable horizon=3 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791832827.533486510] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791832827.626187860] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+[upper_planner_node-3] [WARN] [1791832827.626470624] [upper_planner_node]: interval_diag step=4 reason=3 ref_body=(11.501,-3.423) heading_deg=-16.57 center_cell=(36,53) center_value=100 line_free=0 blocked=417 unknown=0 outside=2 longest_run=0 min_run=2 grid_free=633 zero=633 positive=15751 unknown=0 topic=/bev/occupancy_grid frame=Vehicle origin=(0.000,-20.000) origin_yaw_deg=0.00 size=128x128 res=0.3125 positive_is_drivable=0 threshold=1 waypoint_bias=0 previous=0
+[upper_planner_node-3] [WARN] [1791832827.626569060] [upper_planner_node]: no valid preview interval at step=4; usable horizon=2 reason=3
+[upper_planner_node-3] [WARN] [1791832827.626701322] [upper_planner_node]: no valid preview interval at step=5; usable horizon=2 reason=3
+[upper_planner_node-3] [WARN] [1791832827.626841168] [upper_planner_node]: no valid preview interval at step=6; usable horizon=2 reason=3
+[upper_planner_node-3] [WARN] [1791832827.626967445] [upper_planner_node]: no valid preview interval at step=7; usable horizon=2 reason=3
+[upper_planner_node-3] [WARN] [1791832827.627015191] [upper_planner_node]: horizon_diag configured=7 extent_limit=7 requested=7 usable=2 reserve=1 restore=1 step_m=3.000 previous=0
+[lower_tracking_mpc_node-4] [INFO] [1791832827.832868681] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791832828.127322545] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.209; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791832828.633404730] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[lower_tracking_mpc_node-4] [INFO] [1791832828.832910235] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791832829.626108838] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832829.627258807] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.206; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791832829.633567075] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[lower_tracking_mpc_node-4] [INFO] [1791832829.833125923] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791832830.126204551] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832830.626272736] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832830.627369006] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.204; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791832830.633641465] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[lower_tracking_mpc_node-4] [INFO] [1791832830.883033722] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791832831.126207025] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832831.626271905] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832831.627383152] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.207; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791832831.733629295] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[lower_tracking_mpc_node-4] [INFO] [1791832831.883072888] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791832832.126313006] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832832.626337813] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832832.627460676] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.211; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791832832.833642803] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[lower_tracking_mpc_node-4] [INFO] [1791832832.883077349] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791832833.126364601] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832833.626348597] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791832833.833739156] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[lower_tracking_mpc_node-4] [INFO] [1791832833.883085474] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791832834.126398002] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832834.127564612] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.203; retaining last published path
+[upper_planner_node-3] [WARN] [1791832834.626507852] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791832834.833794083] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[lower_tracking_mpc_node-4] [INFO] [1791832834.883174161] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791832835.126428955] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832835.627876421] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832835.630043233] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.215; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791832835.833980454] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[lower_tracking_mpc_node-4] [INFO] [1791832835.883232494] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791832836.126505013] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832836.626491161] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791832836.883277307] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832836.933793720] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791832837.126554878] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832837.127712527] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.198; retaining last published path
+[upper_planner_node-3] [WARN] [1791832837.626498936] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791832837.883327127] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832837.933895317] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791832838.126613815] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832838.127750087] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.204; retaining last published path
+[upper_planner_node-3] [WARN] [1791832838.626621419] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791832838.883328929] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832838.933972193] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791832839.126561946] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832839.626547173] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832839.627655860] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.201; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791832839.883435519] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832839.934013244] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791832840.126496813] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832840.626622198] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832840.627695747] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.192; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791832840.883435688] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832840.934088103] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791832841.126586102] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832841.626659956] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832841.627752898] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.208; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791832841.883500579] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832842.034135622] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791832842.126703183] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832842.626706691] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832842.627840819] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.205; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791832842.883529613] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832843.034158957] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791832843.126773687] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832843.626746593] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832843.627922675] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.198; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791832843.883574151] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832844.034322889] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791832844.126794028] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832844.626880243] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832844.628005314] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.196; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791832844.933606193] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791832845.126871571] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791832845.134130534] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791832845.626820716] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832845.628439153] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.207; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791832845.933666890] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791832846.126929450] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791832846.134262079] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791832846.626889979] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791832846.933688242] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791832847.126902956] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832847.128008603] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.201; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791832847.234269791] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[knu_batch_runner.py-5] [INFO] [1791832847.397930329] [knu_batch_runner]: [2/5] scenario2
+[upper_planner_node-3] [WARN] [1791832847.626901687] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791832847.933756812] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791832848.126927297] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832848.128036272] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.199; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791832848.234358389] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791832848.626992007] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[px4_odom_map_bridge-2] [INFO] [1791832848.705582074] [px4_odom_map_bridge]: Map alignment initialized once: source=(-1845.424072, 2133.249268, 0.863403, yaw=0.710268) yaw_delta=-0.880963 input_frame='map' (treated as PX4 local)
+[lower_tracking_mpc_node-4] [WARN] [1791832848.734037642] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [INFO] [1791832848.934035966] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [WARN] [1791832849.133966606] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [INFO] [1791832849.334487253] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[lower_tracking_mpc_node-4] [INFO] [1791832849.983825288] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [INFO] [1791832850.093919977] [upper_planner_node]: mission cleared; awaiting path; revision=3
+[lower_tracking_mpc_node-4] [WARN] [1791832850.094075760] [lower_tracking_mpc_node]: Rejected lower path: fewer than two distinct path points
+[upper_planner_node-3] [WARN] [1791832850.126711055] [upper_planner_node]: planner waiting for global path
+[lower_tracking_mpc_node-4] [WARN] [1791832850.134105607] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[knu_batch_runner.py-5] [INFO] [1791832850.195124915] [knu_batch_runner]: db1275c1d8:1:scenario2: mission cleared; awaiting path; revision=3
+[upper_planner_node-3] [INFO] [1791832850.197427348] [upper_planner_node]: reference path loaded from /navigation/global_path: 5 points frame=map waypoint_bias=disabled
+[lower_tracking_mpc_node-4] [WARN] [1791832850.234086589] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [INFO] [1791832850.334490373] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [INFO] [1791832850.626918539] [upper_planner_node]: waypoint pair advanced: [0,1] -> [1,2]; previous reference retained
+[lower_tracking_mpc_node-4] [WARN] [1791832850.634070872] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [INFO] [1791832850.983883281] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [WARN] [1791832851.334122230] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [INFO] [1791832851.334734864] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[lower_tracking_mpc_node-4] [INFO] [1791832851.983912552] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832852.983968272] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832853.984013384] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832854.984051024] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832855.984110537] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832856.984205363] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [WARN] [1791832857.634339318] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [INFO] [1791832857.984215946] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [WARN] [1791832858.134384273] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [INFO] [1791832858.984256019] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832859.984273995] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [WARN] [1791832860.134410348] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[upper_planner_node-3] [INFO] [1791832860.627351015] [upper_planner_node]: waypoint pair advanced: [1,2] -> [2,3]; previous reference retained
+[lower_tracking_mpc_node-4] [WARN] [1791832860.634497203] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [INFO] [1791832860.984301204] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832861.984339789] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832862.984355766] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [INFO] [1791832863.627538904] [upper_planner_node]: waypoint pair advanced: [2,3] -> [3,4]; previous reference retained
+[lower_tracking_mpc_node-4] [INFO] [1791832863.984405169] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832864.984489309] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832866.034497670] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832867.034563250] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832868.034580941] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832869.034646170] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832870.034700887] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832871.034726691] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832872.034743168] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832873.034799951] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832874.034856847] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832875.034973122] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [WARN] [1791832875.635214988] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [INFO] [1791832876.084926758] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [WARN] [1791832876.135116885] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [WARN] [1791832876.635134046] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [INFO] [1791832877.085031449] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [WARN] [1791832877.135155173] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [WARN] [1791832877.635202023] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [INFO] [1791832878.085067867] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [WARN] [1791832878.135110850] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [WARN] [1791832878.635236128] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [INFO] [1791832879.135033999] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [WARN] [1791832879.135571109] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [INFO] [1791832880.135055504] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [WARN] [1791832880.635368487] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [INFO] [1791832881.135082051] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [WARN] [1791832881.135600793] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [INFO] [1791832882.135144744] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791832883.129745947] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.204; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791832883.135183773] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [WARN] [1791832883.635445051] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [INFO] [1791832884.135228388] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832885.135242458] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[knu_batch_runner.py-5] [INFO] [1791832885.198548164] [knu_batch_runner]: scenario2: off_route {"outcome_policy": "road_route_v1", "road_evidence": {"acquisition_stamp_available": false, "blocked": 0, "clock_source": "receive_monotonic", "confirmed": false, "free": 0, "observations": 0, "outside": 533, "reason": "unknown/outside route samples", "state": "unavailable", "unknown": 0}, "waypoint_guard_result": "off_route"}
+[lower_tracking_mpc_node-4] [INFO] [1791832885.235933751] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[lower_tracking_mpc_node-4] [INFO] [1791832886.135326308] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832886.236012288] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[lower_tracking_mpc_node-4] [INFO] [1791832887.135349021] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832887.336092151] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[lower_tracking_mpc_node-4] [WARN] [1791832888.135577263] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [INFO] [1791832888.185619151] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832888.436026807] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[lower_tracking_mpc_node-4] [WARN] [1791832888.635785061] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[upper_planner_node-3] [WARN] [1791832889.129847707] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.197; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791832889.235451294] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832889.436502592] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791832890.129934313] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.207; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791832890.285476998] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832890.536016780] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791832891.130083308] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.215; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791832891.285542019] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832891.536305742] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791832891.628896306] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832892.128861735] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [WARN] [1791832892.135781958] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [INFO] [1791832892.285565199] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791832892.628743954] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832892.629988870] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.182; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791832892.636074051] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791832893.128802115] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791832893.285632302] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791832893.628862511] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832893.630352877] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.203; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791832893.636313892] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791832894.130150123] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791832894.285658845] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791832894.629009534] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791832894.736456230] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791832895.128970588] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832895.130464474] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.213; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791832895.285759072] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791832895.628957686] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791832895.836328043] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791832896.128994352] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832896.130508494] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.211; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791832896.335776138] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791832896.628990115] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791832896.836404183] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791832897.129060535] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832897.130539060] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.215; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791832897.335828653] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791832897.629021121] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791832897.836682492] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791832898.129022795] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791832898.335869922] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791832898.629616872] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832898.631061380] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.209; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791832898.936522255] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791832899.129155127] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791832899.335969482] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791832899.629200918] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791832899.936555243] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791832900.129197393] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832900.130656206] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.200; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791832900.335972351] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791832900.629158118] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791832900.937427708] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791832901.129177787] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791832901.386012509] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791832901.629254956] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832901.630679143] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.206; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791832902.037109910] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791832902.129179318] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791832902.386042102] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791832902.629285666] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832902.630754815] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.219; retaining last published path
+[upper_planner_node-3] [WARN] [1791832903.129225221] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791832903.136538739] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[lower_tracking_mpc_node-4] [INFO] [1791832903.386047455] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791832903.629287336] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832904.129384074] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832904.131359900] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.187; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791832904.136650871] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[lower_tracking_mpc_node-4] [INFO] [1791832904.386079291] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791832904.629300288] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832905.129276630] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791832905.136769868] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[lower_tracking_mpc_node-4] [INFO] [1791832905.386149835] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791832905.629429038] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832905.630920940] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.210; retaining last published path
+[knu_batch_runner.py-5] [INFO] [1791832905.699632867] [knu_batch_runner]: [3/5] scenario2
+[upper_planner_node-3] [WARN] [1791832906.129332026] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791832906.137989984] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[lower_tracking_mpc_node-4] [INFO] [1791832906.386180810] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791832906.629502668] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[px4_odom_map_bridge-2] [INFO] [1791832907.010141396] [px4_odom_map_bridge]: Map alignment initialized once: source=(-1667.758423, 2205.411865, 0.564606, yaw=-0.105145) yaw_delta=-0.065550 input_frame='map' (treated as PX4 local)
+[lower_tracking_mpc_node-4] [WARN] [1791832907.036493972] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[upper_planner_node-3] [WARN] [1791832907.129418545] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [WARN] [1791832907.136508278] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [INFO] [1791832907.236923784] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[lower_tracking_mpc_node-4] [INFO] [1791832907.386256637] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [WARN] [1791832907.637540388] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [INFO] [1791832908.336792869] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [INFO] [1791832908.393850680] [upper_planner_node]: mission cleared; awaiting path; revision=5
+[lower_tracking_mpc_node-4] [WARN] [1791832908.394067169] [lower_tracking_mpc_node]: Rejected lower path: fewer than two distinct path points
+[lower_tracking_mpc_node-4] [INFO] [1791832908.436303088] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [WARN] [1791832908.436809573] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[knu_batch_runner.py-5] [INFO] [1791832908.495130924] [knu_batch_runner]: db1275c1d8:2:scenario2: mission cleared; awaiting path; revision=5
+[upper_planner_node-3] [INFO] [1791832908.497780025] [upper_planner_node]: reference path loaded from /navigation/global_path: 5 points frame=map waypoint_bias=disabled
+[lower_tracking_mpc_node-4] [WARN] [1791832908.536486103] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[upper_planner_node-3] [INFO] [1791832908.629381201] [upper_planner_node]: waypoint pair advanced: [0,1] -> [1,2]; previous reference retained
+[lower_tracking_mpc_node-4] [WARN] [1791832908.636520856] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [INFO] [1791832909.337140263] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[lower_tracking_mpc_node-4] [INFO] [1791832909.437251498] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [WARN] [1791832909.636524775] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [INFO] [1791832910.486375224] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832911.486392302] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832912.486399829] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832913.486464465] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832914.486489789] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832915.486588446] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [WARN] [1791832916.136803407] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [INFO] [1791832916.486587596] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832917.486624494] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [WARN] [1791832917.636873588] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [WARN] [1791832918.138617975] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [INFO] [1791832918.486668995] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [WARN] [1791832918.636970633] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[upper_planner_node-3] [INFO] [1791832919.129718418] [upper_planner_node]: waypoint pair advanced: [1,2] -> [2,3]; previous reference retained
+[lower_tracking_mpc_node-4] [WARN] [1791832919.136901786] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [INFO] [1791832919.486725449] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832920.486761089] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832921.486776299] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [INFO] [1791832921.629837633] [upper_planner_node]: waypoint pair advanced: [2,3] -> [3,4]; previous reference retained
+[lower_tracking_mpc_node-4] [INFO] [1791832922.486850568] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832923.486874390] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832924.486918583] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832925.486978954] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832926.486991406] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832927.487058758] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832928.487092367] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832929.487093993] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832930.487227739] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832931.487238490] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832932.487265388] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832933.537272846] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [WARN] [1791832934.137626917] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [INFO] [1791832934.537354662] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832935.537357006] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832936.537382057] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832937.537408726] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [WARN] [1791832937.637691641] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [WARN] [1791832938.137615623] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [INFO] [1791832938.537544923] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832939.537584046] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832940.537601330] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832941.537604233] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832942.537667477] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832943.537674065] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832944.537749730] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832945.587739129] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791832945.631430094] [upper_planner_node]: interval_diag step=7 reason=3 ref_body=(20.976,0.982) heading_deg=2.91 center_cell=(67,67) center_value=100 line_free=0 blocked=401 unknown=0 outside=1 longest_run=0 min_run=2 grid_free=1590 zero=1590 positive=14794 unknown=0 topic=/bev/occupancy_grid frame=Vehicle origin=(0.000,-20.000) origin_yaw_deg=0.00 size=128x128 res=0.3125 positive_is_drivable=0 threshold=1 waypoint_bias=0 previous=1
+[upper_planner_node-3] [WARN] [1791832945.631735899] [upper_planner_node]: no valid preview interval at step=7; usable horizon=6 reason=3
+[upper_planner_node-3] [WARN] [1791832945.631918786] [upper_planner_node]: horizon_diag configured=7 extent_limit=7 requested=7 usable=6 reserve=1 restore=1 step_m=3.000 previous=1
+[upper_planner_node-3] [WARN] [1791832946.131471084] [upper_planner_node]: no valid preview interval at step=6; usable horizon=5 reason=3
+[upper_planner_node-3] [WARN] [1791832946.131903325] [upper_planner_node]: no valid preview interval at step=7; usable horizon=5 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791832946.587856529] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791832946.631288699] [upper_planner_node]: no valid preview interval at step=5; usable horizon=4 reason=3
+[upper_planner_node-3] [WARN] [1791832946.631704844] [upper_planner_node]: no valid preview interval at step=6; usable horizon=4 reason=3
+[upper_planner_node-3] [WARN] [1791832946.631942678] [upper_planner_node]: no valid preview interval at step=7; usable horizon=4 reason=3
+[knu_batch_runner.py-5] [INFO] [1791832946.697542119] [knu_batch_runner]: scenario2: completed {"outcome_policy": "road_route_v1", "road_evidence": {"acquisition_stamp_available": false, "blocked": 29, "clock_source": "receive_monotonic", "confirmed": false, "free": 188, "observations": 0, "outside": 17, "reason": "unknown/outside route samples", "state": "unavailable", "unknown": 0}, "waypoint_guard_result": "completed"}
+[lower_tracking_mpc_node-4] [INFO] [1791832946.738407336] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791832947.131387316] [upper_planner_node]: no valid preview interval at step=5; usable horizon=4 reason=3
+[upper_planner_node-3] [WARN] [1791832947.131816966] [upper_planner_node]: no valid preview interval at step=6; usable horizon=4 reason=3
+[upper_planner_node-3] [WARN] [1791832947.132047887] [upper_planner_node]: no valid preview interval at step=7; usable horizon=4 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791832947.587866872] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791832947.631302913] [upper_planner_node]: no valid preview interval at step=4; usable horizon=3 reason=3
+[upper_planner_node-3] [WARN] [1791832947.631696401] [upper_planner_node]: interval_diag step=5 reason=3 ref_body=(14.874,-1.943) heading_deg=-7.44 center_cell=(47,57) center_value=100 line_free=0 blocked=404 unknown=0 outside=1 longest_run=0 min_run=2 grid_free=740 zero=740 positive=15644 unknown=0 topic=/bev/occupancy_grid frame=Vehicle origin=(0.000,-20.000) origin_yaw_deg=0.00 size=128x128 res=0.3125 positive_is_drivable=0 threshold=1 waypoint_bias=0 previous=0
+[upper_planner_node-3] [WARN] [1791832947.631845815] [upper_planner_node]: no valid preview interval at step=5; usable horizon=3 reason=3
+[upper_planner_node-3] [WARN] [1791832947.632066048] [upper_planner_node]: no valid preview interval at step=6; usable horizon=3 reason=3
+[upper_planner_node-3] [WARN] [1791832947.632295978] [upper_planner_node]: no valid preview interval at step=7; usable horizon=3 reason=3
+[upper_planner_node-3] [WARN] [1791832947.632405646] [upper_planner_node]: horizon_diag configured=7 extent_limit=7 requested=7 usable=3 reserve=1 restore=1 step_m=3.000 previous=0
+[lower_tracking_mpc_node-4] [INFO] [1791832947.738478511] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791832948.131416820] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+[upper_planner_node-3] [WARN] [1791832948.131846438] [upper_planner_node]: no valid preview interval at step=4; usable horizon=2 reason=3
+[upper_planner_node-3] [WARN] [1791832948.132100560] [upper_planner_node]: no valid preview interval at step=5; usable horizon=2 reason=3
+[upper_planner_node-3] [WARN] [1791832948.132369755] [upper_planner_node]: no valid preview interval at step=6; usable horizon=2 reason=3
+[upper_planner_node-3] [WARN] [1791832948.132597509] [upper_planner_node]: no valid preview interval at step=7; usable horizon=2 reason=3
+[lower_tracking_mpc_node-4] [WARN] [1791832948.138039202] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [INFO] [1791832948.587923923] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791832948.632002166] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.208; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791832948.839008836] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[lower_tracking_mpc_node-4] [INFO] [1791832949.587974369] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791832949.632063747] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.206; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791832949.938559169] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791832950.131171872] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791832950.587990944] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791832950.631244896] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832950.632382766] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.206; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791832950.938619837] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791832951.131170328] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791832951.588024562] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791832951.631296883] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832951.632463906] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.210; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791832951.938664172] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791832952.131652309] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791832952.588053975] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791832952.631169137] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832952.632710224] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.208; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791832952.938779088] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791832953.131287235] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791832953.588102768] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791832953.631358479] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791832954.038804548] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791832954.131340630] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832954.132548039] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.203; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791832954.588167261] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791832954.631361689] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791832955.039250811] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791832955.131421404] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832955.132646893] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.208; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791832955.588215804] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791832955.631380950] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832956.131448755] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832956.132712294] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.202; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791832956.139127626] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[lower_tracking_mpc_node-4] [INFO] [1791832956.588278926] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791832956.631448872] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832957.131505278] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832957.132745136] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.245; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791832957.239552673] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[lower_tracking_mpc_node-4] [INFO] [1791832957.588979854] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791832957.631463435] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832958.131583293] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832958.132773261] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.252; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791832958.338978623] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791832958.631542275] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791832958.638448220] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791832959.131549738] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832959.132808381] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.285; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791832959.339031566] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791832959.631587245] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791832959.688427280] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791832960.131546956] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791832960.339390299] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791832960.631626539] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832960.632924735] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.305; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791832960.688432491] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791832961.131642437] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791832961.439096665] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791832961.631597304] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791832961.688784839] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791832962.131590507] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832962.132799548] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.265; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791832962.539002768] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791832962.631628955] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791832962.738502056] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791832963.131727820] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832963.133260618] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.205; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791832963.539052392] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791832963.631739092] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791832963.738560894] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791832964.131772476] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791832964.539199319] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791832964.631769213] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832964.632920940] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.215; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791832964.738577445] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791832965.131769341] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832965.631831419] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832965.632967657] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.210; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791832965.639147620] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[lower_tracking_mpc_node-4] [INFO] [1791832965.738592031] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791832966.131885943] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832966.631857195] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832966.633045563] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.208; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791832966.639222453] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[lower_tracking_mpc_node-4] [INFO] [1791832966.738671216] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791832967.131892767] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832967.631788490] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791832967.639443136] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[lower_tracking_mpc_node-4] [INFO] [1791832967.788713882] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[knu_batch_runner.py-5] [INFO] [1791832967.999203042] [knu_batch_runner]: [4/5] scenario2
+[upper_planner_node-3] [WARN] [1791832968.131844441] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832968.133008072] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.203; retaining last published path
+[upper_planner_node-3] [WARN] [1791832968.631932197] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791832968.739280476] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[lower_tracking_mpc_node-4] [INFO] [1791832968.788755470] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791832969.131949516] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791832969.133478154] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.201; retaining last published path
+[px4_odom_map_bridge-2] [INFO] [1791832969.405254971] [px4_odom_map_bridge]: Map alignment initialized once: source=(-1454.333862, 2196.803711, 0.390717, yaw=0.148818) yaw_delta=-0.319513 input_frame='map' (treated as PX4 local)
+[lower_tracking_mpc_node-4] [WARN] [1791832969.439020721] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [WARN] [1791832969.639080846] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [INFO] [1791832969.739418409] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[lower_tracking_mpc_node-4] [INFO] [1791832969.788797142] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832970.739464197] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[lower_tracking_mpc_node-4] [INFO] [1791832970.788820401] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [INFO] [1791832970.794409523] [upper_planner_node]: mission cleared; awaiting path; revision=7
+[lower_tracking_mpc_node-4] [WARN] [1791832970.794583610] [lower_tracking_mpc_node]: Rejected lower path: fewer than two distinct path points
+[lower_tracking_mpc_node-4] [WARN] [1791832970.839040640] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[knu_batch_runner.py-5] [INFO] [1791832970.895062393] [knu_batch_runner]: db1275c1d8:3:scenario2: mission cleared; awaiting path; revision=7
+[upper_planner_node-3] [INFO] [1791832970.897042281] [upper_planner_node]: reference path loaded from /navigation/global_path: 5 points frame=map waypoint_bias=disabled
+[lower_tracking_mpc_node-4] [WARN] [1791832970.939036619] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[upper_planner_node-3] [INFO] [1791832971.131895617] [upper_planner_node]: waypoint pair advanced: [0,1] -> [1,2]; previous reference retained
+[lower_tracking_mpc_node-4] [WARN] [1791832971.139014977] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [INFO] [1791832971.739466451] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[lower_tracking_mpc_node-4] [INFO] [1791832971.788883392] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [WARN] [1791832972.039108388] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [INFO] [1791832972.788889569] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832973.838917274] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832974.839001540] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832975.839099810] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832976.839113232] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832977.839148403] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832978.889101318] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832979.889187089] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [WARN] [1791832980.139384441] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [INFO] [1791832980.889234478] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [INFO] [1791832981.132336053] [upper_planner_node]: waypoint pair advanced: [1,2] -> [2,3]; previous reference retained
+[lower_tracking_mpc_node-4] [WARN] [1791832981.139398130] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [INFO] [1791832981.889300544] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [WARN] [1791832982.639539635] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [INFO] [1791832982.889331779] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [INFO] [1791832983.632446159] [upper_planner_node]: waypoint pair advanced: [2,3] -> [3,4]; previous reference retained
+[lower_tracking_mpc_node-4] [INFO] [1791832983.939336535] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832984.939675758] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832985.989372955] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832986.989453358] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832987.989512116] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832989.039620106] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832990.039634069] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832991.089608300] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832992.089678976] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832993.089709095] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832994.089723201] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832995.089811698] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [WARN] [1791832995.640106837] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [INFO] [1791832996.089848597] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [WARN] [1791832996.140044882] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [INFO] [1791832997.089915084] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832998.139940779] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791832999.189894426] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [WARN] [1791833000.140344297] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [INFO] [1791833000.190024368] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [WARN] [1791833000.640330892] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [INFO] [1791833001.240063368] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791833002.240125090] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791833003.240200081] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791833004.240305813] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791833005.290211382] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791833006.290250879] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791833007.290307294] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791833008.133956675] [upper_planner_node]: interval_diag step=7 reason=3 ref_body=(20.980,0.869) heading_deg=2.71 center_cell=(67,66) center_value=100 line_free=0 blocked=401 unknown=0 outside=1 longest_run=0 min_run=2 grid_free=1510 zero=1510 positive=14874 unknown=0 topic=/bev/occupancy_grid frame=Vehicle origin=(0.000,-20.000) origin_yaw_deg=0.00 size=128x128 res=0.3125 positive_is_drivable=0 threshold=1 waypoint_bias=0 previous=1
+[upper_planner_node-3] [WARN] [1791833008.134289873] [upper_planner_node]: no valid preview interval at step=7; usable horizon=6 reason=3
+[upper_planner_node-3] [WARN] [1791833008.134388213] [upper_planner_node]: horizon_diag configured=7 extent_limit=7 requested=7 usable=6 reserve=1 restore=1 step_m=3.000 previous=1
+[lower_tracking_mpc_node-4] [INFO] [1791833008.290331567] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791833008.634495693] [upper_planner_node]: no valid preview interval at step=6; usable horizon=5 reason=3
+[upper_planner_node-3] [WARN] [1791833008.634893373] [upper_planner_node]: no valid preview interval at step=7; usable horizon=5 reason=3
+[knu_batch_runner.py-5] [INFO] [1791833009.097582204] [knu_batch_runner]: scenario2: completed {"outcome_policy": "road_route_v1", "road_evidence": {"acquisition_stamp_available": false, "blocked": 32, "clock_source": "receive_monotonic", "confirmed": false, "free": 196, "observations": 0, "outside": 6, "reason": "unknown/outside route samples", "state": "unavailable", "unknown": 0}, "waypoint_guard_result": "completed"}
+[upper_planner_node-3] [WARN] [1791833009.133849221] [upper_planner_node]: no valid preview interval at step=5; usable horizon=4 reason=3
+[upper_planner_node-3] [WARN] [1791833009.134264822] [upper_planner_node]: no valid preview interval at step=6; usable horizon=4 reason=3
+[upper_planner_node-3] [WARN] [1791833009.134605508] [upper_planner_node]: no valid preview interval at step=7; usable horizon=4 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791833009.140904479] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[lower_tracking_mpc_node-4] [INFO] [1791833009.290381685] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791833009.634078300] [upper_planner_node]: no valid preview interval at step=4; usable horizon=3 reason=3
+[upper_planner_node-3] [WARN] [1791833009.634484045] [upper_planner_node]: no valid preview interval at step=5; usable horizon=3 reason=3
+[upper_planner_node-3] [WARN] [1791833009.634710358] [upper_planner_node]: no valid preview interval at step=6; usable horizon=3 reason=3
+[upper_planner_node-3] [WARN] [1791833009.634939071] [upper_planner_node]: no valid preview interval at step=7; usable horizon=3 reason=3
+[upper_planner_node-3] [WARN] [1791833010.134005958] [upper_planner_node]: no valid preview interval at step=4; usable horizon=3 reason=3
+[upper_planner_node-3] [WARN] [1791833010.134422263] [upper_planner_node]: interval_diag step=5 reason=3 ref_body=(14.625,-3.331) heading_deg=-12.83 center_cell=(46,53) center_value=100 line_free=0 blocked=411 unknown=0 outside=1 longest_run=0 min_run=2 grid_free=678 zero=678 positive=15706 unknown=0 topic=/bev/occupancy_grid frame=Vehicle origin=(0.000,-20.000) origin_yaw_deg=0.00 size=128x128 res=0.3125 positive_is_drivable=0 threshold=1 waypoint_bias=0 previous=0
+[upper_planner_node-3] [WARN] [1791833010.134552828] [upper_planner_node]: no valid preview interval at step=5; usable horizon=3 reason=3
+[upper_planner_node-3] [WARN] [1791833010.134767300] [upper_planner_node]: no valid preview interval at step=6; usable horizon=3 reason=3
+[upper_planner_node-3] [WARN] [1791833010.134957484] [upper_planner_node]: no valid preview interval at step=7; usable horizon=3 reason=3
+[upper_planner_node-3] [WARN] [1791833010.135009614] [upper_planner_node]: horizon_diag configured=7 extent_limit=7 requested=7 usable=3 reserve=1 restore=1 step_m=3.000 previous=0
+[lower_tracking_mpc_node-4] [WARN] [1791833010.140658320] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [INFO] [1791833010.141103234] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[lower_tracking_mpc_node-4] [INFO] [1791833010.290471473] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791833010.634756236] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.198; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791833011.241113323] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[lower_tracking_mpc_node-4] [INFO] [1791833011.340470027] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791833012.133707020] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791833012.134871578] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.200; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791833012.340531502] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791833012.341380752] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791833012.633788556] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791833013.133698467] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791833013.390535535] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791833013.441144179] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791833013.633781853] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791833013.634849320] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.206; retaining last published path
+[upper_planner_node-3] [WARN] [1791833014.133782386] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791833014.390540600] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791833014.441381349] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791833014.633732641] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791833014.634863598] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.205; retaining last published path
+[upper_planner_node-3] [WARN] [1791833015.133908279] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791833015.390589591] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791833015.541055594] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791833015.633933411] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791833015.635033167] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.199; retaining last published path
+[upper_planner_node-3] [WARN] [1791833016.133757798] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791833016.390663148] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791833016.541152158] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791833016.633759467] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791833017.133942326] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791833017.134925629] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.179; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791833017.390662930] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791833017.634200320] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791833017.660290992] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791833018.133966869] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791833018.135115202] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.210; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791833018.390739535] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791833018.633931437] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791833018.741268451] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791833019.133892964] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791833019.390790752] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791833019.633977467] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791833019.635016420] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.200; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791833019.841404100] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791833020.134023535] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791833020.390826277] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791833020.634052767] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791833020.635330385] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.206; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791833020.941200778] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791833021.133983049] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791833021.390888800] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791833021.634047764] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791833021.941365923] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791833022.134083260] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791833022.135264587] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.206; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791833022.440864978] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791833022.634077887] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791833022.941385034] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791833023.134118561] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791833023.135299440] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.203; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791833023.440885491] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791833023.634228259] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791833024.041376176] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791833024.134160924] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791833024.135314090] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.203; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791833024.440916810] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791833024.634275672] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791833025.041432928] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791833025.134211819] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791833025.135354584] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.210; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791833025.440976278] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791833025.634463111] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791833026.041533991] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791833026.134257839] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791833026.135360347] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.204; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791833026.491032635] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791833026.634279996] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791833027.041573504] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791833027.134320232] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791833027.135436788] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.210; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791833027.491078735] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791833027.634323118] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791833028.041739699] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791833028.134323379] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791833028.135491330] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.225; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791833028.491098391] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791833028.634361141] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791833029.134345396] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791833029.135711274] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.259; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791833029.141581971] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[lower_tracking_mpc_node-4] [INFO] [1791833029.491408319] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791833029.634361104] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[knu_batch_runner.py-5] [INFO] [1791833029.998600568] [knu_batch_runner]: [5/5] scenario2
+[upper_planner_node-3] [WARN] [1791833030.134453293] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791833030.141695756] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[lower_tracking_mpc_node-4] [INFO] [1791833030.541099174] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791833030.634442978] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791833030.635507340] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.199; retaining last published path
+[upper_planner_node-3] [WARN] [1791833031.134413109] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791833031.241724634] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[px4_odom_map_bridge-2] [INFO] [1791833031.305281302] [px4_odom_map_bridge]: Map alignment initialized once: source=(-1245.881592, 2242.293213, 0.399750, yaw=0.405444) yaw_delta=-0.576139 input_frame='map' (treated as PX4 local)
+[lower_tracking_mpc_node-4] [WARN] [1791833031.341440018] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [INFO] [1791833031.541142700] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [WARN] [1791833031.641453148] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [INFO] [1791833032.242171177] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[lower_tracking_mpc_node-4] [INFO] [1791833032.541198760] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [WARN] [1791833032.694112479] [lower_tracking_mpc_node]: Rejected lower path: fewer than two distinct path points
+[upper_planner_node-3] [INFO] [1791833032.694561873] [upper_planner_node]: mission cleared; awaiting path; revision=9
+[lower_tracking_mpc_node-4] [WARN] [1791833032.741523865] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[knu_batch_runner.py-5] [INFO] [1791833032.794948834] [knu_batch_runner]: db1275c1d8:4:scenario2: mission cleared; awaiting path; revision=9
+[upper_planner_node-3] [INFO] [1791833032.797105240] [upper_planner_node]: reference path loaded from /navigation/global_path: 5 points frame=map waypoint_bias=disabled
+[lower_tracking_mpc_node-4] [WARN] [1791833032.841562077] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[upper_planner_node-3] [INFO] [1791833033.134445607] [upper_planner_node]: waypoint pair advanced: [0,1] -> [1,2]; previous reference retained
+[lower_tracking_mpc_node-4] [WARN] [1791833033.141531264] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [INFO] [1791833033.341810253] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[lower_tracking_mpc_node-4] [INFO] [1791833033.541225112] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [WARN] [1791833033.941513351] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [INFO] [1791833034.541257244] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791833035.541326487] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791833036.541353733] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791833037.541395272] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791833038.541546661] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791833039.591553550] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [WARN] [1791833040.141913723] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [INFO] [1791833040.591595727] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791833041.591613957] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [WARN] [1791833042.141948389] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [INFO] [1791833042.591669969] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [WARN] [1791833042.641835283] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [INFO] [1791833043.591732531] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [INFO] [1791833043.634878142] [upper_planner_node]: waypoint pair advanced: [1,2] -> [2,3]; previous reference retained
+[lower_tracking_mpc_node-4] [WARN] [1791833043.641979351] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [INFO] [1791833044.591770056] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791833045.591802451] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [INFO] [1791833046.134841370] [upper_planner_node]: waypoint pair advanced: [2,3] -> [3,4]; previous reference retained
+[lower_tracking_mpc_node-4] [INFO] [1791833046.591804081] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791833047.591839429] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791833048.591922353] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791833049.591931663] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791833050.591960931] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791833051.592062543] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791833052.592063628] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791833053.642065428] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791833054.642211744] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791833055.692254835] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791833056.692317190] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791833057.692384047] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [WARN] [1791833058.142455647] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [INFO] [1791833058.742220567] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791833059.742246953] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791833060.742343122] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791833061.742354862] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [WARN] [1791833062.142661219] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [WARN] [1791833062.642694155] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[lower_tracking_mpc_node-4] [INFO] [1791833062.742432834] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791833063.742465801] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791833064.792542776] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791833065.792614219] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791833066.792646738] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791833067.792707888] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791833068.792748035] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791833069.636484876] [upper_planner_node]: interval_diag step=7 reason=3 ref_body=(20.976,0.905) heading_deg=2.99 center_cell=(67,66) center_value=100 line_free=0 blocked=401 unknown=0 outside=1 longest_run=0 min_run=2 grid_free=1601 zero=1601 positive=14783 unknown=0 topic=/bev/occupancy_grid frame=Vehicle origin=(0.000,-20.000) origin_yaw_deg=0.00 size=128x128 res=0.3125 positive_is_drivable=0 threshold=1 waypoint_bias=0 previous=1
+[upper_planner_node-3] [WARN] [1791833069.637222729] [upper_planner_node]: no valid preview interval at step=7; usable horizon=6 reason=3
+[upper_planner_node-3] [WARN] [1791833069.637373167] [upper_planner_node]: horizon_diag configured=7 extent_limit=7 requested=7 usable=6 reserve=1 restore=1 step_m=3.000 previous=1
+[lower_tracking_mpc_node-4] [INFO] [1791833069.842637746] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791833070.136463020] [upper_planner_node]: no valid preview interval at step=6; usable horizon=5 reason=3
+[upper_planner_node-3] [WARN] [1791833070.136894493] [upper_planner_node]: no valid preview interval at step=7; usable horizon=5 reason=3
+[upper_planner_node-3] [WARN] [1791833070.636440328] [upper_planner_node]: no valid preview interval at step=6; usable horizon=5 reason=3
+[upper_planner_node-3] [WARN] [1791833070.636829144] [upper_planner_node]: no valid preview interval at step=7; usable horizon=5 reason=3
+[knu_batch_runner.py-5] [INFO] [1791833070.797446910] [knu_batch_runner]: scenario2: completed {"outcome_policy": "road_route_v1", "road_evidence": {"acquisition_stamp_available": false, "blocked": 32, "clock_source": "receive_monotonic", "confirmed": false, "free": 196, "observations": 0, "outside": 19, "reason": "unknown/outside route samples", "state": "unavailable", "unknown": 0}, "waypoint_guard_result": "completed"}
+[lower_tracking_mpc_node-4] [INFO] [1791833070.842739282] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791833070.843607924] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791833071.136501414] [upper_planner_node]: no valid preview interval at step=5; usable horizon=4 reason=3
+[upper_planner_node-3] [WARN] [1791833071.136919191] [upper_planner_node]: no valid preview interval at step=6; usable horizon=4 reason=3
+[upper_planner_node-3] [WARN] [1791833071.137165440] [upper_planner_node]: no valid preview interval at step=7; usable horizon=4 reason=3
+[upper_planner_node-3] [WARN] [1791833071.636389850] [upper_planner_node]: no valid preview interval at step=4; usable horizon=3 reason=3
+[upper_planner_node-3] [WARN] [1791833071.636773225] [upper_planner_node]: interval_diag step=5 reason=3 ref_body=(14.935,-1.392) heading_deg=-5.32 center_cell=(47,59) center_value=100 line_free=0 blocked=402 unknown=0 outside=1 longest_run=0 min_run=2 grid_free=741 zero=741 positive=15643 unknown=0 topic=/bev/occupancy_grid frame=Vehicle origin=(0.000,-20.000) origin_yaw_deg=0.00 size=128x128 res=0.3125 positive_is_drivable=0 threshold=1 waypoint_bias=0 previous=0
+[upper_planner_node-3] [WARN] [1791833071.636911470] [upper_planner_node]: no valid preview interval at step=5; usable horizon=3 reason=3
+[upper_planner_node-3] [WARN] [1791833071.637115190] [upper_planner_node]: no valid preview interval at step=6; usable horizon=3 reason=3
+[upper_planner_node-3] [WARN] [1791833071.637331679] [upper_planner_node]: no valid preview interval at step=7; usable horizon=3 reason=3
+[upper_planner_node-3] [WARN] [1791833071.637408290] [upper_planner_node]: horizon_diag configured=7 extent_limit=7 requested=7 usable=3 reserve=1 restore=1 step_m=3.000 previous=0
+[lower_tracking_mpc_node-4] [INFO] [1791833071.842754692] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791833071.943301329] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791833072.136307981] [upper_planner_node]: no valid preview interval at step=3; usable horizon=2 reason=3
+[upper_planner_node-3] [WARN] [1791833072.136733790] [upper_planner_node]: no valid preview interval at step=4; usable horizon=2 reason=3
+[upper_planner_node-3] [WARN] [1791833072.136943622] [upper_planner_node]: no valid preview interval at step=5; usable horizon=2 reason=3
+[upper_planner_node-3] [WARN] [1791833072.137084620] [upper_planner_node]: no valid preview interval at step=6; usable horizon=2 reason=3
+[upper_planner_node-3] [WARN] [1791833072.137223185] [upper_planner_node]: no valid preview interval at step=7; usable horizon=2 reason=3
+[lower_tracking_mpc_node-4] [WARN] [1791833072.142995604] [lower_tracking_mpc_node]: lower MPC state reset: path/mission/pose/reset event
+[upper_planner_node-3] [WARN] [1791833072.637036988] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.203; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791833072.842821965] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791833072.943391547] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791833073.636040308] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791833073.638075428] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.190; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791833073.842869644] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791833074.043334825] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791833074.136046336] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791833074.636283922] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791833074.842930016] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791833075.043405020] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791833075.136236919] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791833075.137321569] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.194; retaining last published path
+[upper_planner_node-3] [WARN] [1791833075.636234106] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791833075.842966922] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791833076.043505830] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791833076.136248828] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791833076.137371656] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.206; retaining last published path
+[upper_planner_node-3] [WARN] [1791833076.636407425] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791833076.893069973] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791833077.043536227] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791833077.136397469] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791833077.138101056] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.209; retaining last published path
+[upper_planner_node-3] [WARN] [1791833077.636352436] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791833077.942955084] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791833078.043605335] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791833078.136332363] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791833078.636476804] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791833078.637538606] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.200; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791833078.943034743] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791833079.043665024] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791833079.136373490] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791833079.636346016] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791833079.943043190] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[lower_tracking_mpc_node-4] [INFO] [1791833080.043900262] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791833080.136521428] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791833080.137682689] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.208; retaining last published path
+[upper_planner_node-3] [WARN] [1791833080.636453723] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791833080.943091563] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791833081.136470212] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791833081.143700447] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791833081.636530058] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791833081.637676279] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.212; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791833081.943159447] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791833082.136507533] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791833082.143795786] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791833082.636627185] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791833082.637765885] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.205; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791833082.943164343] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791833083.136519402] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791833083.243834260] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791833083.636472899] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791833083.943263472] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791833084.136591200] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791833084.137725421] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.205; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791833084.243911338] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791833084.636806174] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791833084.943280059] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791833085.136774417] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791833085.137911293] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.203; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791833085.243968116] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791833085.636642267] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791833085.943328926] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791833086.136675020] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791833086.138330540] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.210; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791833086.343862998] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791833086.636640117] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791833086.943394839] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791833087.136634911] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791833087.343927947] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791833087.636740873] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791833087.637852661] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.208; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791833087.993400392] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791833088.136725773] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791833088.344066809] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791833088.636767056] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791833088.637951262] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.207; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791833088.993512751] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791833089.136728782] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791833089.444068734] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791833089.636675528] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791833089.993557673] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791833090.136927916] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791833090.138101082] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.209; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791833090.544076054] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[upper_planner_node-3] [WARN] [1791833090.636865473] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[lower_tracking_mpc_node-4] [INFO] [1791833090.993683964] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791833091.136915129] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791833091.636805382] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791833091.637849519] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.197; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791833091.644164614] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[knu_batch_runner.py-5] [INFO] [1791833091.897488625] [knu_batch_runner]: Batch finished; results: /home/imac/ros2_ws/drive_batches/20261013_041941_scenario2_173ca0/results/20261013_041943_db1275c1d8/summary.csv
+[lower_tracking_mpc_node-4] [INFO] [1791833092.043616703] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791833092.136852697] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791833092.636893319] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[upper_planner_node-3] [WARN] [1791833092.638567913] [upper_planner_node]: egocentric MIQP failed: status=DAQP direct corridor QP infeasible: tried=1 solve_ms=0.201; retaining last published path
+[lower_tracking_mpc_node-4] [INFO] [1791833092.644171492] [lower_tracking_mpc_node]: goal stop applied: steer=0 throttle=0 brake=0.700 MAVLink neutral
+[lower_tracking_mpc_node-4] [INFO] [1791833093.043792991] [lower_tracking_mpc_node]: MAVLink COMMAND_ACK command=187 result=0
+[upper_planner_node-3] [WARN] [1791833093.136941365] [upper_planner_node]: no valid interval at the measured k=0 state; retaining future horizon=7 reason=3
+[WARNING] [launch]: user interrupted with ctrl-c (SIGINT)
+[px4_odom_map_bridge-2] [INFO] [1791833093.196299011] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[upper_planner_node-3] [INFO] [1791833093.196300419] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[lower_tracking_mpc_node-4] [INFO] [1791833093.196542285] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[lower_tracking_mpc_node-4] [WARN] [1791833093.200335393] [lower_tracking_mpc_node]: MAVLink DISARM force=0 sent=1
+[INFO] [px4_odom_map_bridge-2]: process has finished cleanly [pid 79061]
+[INFO] [launch]: process[px4_odom_map_bridge-2] was required: shutting down launched system
+[INFO] [lower_tracking_mpc_node-4]: process has finished cleanly [pid 79065]
+[INFO] [launch]: process[lower_tracking_mpc_node-4] was required: shutting down launched system
+[INFO] [upper_planner_node-3]: process has finished cleanly [pid 79063]
+[INFO] [launch]: process[upper_planner_node-3] was required: shutting down launched system
+[INFO] [knu_batch_runner.py-5]: process has finished cleanly [pid 79067]
+[INFO] [launch]: process[knu_batch_runner.py-5] was required: shutting down launched system
+[INFO] [px4_ekf_bridge.py-1]: process has finished cleanly [pid 79059]
+[INFO] [launch]: process[px4_ekf_bridge.py-1] was required: shutting down launched system
