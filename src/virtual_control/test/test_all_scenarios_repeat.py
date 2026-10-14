@@ -28,7 +28,7 @@ def test_profile_selection_and_count_preserve_controller_parameters(tmp_path):
 
 
 @pytest.fixture
-def supervisor(tmp_path, monkeypatch):
+def supervisor(tmp_path, monkeypatch, request):
     if os.environ.get('KNU_BATCH_ROS_TEST') != '1':
         pytest.skip('isolated ROS opt-in required')
     assert os.environ.get('ROS_DOMAIN_ID') == '177'
@@ -38,13 +38,15 @@ def supervisor(tmp_path, monkeypatch):
     import knu_batch_runner as module
     clock = [100.0]
     monkeypatch.setattr(module, 'time', SimpleNamespace(monotonic=lambda: clock[0]))
+    scenario = getattr(request, 'param', 'all')
+    config = effective_config(5, tmp_path, scenario, guarded=True)
+    settings = config['knu_batch_runner']['ros__parameters']
     rclpy.init()
     runner = module.KnuBatchRunner(parameter_overrides=[
-        Parameter('routes', value=list(SCENARIOS)),
-        Parameter('repeat_count', value=5),
-        Parameter('repeat_per_route', value=True),
-        Parameter('skip_system_fault_scenarios', value=True),
-        Parameter('require_compute_heartbeat', value=True),
+        *[Parameter(name, value=settings[name]) for name in (
+            'routes', 'repeat_count', 'repeat_per_route',
+            'skip_system_fault_scenarios', 'require_compute_heartbeat',
+            'upper_compute_timeout_sec', 'lower_compute_timeout_sec')],
         Parameter('results_directory', value=str(tmp_path))])
     runner.timer.cancel()
     permissions = []
@@ -69,6 +71,107 @@ def supervisor(tmp_path, monkeypatch):
     finally:
         runner.destroy_node()
         rclpy.shutdown()
+
+
+@pytest.mark.parametrize('scenario', ['scenario7', 'scenario8', 'scenario12',
+                                     'scenario10', 'scenario11'])
+def test_guarded_single_preserves_route_and_controller_settings(tmp_path, scenario):
+    legacy = effective_config(5, tmp_path, scenario)
+    guarded = effective_config(5, tmp_path, scenario, guarded=True)
+    for node in legacy.keys()-{'knu_batch_runner'}:
+        assert legacy[node] == guarded[node]
+    original = legacy['knu_batch_runner']['ros__parameters']
+    selected = guarded['knu_batch_runner']['ros__parameters']
+    monitoring_keys = {'repeat_per_route', 'skip_system_fault_scenarios',
+                       'require_compute_heartbeat', 'upper_compute_timeout_sec',
+                       'lower_compute_timeout_sec'}
+    assert {k: v for k, v in original.items() if k not in monitoring_keys} == {
+        k: v for k, v in selected.items() if k not in monitoring_keys}
+    assert selected['routes'] == [scenario] and selected['repeat_count'] == 5
+    assert selected['require_compute_heartbeat'] and selected['skip_system_fault_scenarios']
+    assert selected['upper_compute_timeout_sec'] == 5.0
+    assert selected['lower_compute_timeout_sec'] == 2.0
+    assert not original.get('require_compute_heartbeat', False)
+
+
+@pytest.mark.parametrize('supervisor', ['scenario7'], indirect=True)
+@pytest.mark.parametrize('level,timeout', [('upper', 5.0), ('lower', 2.0)])
+def test_guarded_single_waits_for_stop_and_recovery_before_skipping(supervisor, level, timeout):
+    h = supervisor
+    assert h.r.routes == ['scenario7']*5
+    h.r.set_phase('running')
+    h.r.upper_cycle_at = h.r.lower_cycle_at = h.clock[0]
+    h.step(dt=timeout+0.01, **{level: False})
+    assert h.r.rows[0]['outcome'] == level+'_compute_timeout'
+    assert h.permissions[-1] is False
+    for _ in range(8):
+        h.step(speed=1.0, **{level: False})
+        assert h.r.index == 0 and len(h.r.rows) == 1
+    for _ in range(8):
+        h.step(**{level: False})
+        assert h.r.index == 0 and len(h.r.rows) == 1
+    h.step()
+    assert h.r.phase == 'done'
+    assert len(h.r.rows) == 5 and h.r.rows[0]['stop_status'] == 'stationary'
+    assert [r['outcome'] for r in h.r.rows[1:]] == ['skipped_system_fault']*4
+    assert not any(h.permissions)
+
+
+@pytest.mark.parametrize('supervisor', ['scenario7'], indirect=True)
+def test_guarded_single_driving_failures_continue_all_five(supervisor):
+    h = supervisor
+    for index in range(5):
+        assert h.r.index == index and h.r.route == 'scenario7'
+        h.r.set_phase('running')
+        h.r.fail_or_finish('off_route')
+        for _ in range(5):
+            h.step()
+        assert h.r.rows[-1]['stop_status'] == 'stationary'
+    assert h.r.phase == 'done' and len(h.r.rows) == 5
+    assert not h.r.system_fault_scenarios
+    assert not any(h.permissions)
+
+
+@pytest.mark.parametrize('supervisor', ['scenario1'], indirect=True)
+def test_short_stationary_confirmation_still_restarts_after_motion(supervisor):
+    h = supervisor
+    h.r.settings['stationary_confirm_sec'] = .5
+    h.step(dt=.1)
+    h.step(dt=.49)
+    assert h.r.phase == 'stopping'
+    h.step(dt=.02, speed=1.0)
+    assert h.r.stationary_since is None
+    h.step(dt=.1)
+    h.step(dt=.49)
+    assert h.r.phase == 'stopping'
+    h.step(dt=.02)
+    assert h.r.phase == 'pausing'
+
+
+@pytest.mark.parametrize('supervisor', ['scenario1'], indirect=True)
+def test_short_map_wait_still_requires_a_new_grid_after_alignment(supervisor):
+    h = supervisor
+    h.r.settings['map_settle_sec'] = .3
+    h.r.settings['reset_upper_each_attempt'] = True
+    h.r.set_phase('map')
+    h.r.map_pose_ready_at = None
+    h.step(dt=.1)
+    h.step(dt=.31, grid=False)
+    assert h.r.phase == 'map'
+    h.step(dt=.01)
+    assert h.r.phase == 'resetting'
+
+
+@pytest.mark.parametrize('supervisor', ['scenario1'], indirect=True)
+def test_short_reference_wait_still_requires_a_fresh_reference(supervisor):
+    h = supervisor
+    h.r.settings['reference_min_wait_sec'] = .3
+    h.r.set_phase('reference')
+    h.r.reference_at = h.clock[0] + .25
+    h.step(dt=.25)
+    assert h.r.phase == 'reference'
+    h.step(dt=.06)
+    assert h.r.phase == 'running'
 
 
 def test_driving_failures_still_attempt_all_sixty_slots(supervisor):

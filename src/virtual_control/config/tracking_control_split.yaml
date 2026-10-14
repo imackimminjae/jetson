@@ -134,10 +134,10 @@ upper_planner_node:
     bev_forward_m: 40.0
     preview_interval_boundary_margin_m: 2.00
 
-    upper_planner_rate_hz: 2.0
+    upper_planner_rate_hz: 5.0
     # 6.0 m/s * 0.75 s = 4.5 m; seven steps cover 31.5 m.
-    upper_prediction_dt_sec: 0.75
-    upper_preview_steps: 6
+    upper_prediction_dt_sec: 0.5
+    upper_preview_steps: 7
     preview_limit_to_grid_extent: true
     # Reserve one complete step inside the received extent. At x_max=40 m,
     # floor(40/4.5)-1=7 steps, leaving 8.5 m to the forward boundary.
@@ -160,7 +160,7 @@ upper_planner_node:
     position_scale_m: 10.0
     relative_turn_scale_rad: 0.3490658504
     lambda_position: 1.0
-    lambda_relative_turn: 0.6
+    lambda_relative_turn: 0.3
     terminal_buffer_max_turn_rad: 0.3490658504
     terminal_position_weight_multiplier: 1000.0
     upper_r_dv: 1.0
@@ -264,7 +264,7 @@ lower_tracking_mpc_node:
     scale_mode: "fullscale"
 
     lower_controller_rate_hz: 10.0
-    lower_prediction_dt_sec: 0.10
+    lower_prediction_dt_sec: 0.1
     # Keep three seconds of geometric preview with the bicycle plant.
     lower_prediction_steps: 30
     lower_q_lateral: 1.0

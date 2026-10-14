@@ -54,6 +54,9 @@ class KnuBatchRunner(Node):
             'reset_upper_each_attempt': False,
             'recorder_timeout_sec': 2.0,
             'stationary_timeout_sec': 60.0,
+            'stationary_confirm_sec': 1.0,
+            'map_settle_sec': 1.0,
+            'reference_min_wait_sec': 1.0,
             'startup_timeout_sec': 120.0, 'setup_timeout_sec': 30.0,
             'pose_loss_sec': 10.0, 'grid_loss_sec': 10.0,
             'pose_fresh_sec': 0.6, 'grid_fresh_sec': 2.0,
@@ -80,6 +83,10 @@ class KnuBatchRunner(Node):
                 raise ValueError(f'{key} must be positive and finite')
         self.limits = Limits(**{k: self.settings[k] for k in vars(Limits())})
         self.road_limits = RoadLimits(**{k:self.settings[k] for k in vars(RoadLimits())})
+        for key, floor in [('stationary_confirm_sec', 0.5), ('map_settle_sec', 0.2),
+                           ('reference_min_wait_sec', 0.2)]:
+            if self.settings[key] < floor:
+                raise ValueError(f'{key} must be >= {floor}')
         if not 0 <= self.settings['road_grid_value_threshold'] <= 100:
             raise ValueError('road_grid_value_threshold must be in [0,100]')
         if not self.settings['road_expected_grid_frame'].lstrip('/'):
@@ -447,7 +454,8 @@ class KnuBatchRunner(Node):
             alignment_idle = self.future is None or self.future.done()
             self.stationary_since = ((now if self.stationary_since is None
                                       else self.stationary_since) if stopped else None)
-            if (self.stationary_since is not None and now-self.stationary_since >= 1.0
+            if (self.stationary_since is not None and
+                    now-self.stationary_since >= self.settings['stationary_confirm_sec']
                     and (not recovering or (grid_fresh and not compute_issue and alignment_idle))):
                 if self.phase == 'stopping':
                     self.set_phase('pausing')
@@ -459,7 +467,7 @@ class KnuBatchRunner(Node):
                         self.next_route()
             elif now-self.entered >= self.settings['stationary_timeout_sec']:
                 confirmed_stop = (self.stationary_since is not None and
-                                  now-self.stationary_since >= 1.0)
+                                  now-self.stationary_since >= self.settings['stationary_confirm_sec'])
                 self.record_stop(confirmed_stop)
                 if self.phase != 'aborting':
                     self.abort('system_recovery_timeout: grid/compute/alignment still unavailable' if
@@ -515,7 +523,8 @@ class KnuBatchRunner(Node):
             if not aligned or self.map_pose_ready_at is None:
                 return
             # Allow the external map provider to consume the newly aligned odometry.
-            ready = (grid_fresh and self.grid_at > self.map_pose_ready_at + 1.0)
+            ready = (grid_fresh and self.grid_at >
+                     self.map_pose_ready_at + self.settings['map_settle_sec'])
             if self.settings['require_matlab_ack']:
                 ready = ready and self.ack is not None and self.ack_at > self.entered
             if ready:
@@ -549,7 +558,8 @@ class KnuBatchRunner(Node):
             return
         if self.phase == 'reference':
             if (self.reference_at > self.entered + 0.2 and pose_fresh and grid_fresh
-                    and not compute_issue and now-self.entered > 1.0):
+                    and not compute_issue and
+                    now-self.entered > self.settings['reference_min_wait_sec']):
                 self.reset_pub.publish(Bool(data=True))
                 self.monitor = RouteMonitor(self.points[self.route], now, self.limits)
                 if self.settings['enable_road_route_check']:

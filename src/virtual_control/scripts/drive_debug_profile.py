@@ -17,6 +17,7 @@ TOPICS = (
     '/debug/bev_source_timing',
     '/controller/reset',
     '/knu_batch/status',
+    '/knu_batch/run_permission',
     '/knu_batch/active_route',
     '/parameter_events',
     '/rosout',

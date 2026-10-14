@@ -16,12 +16,12 @@ SPEC.loader.exec_module(PUBLISHER)
 
 @pytest.mark.parametrize('route_name, count, first, last', [
     ('scenario1', 6, (150, -140, 0), (173, -2, 0)),
-    ('scenario2', 7, (-250, 101, 0), (-4, 95, 0)),
+    ('scenario2', 5, (-250, 101, 0), (-76, 67, 0)),
     ('scenario3', 8, (187, 220, 0), (278, 172, 0)),
     ('scenario4', 14, (-261.143, 96.574, 0), (-100.305, 138.985, 0)),
 ])
 def test_installed_mission_geometry(route_name, count, first, last):
-    """Preserve MATLAB mission endpoints, including scenario2's off-road waypoint."""
+    """Check configured endpoints, including scenario2's BEV-limited endpoint."""
     points = PUBLISHER.load_route(route_name, PACKAGE_DIR / 'data' / 'knu_routes')
     assert len(points) == count
     assert points[0] == first

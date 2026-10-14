@@ -34,15 +34,26 @@ PHASE_LABELS = {'startup': '입력·기록 준비', 'stopping': '출발 전 정�
                 'aborted': '중단됨', 'done': '전체 완료'}
 
 
-def effective_config(count, results, scenario='scenario3'):
+def effective_config(count, results, scenario='scenario3', guarded=False, config_file=None):
     if scenario not in (*SCENARIOS, 'all'):
         raise ValueError(f'Unsupported repeat scenario: {scenario}')
     config = {}
-    # Reuse the established reset/recorder/manual-operation overlay for all routes.
-    for name in ('tracking_control_split.yaml', 'knu_batch.yaml', 'scenario3_repeat.yaml'):
-        for node, section in yaml.safe_load((PACKAGE/'config'/name).read_text()).items():
+    # A sweep passes a complete frozen configuration; ordinary runs retain the
+    # established base + manual-operation overlays.
+    paths = ([Path(config_file)] if config_file is not None else
+             [PACKAGE/'config'/name for name in
+              ('tracking_control_split.yaml', 'knu_batch.yaml', 'scenario3_repeat.yaml')])
+    for path in paths:
+        document = yaml.safe_load(path.read_text())
+        if not isinstance(document, dict):
+            raise ValueError(f'{path}: expected a node parameter mapping')
+        for node, section in document.items():
             config.setdefault(node, {'ros__parameters': {}})['ros__parameters'].update(
                 section['ros__parameters'])
+    for node in ('upper_planner_node', 'lower_tracking_mpc_node', 'knu_batch_runner',
+                 'px4_ekf_bridge', 'px4_odom_map_bridge', 'knu_global_path_publisher'):
+        if node not in config:
+            raise ValueError(f'configuration is missing {node}')
     runner = config['knu_batch_runner']['ros__parameters']
     upper = config['upper_planner_node']['ros__parameters']
     # Outcome evidence uses the identical value convention/frame/bias as the planner.
@@ -56,7 +67,7 @@ def effective_config(count, results, scenario='scenario3'):
                   road_waypoint_y_bias_m=upper.get('waypoint_y_bias_m',0.0))
     routes = list(SCENARIOS) if scenario == 'all' else [scenario]
     runner.update(routes=routes, repeat_count=count, results_directory=str(results))
-    if scenario == 'all':
+    if scenario == 'all' or guarded:
         runner.update(repeat_per_route=True, skip_system_fault_scenarios=True,
                       require_compute_heartbeat=True,
                       upper_compute_timeout_sec=5.0, lower_compute_timeout_sec=2.0)
@@ -141,10 +152,23 @@ def main():
     parser = argparse.ArgumentParser(description='Profile routes repeated SIH attempts with compressed logs')
     parser.add_argument('--scenario', choices=(*SCENARIOS, 'all'), default='scenario3')
     parser.add_argument('--runs', type=int, default=5, help="Attempt count (default: 5)")
+    parser.add_argument('--guarded', action='store_true',
+                        help='Enable 5s/2s compute monitoring and skip remaining runs '
+                             'after system-fault stop and recovery, including single scenarios')
     parser.add_argument('--check', action='store_true', help='Read-only readiness check; no driving nodes')
+    parser.add_argument('--config-file', type=Path, help='Complete prepared session configuration')
+    parser.add_argument('--session-dir', type=Path, help='New explicit recording directory; must not exist')
     args = parser.parse_args()
     if not 1 <= args.runs <= 100:
         parser.error('--runs must be in [1, 100]')
+    # Validate prepared configuration before creating a ROS node or children.
+    try:
+        effective_config(args.runs, Path('/tmp/repeat_config_validation'),
+                         args.scenario, guarded=args.guarded, config_file=args.config_file)
+        if args.session_dir is not None and args.session_dir.exists():
+            raise ValueError(f'session directory already exists: {args.session_dir}')
+    except (ValueError, OSError, KeyError) as error:
+        parser.error(str(error))
     import rclpy
     from rclpy.node import Node
     from rclpy.qos import QoSProfile, DurabilityPolicy, ReliabilityPolicy
@@ -165,11 +189,14 @@ def main():
         if args.check:
             print('점검 통과: 기존 제어기/기록기 충돌 없음, UDP 포트 및 저장공간 준비됨.')
             return 0
-        session = WORKSPACE/'drive_batches'/(
-            datetime.now().strftime('%Y%m%d_%H%M%S_')+args.scenario+'_'+uuid.uuid4().hex[:6])
+        session = (args.session_dir.resolve() if args.session_dir is not None else
+                   WORKSPACE/'drive_batches'/(
+                       datetime.now().strftime('%Y%m%d_%H%M%S_')+args.scenario+'_'+uuid.uuid4().hex[:6]))
         session.mkdir(parents=True)
-        config = effective_config(args.runs, session/'results', args.scenario)
-        routes = config['knu_batch_runner']['ros__parameters']['routes']
+        config = effective_config(args.runs, session/'results', args.scenario,
+                                  guarded=args.guarded, config_file=args.config_file)
+        runner_settings = config['knu_batch_runner']['ros__parameters']
+        routes = runner_settings['routes']
         (session/'effective_config.yaml').write_text(yaml.safe_dump(config, sort_keys=False))
         sources = [PACKAGE/'config/tracking_control_split.yaml',
                    PACKAGE/'config/scenario3_repeat.yaml', Path(__file__),
@@ -178,6 +205,8 @@ def main():
                    PACKAGE/'data/knu_routes/knu_batch_profile.json',
                    PACKAGE/'data/knu_routes/knu_start_poses.json']
         sources += [PACKAGE/f'data/knu_routes/{route}.csv' for route in routes]
+        if args.config_file is not None:
+            sources.append(args.config_file.resolve())
         # Snapshot the actual route definitions; later edits must not obscure old runs.
         route_snapshot = session/'routes'
         route_snapshot.mkdir()
@@ -190,8 +219,11 @@ def main():
             'domain': os.environ.get('ROS_DOMAIN_ID'), 'runs': args.runs,
             'scenario': args.scenario,
             'routes': routes, 'planned_attempts': len(routes)*args.runs,
-            'repeat_per_route': args.scenario == 'all',
-            'skip_system_fault_scenarios': args.scenario == 'all',
+            'repeat_per_route': runner_settings.get('repeat_per_route', False),
+            'skip_system_fault_scenarios': runner_settings.get('skip_system_fault_scenarios', False),
+            'require_compute_heartbeat': runner_settings.get('require_compute_heartbeat', False),
+            'upper_compute_timeout_sec': runner_settings.get('upper_compute_timeout_sec', 5.0),
+            'lower_compute_timeout_sec': runner_settings.get('lower_compute_timeout_sec', 2.0),
             'topics': TOPICS, 'format': 'MCAP Zstd lossless',
             'max_session_bytes': MAX_SESSION, 'min_free_bytes': MIN_FREE,
             'sha256': {str(p): hashlib.sha256(p.read_bytes()).hexdigest() for p in sources},
