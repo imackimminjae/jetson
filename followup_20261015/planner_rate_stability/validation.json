@@ -1,0 +1,43 @@
+{
+  "batches": [
+    {
+      "batch": "20261015_003614_scenario1_227182",
+      "selected_topic_counts_match_metadata": true,
+      "attempts": 5
+    },
+    {
+      "batch": "20261015_002932_scenario1_e32c02",
+      "selected_topic_counts_match_metadata": true,
+      "attempts": 5
+    },
+    {
+      "batch": "20261015_004204_scenario1_537322",
+      "selected_topic_counts_match_metadata": true,
+      "attempts": 5
+    },
+    {
+      "batch": "20261015_004934_scenario1_e1b58d",
+      "selected_topic_counts_match_metadata": true,
+      "attempts": 5
+    }
+  ],
+  "source_hashes_saved": true,
+  "operating_code_changed": false,
+  "original_hashes_rechecked": true,
+  "png_verified": true,
+  "all_attempts_completed": 20,
+  "steering_metric": "Actual sent MAVLink command x configured 0.35 rad/normalized unit; not measured actuator angle",
+  "spatial_comparison": "Same waypoint-route progress 5..179.5m at0.5m intervals",
+  "sensitivity": {
+    "rate_hz": 1,
+    "included_attempts": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "reason": "Exclude attempt5 with max BEV reception gap 1.6585s",
+    "steering_variation_deg_per_100m_median": 165.03009391039927,
+    "trajectory_spread_rms_m": 0.45251327277738007
+  }
+}

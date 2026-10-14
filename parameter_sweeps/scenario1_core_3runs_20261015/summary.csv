@@ -1,0 +1,28 @@
+set,label,scenario,attempt,planner_hz,controller_hz,controller_preview_sec,outcome,duration_sec,progress_ratio,cross_track_m,stop_status,session
+baseline,기준: 플래너5Hz / 제어10Hz / 예측3초,scenario1,1,5.0,10.0,3.0,completed,38.902,0.9616,2.1775,stationary,/home/imac/ros2_ws/parameter_sweeps/scenario1_core_3runs_20261015/sessions/01_baseline_scenario1
+baseline,기준: 플래너5Hz / 제어10Hz / 예측3초,scenario1,2,5.0,10.0,3.0,completed,39.899,0.9609,2.063,stationary,/home/imac/ros2_ws/parameter_sweeps/scenario1_core_3runs_20261015/sessions/01_baseline_scenario1
+baseline,기준: 플래너5Hz / 제어10Hz / 예측3초,scenario1,3,5.0,10.0,3.0,completed,39.096,0.9607,1.9482,stationary,/home/imac/ros2_ws/parameter_sweeps/scenario1_core_3runs_20261015/sessions/01_baseline_scenario1
+planner_2,플래너2Hz,scenario1,1,2.0,10.0,3.0,completed,40.6,0.9612,2.0746,stationary,/home/imac/ros2_ws/parameter_sweeps/scenario1_core_3runs_20261015/sessions/02_planner_2_scenario1
+planner_2,플래너2Hz,scenario1,2,2.0,10.0,3.0,completed,40.999,0.9616,2.169,stationary,/home/imac/ros2_ws/parameter_sweeps/scenario1_core_3runs_20261015/sessions/02_planner_2_scenario1
+planner_2,플래너2Hz,scenario1,3,2.0,10.0,3.0,completed,41.299,0.9611,2.0584,stationary,/home/imac/ros2_ws/parameter_sweeps/scenario1_core_3runs_20261015/sessions/02_planner_2_scenario1
+planner_10,플래너10Hz,scenario1,1,10.0,10.0,3.0,completed,39.698,0.9611,2.1845,stationary,/home/imac/ros2_ws/parameter_sweeps/scenario1_core_3runs_20261015/sessions/03_planner_10_scenario1
+planner_10,플래너10Hz,scenario1,2,10.0,10.0,3.0,completed,40.094,0.9615,2.159,stationary,/home/imac/ros2_ws/parameter_sweeps/scenario1_core_3runs_20261015/sessions/03_planner_10_scenario1
+planner_10,플래너10Hz,scenario1,3,10.0,10.0,3.0,completed,39.897,0.9611,2.1661,stationary,/home/imac/ros2_ws/parameter_sweeps/scenario1_core_3runs_20261015/sessions/03_planner_10_scenario1
+controller_20_horizon3,제어20Hz / 예측3초 유지,scenario1,1,5.0,20.0,3.0,completed,38.901,0.9612,2.0511,stationary,/home/imac/ros2_ws/parameter_sweeps/scenario1_core_3runs_20261015/sessions/04_controller_20_horizon3_scenario1
+controller_20_horizon3,제어20Hz / 예측3초 유지,scenario1,2,5.0,20.0,3.0,completed,38.997,0.9619,2.0364,stationary,/home/imac/ros2_ws/parameter_sweeps/scenario1_core_3runs_20261015/sessions/04_controller_20_horizon3_scenario1
+controller_20_horizon3,제어20Hz / 예측3초 유지,scenario1,3,5.0,20.0,3.0,completed,38.697,0.9611,2.1064,stationary,/home/imac/ros2_ws/parameter_sweeps/scenario1_core_3runs_20261015/sessions/04_controller_20_horizon3_scenario1
+heading_soft,상위 도로 헤딩 비용 약하게,scenario1,1,5.0,10.0,3.0,completed,39.3,0.9623,2.163,stationary,/home/imac/ros2_ws/parameter_sweeps/scenario1_core_3runs_20261015/sessions/05_heading_soft_scenario1
+heading_soft,상위 도로 헤딩 비용 약하게,scenario1,2,5.0,10.0,3.0,completed,41.496,0.9602,2.0489,stationary,/home/imac/ros2_ws/parameter_sweeps/scenario1_core_3runs_20261015/sessions/05_heading_soft_scenario1
+heading_soft,상위 도로 헤딩 비용 약하게,scenario1,3,5.0,10.0,3.0,completed,38.895,0.9616,2.0049,stationary,/home/imac/ros2_ws/parameter_sweeps/scenario1_core_3runs_20261015/sessions/05_heading_soft_scenario1
+heading_strong,상위 도로 헤딩 비용 강하게,scenario1,1,5.0,10.0,3.0,completed,41.101,0.9607,2.143,stationary,/home/imac/ros2_ws/parameter_sweeps/scenario1_core_3runs_20261015/sessions/06_heading_strong_scenario1
+heading_strong,상위 도로 헤딩 비용 강하게,scenario1,2,5.0,10.0,3.0,completed,40.896,0.9621,2.0654,stationary,/home/imac/ros2_ws/parameter_sweeps/scenario1_core_3runs_20261015/sessions/06_heading_strong_scenario1
+heading_strong,상위 도로 헤딩 비용 강하게,scenario1,3,5.0,10.0,3.0,completed,39.497,0.9611,2.0723,stationary,/home/imac/ros2_ws/parameter_sweeps/scenario1_core_3runs_20261015/sessions/06_heading_strong_scenario1
+upper_heading_smooth,상위 헤딩 보정 비용 강화,scenario1,1,5.0,10.0,3.0,off_route,35.1,0.7305,24.6475,stationary,/home/imac/ros2_ws/parameter_sweeps/scenario1_core_3runs_20261015/sessions/07_upper_heading_smooth_scenario1
+upper_heading_smooth,상위 헤딩 보정 비용 강화,scenario1,2,5.0,10.0,3.0,completed,39.692,0.9614,2.096,stationary,/home/imac/ros2_ws/parameter_sweeps/scenario1_core_3runs_20261015/sessions/07_upper_heading_smooth_scenario1
+upper_heading_smooth,상위 헤딩 보정 비용 강화,scenario1,3,5.0,10.0,3.0,completed,40.197,0.9627,2.1143,stationary,/home/imac/ros2_ws/parameter_sweeps/scenario1_core_3runs_20261015/sessions/07_upper_heading_smooth_scenario1
+heading_limit_tight,헤딩 변화 한계 강화: 상위 조향 한계0.25rad,scenario1,1,5.0,10.0,3.0,completed,38.598,0.9617,2.1854,stationary,/home/imac/ros2_ws/parameter_sweeps/scenario1_core_3runs_20261015/sessions/08_heading_limit_tight_scenario1
+heading_limit_tight,헤딩 변화 한계 강화: 상위 조향 한계0.25rad,scenario1,2,5.0,10.0,3.0,completed,39.097,0.9615,2.0315,stationary,/home/imac/ros2_ws/parameter_sweeps/scenario1_core_3runs_20261015/sessions/08_heading_limit_tight_scenario1
+heading_limit_tight,헤딩 변화 한계 강화: 상위 조향 한계0.25rad,scenario1,3,5.0,10.0,3.0,completed,40.399,0.962,2.1772,stationary,/home/imac/ros2_ws/parameter_sweeps/scenario1_core_3runs_20261015/sessions/08_heading_limit_tight_scenario1
+steering_smooth,하위 조향 변화 비용 강화,scenario1,1,5.0,10.0,3.0,completed,41.702,0.9607,2.2514,stationary,/home/imac/ros2_ws/parameter_sweeps/scenario1_core_3runs_20261015/sessions/09_steering_smooth_scenario1
+steering_smooth,하위 조향 변화 비용 강화,scenario1,2,5.0,10.0,3.0,completed,37.996,0.962,2.0512,stationary,/home/imac/ros2_ws/parameter_sweeps/scenario1_core_3runs_20261015/sessions/09_steering_smooth_scenario1
+steering_smooth,하위 조향 변화 비용 강화,scenario1,3,5.0,10.0,3.0,completed,38.595,0.9609,2.2618,stationary,/home/imac/ros2_ws/parameter_sweeps/scenario1_core_3runs_20261015/sessions/09_steering_smooth_scenario1
