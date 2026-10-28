@@ -1,9 +1,0 @@
-# Virtual-test candidate only; production configuration has not been changed.
-# Load after the existing tracking_control_split.yaml for a separate comparison.
-upper_planner_node:
-  ros__parameters:
-    upper_r_dpsi: 2.0
-lower_tracking_mpc_node:
-  ros__parameters:
-    lower_rd_steering_rate: 240.0
-    enable_output_filter: false

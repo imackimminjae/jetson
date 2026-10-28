@@ -1,9 +1,0 @@
-{
-  "assumptions": "SIH 400Hz; filter tau .05; each command ACK represents one actuator update; receive timestamps approximate update time; gain 1; no fitted parameters.",
-  "ack_hz": 30.026485404357516,
-  "equivalent_tau_s": 0.6492843062942827,
-  "fast_model_rmse_deg": 4.942566807684539,
-  "ack_gated_original_filter_rmse_deg": 0.7273860545354687,
-  "count": 761,
-  "limitation": "ACK timing is not actuator_outputs_sim timing; this conditional replay supports but does not prove the firmware cause."
-}

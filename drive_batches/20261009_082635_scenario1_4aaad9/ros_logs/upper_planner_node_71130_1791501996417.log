@@ -1,9 +1,0 @@
-[INFO] [1791501996.566184713] [upper_planner_node]: planner state input: Odometry topic=/motive/vehicle/odom_map yaw=orientation.z scalar
-[INFO] [1791501996.630950726] [upper_planner_node]: k1 lane constraint trial: skip_front_clipped_k1_lane_constraints=false
-[INFO] [1791501996.633894400] [upper_planner_node]: Egocentric MIQP planner ready: rate=2.00Hz pred_dt=0.750s Nmax=6 lower_dt=0.100s target_v=6.000m/s scale=fullscale wheelbase=2.80m length=4.70m bev=40.00m margin=2.00m state=odom grid=/bev/occupancy_grid sparse=/planner/upper_path_sparse dense=/planner/lower_reference_path
-[INFO] [1791501996.635992032] [upper_planner_node]: upper branch model: cumulative_increment=1 turn_window_at_split=1 turn_target_absolute=1 split_continuity=6.75m r_dpsi=3.000 lambda_turn=0.600
-[WARN] [1791501997.134230824] [upper_planner_node]: planner waiting for pose
-[WARN] [1791501999.134332001] [upper_planner_node]: planner waiting for pose
-[WARN] [1791502000.634348730] [upper_planner_node]: planner waiting for global path
-[WARN] [1791502002.634430195] [upper_planner_node]: planner waiting for global path
-[INFO] [1791502002.701464085] [rclcpp]: signal_handler(SIGINT/SIGTERM)
