@@ -1,0 +1,129 @@
+{
+  "date": "2026-10-28",
+  "timezone": "Asia/Seoul",
+  "source_recording_date": "2026-10-27",
+  "repository": "https://github.com/imackimminjae/jetson",
+  "branch": "codex/driving-logs-s22-s25-20261028",
+  "base_planner_commit": "330167495e177672831dfef3172275d828cbc251",
+  "format": "POSIX tar, lossless Zstandard, concatenable 32 MiB parts",
+  "source_file_count": 174,
+  "source_bytes": 591030442,
+  "archive_bytes": 473121692,
+  "attempt_count": 17,
+  "selection": "Only completed attempts; scenario24 only the two corrected west-passage route successes.",
+  "outcomes": [
+    {
+      "scenario": "scenario22",
+      "outcome": "completed",
+      "attempts": 5
+    },
+    {
+      "scenario": "scenario23",
+      "outcome": "completed",
+      "attempts": 5
+    },
+    {
+      "scenario": "scenario24",
+      "outcome": "completed",
+      "attempts": 2
+    },
+    {
+      "scenario": "scenario25",
+      "outcome": "completed",
+      "attempts": 5
+    }
+  ],
+  "selected_sessions": [
+    "parameter_sweeps/manual_bias_scenario22_scenario23_scenario24_scenario25_20261027_055819_d4d0ac/sessions/01_bias_000_scenario22",
+    "parameter_sweeps/manual_bias_scenario22_scenario23_scenario24_scenario25_20261027_055819_d4d0ac/sessions/01_bias_000_scenario23",
+    "parameter_sweeps/manual_bias_scenario22_scenario23_scenario24_scenario25_20261027_055819_d4d0ac/sessions/01_bias_000_scenario25",
+    "parameter_sweeps/manual_bias_scenario24_20261027_071311_7aefd4/sessions/01_bias_000_scenario24",
+    "parameter_sweeps/manual_bias_scenario24_20261027_071709_de9c27/sessions/01_bias_000_scenario24"
+  ],
+  "excluded": [
+    "All 10 failed scenario24 attempts",
+    "No-run preparation and startup-aborted batches",
+    "Mixed main-batch summary/plan/progress that contain failed scenario24 entries",
+    "Continuous MAVLink telemetry and mixed analyses containing failed scenario24 data"
+  ],
+  "limitations": [
+    "The first successful scenario24 route CSV hash is preserved in route_versions.json; its exact original CSV file is not currently available. The final successful route CSV and both original successful recordings are included."
+  ],
+  "parts": [
+    {
+      "path": "scenario_logs.tar.zst.part-000",
+      "bytes": 33554432,
+      "sha256": "81cd16bac5b5d549dde8a892f770db24094435eb07b7d21d9ee29109fb3113ea"
+    },
+    {
+      "path": "scenario_logs.tar.zst.part-001",
+      "bytes": 33554432,
+      "sha256": "84a8c849ca0dfd850092dcfbef1ca61316240b39c642c6e887908f6007cfd8a0"
+    },
+    {
+      "path": "scenario_logs.tar.zst.part-002",
+      "bytes": 33554432,
+      "sha256": "c7e4990377c9c5d27f66af2d207c9b53b9f118193c5f373edebb9efdc73554df"
+    },
+    {
+      "path": "scenario_logs.tar.zst.part-003",
+      "bytes": 33554432,
+      "sha256": "b9d19dbed65050b793e6f49a19b317b1a8d8fca20b549d0b0f0df1a3c324d121"
+    },
+    {
+      "path": "scenario_logs.tar.zst.part-004",
+      "bytes": 33554432,
+      "sha256": "e096bf2c4089712c068cb9d4af8ea6c32c7394882206ad1cea21e3c4147c0a48"
+    },
+    {
+      "path": "scenario_logs.tar.zst.part-005",
+      "bytes": 33554432,
+      "sha256": "0e74fe531acfdf1918c63b3dc9fe8c383b2dc3c3ffda4f29326474340ef6668d"
+    },
+    {
+      "path": "scenario_logs.tar.zst.part-006",
+      "bytes": 33554432,
+      "sha256": "7a70ae575cf6aba8854d9e95d6a049035ad7e4f96b844e8be894c7fe9c68207f"
+    },
+    {
+      "path": "scenario_logs.tar.zst.part-007",
+      "bytes": 33554432,
+      "sha256": "6dd1eef28e215a4a292cf65c6bee8ffab025787706d32e5ce34b5da0b6b49b35"
+    },
+    {
+      "path": "scenario_logs.tar.zst.part-008",
+      "bytes": 33554432,
+      "sha256": "04874a2eda02a6fcaa1c9bd0c20f13c426d39202ec7fee57a17b838802a26d80"
+    },
+    {
+      "path": "scenario_logs.tar.zst.part-009",
+      "bytes": 33554432,
+      "sha256": "ad7cf03e369ac1145d912d4357b5e3fdca2c0a2d62f04dfaf83ab861fbe92653"
+    },
+    {
+      "path": "scenario_logs.tar.zst.part-010",
+      "bytes": 33554432,
+      "sha256": "6ade09e28c3ff138314ab0a1ba489e6571c05b73757d2a7a56d076adefe6ff9b"
+    },
+    {
+      "path": "scenario_logs.tar.zst.part-011",
+      "bytes": 33554432,
+      "sha256": "abaf6c4bd391acbf18da8965e60a4788925080991387c1ad2c8ed41737bf8fdf"
+    },
+    {
+      "path": "scenario_logs.tar.zst.part-012",
+      "bytes": 33554432,
+      "sha256": "5f48cea02fb50fb503cf793c2b88dc097a35b0ba63ee010fa0c00c99490b0494"
+    },
+    {
+      "path": "scenario_logs.tar.zst.part-013",
+      "bytes": 33554432,
+      "sha256": "3329e14d8b68a83080065ca0896d5ca57586aa8aae22c8bb087c70158cb40d55"
+    },
+    {
+      "path": "scenario_logs.tar.zst.part-014",
+      "bytes": 3359644,
+      "sha256": "c7123114a93a2b3a585c41d38cdf64e7e2122e003b254b59d03ba4d8e5540960"
+    }
+  ]
+}
