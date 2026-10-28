@@ -148,6 +148,7 @@ struct LowerTrackingMpcNode::Impl
     double steering_angle_rad{0.0};
     bool drive_valid{false};
     int fallback_mode{3};  // 0=solver, 1=previous sequence, 2=hold, 3=neutral, 4=goal stop, 5=error-feedback fallback
+    std::string failure_reason{};
   };
 
   struct VirtualDriveCommand
@@ -271,6 +272,7 @@ struct LowerTrackingMpcNode::Impl
     node_.declare_parameter<bool>("pose_invert_y", pose_invert_y_);
     node_.declare_parameter<double>("pose_speed_lpf_alpha", pose_speed_lpf_alpha_);
     node_.declare_parameter<double>("pose_max_dt_for_speed", pose_max_dt_for_speed_);
+    node_.declare_parameter<bool>("pose_use_header_stamp_for_speed", pose_use_header_stamp_for_speed_);
     node_.declare_parameter<std::string>(
       "lower_reference_path_topic", lower_reference_path_topic_);
     node_.declare_parameter<bool>("lower_use_path_arclength", lower_use_path_arclength_);
@@ -322,6 +324,7 @@ struct LowerTrackingMpcNode::Impl
     node_.declare_parameter<bool>("mavlink_auto_arm", mavlink_auto_arm_);
     node_.declare_parameter<bool>("mavlink_force_arm", mavlink_force_arm_);
     node_.declare_parameter<bool>("mavlink_disarm_on_shutdown", mavlink_disarm_on_shutdown_);
+    node_.declare_parameter<bool>("lower_latch_stop_until_reset", lower_latch_stop_until_reset_);
     node_.declare_parameter<double>("mavlink_throttle_max_norm", mavlink_throttle_max_norm_);
     node_.declare_parameter<double>("mavlink_steer_sign", mavlink_steer_sign_);
     node_.declare_parameter<double>("mavlink_keepalive_rate_hz", mavlink_keepalive_rate_hz_);
@@ -372,6 +375,7 @@ struct LowerTrackingMpcNode::Impl
     node_.get_parameter("pose_invert_y", pose_invert_y_);
     node_.get_parameter("pose_speed_lpf_alpha", pose_speed_lpf_alpha_);
     node_.get_parameter("pose_max_dt_for_speed", pose_max_dt_for_speed_);
+    node_.get_parameter("pose_use_header_stamp_for_speed", pose_use_header_stamp_for_speed_);
     node_.get_parameter("lower_reference_path_topic", lower_reference_path_topic_);
     node_.get_parameter("lower_use_path_arclength", lower_use_path_arclength_);
     node_.get_parameter("goal_reached_topic", goal_reached_topic_);
@@ -415,6 +419,7 @@ struct LowerTrackingMpcNode::Impl
     node_.get_parameter("mavlink_auto_arm", mavlink_auto_arm_);
     node_.get_parameter("mavlink_force_arm", mavlink_force_arm_);
     node_.get_parameter("mavlink_disarm_on_shutdown", mavlink_disarm_on_shutdown_);
+    node_.get_parameter("lower_latch_stop_until_reset", lower_latch_stop_until_reset_);
     node_.get_parameter("mavlink_throttle_max_norm", mavlink_throttle_max_norm_);
     node_.get_parameter("mavlink_steer_sign", mavlink_steer_sign_);
     node_.get_parameter("mavlink_keepalive_rate_hz", mavlink_keepalive_rate_hz_);
@@ -542,6 +547,13 @@ struct LowerTrackingMpcNode::Impl
       std::bind(&Impl::goalCallback, this, std::placeholders::_1));
     reset_sub_ = node_.create_subscription<std_msgs::msg::Bool>(
       reset_topic_, 10, std::bind(&Impl::resetCallback, this, std::placeholders::_1));
+    if (lower_latch_stop_until_reset_) {
+      stop_sub_ = node_.create_subscription<std_msgs::msg::Bool>(
+        "/controller/stop", 10,
+        [this](const std_msgs::msg::Bool::SharedPtr message) {
+          if (message->data) {applyStopSignal(message, "manual_stop");}
+        });
+    }
     if (state_input_type_ == "odom") {
       odom_sub_ = node_.create_subscription<nav_msgs::msg::Odometry>(
         odom_topic_, 10, std::bind(&Impl::odomCallback, this, std::placeholders::_1));
@@ -608,13 +620,25 @@ struct LowerTrackingMpcNode::Impl
     next.frame_id = message->header.frame_id;
     next.received = node_.now();
     next.valid = finitePoint(next.position) && std::isfinite(next.yaw_rad);
+    const bool use_header_stamp = pose_use_header_stamp_for_speed_ &&
+      (message->header.stamp.sec > 0 ||
+      (message->header.stamp.sec == 0 && message->header.stamp.nanosec > 0));
+    const rclcpp::Time measured_at = use_header_stamp ?
+      rclcpp::Time(message->header.stamp, next.received.get_clock_type()) : next.received;
     std::lock_guard<std::mutex> lock(data_mtx_);
+    if (next.valid && have_previous_pose_measurement_ && use_header_stamp &&
+      previous_pose_used_header_stamp_ && measured_at <= previous_pose_time_)
+    {
+      return;
+    }
     if (!next.valid) {
       next.speed_mps = 0.0;
       next.speed_valid = false;
       have_previous_pose_measurement_ = false;
-    } else if (have_previous_pose_measurement_) {
-      const double dt = (next.received - previous_pose_time_).seconds();
+    } else if (have_previous_pose_measurement_ &&
+      previous_pose_used_header_stamp_ == use_header_stamp)
+    {
+      const double dt = (measured_at - previous_pose_time_).seconds();
       if (dt > 1e-4 && dt <= pose_max_dt_for_speed_) {
         const double measured = (next.position - previous_pose_measurement_).norm() / dt;
         if (std::isfinite(measured)) {
@@ -639,7 +663,8 @@ struct LowerTrackingMpcNode::Impl
     }
     if (next.valid) {
       previous_pose_measurement_ = next.position;
-      previous_pose_time_ = next.received;
+      previous_pose_time_ = measured_at;
+      previous_pose_used_header_stamp_ = use_header_stamp;
       have_previous_pose_measurement_ = true;
     }
     pose_ = next;
@@ -709,17 +734,47 @@ struct LowerTrackingMpcNode::Impl
 
   void goalCallback(const std_msgs::msg::Bool::SharedPtr message)
   {
-    std::lock_guard<std::mutex> lock(data_mtx_);
-    if (goal_reached_ != message->data) {
-      reset_pending_ = true;
+    applyStopSignal(message, "goal_reached");
+  }
+
+  void applyStopSignal(const std_msgs::msg::Bool::SharedPtr message, const std::string & source)
+  {
+    PoseSnapshot pose;
+    std::string reason = source;
+    {
+      std::lock_guard<std::mutex> lock(data_mtx_);
+      if (goal_reached_ != message->data) {
+        reset_pending_ = true;
+      }
+      goal_reached_ = message->data;
+      if (message->data && lower_latch_stop_until_reset_) {
+        if (!stop_latched_) {stop_latch_reason_ = source;}
+        stop_latched_ = true;
+        reason = stop_latch_reason_;
+      }
+      pose = pose_;
     }
-    goal_reached_ = message->data;
+    // Real ESC: the user confirmed normalized throttle 0 engages braking.
+    // Update the keepalive cache before waiting for the next MPC timer.
+    if (message->data && lower_latch_stop_until_reset_) {publishGoalStop(pose, reason);}
   }
 
   void resetCallback(const std_msgs::msg::Bool::SharedPtr message)
   {
     if (!message->data) {return;}
     std::lock_guard<std::mutex> lock(data_mtx_);
+    if (lower_latch_stop_until_reset_ && stop_latched_) {
+      const double age = (node_.now() - pose_.received).seconds();
+      if (!pose_.valid || !pose_.speed_valid || age < 0.0 || age > input_timeout_sec_ ||
+        pose_.speed_mps >= 0.03)
+      {
+        RCLCPP_WARN(node_.get_logger(), "stop reset refused: need fresh stationary Motive");
+        return;
+      }
+      stop_latched_ = false;
+      stop_latch_reason_.clear();
+      have_driven_ = false;
+    }
     reset_pending_ = true;
   }
 
@@ -1055,6 +1110,7 @@ struct LowerTrackingMpcNode::Impl
   SelectedCommand selectFailureCommand(const std::string & reason, bool allow_sequence)
   {
     SelectedCommand selected;
+    selected.failure_reason = reason.empty() ? "waiting for lower reference path" : reason;
     if (allow_sequence &&
       previous_lower_steering_index_ < previous_lower_steering_sequence_.size())
     {
@@ -1066,7 +1122,7 @@ struct LowerTrackingMpcNode::Impl
         node_.get_logger(), *node_.get_clock(), 1000,
         "lower QP failure: consuming previous lower sequence (%zu/%zu): %s",
         previous_lower_steering_index_, previous_lower_steering_sequence_.size(),
-        reason.c_str());
+        selected.failure_reason.c_str());
       return selected;
     }
     const rclcpp::Time current_time = node_.now();
@@ -1077,13 +1133,14 @@ struct LowerTrackingMpcNode::Impl
       selected.fallback_mode = 2;
       RCLCPP_WARN_THROTTLE(
         node_.get_logger(), *node_.get_clock(), 1000,
-        "lower control invalid: holding steering with neutral throttle: %s", reason.c_str());
+        "lower control invalid: holding steering with neutral throttle: %s",
+        selected.failure_reason.c_str());
     } else {
       selected.steering_angle_rad = 0.0;
       selected.fallback_mode = 3;
       RCLCPP_WARN_THROTTLE(
         node_.get_logger(), *node_.get_clock(), 1000,
-        "lower control invalid: neutral steering/throttle: %s", reason.c_str());
+        "lower control invalid: neutral steering/throttle: %s", selected.failure_reason.c_str());
     }
     return selected;
   }
@@ -1193,7 +1250,7 @@ struct LowerTrackingMpcNode::Impl
     local_curve_pub_->publish(message);
   }
 
-  void publishGoalStop(const PoseSnapshot & pose)
+  void publishGoalStop(const PoseSnapshot & pose, const std::string & reason = "goal_reached")
   {
     previous_lower_steering_sequence_.clear();
     previous_lower_steering_index_ = 0;
@@ -1223,7 +1280,8 @@ struct LowerTrackingMpcNode::Impl
     advanceSteeringActuatorModel(0.0);
     RCLCPP_INFO_THROTTLE(
       node_.get_logger(), *node_.get_clock(), 1000,
-      "goal stop applied: steer=0 throttle=0 brake=%.3f MAVLink neutral",
+      "stop applied: reason=%s steer=0 throttle=0 brake=%.3f MAVLink neutral",
+      reason.c_str(),
       static_cast<double>(virtual_command.brake));
   }
 
@@ -1292,7 +1350,28 @@ struct LowerTrackingMpcNode::Impl
       command.steering_angle_rad = 0.0;
       command.drive_valid = false;
       command.fallback_mode = 3;
+      command.failure_reason = "nonfinite steering command";
     }
+    bool stop = false;
+    bool newly_latched = false;
+    std::string stop_reason;
+    if (lower_latch_stop_until_reset_) {
+      std::lock_guard<std::mutex> lock(data_mtx_);
+      if (!command.drive_valid && have_driven_ && !stop_latched_) {
+        stop_latched_ = true;
+        stop_latch_reason_ = command.failure_reason.empty() ?
+          "invalid control command" : command.failure_reason;
+        newly_latched = true;
+      }
+      stop = stop_latched_;
+      stop_reason = stop_latch_reason_;
+      if (command.drive_valid && !stop) {have_driven_ = true;}
+    }
+    if (newly_latched) {
+      RCLCPP_WARN(node_.get_logger(), "stop latched: reason=%s; explicit reset required",
+        stop_reason.c_str());
+    }
+    if (stop) {publishGoalStop(pose, stop_reason); return;}
     const rclcpp::Time current_time = node_.now();
     if (command.drive_valid) {
       last_valid_steering_angle_rad_ = command.steering_angle_rad;
@@ -1355,13 +1434,16 @@ struct LowerTrackingMpcNode::Impl
     bool goal_reached = false;
     bool reset_pending = false;
     bool batch_stop = false;
+    std::string stop_reason;
     {
       std::lock_guard<std::mutex> lock(data_mtx_);
       pose = pose_;
       path = path_;
       frame_id = path_frame_id_;
       path_received = path_received_;
-      goal_reached = goal_reached_;
+      goal_reached = goal_reached_ || (lower_latch_stop_until_reset_ && stop_latched_);
+      stop_reason = lower_latch_stop_until_reset_ && stop_latched_ ?
+        stop_latch_reason_ : "goal_reached";
       reset_pending = reset_pending_;
       reset_pending_ = false;
       batch_stop = batch_supervision_ && (!batch_run_allowed_ ||
@@ -1370,7 +1452,7 @@ struct LowerTrackingMpcNode::Impl
     }
     if (reset_pending) {resetControllerState("path/mission/pose/reset event");}
     if (goal_reached || batch_stop) {
-      publishGoalStop(pose);
+      publishGoalStop(pose, batch_stop && !goal_reached ? "batch_supervision" : stop_reason);
       return;
     }
 
@@ -1804,6 +1886,7 @@ struct LowerTrackingMpcNode::Impl
   bool pose_invert_y_{false};
   double pose_speed_lpf_alpha_{0.4};
   double pose_max_dt_for_speed_{0.5};
+  bool pose_use_header_stamp_for_speed_{false};
   bool lower_use_path_arclength_{true};
   std::string lower_reference_path_topic_{"/planner/lower_reference_path"};
   std::string goal_reached_topic_{"/planner/goal_reached"};
@@ -1851,6 +1934,10 @@ struct LowerTrackingMpcNode::Impl
   bool mavlink_auto_arm_{false};
   bool mavlink_force_arm_{false};
   bool mavlink_disarm_on_shutdown_{true};
+  bool lower_latch_stop_until_reset_{false};
+  bool stop_latched_{false};
+  std::string stop_latch_reason_;
+  bool have_driven_{false};
   double mavlink_throttle_max_norm_{0.17};
   double mavlink_steer_sign_{1.0};
   double mavlink_keepalive_rate_hz_{20.0};
@@ -1858,6 +1945,7 @@ struct LowerTrackingMpcNode::Impl
   mutable std::mutex data_mtx_;
   PoseSnapshot pose_;
   bool have_previous_pose_measurement_{false};
+  bool previous_pose_used_header_stamp_{false};
   Eigen::Vector2d previous_pose_measurement_{Eigen::Vector2d::Zero()};
   rclcpp::Time previous_pose_time_{0, 0, RCL_ROS_TIME};
   LowerPathGeometry path_;
@@ -1899,6 +1987,7 @@ struct LowerTrackingMpcNode::Impl
   rclcpp::Subscription<imac_interfaces::msg::PathWithArcLength>::SharedPtr arc_path_sub_;
   rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr goal_sub_;
   rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr reset_sub_;
+  rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr stop_sub_;
   rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr batch_run_sub_;
   bool batch_supervision_{false};
   bool batch_run_allowed_{false};

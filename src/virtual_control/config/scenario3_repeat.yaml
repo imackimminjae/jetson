@@ -40,7 +40,8 @@ lower_tracking_mpc_node:
     mavlink_auto_arm: false
     mavlink_force_arm: false
     batch_supervision: true
-    reset_on_path_change: true
+    # Preserve steering and actuator history across valid planner path updates.
+    reset_on_path_change: false
 knu_batch_runner:
   ros__parameters:
     routes: ["scenario3"]

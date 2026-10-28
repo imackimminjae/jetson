@@ -192,6 +192,42 @@ geometry_msgs::msg::Quaternion yawQuaternion(double yaw)
 namespace imac_ctrl
 {
 
+std::vector<SdMapUpperPlannerNode::IntervalBProbe> SdMapUpperPlannerNode::buildIntervalBProbes(
+  const std::vector<Eigen::Vector2d> & points, const std::vector<double> & headings,
+  int usable_horizon, double spacing_m)
+{
+  std::vector<IntervalBProbe> probes;
+  if (!std::isfinite(spacing_m) || spacing_m <= 0.0 || usable_horizon < 1 ||
+    points.size() != headings.size() ||
+    points.size() <= static_cast<std::size_t>(usable_horizon))
+  {
+    return probes;
+  }
+  std::vector<double> arc(static_cast<std::size_t>(usable_horizon + 1), 0.0);
+  for (int k = 0; k <= usable_horizon; ++k) {
+    if (!points[k].allFinite() || !std::isfinite(headings[k])) {return {};}
+    if (k > 0) {arc[k] = arc[k - 1] + (points[k] - points[k - 1]).norm();}
+  }
+  // Keep pathological settings bounded. Parameter validation also limits spacing.
+  if (arc.back() / spacing_m > 4096.0) {return probes;}
+  for (std::size_t i = 1; static_cast<double>(i) * spacing_m < arc.back() - 1e-8; ++i) {
+    const double query = static_cast<double>(i) * spacing_m;
+    const auto end = std::lower_bound(arc.begin(), arc.end(), query);
+    if (end == arc.end() || std::abs(*end - query) <= 1e-8) {continue;}
+    const int k = static_cast<int>(end - arc.begin()) - 1;
+    const double length = arc[k + 1] - arc[k];
+    if (length <= 1e-9) {continue;}
+    const double ratio = (query - arc[k]) / length;
+    IntervalBProbe probe;
+    probe.preceding_step = k;
+    probe.arc_length_m = query;
+    probe.point_body = points[k] + ratio * (points[k + 1] - points[k]);
+    probe.heading_rad = headings[k] + ratio * wrapToPi(headings[k + 1] - headings[k]);
+    probes.push_back(std::move(probe));
+  }
+  return probes;
+}
+
 bool SdMapUpperPlannerNode::hasIntervalReference(const IntervalCenteringState & state)
 {
   return std::isfinite(state.reference_length) && state.reference_length > 0.0;
@@ -204,6 +240,11 @@ SdMapUpperPlannerNode::updateIntervalCentering(
   const std::vector<std::vector<IntervalObservation>> & preview,
   const IntervalCenteringSettings & settings)
 {
+  if (!std::isfinite(settings.max_reference_growth_per_update_m) ||
+    settings.max_reference_growth_per_update_m < 0.0)
+  {
+    throw std::invalid_argument("B growth cap must be finite and >= 0");
+  }
   IntervalCenteringUpdate info;
   info.state = previous;
   info.previous_reference_length = previous.reference_length;
@@ -234,11 +275,18 @@ SdMapUpperPlannerNode::updateIntervalCentering(
     }
   }
 
-  if (info.candidate_step >= 0 &&
-    (!hasIntervalReference(previous) ||
-    info.candidate_length <= settings.relative_length_factor * previous.reference_length))
-  {
-    info.state.reference_length = info.candidate_length;
+  if (info.candidate_step >= 0) {
+    if (settings.max_reference_growth_per_update_m > 0.0 && hasIntervalReference(previous)) {
+      // Narrowing is immediate. Sustained widening converges even when the
+      // candidate exceeds 1.5*B; that factor still governs interval treatment.
+      info.state.reference_length = std::min(
+        info.candidate_length,
+        previous.reference_length + settings.max_reference_growth_per_update_m);
+    } else if (!hasIntervalReference(previous) ||
+      info.candidate_length <= settings.relative_length_factor * previous.reference_length)
+    {
+      info.state.reference_length = info.candidate_length;
+    }
   }
   return info;
 }
@@ -247,7 +295,8 @@ SdMapUpperPlannerNode::IntervalTreatment
 SdMapUpperPlannerNode::intervalTreatment(
   const IntervalObservation & interval, const IntervalCenteringState & state,
   const IntervalCenteringSettings & settings, double soft_ratio,
-  double boundary_margin, double fallback_max_centering_length)
+  double boundary_margin, double fallback_max_centering_length,
+  int prediction_step, bool k1_disable_extra_centering)
 {
   IntervalTreatment result;
   // Fallback keeps its independent threshold; all observed stages share 1.5*B.
@@ -259,6 +308,22 @@ SdMapUpperPlannerNode::intervalTreatment(
   result.centering_on = std::isfinite(result.threshold) && interval.length <= result.threshold;
   result.inset = result.centering_on ? (1.0 - soft_ratio) * interval.length :
     std::min(boundary_margin, 0.45 * interval.length);
+  if (!interval.nominal_fallback && hasIntervalReference(state) &&
+    settings.transition_relative_band > 0.0)
+  {
+    const double fraction = clampd(
+      (settings.relative_length_factor - interval.length / state.reference_length) /
+      settings.transition_relative_band, 0.0, 1.0);
+    const double weight = fraction * fraction * (3.0 - 2.0 * fraction);
+    const double off_inset = std::min(boundary_margin, 0.45 * interval.length);
+    const double on_inset = (1.0 - soft_ratio) * interval.length;
+    result.inset = off_inset + weight * (on_inset - off_inset);
+  }
+  if (k1_disable_extra_centering && prediction_step == 1) {
+    // Remove only ADDITIONAL centering contraction. A narrow interval may
+    // already have less inset than boundary_margin; never tighten it here.
+    result.inset = std::min(result.inset, std::min(boundary_margin, 0.45 * interval.length));
+  }
   return result;
 }
 
@@ -273,6 +338,18 @@ SdMapUpperPlannerNode::SdMapUpperPlannerNode(const rclcpp::NodeOptions & options
     get_logger(), "k1 lane constraint trial: skip_front_clipped_k1_lane_constraints=%s",
     skip_front_clipped_k1_lane_constraints_ ? "true" : "false");
 
+  RCLCPP_INFO(
+    get_logger(), "interval B growth: preview_interval_reference_growth_rate_mps=%.6f cap_per_update_m=%.6f",
+    preview_interval_reference_growth_rate_mps_,
+    interval_centering_settings_.max_reference_growth_per_update_m);
+
+  RCLCPP_INFO(
+    get_logger(), "B-only sample spacing: %.3fm (0 disables extra sections)",
+    preview_interval_b_sample_spacing_m_);
+  RCLCPP_INFO(get_logger(),
+    "upper steering rate: %.6frad/s (0 disables), feedback=%s timeout=%.3fs",
+    upper_max_steering_rate_radps_, upper_steering_state_topic_.c_str(),
+    upper_steering_state_timeout_sec_);
   const auto period = std::chrono::duration<double>(1.0 / upper_planner_rate_hz_);
   planner_timer_ = create_wall_timer(period, std::bind(&SdMapUpperPlannerNode::plannerLoop, this));
 
@@ -289,11 +366,12 @@ SdMapUpperPlannerNode::SdMapUpperPlannerNode(const rclcpp::NodeOptions & options
     grid_map_topic_.c_str(), sparse_path_topic_.c_str(), dense_path_topic_.c_str());
   RCLCPP_INFO(
     get_logger(),
-    "upper branch model: cumulative_increment=%d turn_window_at_split=%d "
-    "turn_target_absolute=%d split_continuity=%.2fm r_dpsi=%.3f lambda_turn=%.3f",
-    upper_cumulative_increment_model_ ? 1 : 0, branch_turn_window_at_split_ ? 1 : 0,
-    branch_turn_target_absolute_ ? 1 : 0, branch_split_continuity_m_, upper_r_dpsi_,
-    lambda_relative_turn_);
+    "upper branch model: cumulative_increment=%d turn_target_absolute=%d "
+    "min_candidate_width=%.2fm r_dpsi=%.3f lambda_turn=%.3f",
+    upper_cumulative_increment_model_ ? 1 : 0, branch_turn_target_absolute_ ? 1 : 0,
+    branch_min_candidate_width_m_, upper_r_dpsi_, lambda_relative_turn_);
+  RCLCPP_INFO(get_logger(), "optimizer road candidate minimum original width=%.3fm",
+    road_candidate_min_width_m_);
 }
 
 void SdMapUpperPlannerNode::declareAndLoadParameters()
@@ -343,11 +421,26 @@ void SdMapUpperPlannerNode::declareAndLoadParameters()
     "terminal_position_weight_multiplier", terminal_position_weight_multiplier_);
   declare_parameter<double>("upper_r_dv", upper_r_dv_);
   declare_parameter<double>("upper_r_dpsi", upper_r_dpsi_);
+  declare_parameter<double>("upper_r_steering_delta", upper_r_steering_delta_);
+  declare_parameter<double>("upper_max_steering_rate_radps", upper_max_steering_rate_radps_);
+  declare_parameter<bool>("upper_use_vehicle_rollout", upper_use_vehicle_rollout_);
+  declare_parameter<bool>("upper_soft_corridor_constraints", upper_soft_corridor_constraints_);
+  declare_parameter<double>("upper_corridor_soft_linear_weight", upper_corridor_soft_linear_weight_);
+  declare_parameter<double>("upper_corridor_soft_quadratic_weight", upper_corridor_soft_quadratic_weight_);
+  declare_parameter<double>("upper_vehicle_integration_dt_sec", upper_vehicle_integration_dt_sec_);
+  declare_parameter<int>("upper_vehicle_rollout_max_iterations", upper_vehicle_rollout_max_iterations_);
+  declare_parameter<double>("upper_vehicle_rollout_budget_ms", upper_vehicle_rollout_budget_ms_);
+  declare_parameter<double>("upper_steering_state_timeout_sec", upper_steering_state_timeout_sec_);
+  declare_parameter<std::string>("upper_steering_state_topic", upper_steering_state_topic_);
   declare_parameter<bool>("normalize_upper_input_cost", normalize_upper_input_cost_);
   declare_parameter<int>("turn_preview_steps", turn_preview_steps_);
   declare_parameter<bool>("upper_cumulative_increment_model", upper_cumulative_increment_model_);
-  declare_parameter<bool>("branch_turn_window_at_split", branch_turn_window_at_split_);
   declare_parameter<bool>("branch_turn_target_absolute", branch_turn_target_absolute_);
+  declare_parameter<double>("branch_min_candidate_width_m", branch_min_candidate_width_m_);
+  declare_parameter<double>("road_candidate_min_width_m", road_candidate_min_width_m_);
+  declare_parameter<bool>("branch_require_count_increase", branch_require_count_increase_);
+  declare_parameter<bool>("branch_include_k0_transition", branch_include_k0_transition_);
+  declare_parameter<bool>("branch_use_split_continuity", branch_use_split_continuity_);
   declare_parameter<double>("branch_split_continuity_m", branch_split_continuity_m_);
   declare_parameter<double>("turn_weight_growth", turn_weight_growth_);
   declare_parameter<double>("miqp_diagonal_regularization", miqp_diagonal_regularization_);
@@ -382,6 +475,12 @@ void SdMapUpperPlannerNode::declareAndLoadParameters()
   declare_parameter<double>("preview_line_sample_m", preview_line_sample_m_);
   declare_parameter<int>("preview_min_segment_samples", preview_min_segment_samples_);
   declare_parameter<double>("preview_interval_soft_ratio", preview_interval_soft_ratio_);
+  declare_parameter<double>("preview_interval_b_sample_spacing_m", preview_interval_b_sample_spacing_m_);
+  declare_parameter<bool>("preview_interval_k1_disable_extra_centering", preview_interval_k1_disable_extra_centering_);
+  declare_parameter<double>(
+    "preview_interval_transition_relative_band", interval_centering_settings_.transition_relative_band);
+  declare_parameter<double>(
+    "preview_interval_reference_growth_rate_mps", preview_interval_reference_growth_rate_mps_);
   declare_parameter<double>(
     "preview_interval_relative_length_factor", interval_centering_settings_.relative_length_factor);
   declare_parameter<double>(
@@ -417,8 +516,10 @@ void SdMapUpperPlannerNode::declareAndLoadParameters()
   declare_parameter<bool>("pose_invert_y", pose_invert_y_);
   declare_parameter<double>("pose_speed_lpf_alpha", pose_speed_lpf_alpha_);
   declare_parameter<double>("pose_max_dt_for_speed", pose_max_dt_for_speed_);
+  declare_parameter<bool>("pose_use_header_stamp_for_speed", pose_use_header_stamp_for_speed_);
 
   declare_parameter<std::string>("global_path_topic", global_path_topic_);
+  declare_parameter<std::string>("global_path_frame_alias", global_path_frame_alias_);
   declare_parameter<std::string>("grid_map_topic", grid_map_topic_);
   declare_parameter<std::string>("upper_sparse_path_topic", sparse_path_topic_);
   declare_parameter<std::string>("lower_reference_path_topic", dense_path_topic_);
@@ -451,11 +552,26 @@ void SdMapUpperPlannerNode::declareAndLoadParameters()
     "terminal_position_weight_multiplier", terminal_position_weight_multiplier_);
   get_parameter("upper_r_dv", upper_r_dv_);
   get_parameter("upper_r_dpsi", upper_r_dpsi_);
+  get_parameter("upper_r_steering_delta", upper_r_steering_delta_);
+  get_parameter("upper_max_steering_rate_radps", upper_max_steering_rate_radps_);
+  get_parameter("upper_use_vehicle_rollout", upper_use_vehicle_rollout_);
+  get_parameter("upper_soft_corridor_constraints", upper_soft_corridor_constraints_);
+  get_parameter("upper_corridor_soft_linear_weight", upper_corridor_soft_linear_weight_);
+  get_parameter("upper_corridor_soft_quadratic_weight", upper_corridor_soft_quadratic_weight_);
+  get_parameter("upper_vehicle_integration_dt_sec", upper_vehicle_integration_dt_sec_);
+  get_parameter("upper_vehicle_rollout_max_iterations", upper_vehicle_rollout_max_iterations_);
+  get_parameter("upper_vehicle_rollout_budget_ms", upper_vehicle_rollout_budget_ms_);
+  get_parameter("upper_steering_state_timeout_sec", upper_steering_state_timeout_sec_);
+  get_parameter("upper_steering_state_topic", upper_steering_state_topic_);
   get_parameter("normalize_upper_input_cost", normalize_upper_input_cost_);
   get_parameter("turn_preview_steps", turn_preview_steps_);
   get_parameter("upper_cumulative_increment_model", upper_cumulative_increment_model_);
-  get_parameter("branch_turn_window_at_split", branch_turn_window_at_split_);
   get_parameter("branch_turn_target_absolute", branch_turn_target_absolute_);
+  get_parameter("branch_min_candidate_width_m", branch_min_candidate_width_m_);
+  get_parameter("road_candidate_min_width_m", road_candidate_min_width_m_);
+  get_parameter("branch_require_count_increase", branch_require_count_increase_);
+  get_parameter("branch_include_k0_transition", branch_include_k0_transition_);
+  get_parameter("branch_use_split_continuity", branch_use_split_continuity_);
   get_parameter("branch_split_continuity_m", branch_split_continuity_m_);
   get_parameter("turn_weight_growth", turn_weight_growth_);
   get_parameter("miqp_diagonal_regularization", miqp_diagonal_regularization_);
@@ -489,6 +605,14 @@ void SdMapUpperPlannerNode::declareAndLoadParameters()
   get_parameter("preview_line_sample_m", preview_line_sample_m_);
   get_parameter("preview_min_segment_samples", preview_min_segment_samples_);
   get_parameter("preview_interval_soft_ratio", preview_interval_soft_ratio_);
+  get_parameter("preview_interval_b_sample_spacing_m", preview_interval_b_sample_spacing_m_);
+  get_parameter("preview_interval_k1_disable_extra_centering", preview_interval_k1_disable_extra_centering_);
+  get_parameter(
+    "preview_interval_transition_relative_band", interval_centering_settings_.transition_relative_band);
+  get_parameter(
+    "preview_interval_reference_growth_rate_mps", preview_interval_reference_growth_rate_mps_);
+  interval_centering_settings_.max_reference_growth_per_update_m =
+    preview_interval_reference_growth_rate_mps_ / upper_planner_rate_hz_;
   get_parameter(
     "preview_interval_relative_length_factor", interval_centering_settings_.relative_length_factor);
   get_parameter("preview_interval_boundary_margin_m", preview_interval_boundary_margin_m_);
@@ -522,8 +646,10 @@ void SdMapUpperPlannerNode::declareAndLoadParameters()
   get_parameter("pose_invert_y", pose_invert_y_);
   get_parameter("pose_speed_lpf_alpha", pose_speed_lpf_alpha_);
   get_parameter("pose_max_dt_for_speed", pose_max_dt_for_speed_);
+  get_parameter("pose_use_header_stamp_for_speed", pose_use_header_stamp_for_speed_);
 
   get_parameter("global_path_topic", global_path_topic_);
+  get_parameter("global_path_frame_alias", global_path_frame_alias_);
   get_parameter("grid_map_topic", grid_map_topic_);
   get_parameter("upper_sparse_path_topic", sparse_path_topic_);
   get_parameter("lower_reference_path_topic", dense_path_topic_);
@@ -555,7 +681,27 @@ void SdMapUpperPlannerNode::validateParameters() const
     fail("max_steering_angle_rad must be in (0, pi/2)");
   }
   if (a_max_mps2_ <= 0.0) {fail("a_max_mps2 must be > 0");}
+  if (!std::isfinite(upper_max_steering_rate_radps_) || upper_max_steering_rate_radps_ < 0.0) {
+    fail("upper_max_steering_rate_radps must be finite and >= 0");
+  }
+  if (!std::isfinite(upper_vehicle_integration_dt_sec_) || upper_vehicle_integration_dt_sec_ <= 0.0 ||
+    upper_vehicle_integration_dt_sec_ > upper_prediction_dt_sec_ ||
+    upper_vehicle_rollout_max_iterations_ < 1 || upper_vehicle_rollout_max_iterations_ > 100 ||
+    !std::isfinite(upper_vehicle_rollout_budget_ms_) || upper_vehicle_rollout_budget_ms_ <= 0.0 ||
+    (upper_use_vehicle_rollout_ && upper_max_steering_rate_radps_ <= 0.0))
+  {fail("invalid upper vehicle rollout integration/iterations/budget/rate");}
+  if (!std::isfinite(upper_steering_state_timeout_sec_) || upper_steering_state_timeout_sec_ <= 0.0) {
+    fail("upper_steering_state_timeout_sec must be finite and > 0");
+  }
+  if (upper_max_steering_rate_radps_ > 0.0 &&
+    (!upper_cumulative_increment_model_ || upper_steering_state_topic_.empty()))
+  {
+    fail("upper steering rate requires cumulative increment model and feedback topic");
+  }
   if (miqp_big_m_ <= 0.0) {fail("miqp_big_m must be > 0");}
+  if (!std::isfinite(upper_corridor_soft_linear_weight_) || upper_corridor_soft_linear_weight_ < 0.0 ||
+    !std::isfinite(upper_corridor_soft_quadratic_weight_) || upper_corridor_soft_quadratic_weight_ <= 0.0)
+  {fail("soft corridor weights require finite linear >= 0 and quadratic > 0");}
   if (position_scale_m_ <= 0.0) {fail("position_scale_m must be > 0");}
   if (relative_turn_scale_rad_ <= 0.0) {fail("relative_turn_scale_rad must be > 0");}
   if (lambda_position_ < 0.0 || lambda_relative_turn_ < 0.0) {
@@ -575,7 +721,18 @@ void SdMapUpperPlannerNode::validateParameters() const
   if (upper_r_dv_ < 0.0 || upper_r_dpsi_ < 0.0) {
     fail("input regularization weights must be >= 0");
   }
+  if (!std::isfinite(upper_r_steering_delta_) || upper_r_steering_delta_ < 0.0 ||
+    (upper_r_steering_delta_ > 0.0 && !upper_use_vehicle_rollout_))
+  {
+    fail("upper_r_steering_delta must be finite, >= 0, and requires vehicle rollout when positive");
+  }
   if (turn_preview_steps_ < 0) {fail("turn_preview_steps must be >= 0");}
+  if (!std::isfinite(branch_min_candidate_width_m_) || branch_min_candidate_width_m_ < 0.0) {
+    fail("branch_min_candidate_width_m must be finite and >= 0");
+  }
+  if (!std::isfinite(road_candidate_min_width_m_) || road_candidate_min_width_m_ < 0.0) {
+    fail("road_candidate_min_width_m must be finite and >= 0");
+  }
   if (!std::isfinite(branch_split_continuity_m_) || branch_split_continuity_m_ <= 0.0) {
     fail("branch_split_continuity_m must be finite and > 0");
   }
@@ -610,6 +767,20 @@ void SdMapUpperPlannerNode::validateParameters() const
   if (preview_min_segment_samples_ < 2) {
     fail("preview_min_segment_samples must be >= 2");
   }
+  if (!std::isfinite(preview_interval_b_sample_spacing_m_) ||
+    preview_interval_b_sample_spacing_m_ < 0.0 ||
+    (preview_interval_b_sample_spacing_m_ > 0.0 &&
+    preview_interval_b_sample_spacing_m_ < preview_line_sample_m_))
+  {
+    fail("preview_interval_b_sample_spacing_m must be 0 or >= preview_line_sample_m");
+  }
+  if (!std::isfinite(preview_interval_reference_growth_rate_mps_) ||
+    preview_interval_reference_growth_rate_mps_ < 0.0 ||
+    !std::isfinite(interval_centering_settings_.max_reference_growth_per_update_m) ||
+    interval_centering_settings_.max_reference_growth_per_update_m < 0.0)
+  {
+    fail("preview_interval_reference_growth_rate_mps and derived update cap must be finite and >= 0");
+  }
   if (!std::isfinite(preview_interval_soft_ratio_) ||
     preview_interval_soft_ratio_ <= 0.5 || preview_interval_soft_ratio_ > 1.0)
   {
@@ -619,6 +790,13 @@ void SdMapUpperPlannerNode::validateParameters() const
     std::abs(interval_centering_settings_.relative_length_factor - 1.5) > 1e-12)
   {
     fail("interval centering requires fixed preview_interval_relative_length_factor=1.5");
+  }
+  if (!std::isfinite(interval_centering_settings_.transition_relative_band) ||
+    interval_centering_settings_.transition_relative_band < 0.0 ||
+    interval_centering_settings_.transition_relative_band >=
+    interval_centering_settings_.relative_length_factor)
+  {
+    fail("preview_interval_transition_relative_band must be finite and in [0, 1.5)");
   }
   if (!std::isfinite(preview_interval_boundary_margin_m_) ||
     preview_interval_boundary_margin_m_ < 0.0)
@@ -658,6 +836,11 @@ void SdMapUpperPlannerNode::validateParameters() const
 
 void SdMapUpperPlannerNode::createInterfaces()
 {
+  if (upper_max_steering_rate_radps_ > 0.0) {
+    steering_state_sub_ = create_subscription<std_msgs::msg::Float64MultiArray>(
+      upper_steering_state_topic_, rclcpp::QoS(1).best_effort(),
+      std::bind(&SdMapUpperPlannerNode::steeringStateCallback, this, _1));
+  }
   global_path_sub_ = create_subscription<nav_msgs::msg::Path>(
     global_path_topic_, rclcpp::QoS(1).reliable().transient_local(),
     std::bind(&SdMapUpperPlannerNode::globalPathCallback, this, _1));
@@ -696,6 +879,8 @@ void SdMapUpperPlannerNode::createInterfaces()
     "/debug/upper_interval_info", 10);
   interval_state_pub_ = create_publisher<std_msgs::msg::Float64MultiArray>(
     "/debug/upper_interval_centering_state", 10);
+  interval_b_samples_pub_ = create_publisher<std_msgs::msg::Float64MultiArray>(
+    "/debug/upper_interval_b_samples", 10);
   upper_trace_pub_ = create_publisher<std_msgs::msg::Float64MultiArray>(
     "/debug/upper_miqp_trace", 10);
   branch_event_pub_ = create_publisher<std_msgs::msg::String>(
@@ -791,15 +976,29 @@ void SdMapUpperPlannerNode::poseStampedCallback(
   next.frame_id = msg->header.frame_id;
   next.received = now();
   next.valid = finitePoint(next.position) && std::isfinite(next.yaw_rad);
+  const bool use_header_stamp = pose_use_header_stamp_for_speed_ &&
+    (msg->header.stamp.sec > 0 ||
+    (msg->header.stamp.sec == 0 && msg->header.stamp.nanosec > 0));
+  const rclcpp::Time measured_at = use_header_stamp ?
+    rclcpp::Time(msg->header.stamp, next.received.get_clock_type()) : next.received;
 
   {
     std::lock_guard<std::mutex> lock(pose_mtx_);
+    // A queued duplicate must not invalidate a good velocity or refresh its
+    // receipt time. A stopped timestamp stream still becomes stale normally.
+    if (next.valid && have_previous_pose_measurement_ && use_header_stamp &&
+      previous_pose_used_header_stamp_ && measured_at <= previous_pose_time_)
+    {
+      return;
+    }
     if (!next.valid) {
       next.speed_mps = 0.0;
       next.speed_valid = false;
       have_previous_pose_measurement_ = false;
-    } else if (have_previous_pose_measurement_) {
-      const double dt = (next.received - previous_pose_time_).seconds();
+    } else if (have_previous_pose_measurement_ &&
+      previous_pose_used_header_stamp_ == use_header_stamp)
+    {
+      const double dt = (measured_at - previous_pose_time_).seconds();
       if (dt > 1e-4 && dt <= pose_max_dt_for_speed_) {
         const double measured_speed =
           (next.position - previous_pose_measurement_).norm() / dt;
@@ -822,7 +1021,8 @@ void SdMapUpperPlannerNode::poseStampedCallback(
     }
     if (next.valid) {
       previous_pose_measurement_ = next.position;
-      previous_pose_time_ = next.received;
+      previous_pose_time_ = measured_at;
+      previous_pose_used_header_stamp_ = use_header_stamp;
       have_previous_pose_measurement_ = true;
     }
     pose_ = next;
@@ -846,9 +1046,15 @@ void SdMapUpperPlannerNode::globalPathCallback(const nav_msgs::msg::Path::Shared
       path.push_back(point);
     }
   }
-  applyReferencePath(
-    path, msg->header.frame_id.empty() ? path_frame_id_ : msg->header.frame_id,
-    global_path_topic_);
+  std::string frame_id = msg->header.frame_id.empty() ? path_frame_id_ : msg->header.frame_id;
+  if (!global_path_frame_alias_.empty() &&
+    frameIdsEquivalent(frame_id, global_path_frame_alias_))
+  {
+    // Opt-in alias for coordinates already confirmed identical. Other frame
+    // names still go through the normal pose/path mismatch rejection.
+    frame_id = path_frame_id_;
+  }
+  applyReferencePath(path, frame_id, global_path_topic_);
 }
 
 std::vector<Eigen::Vector2d> SdMapUpperPlannerNode::applyConfiguredWaypointBias(
@@ -1347,6 +1553,80 @@ bool SdMapUpperPlannerNode::isDrivable(int8_t value) const
     static_cast<int>(value), grid_positive_is_drivable_, grid_value_threshold_);
 }
 
+SdMapUpperPlannerNode::ObservedIntervalScan SdMapUpperPlannerNode::scanObservedIntervals(
+  const Eigen::Vector2d & reference_point, const Eigen::Vector2d & lateral_direction,
+  const GridMapSnapshot * grid) const
+{
+  ObservedIntervalScan scan;
+  if (grid != nullptr && grid->valid) {
+    double lambda_min = 0.0;
+    double lambda_max = 0.0;
+    if (clipLineToGridRectangle(
+        reference_point, lateral_direction, *grid, lambda_min, lambda_max))
+    {
+      const double span = std::max(0.0, lambda_max - lambda_min);
+      std::vector<double> lambdas;
+      const int full_steps = static_cast<int>(std::floor(span / preview_line_sample_m_));
+      lambdas.reserve(static_cast<std::size_t>(full_steps + 2));
+      for (int sample = 0; sample <= full_steps; ++sample) {
+        lambdas.push_back(lambda_min + static_cast<double>(sample) * preview_line_sample_m_);
+      }
+      if (lambdas.empty() || lambdas.back() < lambda_max - 1e-10) {
+        lambdas.push_back(lambda_max);
+      }
+
+      if (static_cast<int>(lambdas.size()) >= preview_min_segment_samples_) {
+        std::vector<Eigen::Vector2d> run;
+        bool previous_known_blocked = false;
+        bool run_start_observed = false;
+        auto flush_run = [&](bool end_observed) {
+            if (static_cast<int>(run.size()) >= preview_min_segment_samples_) {
+              scan.starts.push_back(run.front());
+              scan.ends.push_back(run.back());
+              scan.observed_boundaries.push_back({run_start_observed, end_observed});
+            }
+            run.clear();
+          };
+
+        for (const double lambda : lambdas) {
+          const Eigen::Vector2d point = reference_point + lambda * lateral_direction;
+          int8_t value = -1;
+          const bool sampled = sampleGridValue(point, *grid, value);
+          const bool drivable = sampled && isDrivable(value);
+          if (drivable) {
+            ++scan.sampled_free;
+            if (run.empty()) {run_start_observed = previous_known_blocked;}
+            run.push_back(point);
+            scan.longest_free_run = std::max(scan.longest_free_run, run.size());
+          } else {
+            if (!sampled) {
+              ++scan.sampled_outside;
+            } else if (value < 0) {
+              ++scan.sampled_unknown;
+            } else {
+              ++scan.sampled_blocked;
+            }
+            flush_run(sampled && value >= 0);
+          }
+          // Unknown/outside samples are clipping, not observed road boundaries.
+          previous_known_blocked = sampled && value >= 0 && !drivable;
+        }
+        flush_run(false);
+        if (scan.starts.empty()) {
+          scan.reason = IntervalFallbackReason::NoValidDrivableRun;
+        }
+      } else {
+        scan.reason = IntervalFallbackReason::InsufficientBevSamples;
+      }
+    } else {
+      scan.reason = IntervalFallbackReason::LineOutsideBev;
+    }
+  } else {
+    scan.reason = IntervalFallbackReason::GridUnavailable;
+  }
+  return scan;
+}
+
 SdMapUpperPlannerNode::PreviewConstraintData
 SdMapUpperPlannerNode::extractPreviewIntervals(
   const PreviewReferenceData & reference,
@@ -1366,6 +1646,8 @@ SdMapUpperPlannerNode::extractPreviewIntervals(
   const std::size_t size = static_cast<std::size_t>(requested_horizon + 1);
   output.pmk.resize(size);
   output.pMk.resize(size);
+  output.road_pmk.resize(size);
+  output.road_pMk.resize(size);
   output.raw_lengths.resize(size);
   output.processed_lengths.resize(size);
   output.treatment_modes.resize(size);
@@ -1394,84 +1676,13 @@ SdMapUpperPlannerNode::extractPreviewIntervals(
     const double heading = output.psirk[step];
     const Eigen::Vector2d lateral_direction(-std::sin(heading), std::cos(heading));
 
-    std::vector<Eigen::Vector2d> raw_starts;
-    std::vector<Eigen::Vector2d> raw_ends;
-    std::vector<int> raw_source_modes;
-    std::vector<std::array<bool, 2>> raw_observed_boundaries;
-    IntervalFallbackReason fallback_reason = IntervalFallbackReason::None;
-    std::size_t sampled_free = 0;
-    std::size_t sampled_blocked = 0;
-    std::size_t sampled_unknown = 0;
-    std::size_t sampled_outside = 0;
-    std::size_t longest_free_run = 0;
-
-    if (grid != nullptr && grid->valid) {
-      double lambda_min = 0.0;
-      double lambda_max = 0.0;
-      if (clipLineToGridRectangle(
-          reference_point, lateral_direction, *grid, lambda_min, lambda_max))
-      {
-        const double span = std::max(0.0, lambda_max - lambda_min);
-        std::vector<double> lambdas;
-        const int full_steps = static_cast<int>(std::floor(span / preview_line_sample_m_));
-        lambdas.reserve(static_cast<std::size_t>(full_steps + 2));
-        for (int sample = 0; sample <= full_steps; ++sample) {
-          lambdas.push_back(lambda_min + static_cast<double>(sample) * preview_line_sample_m_);
-        }
-        if (lambdas.empty() || lambdas.back() < lambda_max - 1e-10) {
-          lambdas.push_back(lambda_max);
-        }
-
-        if (static_cast<int>(lambdas.size()) >= preview_min_segment_samples_) {
-          std::vector<Eigen::Vector2d> run;
-          bool previous_known_blocked = false;
-          bool run_start_observed = false;
-          auto flush_run = [&](bool end_observed) {
-              if (static_cast<int>(run.size()) >= preview_min_segment_samples_) {
-                raw_starts.push_back(run.front());
-                raw_ends.push_back(run.back());
-                raw_observed_boundaries.push_back({run_start_observed, end_observed});
-                raw_source_modes.push_back(static_cast<int>(IntervalSourceMode::BevObserved));
-              }
-              run.clear();
-            };
-
-          for (const double lambda : lambdas) {
-            const Eigen::Vector2d point = reference_point + lambda * lateral_direction;
-            int8_t value = -1;
-            const bool sampled = sampleGridValue(point, *grid, value);
-            const bool drivable = sampled && isDrivable(value);
-            if (drivable) {
-              ++sampled_free;
-              if (run.empty()) {run_start_observed = previous_known_blocked;}
-              run.push_back(point);
-              longest_free_run = std::max(longest_free_run, run.size());
-            } else {
-              if (!sampled) {
-                ++sampled_outside;
-              } else if (value < 0) {
-                ++sampled_unknown;
-              } else {
-                ++sampled_blocked;
-              }
-              flush_run(sampled && value >= 0);
-            }
-            // Unknown/outside samples are clipping, not observed road boundaries.
-            previous_known_blocked = sampled && value >= 0 && !drivable;
-          }
-          flush_run(false);
-          if (raw_starts.empty()) {
-            fallback_reason = IntervalFallbackReason::NoValidDrivableRun;
-          }
-        } else {
-          fallback_reason = IntervalFallbackReason::InsufficientBevSamples;
-        }
-      } else {
-        fallback_reason = IntervalFallbackReason::LineOutsideBev;
-      }
-    } else {
-      fallback_reason = IntervalFallbackReason::GridUnavailable;
-    }
+    auto scan = scanObservedIntervals(reference_point, lateral_direction, grid);
+    auto raw_starts = std::move(scan.starts);
+    auto raw_ends = std::move(scan.ends);
+    auto raw_observed_boundaries = std::move(scan.observed_boundaries);
+    std::vector<int> raw_source_modes(
+      raw_starts.size(), static_cast<int>(IntervalSourceMode::BevObserved));
+    const auto fallback_reason = scan.reason;
 
     output.fallback_reason_codes[step] = static_cast<int>(fallback_reason);
 
@@ -1565,8 +1776,8 @@ SdMapUpperPlannerNode::extractPreviewIntervals(
           k, static_cast<int>(fallback_reason), reference_point.x(), reference_point.y(),
           radToDeg(heading), center_gx, center_gy,
           center_sampled ? static_cast<int>(center_value) : -999,
-          sampled_free, sampled_blocked, sampled_unknown, sampled_outside,
-          longest_free_run, preview_min_segment_samples_,
+          scan.sampled_free, scan.sampled_blocked, scan.sampled_unknown, scan.sampled_outside,
+          scan.longest_free_run, preview_min_segment_samples_,
           grid_free, grid_zero, grid_positive, grid_unknown,
           grid_map_topic_.c_str(), grid->frame_id.c_str(),
           grid->origin_body.x(), grid->origin_body.y(), radToDeg(grid->origin_yaw_rad),
@@ -1648,6 +1859,29 @@ SdMapUpperPlannerNode::extractPreviewIntervals(
   }
 
   observations.resize(static_cast<std::size_t>(output.N_pred + 1));
+  output.b_original_sample_count = static_cast<int>(size);
+  if (preview_interval_b_sample_spacing_m_ > 0.0 && grid != nullptr && grid->valid) {
+    // Reserve the complete original index range, including any unusable suffix.
+    observations.resize(size);
+    output.b_probes = buildIntervalBProbes(
+      output.prk, output.psirk, output.N_pred, preview_interval_b_sample_spacing_m_);
+    for (auto & probe : output.b_probes) {
+      const Eigen::Vector2d lateral(-std::sin(probe.heading_rad), std::cos(probe.heading_rad));
+      const auto scan = scanObservedIntervals(probe.point_body, lateral, grid);
+      for (std::size_t j = 0; j < scan.starts.size(); ++j) {
+        const Eigen::Vector2d segment = scan.ends[j] - scan.starts[j];
+        const double length = segment.norm();
+        if (!std::isfinite(length) || length <= 1e-8) {continue;}
+        const double distance = (probe.point_body - scan.starts[j]).dot(segment / length);
+        probe.observations.push_back(IntervalObservation{
+          length, scan.observed_boundaries[j][0], scan.observed_boundaries[j][1],
+          distance >= -1e-8 && distance <= length + 1e-8, false});
+      }
+      // Extra samples participate ONLY in the B update, never in the MIQP arrays.
+      // Original samples retain their indices and win exact ties.
+      observations.push_back(probe.observations);
+    }
+  }
   output.interval_update = updateIntervalCentering(
     interval_state, observations, interval_centering_settings_);
   const auto & next_state = output.interval_update.state;
@@ -1672,7 +1906,8 @@ SdMapUpperPlannerNode::extractPreviewIntervals(
       info.treatment = intervalTreatment(
         info.observation, next_state, interval_centering_settings_,
         preview_interval_soft_ratio_, preview_interval_boundary_margin_m_,
-        preview_interval_fallback_max_centering_length_m_);
+        preview_interval_fallback_max_centering_length_m_, k,
+        preview_interval_k1_disable_extra_centering_);
       const Eigen::Vector2d p0 = output.pmk[step][candidate];
       const Eigen::Vector2d p1 = output.pMk[step][candidate];
       const double raw_length = info.observation.length;
@@ -1687,6 +1922,8 @@ SdMapUpperPlannerNode::extractPreviewIntervals(
       }
       output.pmk[step][retained] = processed_start;
       output.pMk[step][retained] = processed_end;
+      output.road_pmk[step].push_back(p0);
+      output.road_pMk[step].push_back(p1);
       if (k == 1) {
         // A truncated BEV edge is not an observed road boundary. Match the
         // offline trial's 0.11 m tolerance for the 0.10 m line sampling.
@@ -1723,6 +1960,8 @@ SdMapUpperPlannerNode::extractPreviewIntervals(
   const std::size_t usable_size = static_cast<std::size_t>(output.N_pred + 1);
   output.pmk.resize(usable_size);
   output.pMk.resize(usable_size);
+  output.road_pmk.resize(usable_size);
+  output.road_pMk.resize(usable_size);
   output.raw_lengths.resize(usable_size);
   output.processed_lengths.resize(usable_size);
   output.treatment_modes.resize(usable_size);
@@ -1747,6 +1986,21 @@ std::vector<Eigen::Vector2d> SdMapUpperPlannerNode::publishablePrediction(
     points.resize(static_cast<std::size_t>(preview.side_boundary_tail_start));
   }
   return points;
+}
+
+void SdMapUpperPlannerNode::steeringStateCallback(
+  const std_msgs::msg::Float64MultiArray::SharedPtr msg)
+{
+  const double stamp = now().seconds();
+  const auto next = upper_steering_rate::parseFeedback(msg->data, stamp);
+  std::lock_guard<std::mutex> lock(steering_state_mtx_);
+  if (!upper_steering_rate::fresh(next, stamp, upper_steering_state_timeout_sec_)) {
+    steering_state_ = {}; return;
+  }
+  // Do not let delayed messages replace a newer accepted sample.
+  if (upper_steering_rate::fresh(steering_state_, stamp, upper_steering_state_timeout_sec_) &&
+    next.stamp < steering_state_.stamp) {return;}
+  steering_state_ = next;
 }
 
 void SdMapUpperPlannerNode::applyTerminalPositionTargets(
@@ -1826,6 +2080,21 @@ void SdMapUpperPlannerNode::applyTerminalPositionTargets(
   preview.terminal_buffer_turn_rad = bounded_turn;
 }
 
+bool SdMapUpperPlannerNode::roadCandidateWidthEligible(
+  const PreviewConstraintData & preview, int step, int candidate) const
+{
+  if (road_candidate_min_width_m_ <= 0.0) {return true;}
+  if (step < 1 || candidate < 0 ||
+    static_cast<std::size_t>(step) >= preview.raw_lengths.size() ||
+    static_cast<std::size_t>(candidate) >= preview.raw_lengths[step].size())
+  {
+    return false;
+  }
+  const double width = preview.raw_lengths[step][candidate];
+  return std::isfinite(width) && width > 0.0 &&
+         width + 1e-9 >= road_candidate_min_width_m_;
+}
+
 SdMapUpperPlannerNode::UpperSolveResult SdMapUpperPlannerNode::solveUpperMiqp(
   const PreviewConstraintData & preview,
   double planning_speed_mps) const
@@ -1861,6 +2130,7 @@ SdMapUpperPlannerNode::UpperSolveResult SdMapUpperPlannerNode::solveUpperMiqp(
   }
 
   std::vector<int> binary_offsets(static_cast<std::size_t>(horizon + 1), 0);
+  std::vector<std::vector<int>> eligible_candidates(static_cast<std::size_t>(horizon + 1));
   for (int k = 1; k <= horizon; ++k) {
     const int candidates = preview.Nck[static_cast<std::size_t>(k)];
     if (candidates <= 0 ||
@@ -1874,11 +2144,83 @@ SdMapUpperPlannerNode::UpperSolveResult SdMapUpperPlannerNode::solveUpperMiqp(
     }
     binary_offsets[static_cast<std::size_t>(k)] =
       binary_offsets[static_cast<std::size_t>(k - 1)] + candidates;
+    for (int j = 0; j < candidates; ++j) {
+      if (roadCandidateWidthEligible(preview, k, j)) {eligible_candidates[k].push_back(j);}
+    }
+    if (eligible_candidates[k].empty()) {
+      result.status = "no width-eligible road candidate at step=" + std::to_string(k);
+      return result;
+    }
   }
 
   const int input_count = 2 * horizon;
   const int binary_count = binary_offsets.back();
-  const int variable_count = input_count + binary_count;
+  const bool soft = upper_soft_corridor_constraints_;
+  const int continuous_count = input_count + (soft ? 2 * horizon : 0);
+  const int variable_count = continuous_count + binary_count;
+  if (soft) {
+    if (preview.road_pmk.size() != preview.pmk.size() ||
+      preview.road_pMk.size() != preview.pMk.size()) {
+      result.status = "soft corridors require explicit observed road bounds"; return result;
+    }
+    for (int k = 1; k <= horizon; ++k) {
+      const auto count = static_cast<std::size_t>(preview.Nck[k]);
+      if (preview.road_pmk[k].size() != count || preview.road_pMk[k].size() != count) {
+        result.status = "invalid hard road candidate dimensions"; return result;
+      }
+      for (std::size_t j = 0; j < count; ++j) {
+        if (!preview.source_modes.empty() && (preview.source_modes.size() <= static_cast<std::size_t>(k) ||
+          preview.source_modes[k].size() != count || preview.source_modes[k][j] != static_cast<int>(IntervalSourceMode::BevObserved))) {
+          result.status = "soft corridors require observed road, not nominal fallback"; return result;
+        }
+        const Eigen::Vector2d axis(-std::sin(preview.psirk[k]), std::cos(preview.psirk[k]));
+        const auto & a = preview.road_pmk[k][j]; const auto & b = preview.road_pMk[k][j];
+        const double lo = std::min(axis.dot(a), axis.dot(b)), hi = std::max(axis.dot(a), axis.dot(b));
+        const double pa = axis.dot(preview.pmk[k][j]), pb = axis.dot(preview.pMk[k][j]);
+        if (!finitePoint(a) || !finitePoint(b) || !std::isfinite(pa) || !std::isfinite(pb) ||
+          hi - lo <= 1e-8 || std::min(pa,pb) < lo - 1e-8 || std::max(pa,pb) > hi + 1e-8) {
+          result.status = "preferred interval must lie inside hard observed road"; return result;
+        }
+      }
+    }
+  }
+
+  upper_steering_rate::Settings rate_settings;
+  upper_steering_rate::Constraints rate_constraints;
+  upper_steering_rate::Feedback vehicle_feedback;
+  if (upper_max_steering_rate_radps_ > 0.0) {
+    result.steering_rate_limited = !upper_use_vehicle_rollout_;
+    upper_steering_rate::Feedback feedback;
+    {
+      std::lock_guard<std::mutex> lock(steering_state_mtx_);
+      feedback = steering_state_;
+    }
+    const double stamp = now().seconds();
+    if (!upper_steering_rate::fresh(feedback, stamp, upper_steering_state_timeout_sec_)) {
+      result.status = "upper steering rate: missing, stale or future steering estimate";
+      return result;
+    }
+    result.steering_anchor_rad = feedback.angle;
+    result.steering_anchor_stamp = feedback.stamp;
+    result.steering_anchor_age_sec = stamp - feedback.stamp;
+    vehicle_feedback = feedback;
+    if (upper_use_vehicle_rollout_ &&
+      (!feedback.vehicle_valid || feedback.delay > 1e-9 || feedback.offset > wheelbase_))
+    {result.status = "vehicle rollout requires complete zero-delay steering feedback"; return result;}
+    rate_settings = {upper_max_steering_rate_radps_, upper_prediction_dt_sec_, wheelbase_,
+      planning_speed_mps, a_max_mps2_*upper_prediction_dt_sec_,
+      max_steering_angle_rad_, feedback.angle};
+    auto constraint_settings = rate_settings;
+    // Leave small headroom for the geometric conversion of the linearized QP.
+    // Acceptance is still checked against the requested rate, without slack.
+    constraint_settings.rate_radps *= 0.98;
+    if (!upper_use_vehicle_rollout_) {
+      rate_constraints = upper_steering_rate::build(horizon, constraint_settings);
+    }
+    if (!rate_constraints.valid) {
+      result.status = "upper steering rate: " + rate_constraints.status; return result;
+    }
+  }
 
   Matrix<double> G(0.0, 2 * (horizon + 1), variable_count);
   for (int state_step = 1; state_step <= horizon; ++state_step) {
@@ -1962,50 +2304,11 @@ SdMapUpperPlannerNode::UpperSolveResult SdMapUpperPlannerNode::solveUpperMiqp(
     }
   }
 
-  for (int k = 1; k <= horizon; ++k) {
-    if (preview.Nck[static_cast<std::size_t>(k)] >= 2) {
-      result.branch_step = k;
-      break;
-    }
-  }
-  if (branch_turn_window_at_split_) {
-    // Anchor the relative-turn window at the first step where one observed arm continues into
-    // two or more arms. Candidates that do not continue the previous section (side remnants of an
-    // earlier junction) no longer capture the turn window.
-    const auto point_segment = [](const Eigen::Vector2d & p, const Eigen::Vector2d & q0,
-        const Eigen::Vector2d & q1) {
-        const Eigen::Vector2d d = q1 - q0;
-        const double l2 = d.squaredNorm();
-        const double u = l2 > 1e-12 ? clampd((p - q0).dot(d) / l2, 0.0, 1.0) : 0.0;
-        return (p - (q0 + u * d)).norm();
-      };
-    const auto segment_distance = [&point_segment](const Eigen::Vector2d & a0,
-        const Eigen::Vector2d & a1, const Eigen::Vector2d & b0, const Eigen::Vector2d & b1) {
-        return std::min(std::min(point_segment(a0, b0, b1), point_segment(a1, b0, b1)),
-          std::min(point_segment(b0, a0, a1), point_segment(b1, a0, a1)));
-      };
-    int split_step = -1;
-    for (int k = 1; k <= horizon && split_step < 0; ++k) {
-      const std::size_t sk = static_cast<std::size_t>(k);
-      const int previous_count = k == 1 ? 1 : preview.Nck[sk - 1];
-      for (int i = 0; i < previous_count && split_step < 0; ++i) {
-        const Eigen::Vector2d a0 = k == 1 ? Eigen::Vector2d::Zero() :
-          preview.pmk[sk - 1][static_cast<std::size_t>(i)];
-        const Eigen::Vector2d a1 = k == 1 ? Eigen::Vector2d::Zero() :
-          preview.pMk[sk - 1][static_cast<std::size_t>(i)];
-        int continuing = 0;
-        for (int j = 0; j < preview.Nck[sk]; ++j) {
-          if (segment_distance(a0, a1, preview.pmk[sk][static_cast<std::size_t>(j)],
-            preview.pMk[sk][static_cast<std::size_t>(j)]) <= branch_split_continuity_m_)
-          {
-            ++continuing;
-          }
-        }
-        if (continuing >= 2) {split_step = k;}
-      }
-    }
-    if (split_step >= 1) {result.branch_step = split_step;}
-  }
+  const auto branch = egocentric_planner_geometry::detectBranchWithContinuity(
+    preview.pmk, preview.pMk, preview.raw_lengths, branch_min_candidate_width_m_,
+    branch_require_count_increase_, branch_include_k0_transition_,
+    branch_use_split_continuity_, branch_split_continuity_m_);
+  result.branch_step = branch.turn_step;
 
   if (result.branch_step >= 1 && lambda_relative_turn_ > 0.0) {
     const int turn_start = std::max(1, result.branch_step - turn_preview_steps_);
@@ -2052,6 +2355,13 @@ SdMapUpperPlannerNode::UpperSolveResult SdMapUpperPlannerNode::solveUpperMiqp(
     }
   }
 
+  if (soft) {
+    for (int k = 0; k < 2 * horizon; ++k) {
+      hessian[input_count+k][input_count+k] += upper_corridor_soft_quadratic_weight_;
+      linear_term[input_count+k] += upper_corridor_soft_linear_weight_;
+    }
+  }
+
   for (int row = 0; row < variable_count; ++row) {
     for (int column = row + 1; column < variable_count; ++column) {
       const double symmetric = 0.5 * (hessian[row][column] + hessian[column][row]);
@@ -2059,7 +2369,7 @@ SdMapUpperPlannerNode::UpperSolveResult SdMapUpperPlannerNode::solveUpperMiqp(
       hessian[column][row] = symmetric;
     }
     hessian[row][row] += miqp_diagonal_regularization_;
-    if (row >= input_count) {
+    if (row >= continuous_count) {
       // The selector constraint below requires at least one corridor.  Since
       // selecting another corridor can only add restrictions, this positive
       // cost makes the optimum use one selector without a one-hot equality.
@@ -2067,15 +2377,15 @@ SdMapUpperPlannerNode::UpperSolveResult SdMapUpperPlannerNode::solveUpperMiqp(
     }
   }
 
-  const int lane_rows = 2 * binary_count + horizon;
+  const int lane_rows = (soft ? 4 : 2) * binary_count + horizon + (soft ? 2 * horizon : 0);
   const auto skip_lane = [&](int k, int candidate) {
       if (guard_side_boundary_terminal_loss_ && preview.side_boundary_tail_start >= 2 &&
         k >= preview.side_boundary_tail_start) {return true;}
-      return skip_front_clipped_k1_lane_constraints_ && k == 1 && candidate >= 0 &&
+      return !upper_soft_corridor_constraints_ && skip_front_clipped_k1_lane_constraints_ && k == 1 && candidate >= 0 &&
              static_cast<std::size_t>(candidate) < preview.k1_lane_constraint_excluded.size() &&
              preview.k1_lane_constraint_excluded[static_cast<std::size_t>(candidate)];
     };
-  const int input_rows = 4 * horizon;
+  const int input_rows = 4 * horizon + static_cast<int>(rate_constraints.rows.size());
   Matrix<double> inequality(0.0, lane_rows + input_rows, variable_count);
   Vector<double> inequality_bound(0.0, lane_rows + input_rows);
   int row = 0;
@@ -2088,12 +2398,12 @@ SdMapUpperPlannerNode::UpperSolveResult SdMapUpperPlannerNode::solveUpperMiqp(
     for (int candidate = 0;
       candidate < preview.Nck[static_cast<std::size_t>(k)]; ++candidate)
     {
-      double lower = axis.dot(
-        preview.pmk[static_cast<std::size_t>(k)][static_cast<std::size_t>(candidate)]);
-      double upper = axis.dot(
-        preview.pMk[static_cast<std::size_t>(k)][static_cast<std::size_t>(candidate)]);
+      const auto & hard_starts = soft ? preview.road_pmk : preview.pmk;
+      const auto & hard_ends = soft ? preview.road_pMk : preview.pMk;
+      double lower = axis.dot(hard_starts[k][candidate]);
+      double upper = axis.dot(hard_ends[k][candidate]);
       if (lower > upper) {std::swap(lower, upper);}
-      const int binary_index = input_count +
+      const int binary_index = continuous_count +
         binary_offsets[static_cast<std::size_t>(k - 1)] + candidate;
 
       if (skip_lane(k, candidate)) {
@@ -2102,6 +2412,7 @@ SdMapUpperPlannerNode::UpperSolveResult SdMapUpperPlannerNode::solveUpperMiqp(
         inequality_bound[row++] = 1.0;
         inequality[row][binary_index] = 1.0;
         inequality_bound[row++] = 1.0;
+        if (soft) {inequality_bound[row++] = 1.0; inequality_bound[row++] = 1.0;}
         continue;
       }
       for (int column = 0; column < input_count; ++column) {
@@ -2117,6 +2428,19 @@ SdMapUpperPlannerNode::UpperSolveResult SdMapUpperPlannerNode::solveUpperMiqp(
       }
       inequality[row][binary_index] = miqp_big_m_;
       inequality_bound[row++] = miqp_big_m_ - lower + reference_projection;
+      if (soft) {
+        const double a = axis.dot(preview.pmk[k][candidate]), b = axis.dot(preview.pMk[k][candidate]);
+        for (int column = 0; column < input_count; ++column) {
+          const double z = axis.x()*G[2*k][column]+axis.y()*G[2*k+1][column];
+          inequality[row][column] = z; inequality[row+1][column] = -z;
+        }
+        inequality[row][input_count+2*(k-1)] = -1.0;
+        inequality[row][binary_index] = miqp_big_m_;
+        inequality_bound[row++] = miqp_big_m_ + std::max(a,b) - reference_projection;
+        inequality[row][input_count+2*(k-1)+1] = -1.0;
+        inequality[row][binary_index] = miqp_big_m_;
+        inequality_bound[row++] = miqp_big_m_ - std::min(a,b) + reference_projection;
+      }
     }
 
     // DAQP's branch-and-bound becomes singular when the one-hot selector is
@@ -2126,10 +2450,16 @@ SdMapUpperPlannerNode::UpperSolveResult SdMapUpperPlannerNode::solveUpperMiqp(
     for (int candidate = 0;
       candidate < preview.Nck[static_cast<std::size_t>(k)]; ++candidate)
     {
-      inequality[row][input_count +
+      inequality[row][continuous_count +
         binary_offsets[static_cast<std::size_t>(k - 1)] + candidate] = -1.0;
     }
     inequality_bound[row++] = -1.0;
+  }
+
+  if (soft) {
+    for (int j = input_count; j < continuous_count; ++j) {
+      inequality[row][j] = -1.0; inequality_bound[row++] = 0.0;
+    }
   }
 
   const double speed = std::max(0.0, planning_speed_mps);
@@ -2166,6 +2496,13 @@ SdMapUpperPlannerNode::UpperSolveResult SdMapUpperPlannerNode::solveUpperMiqp(
     ++row;
   }
 
+  for (const auto & rate_row : rate_constraints.rows) {
+    for (int column = 0; column < input_count; ++column) {
+      inequality[row][column] = rate_row.coefficients[static_cast<std::size_t>(column)];
+    }
+    finalize_input_row(row, rate_row.bound);
+    ++row;
+  }
   if (row != lane_rows + input_rows) {
     result.status = "inequality row mismatch";
     return result;
@@ -2178,8 +2515,7 @@ SdMapUpperPlannerNode::UpperSolveResult SdMapUpperPlannerNode::solveUpperMiqp(
   std::size_t combination_count = 1U;
   bool combination_count_supported = true;
   for (int k = 1; k <= horizon; ++k) {
-    const std::size_t candidates = static_cast<std::size_t>(
-      preview.Nck[static_cast<std::size_t>(k)]);
+    const std::size_t candidates = eligible_candidates[k].size();
     if (candidates == 0U ||
       combination_count > kMaxDirectCorridorCombinations / candidates)
     {
@@ -2190,7 +2526,7 @@ SdMapUpperPlannerNode::UpperSolveResult SdMapUpperPlannerNode::solveUpperMiqp(
   }
 
   // The usual short-horizon problem has only a handful of corridor
-  // combinations (and exactly one when branch_step == -1). Solve those
+  // combinations (exactly one when every stage has one road candidate). Solve those
   // combinations as ordinary continuous QPs. This avoids sending forced
   // selector variables through DAQP branch-and-bound and also makes an
   // outright MIQP "infeasible" result unable to bypass the direct solver.
@@ -2220,8 +2556,18 @@ SdMapUpperPlannerNode::UpperSolveResult SdMapUpperPlannerNode::solveUpperMiqp(
       result.status = "DAQP failed to set the objective";
       return result;
     }
-    for (int index = input_count; index < variable_count; ++index) {
+    for (int index = continuous_count; index < variable_count; ++index) {
       solver.set_binary_var(decision[index]);
+    }
+    // Preserve original observation indices for B/debugging, but exclude
+    // narrow candidates from the actual feasible selector set.
+    for (int k = 1; k <= horizon; ++k) {
+      for (int j = 0; j < preview.Nck[k]; ++j) {
+        if (!roadCandidateWidthEligible(preview, k, j)) {
+          const int index = continuous_count + binary_offsets[k - 1] + j;
+          solver.set_var_bounds(index, 0.0, 0.0);
+        }
+      }
     }
 
     objective = timed_solve(solver, argument);
@@ -2242,7 +2588,7 @@ SdMapUpperPlannerNode::UpperSolveResult SdMapUpperPlannerNode::solveUpperMiqp(
 
     feasibility = miqp_solution_validation::evaluate(
       inequality, inequality_bound, equality, equality_bound, argument,
-      static_cast<std::size_t>(input_count), miqp_feasibility_tolerance_);
+      static_cast<std::size_t>(continuous_count), miqp_feasibility_tolerance_);
   }
 
   // DAQP can return integral selectors while the continuous vector retained
@@ -2269,7 +2615,7 @@ SdMapUpperPlannerNode::UpperSolveResult SdMapUpperPlannerNode::solveUpperMiqp(
         polishing_solver.set_q0_vector(linear_term);
 
       if (objective_added) {
-        for (int index = input_count; index < variable_count; ++index) {
+        for (int index = continuous_count; index < variable_count; ++index) {
           const double fixed_value = argument[index] >= 0.5 ? 1.0 : 0.0;
           polishing_solver.set_var_bounds(index, fixed_value, fixed_value);
         }
@@ -2282,7 +2628,7 @@ SdMapUpperPlannerNode::UpperSolveResult SdMapUpperPlannerNode::solveUpperMiqp(
         {
           const auto polished_feasibility = miqp_solution_validation::evaluate(
             inequality, inequality_bound, equality, equality_bound, polished_argument,
-            static_cast<std::size_t>(input_count), miqp_feasibility_tolerance_);
+            static_cast<std::size_t>(continuous_count), miqp_feasibility_tolerance_);
           if (polished_feasibility.valid) {
             argument = polished_argument;
             objective = polished_objective;
@@ -2297,37 +2643,50 @@ SdMapUpperPlannerNode::UpperSolveResult SdMapUpperPlannerNode::solveUpperMiqp(
   // Enumerating the supported Cartesian product removes both the selector
   // variables and Big-M=100 from every subproblem. Each returned solution is
   // independently checked before it is reconstructed in the full model.
-  if (combination_count_supported) {
-      Matrix<double> direct_hessian(0.0, input_count, input_count);
-      Vector<double> direct_linear(0.0, input_count);
-      for (int r = 0; r < input_count; ++r) {
+  const bool recover_soft_selectors = soft && !combination_count_supported &&
+    !feasibility.valid && feasibility.finite &&
+    feasibility.max_binary_violation <= miqp_feasibility_tolerance_;
+  if (combination_count_supported || recover_soft_selectors) {
+      Matrix<double> direct_hessian(0.0, continuous_count, continuous_count);
+      Vector<double> direct_linear(0.0, continuous_count);
+      for (int r = 0; r < continuous_count; ++r) {
         direct_linear[r] = linear_term[r];
-        for (int c = 0; c < input_count; ++c) {
+        for (int c = 0; c < continuous_count; ++c) {
           direct_hessian[r][c] = hessian[r][c];
         }
       }
 
-      const int direct_lane_rows = 2 * horizon;
+      const int direct_lane_rows = (soft ? 6 : 2) * horizon;
       const int direct_row_count = direct_lane_rows + input_rows;
-      Matrix<double> direct_equality(0.0, 0, input_count);
+      Matrix<double> direct_equality(0.0, 0, continuous_count);
       Vector<double> direct_equality_bound(0.0, 0);
       Vector<double> best_direct_argument;
       std::vector<int> best_candidates(static_cast<std::size_t>(horizon + 1), -1);
       double best_direct_objective = std::numeric_limits<double>::infinity();
 
       for (std::size_t combination = 0U;
-        combination < combination_count; ++combination)
+        combination < (combination_count_supported ? combination_count : 1U); ++combination)
       {
         std::size_t code = combination;
         std::vector<int> selected(static_cast<std::size_t>(horizon + 1), -1);
         for (int k = 1; k <= horizon; ++k) {
           const int candidates = preview.Nck[static_cast<std::size_t>(k)];
-          selected[static_cast<std::size_t>(k)] =
-            static_cast<int>(code % static_cast<std::size_t>(candidates));
-          code /= static_cast<std::size_t>(candidates);
+          if (combination_count_supported) {
+            const auto & eligible = eligible_candidates[k];
+            selected[static_cast<std::size_t>(k)] = eligible[code % eligible.size()];
+            code /= eligible.size();
+          } else {
+            // Remove fixed binary variables and Big-M rows completely when
+            // recovering a stale MIQP relaxation with continuous soft slack.
+            for (int j=0;j<candidates;++j) {
+              if(roadCandidateWidthEligible(preview,k,j) &&
+                argument[continuous_count+binary_offsets[k-1]+j]>.5) {selected[k]=j;break;}
+            }
+          }
         }
+        if (std::any_of(selected.begin()+1,selected.end(),[](int j){return j<0;})) {continue;}
 
-        Matrix<double> direct_inequality(0.0, direct_row_count, input_count);
+        Matrix<double> direct_inequality(0.0, direct_row_count, continuous_count);
         Vector<double> direct_bound(0.0, direct_row_count);
         int direct_row = 0;
         for (int k = 1; k <= horizon; ++k) {
@@ -2337,13 +2696,14 @@ SdMapUpperPlannerNode::UpperSolveResult SdMapUpperPlannerNode::solveUpperMiqp(
             // DAQP ignores satisfied zero rows (0 <= 1).
             direct_bound[direct_row++] = 1.0;
             direct_bound[direct_row++] = 1.0;
+            if (soft) {direct_bound[direct_row++]=1.0; direct_bound[direct_row++]=1.0;}
             continue;
           }
           const double heading = preview.psirk[step];
           const Eigen::Vector2d axis(-std::sin(heading), std::cos(heading));
           const double reference_projection = axis.dot(preview.prk[step]);
-          double lower = axis.dot(preview.pmk[step][candidate]);
-          double upper = axis.dot(preview.pMk[step][candidate]);
+          double lower = axis.dot((soft ? preview.road_pmk : preview.pmk)[step][candidate]);
+          double upper = axis.dot((soft ? preview.road_pMk : preview.pMk)[step][candidate]);
           if (lower > upper) {std::swap(lower, upper);}
 
           for (int column = 0; column < input_count; ++column) {
@@ -2354,6 +2714,22 @@ SdMapUpperPlannerNode::UpperSolveResult SdMapUpperPlannerNode::solveUpperMiqp(
           }
           direct_bound[direct_row++] = upper - reference_projection;
           direct_bound[direct_row++] = -lower + reference_projection;
+          if (soft) {
+            const double a=axis.dot(preview.pmk[step][candidate]), b=axis.dot(preview.pMk[step][candidate]);
+            for(int column=0;column<input_count;++column) {
+              const double z=axis.x()*G[2*k][column]+axis.y()*G[2*k+1][column];
+              direct_inequality[direct_row][column]=z; direct_inequality[direct_row+1][column]=-z;
+            }
+            direct_inequality[direct_row][input_count+2*(k-1)]=-1;
+            direct_bound[direct_row++]=std::max(a,b)-reference_projection;
+            direct_inequality[direct_row][input_count+2*(k-1)+1]=-1;
+            direct_bound[direct_row++]=-std::min(a,b)+reference_projection;
+          }
+        }
+        if (soft) {
+          for(int j=input_count;j<continuous_count;++j) {
+            direct_inequality[direct_row][j]=-1; direct_bound[direct_row++]=0;
+          }
         }
         for (int input_row = 0; input_row < input_rows; ++input_row) {
           for (int column = 0; column < input_count; ++column) {
@@ -2365,7 +2741,7 @@ SdMapUpperPlannerNode::UpperSolveResult SdMapUpperPlannerNode::solveUpperMiqp(
 
         QuadraticProblem direct_solver(false);
         Variable * direct_variable =
-          direct_solver.vector_variable(input_count, "upper_direct_corridor");
+          direct_solver.vector_variable(continuous_count, "upper_direct_corridor");
         if (!direct_solver.add_variable(direct_variable)) {continue;}
         const Var direct_decision = direct_solver.get_variable(direct_variable);
         const Var direct_main = direct_solver.get_main_variable();
@@ -2383,13 +2759,13 @@ SdMapUpperPlannerNode::UpperSolveResult SdMapUpperPlannerNode::solveUpperMiqp(
         const double direct_objective = timed_solve(direct_solver, direct_argument);
         ++result.direct_corridor_combinations;
         if (!std::isfinite(direct_objective) ||
-          direct_argument.size() < static_cast<unsigned int>(input_count))
+          direct_argument.size() < static_cast<unsigned int>(continuous_count))
         {
           continue;
         }
         const auto direct_feasibility = miqp_solution_validation::evaluate(
           direct_inequality, direct_bound, direct_equality, direct_equality_bound,
-          direct_argument, static_cast<std::size_t>(input_count),
+          direct_argument, static_cast<std::size_t>(continuous_count),
           miqp_feasibility_tolerance_);
         if (!direct_feasibility.valid || direct_objective >= best_direct_objective) {
           continue;
@@ -2400,21 +2776,21 @@ SdMapUpperPlannerNode::UpperSolveResult SdMapUpperPlannerNode::solveUpperMiqp(
       }
 
       if (std::isfinite(best_direct_objective) &&
-        best_direct_argument.size() >= static_cast<unsigned int>(input_count))
+        best_direct_argument.size() >= static_cast<unsigned int>(continuous_count))
       {
         Vector<double> reconstructed_argument(0.0, variable_count);
-        for (int index = 0; index < input_count; ++index) {
+        for (int index = 0; index < continuous_count; ++index) {
           reconstructed_argument[index] = best_direct_argument[index];
         }
         for (int k = 1; k <= horizon; ++k) {
           const int selected = best_candidates[static_cast<std::size_t>(k)];
-          reconstructed_argument[input_count +
+          reconstructed_argument[continuous_count +
             binary_offsets[static_cast<std::size_t>(k - 1)] + selected] = 1.0;
         }
 
         const auto reconstructed_feasibility = miqp_solution_validation::evaluate(
           inequality, inequality_bound, equality, equality_bound,
-          reconstructed_argument, static_cast<std::size_t>(input_count),
+          reconstructed_argument, static_cast<std::size_t>(continuous_count),
           miqp_feasibility_tolerance_);
         if (reconstructed_feasibility.valid) {
           argument = reconstructed_argument;
@@ -2481,14 +2857,42 @@ SdMapUpperPlannerNode::UpperSolveResult SdMapUpperPlannerNode::solveUpperMiqp(
     }
   }
 
+  if (result.steering_rate_limited) {
+    const auto report = upper_steering_rate::evaluate(result.actual_input, rate_settings);
+    result.model_steering_rad = report.angles;
+    result.max_model_steering_rate_radps = report.max_rate;
+    // The QP uses a linearized position model. Independently check the actual
+    // published polyline's equivalent bicycle steering as well; a valid QP
+    // must not hide a sharp geometric turn behind linearization error.
+    const auto geometry = upper_steering_rate::evaluateGeometry(result.predicted_body, rate_settings);
+    result.geometric_steering_rad = geometry.angles;
+    result.max_geometric_steering_rate_radps = geometry.max_rate;
+    if (!report.valid || !geometry.valid) {
+      std::ostringstream message;
+      message << "upper steering rate postcheck rejected: model=" << report.max_rate <<
+        " geometry=" << geometry.max_rate << " limit=" << upper_max_steering_rate_radps_;
+      result.status = message.str(); return result;
+    }
+    result.steering_anchor_age_sec = now().seconds()-result.steering_anchor_stamp;
+    if (result.steering_anchor_age_sec < 0.0 ||
+      result.steering_anchor_age_sec > upper_steering_state_timeout_sec_)
+    {
+      result.status = "upper steering estimate expired during solve"; return result;
+    }
+  }
+
   result.selected_corridors.assign(static_cast<std::size_t>(horizon + 1), -1);
   for (int k = 1; k <= horizon; ++k) {
     for (int candidate = 0;
       candidate < preview.Nck[static_cast<std::size_t>(k)]; ++candidate)
     {
-      const int index = input_count +
+      const int index = continuous_count +
         binary_offsets[static_cast<std::size_t>(k - 1)] + candidate;
       if (argument[index] > 0.5) {
+        if (!roadCandidateWidthEligible(preview, k, candidate)) {
+          result.status = "excluded narrow road candidate selected";
+          return result;
+        }
         result.selected_corridors[static_cast<std::size_t>(k)] = candidate;
         break;
       }
@@ -2533,6 +2937,89 @@ SdMapUpperPlannerNode::UpperSolveResult SdMapUpperPlannerNode::solveUpperMiqp(
   }
 
   result.objective = objective;
+  if (upper_use_vehicle_rollout_) {
+    upper_vehicle_rollout::Problem physical;
+    auto & settings = physical.settings;
+    settings.dt = upper_prediction_dt_sec_; settings.integration_dt = upper_vehicle_integration_dt_sec_;
+    settings.wheelbase = wheelbase_; settings.offset = vehicle_feedback.offset;
+    // Preserve the upper planner's nominal-speed convention and optimized dv.
+    settings.speed = planning_speed_mps; settings.max_acceleration = a_max_mps2_;
+    settings.max_angle = max_steering_angle_rad_; settings.max_rate = upper_max_steering_rate_radps_;
+    settings.initial_steering = vehicle_feedback.angle; settings.initial_command = vehicle_feedback.command;
+    settings.tau = vehicle_feedback.tau; settings.actuator_enabled = vehicle_feedback.actuator_enabled;
+    settings.iterations = upper_vehicle_rollout_max_iterations_; settings.budget_ms = upper_vehicle_rollout_budget_ms_;
+    physical.soft_linear_weight = upper_corridor_soft_linear_weight_;
+    physical.soft_quadratic_weight = upper_corridor_soft_quadratic_weight_;
+    physical.position_weights = position_weights;
+    physical.speed_weight = normalized_dv_weight; physical.heading_increment_weight = normalized_dpsi_weight;
+    physical.steering_change_weight = upper_r_steering_delta_;
+    for (int k = 0; k <= horizon; ++k) {
+      physical.position_targets.push_back({preview.position_targets[k].x(), preview.position_targets[k].y()});
+      physical.seed_path.push_back({result.predicted_body[k].x(), result.predicted_body[k].y()});
+      if (k == horizon) {continue;}
+      physical.reference_headings.push_back(preview.psirk[k]);
+      physical.seed_speed_increments.push_back(result.actual_input[2*k]);
+      const int j = result.selected_corridors[k+1];
+      const Eigen::Vector2d axis(-std::sin(preview.psirk[k+1]), std::cos(preview.psirk[k+1]));
+      const double a = axis.dot((soft ? preview.road_pmk : preview.pmk)[k+1][j]);
+      const double b = axis.dot((soft ? preview.road_pMk : preview.pMk)[k+1][j]);
+      physical.corridors.push_back({{axis.x(), axis.y()}, std::min(a,b), std::max(a,b), !skip_lane(k+1,j)});
+      if (soft) {
+        const double pa=axis.dot(preview.pmk[k+1][j]), pb=axis.dot(preview.pMk[k+1][j]);
+        physical.preferred_corridors.push_back({{axis.x(),axis.y()},std::min(pa,pb),std::max(pa,pb),!skip_lane(k+1,j)});
+      }
+    }
+    for (std::size_t i = 0; i < result.turn_window_steps.size(); ++i) {
+      physical.turn_targets.push_back({result.turn_window_steps[i],result.turn_target_rad[i],turn_base_weight*result.turn_stage_weights[i]});
+    }
+    result.vehicle_rollout = upper_vehicle_rollout::refine(physical);
+    result.solver_only_time_ms += result.vehicle_rollout.solver_ms;
+    result.solve_time_ms = std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-started).count();
+    if (!result.vehicle_rollout.valid) {result.status = result.vehicle_rollout.status; return result;}
+    result.steering_anchor_age_sec = now().seconds()-vehicle_feedback.stamp;
+    if (result.steering_anchor_age_sec < 0 || result.steering_anchor_age_sec > upper_steering_state_timeout_sec_) {
+      result.status = "vehicle rollout steering feedback expired during solve"; return result;
+    }
+    result.predicted_body.clear();
+    for (int index : result.vehicle_rollout.trajectory.coarse_indices) {
+      const auto & x = result.vehicle_rollout.trajectory.states[index]; result.predicted_body.push_back({x.x,x.y});
+    }
+    double previous_course = 0.0;
+    for (int k = 0; k < horizon; ++k) {
+      const Eigen::Vector2d d = result.predicted_body[k+1]-result.predicted_body[k];
+      const double course = std::atan2(d.y(),d.x());
+      result.actual_input[2*k] = result.vehicle_rollout.inputs[2*k];
+      result.actual_input[2*k+1] = wrapToPi(course-previous_course);
+      result.correction_input[2*k] = result.actual_input[2*k];
+      result.correction_input[2*k+1] = wrapToPi(result.actual_input[2*k+1]-result.nominal_input[2*k+1]);
+      result.psi_pred_cost_rad[k] = wrapToPi(course-preview.psirk[k]);
+      result.psi_pred_model_rad[k] = course; previous_course = course;
+    }
+    result.position_cost = result.vehicle_rollout.position_cost; result.input_cost = result.vehicle_rollout.input_cost;
+    result.turn_cost = result.vehicle_rollout.turn_cost; result.objective = result.vehicle_rollout.objective;
+    result.terminal_position_error = (result.predicted_body.back()-preview.position_targets.back()).norm();
+  }
+  if (soft) {
+    result.preferred_corridor_violations_m.assign(horizon, 0.0);
+    for(int k=1;k<=horizon;++k) {
+      const int j=result.selected_corridors[k];
+      if(j<0) {result.status="missing selected road corridor";return result;}
+      if(skip_lane(k,j)) {continue;}
+      const Eigen::Vector2d axis(-std::sin(preview.psirk[k]),std::cos(preview.psirk[k]));
+      const double z=axis.dot(result.predicted_body[k]);
+      const double a=axis.dot(preview.road_pmk[k][j]), b=axis.dot(preview.road_pMk[k][j]);
+      const double hard_violation=std::max({0.0,std::min(a,b)-z,z-std::max(a,b)});
+      result.max_hard_road_violation_m=std::max(result.max_hard_road_violation_m,hard_violation);
+      const double pa=axis.dot(preview.pmk[k][j]), pb=axis.dot(preview.pMk[k][j]);
+      const double v=std::max({0.0,std::min(pa,pb)-z,z-std::max(pa,pb)});
+      result.preferred_corridor_violations_m[k-1]=v;
+      result.max_preferred_corridor_violation_m=std::max(result.max_preferred_corridor_violation_m,v);
+      result.preferred_corridor_cost+=upper_corridor_soft_linear_weight_*v+.5*upper_corridor_soft_quadratic_weight_*v*v;
+    }
+    if(result.max_hard_road_violation_m>miqp_feasibility_tolerance_) {
+      result.status="hard observed road postcheck rejected";return result;
+    }
+  }
   result.status = "solved";
   result.valid = true;
   return result;
@@ -2726,6 +3213,42 @@ void SdMapUpperPlannerNode::publishIntervalDebug(
   state_message.layout.dim[0].size = static_cast<uint32_t>(state_message.data.size());
   state_message.layout.dim[0].stride = static_cast<uint32_t>(state_message.data.size());
   interval_state_pub_->publish(state_message);
+
+  std_msgs::msg::Float64MultiArray b_samples;
+  for (std::size_t i = 0; i < preview.b_probes.size(); ++i) {
+    const auto & probe = preview.b_probes[i];
+    const int sample_index = preview.b_original_sample_count + static_cast<int>(i);
+    const auto containing = std::count_if(
+      probe.observations.begin(), probe.observations.end(),
+      [](const IntervalObservation & obs) {return obs.reference_inside;});
+    for (std::size_t j = 0; j < probe.observations.size(); ++j) {
+      const auto & obs = probe.observations[j];
+      const bool eligible = containing == 1 && obs.reference_inside &&
+        obs.start_boundary_observed && obs.end_boundary_observed &&
+        !obs.nominal_fallback && std::isfinite(obs.length) && obs.length > 0.0;
+      const std::vector<double> row{
+        state_message.data[0], static_cast<double>(sample_index),
+        static_cast<double>(probe.preceding_step), probe.arc_length_m,
+        probe.point_body.x(), probe.point_body.y(), probe.heading_rad,
+        static_cast<double>(j), obs.length,
+        obs.start_boundary_observed ? 1.0 : 0.0, obs.end_boundary_observed ? 1.0 : 0.0,
+        obs.reference_inside ? 1.0 : 0.0, eligible ? 1.0 : 0.0,
+        update.candidate_step == sample_index && update.candidate_interval == static_cast<int>(j) ?
+        1.0 : 0.0};
+      b_samples.data.insert(b_samples.data.end(), row.begin(), row.end());
+    }
+  }
+  b_samples.layout.dim.resize(2);
+  b_samples.layout.dim[0].label = "B_only_intervals";
+  b_samples.layout.dim[0].size = static_cast<uint32_t>(b_samples.data.size() / 14U);
+  b_samples.layout.dim[0].stride = static_cast<uint32_t>(b_samples.data.size());
+  b_samples.layout.dim[1].label =
+    "stamp,sample,parent_step,s,x_body,y_body,heading,candidate,raw,start_observed,"
+    "end_observed,inside,eligible,selected";
+  b_samples.layout.dim[1].size = 14U;
+  b_samples.layout.dim[1].stride = 14U;
+  interval_b_samples_pub_->publish(b_samples);
+
 }
 
 void SdMapUpperPlannerNode::publishBranchEvent(
@@ -2757,6 +3280,11 @@ void SdMapUpperPlannerNode::publishBranchEvent(
       if (branch_step < 0 && preview->Nck[k] >= 2) {branch_step = static_cast<int>(k);}
     }
   }
+  const auto filtered_branch = preview ? egocentric_planner_geometry::detectBranchWithContinuity(
+    preview->pmk, preview->pMk, preview->raw_lengths, branch_min_candidate_width_m_,
+    branch_require_count_increase_, branch_include_k0_transition_,
+    branch_use_split_continuity_, branch_split_continuity_m_) :
+    egocentric_planner_geometry::BranchDetection{};
   const bool solver_called = solve && std::isfinite(solve->solver_only_time_ms);
   const bool branch_failure = branch_step >= 1 && solve && !solve->valid &&
     (reason == "solver_rejected" || reason == "solver_setup_failed");
@@ -2772,6 +3300,14 @@ void SdMapUpperPlannerNode::publishBranchEvent(
       << ",\"wp0\":" << wp0 << ",\"wp1\":" << wp1
       << ",\"horizon\":" << (preview ? preview->N_pred : 0)
       << ",\"branch_step\":" << branch_step << ",\"max_candidates\":" << max_candidates
+      << ",\"branch_min_candidate_width_m\":" << branchJsonNumber(branch_min_candidate_width_m_)
+      << ",\"road_candidate_min_width_m\":" << branchJsonNumber(road_candidate_min_width_m_)
+      << ",\"branch_require_count_increase\":" << (branch_require_count_increase_ ? "true" : "false")
+      << ",\"branch_include_k0_transition\":" << (branch_include_k0_transition_ ? "true" : "false")
+      << ",\"branch_use_split_continuity\":" << (branch_use_split_continuity_ ? "true" : "false")
+      << ",\"branch_split_continuity_m\":" << branchJsonNumber(branch_split_continuity_m_)
+      << ",\"filtered_branch_step\":" << filtered_branch.turn_step
+      << ",\"turn_branch_step\":" << (solve ? solve->branch_step : -1)
       << ",\"branch_failure\":" << (branch_failure ? "true" : "false")
       << ",\"valid_plan\":" << (published ? "true" : "false")
       << ",\"solver_valid\":" << (solve && solve->valid ? "true" : "false")
@@ -2781,16 +3317,93 @@ void SdMapUpperPlannerNode::publishBranchEvent(
       << ",\"status\":" << branchJsonString(status)
       << ",\"retained_previous_path\":" << (retained ? "true" : "false")
       << ",\"retained_path_age_sec\":" << branchJsonNumber(retained ? emitted-diagnostic_last_path_stamp_ : NAN)
-      << ",\"selected_corridors\":[";
+      << ",\"steering_rate_limit_radps\":" << branchJsonNumber(upper_max_steering_rate_radps_)
+      << ",\"steering_anchor_rad\":" << branchJsonNumber(solve ? solve->steering_anchor_rad : NAN)
+      << ",\"steering_anchor_stamp\":" << branchJsonNumber(solve ? solve->steering_anchor_stamp : NAN)
+      << ",\"steering_anchor_age_sec\":" << branchJsonNumber(solve ? solve->steering_anchor_age_sec : NAN)
+      << ",\"max_model_steering_rate_radps\":" << branchJsonNumber(solve ? solve->max_model_steering_rate_radps : NAN)
+      << ",\"max_geometric_steering_rate_radps\":" << branchJsonNumber(solve ? solve->max_geometric_steering_rate_radps : NAN);
+  auto angles = [&](const std::vector<double> & values) {
+      out << '[';
+      for (std::size_t k = 0; k < values.size(); ++k) {
+        if (k) {out << ',';} out << branchJsonNumber(values[k]);
+      }
+      out << ']';
+    };
+  out << ",\"model_steering_rad\":";
+  angles(solve ? solve->model_steering_rad : std::vector<double>{});
+  out << ",\"geometric_steering_rad\":";
+  angles(solve ? solve->geometric_steering_rad : std::vector<double>{});
+  out << ",\"soft_corridor_constraints\":" << (upper_soft_corridor_constraints_ ? "true" : "false")
+      << ",\"corridor_soft_linear_weight\":" << branchJsonNumber(upper_corridor_soft_linear_weight_)
+      << ",\"corridor_soft_quadratic_weight\":" << branchJsonNumber(upper_corridor_soft_quadratic_weight_)
+      << ",\"preferred_corridor_cost\":" << branchJsonNumber(solve && solve->valid ? solve->preferred_corridor_cost : NAN)
+      << ",\"max_preferred_corridor_violation_m\":" << branchJsonNumber(solve && solve->valid ? solve->max_preferred_corridor_violation_m : NAN)
+      << ",\"max_hard_road_violation_m\":" << branchJsonNumber(solve && solve->valid ? solve->max_hard_road_violation_m : NAN)
+      << ",\"preferred_corridor_violations_m\":";
+  angles(solve ? solve->preferred_corridor_violations_m : std::vector<double>{});
+  out << ",\"k1_extra_centering_disabled\":" << (preview_interval_k1_disable_extra_centering_ ? "true" : "false");
+  out << ",\"vehicle_rollout_enabled\":" << (upper_use_vehicle_rollout_ ? "true" : "false")
+      << ",\"steering_change_weight\":" << branchJsonNumber(upper_r_steering_delta_)
+      << ",\"steering_change_cost\":" << branchJsonNumber(
+        solve && solve->valid && solve->vehicle_rollout.valid ?
+        solve->vehicle_rollout.steering_change_cost : NAN)
+      << ",\"vehicle_rollout_valid\":" << (solve && solve->vehicle_rollout.valid ? "true" : "false")
+      << ",\"vehicle_rollout_status\":" << branchJsonString(solve ? solve->vehicle_rollout.status : "")
+      << ",\"vehicle_rollout_ms\":" << branchJsonNumber(solve ? solve->vehicle_rollout.elapsed_ms : NAN)
+      << ",\"vehicle_initial_course_error_rad\":" << branchJsonNumber(solve ? solve->vehicle_rollout.initial_course_error_rad : NAN)
+      << ",\"vehicle_max_command_rate_radps\":" << branchJsonNumber(solve ? solve->vehicle_rollout.trajectory.max_command_rate : NAN)
+      << ",\"vehicle_max_effective_rate_radps\":" << branchJsonNumber(solve ? solve->vehicle_rollout.trajectory.max_effective_rate : NAN);
+  out << ",\"vehicle_coarse_states\":[";
+  if (solve && solve->vehicle_rollout.valid) {
+    const auto & t = solve->vehicle_rollout.trajectory;
+    for (std::size_t k = 0; k < t.coarse_indices.size(); ++k) {
+      const int index = t.coarse_indices[k]; const auto & x = t.states[index];
+      const auto p = world({x.x,x.y});
+      if (k) {out << ',';}
+      out << '[' << branchJsonNumber(k*upper_prediction_dt_sec_) << ',' << branchJsonNumber(p.x()) << ','
+          << branchJsonNumber(p.y()) << ',' << branchJsonNumber(pose.yaw_rad+x.yaw) << ','
+          << branchJsonNumber(x.steering) << ',' << branchJsonNumber(x.speed) << ',' << branchJsonNumber(t.commands[index]) << ']';
+    }
+  }
+  out << ']';
+  out << ",\"selected_corridors\":[";
   if (solve) {
     for (std::size_t k = 0; k < solve->selected_corridors.size(); ++k) {
       if (k) {out << ',';} out << solve->selected_corridors[k];
     }
   }
+  out << "],\"branch_candidate_counts\":[";
+  for (std::size_t k = 0; k < filtered_branch.candidate_counts.size(); ++k) {
+    if (k) {out << ',';} out << filtered_branch.candidate_counts[k];
+  }
   out << "],\"candidate_counts\":[";
   if (preview) {
     for (std::size_t k = 0; k < preview->Nck.size(); ++k) {
       if (k) {out << ',';} out << preview->Nck[k];
+    }
+  }
+  out << "],\"optimization_candidate_counts\":[";
+  if (preview) {
+    for (std::size_t k = 0; k < preview->Nck.size(); ++k) {
+      if (k) {out << ',';}
+      int eligible = 0;
+      for (int j = 0; k > 0 && j < preview->Nck[k]; ++j) {
+        if (roadCandidateWidthEligible(*preview, static_cast<int>(k), j)) {++eligible;}
+      }
+      out << eligible;
+    }
+  }
+  out << "],\"optimization_candidate_eligible\":[";
+  if (preview) {
+    for (std::size_t k = 0; k < preview->Nck.size(); ++k) {
+      if (k) {out << ',';} out << '[';
+      for (int j = 0; j < preview->Nck[k]; ++j) {
+        if (j) {out << ',';}
+        out << (k > 0 && roadCandidateWidthEligible(*preview, static_cast<int>(k), j) ?
+          "true" : "false");
+      }
+      out << ']';
     }
   }
   out << "],\"k1_lane_constraint_excluded\":[";
@@ -2815,6 +3428,18 @@ void SdMapUpperPlannerNode::publishBranchEvent(
       }
     }
   }
+  out << "],\"road_intervals_world\":[";
+  first = true;
+  if (preview) {
+    for (std::size_t k = 1; k < preview->road_pmk.size(); ++k) {
+      for (std::size_t j = 0; j < preview->road_pmk[k].size(); ++j) {
+        if (!first) {out << ',';} first = false;
+        const auto a = world(preview->road_pmk[k][j]), b = world(preview->road_pMk[k][j]);
+        out << '[' << k << ',' << j << ',' << branchJsonNumber(a.x()) << ',' << branchJsonNumber(a.y())
+            << ',' << branchJsonNumber(b.x()) << ',' << branchJsonNumber(b.y()) << ']';
+      }
+    }
+  }
   out << "],\"preview_world\":";
   points(preview ? preview->prk : std::vector<Eigen::Vector2d>{}, true);
   out << ",\"planned_world\":";
@@ -2823,15 +3448,22 @@ void SdMapUpperPlannerNode::publishBranchEvent(
     (preview ? preview->side_boundary_tail_start : -1);
   out << ",\"side_boundary_side\":" << (preview ? preview->side_boundary_side : 0);
   out << ",\"published_world\":";
-  points(preview && solve ? publishablePrediction(*preview, *solve) :
-    std::vector<Eigen::Vector2d>{}, true);
+  auto reference = preview && solve ? publishablePrediction(*preview,*solve) : std::vector<Eigen::Vector2d>{};
+  if (!reference.empty() && solve->vehicle_rollout.valid) {
+    const int last = solve->vehicle_rollout.trajectory.coarse_indices[reference.size()-1];
+    reference.clear();
+    for (int k = 0; k <= last; ++k) {
+      const auto & x = solve->vehicle_rollout.trajectory.states[k]; reference.push_back({x.x,x.y});
+    }
+  }
+  points(reference, true);
   out << ",\"retained_world\":";
   points(retained ? diagnostic_last_path_ : std::vector<Eigen::Vector2d>{}, false);
   out << '}';
   std_msgs::msg::String msg; msg.data = out.str(); branch_event_pub_->publish(msg);
   if (published && solve) {
     diagnostic_last_path_.clear();
-    for (const auto & p : publishablePrediction(*preview, *solve)) {
+    for (const auto & p : reference) {
       diagnostic_last_path_.push_back(world(p));
     }
     diagnostic_last_revision_ = revision; diagnostic_last_path_stamp_ = emitted;
@@ -3242,7 +3874,17 @@ void SdMapUpperPlannerNode::plannerLoop()
   // Road-turn diagnostics remain available in upper_trace. Avoid synchronous
   // per-cycle logging before solving; retain the timing marker for comparison.
   stages.timer.mark("road_turn_log");
-  const UpperSolveResult solve = solveUpperMiqp(constraints, planning_speed_mps);
+  UpperSolveResult solve = solveUpperMiqp(constraints, planning_speed_mps);
+  if (solve.valid && solve.vehicle_rollout.valid) {
+    const auto prefix = publishablePrediction(constraints, solve);
+    const int last = solve.vehicle_rollout.trajectory.coarse_indices[prefix.size()-1];
+    for (int k = 0; k <= last; ++k) {
+      const auto & x = solve.vehicle_rollout.trajectory.states[k]; int8_t value = -1;
+      if (!grid_available || !sampleGridValue({x.x,x.y},grid,value) || !isDrivable(value)) {
+        solve.valid = false; solve.status = "vehicle rollout fine reference leaves known free BEV"; break;
+      }
+    }
+  }
   stages.timer.mark("solve_upper_full_call");
   timing.solver_ms = solve.solver_only_time_ms;
   // Publish actual solver work only, including unsuccessful solves. No sample
@@ -3276,8 +3918,35 @@ void SdMapUpperPlannerNode::plannerLoop()
   for (const auto & point : publishablePrediction(constraints, solve)) {
     published_world.push_back(pose.position + rotation_world_body * point);
   }
-  const auto dense_world = densifyPath(published_world, planning_speed_mps, dense_s);
+  std::vector<Eigen::Vector2d> dense_world;
+  if (solve.vehicle_rollout.valid) {
+    const int last = solve.vehicle_rollout.trajectory.coarse_indices[published_world.size()-1];
+    for (int k = 0; k <= last; ++k) {
+      const auto & x = solve.vehicle_rollout.trajectory.states[k];
+      dense_world.push_back(pose.position+rotation_world_body*Eigen::Vector2d(x.x,x.y));
+      dense_s.push_back(k == 0 ? 0.0 : dense_s.back()+(dense_world[k]-dense_world[k-1]).norm());
+    }
+  } else {
+    dense_world = densifyPath(published_world, planning_speed_mps, dense_s);
+  }
   stages.timer.mark("path_conversion_and_densify");
+
+  if (upper_soft_corridor_constraints_) {
+    // Hard strips constrain prediction stations. Independently reject a
+    // published reference crossing blocked, unknown or outside BEV cells.
+    // This checks the tracked point, not a swept vehicle footprint.
+    for (const auto & point : dense_world) {
+      const Eigen::Vector2d body = rotation_body_world * (point - pose.position);
+      int8_t value = -1;
+      if (!grid_available || !sampleGridValue(body, grid, value) || !isDrivable(value)) {
+        solve.valid = false;
+        solve.status = "soft corridor reference leaves known free BEV";
+        publishBranchEvent(cycle_stamp, timing.sequence, planning_revision, pose, wp0_idx, wp1_idx,
+          &constraints, &solve, "hard_road_rejected", solve.status, false);
+        return;
+      }
+    }
+  }
 
   {
     std::lock_guard<std::mutex> lock(path_mtx_);

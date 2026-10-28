@@ -23,13 +23,18 @@ updates. Multiple intervals containing the reference make that stage ambiguous,
 even when one of those intervals is unreliable.
 
 The shortest eligible original length across the entire preview is candidate B.
-It initializes B immediately. An existing B is retained when no candidate exists
-or candidate B > 1.5*B; otherwise B is replaced immediately. B is the only retained
-algorithm state. Missing or stale required grid data leaves B unchanged.
+It initializes B immediately. With the default
+`preview_interval_reference_growth_rate_mps: 0.0`, an existing B is retained when
+no candidate exists or candidate B > 1.5*B; otherwise B is replaced immediately.
+A positive growth-rate setting keeps immediate decreases and limits increases
+per configured planning period, including gradual recovery beyond the legacy
+1.5*B growth gate. See [the optional B growth limit](interval_reference_growth.md).
+B is the only retained algorithm state. Missing or stale required grid data
+leaves B unchanged.
 
 Observed intervals are ON iff B exists and L <= 1.5*B. ON keeps the central
-`(2*soft_ratio - 1)` fraction: the split profile uses 0.8, retaining 60%.
-The ratio is configurable in `(0.5, 1.0]`; the node default remains 0.7 (40%).
+`(2*soft_ratio - 1)` fraction: the split profile and node default use 0.7,
+retaining 40%. The ratio is configurable in `(0.5, 1.0]`.
 OFF insets each endpoint by min(2.0 m, 0.45*L) in the split profile,
 including when B is unavailable. OFF can therefore be narrower than ON on short
 intervals. B is an observed length scale, not a physical road-width estimate.
@@ -80,3 +85,52 @@ source install/setup.bash
 ROS_DOMAIN_ID=179 ROS_LOCALHOST_ONLY=1 INTERVAL_CENTERING_ROS_TEST=1 \
   python3 -m pytest -q src/virtual_control/test/test_interval_centering_ros.py
 ```
+
+## Additional sections used only to calculate B
+
+`preview_interval_b_sample_spacing_m` defaults to `0.0` (disabled). A positive
+value adds sections at that physical arc-length spacing along the existing
+usable reference. The prepared full-scale trial configs use `0.6` m. Existing
+prediction stages are retained; intermediate points coinciding with an existing
+stage are omitted. Position is linearly interpolated along the existing polyline,
+and heading follows the shortest wrapped interpolation of its recorded/reference
+headings. There is no reference extrapolation, timing resampling, or new solver step.
+Spacing must be finite and either zero or at least `preview_line_sample_m`.
+Pathological requests exceeding 4096 probes are left without extra probes.
+
+The exact same observed-grid traversal is used for original stages and B-only
+sections. Unknown/outside termination is not an observed boundary. Extra sections
+cannot use nominal fallback, and the original unique-reference-containment and
+both-boundaries-observed eligibility rules remain in effect. Eligible sections
+compete with original stages for the minimum B candidate. The existing B growth
+policy, soft ratio, and interval-treatment policy then apply once per planning
+cycle. This option introduces no persistent state.
+
+Only B receives the added observations. MIQP reference points, horizon, raw lane
+intervals, candidate count, heading costs and vehicle constraints are unchanged
+by the sampling operation. A changed B does change processed lane bounds, and
+can consequently alter branch continuity/selection or later closed-loop motion.
+This is not a guarantee that candidate selection or the published path is unchanged.
+
+Existing interval-info rows still describe only original prediction stages. The
+seven-column B state message is unchanged. Its `candidate_step` is a **B sample
+index**: original stages retain indices `0..requested_horizon`; extra samples
+start at `requested_horizon+1`. Missing candidate remains `-1`. Original samples
+are inspected first and win exact length ties. Indices beyond the horizon must
+not be interpreted as MIQP prediction stages.
+
+`/debug/upper_interval_b_samples` records extra sections in 14-column rows:
+
+    stamp,sample,parent_step,s,x_body,y_body,heading,candidate,raw,
+    start_observed,end_observed,inside,eligible,selected
+
+`stamp` is shared with the accompanying B state diagnostic; `parent_step` is the
+preceding original stage and `s` is reference arc length. Multiple interval rows
+may share a sample index. A section with no observed free runs has no rows.
+`selected` denotes the winning minimum candidate, even if the existing B update
+gate rejects its increase. The shared essential recording profile includes this
+new diagnostic topic; it is not a required-ready topic and changes no stop guard.
+
+Implementation and saved-input checks are recorded under
+`followup_20261016/dense_b_implementation/`. Frozen-input geometry checks do not
+establish actual body-yaw improvement or safety on a full vehicle footprint.

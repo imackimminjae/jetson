@@ -33,6 +33,16 @@ find_package(Eigen3 REQUIRED)
 #################################
 # Targets
 #################################
+add_library(upper_vehicle_rollout STATIC src/upper_vehicle_rollout.cpp)
+ament_target_dependencies(upper_vehicle_rollout mpclib_vendor)
+target_include_directories(upper_vehicle_rollout PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include> PRIVATE ${EIGEN3_INCLUDE_DIRS})
+if(TARGET mpclib_vendor::MIQPLib)
+  target_link_libraries(upper_vehicle_rollout mpclib_vendor::MIQPLib)
+elseif(TARGET MIQPLib)
+  target_link_libraries(upper_vehicle_rollout MIQPLib)
+endif()
 
 # Shared, ROS-independent PX4-local to KNU-map rigid transform. Keeping the
 # alignment state here prevents upper/lower consumers from selecting different
@@ -87,7 +97,7 @@ if(TARGET mpclib_vendor::MIQPLib)
 elseif(TARGET MIQPLib)
   target_link_libraries(upper_planner_node MIQPLib)
 endif()
-target_link_libraries(upper_planner_node Threads::Threads)
+target_link_libraries(upper_planner_node Threads::Threads upper_vehicle_rollout)
 
 # High-rate lower lateral QP-MPC + all actuator output backends.
 add_executable(lower_tracking_mpc_node
@@ -208,9 +218,17 @@ if(BUILD_TESTING)
     ${EIGEN3_INCLUDE_DIRS}
   )
 
+  # The planner implementation is identical across these test executables.
+  # Compile it once without main; tests still link the production solver.
+  add_library(upper_planner_test_core OBJECT src/tracking_control.cpp)
+  target_compile_definitions(upper_planner_test_core PRIVATE VIRTUAL_CONTROL_UPPER_PLANNER_NO_MAIN)
+  ament_target_dependencies(upper_planner_test_core
+    rclcpp nav_msgs geometry_msgs imac_interfaces std_msgs std_srvs tf2 ament_index_cpp mpclib_vendor)
+  target_include_directories(upper_planner_test_core PRIVATE include ${EIGEN3_INCLUDE_DIRS})
+
   ament_add_gtest(test_interval_centering_state
     test/test_interval_centering_state.cpp
-    src/tracking_control.cpp
+    $<TARGET_OBJECTS:upper_planner_test_core>
   )
   target_compile_definitions(test_interval_centering_state PRIVATE
     VIRTUAL_CONTROL_UPPER_PLANNER_NO_MAIN
@@ -227,10 +245,10 @@ if(BUILD_TESTING)
   elseif(TARGET MIQPLib)
     target_link_libraries(test_interval_centering_state MIQPLib)
   endif()
-  target_link_libraries(test_interval_centering_state Threads::Threads)
+  target_link_libraries(test_interval_centering_state Threads::Threads upper_vehicle_rollout)
 
   ament_add_gtest(test_lower_path_generation
-    test/test_lower_path_generation.cpp src/tracking_control.cpp)
+    test/test_lower_path_generation.cpp $<TARGET_OBJECTS:upper_planner_test_core>)
   target_compile_definitions(test_lower_path_generation PRIVATE VIRTUAL_CONTROL_UPPER_PLANNER_NO_MAIN)
   ament_target_dependencies(test_lower_path_generation
     rclcpp nav_msgs geometry_msgs imac_interfaces std_msgs std_srvs tf2 ament_index_cpp mpclib_vendor)
@@ -240,9 +258,34 @@ if(BUILD_TESTING)
   elseif(TARGET MIQPLib)
     target_link_libraries(test_lower_path_generation MIQPLib)
   endif()
-  target_link_libraries(test_lower_path_generation Threads::Threads)
+  target_link_libraries(test_lower_path_generation Threads::Threads upper_vehicle_rollout)
   set_tests_properties(test_lower_path_generation PROPERTIES
     ENVIRONMENT "ROS_DOMAIN_ID=175;ROS_LOCALHOST_ONLY=1;ROS_LOG_DIR=/tmp/lower_mpc_test_logs")
+
+  ament_add_gtest(test_upper_steering_rate
+    test/test_upper_steering_rate.cpp $<TARGET_OBJECTS:upper_planner_test_core>)
+  target_compile_definitions(test_upper_steering_rate PRIVATE VIRTUAL_CONTROL_UPPER_PLANNER_NO_MAIN)
+  ament_target_dependencies(test_upper_steering_rate
+    rclcpp nav_msgs geometry_msgs imac_interfaces std_msgs std_srvs tf2 ament_index_cpp mpclib_vendor)
+  target_include_directories(test_upper_steering_rate PRIVATE include ${EIGEN3_INCLUDE_DIRS})
+  if(TARGET mpclib_vendor::MIQPLib)
+    target_link_libraries(test_upper_steering_rate mpclib_vendor::MIQPLib)
+  elseif(TARGET MIQPLib)
+    target_link_libraries(test_upper_steering_rate MIQPLib)
+  endif()
+  target_link_libraries(test_upper_steering_rate Threads::Threads upper_vehicle_rollout)
+  ament_add_gtest(test_upper_vehicle_rollout test/test_upper_vehicle_rollout.cpp)
+  target_link_libraries(test_upper_vehicle_rollout upper_vehicle_rollout)
+  ament_add_gtest(test_soft_corridors test/test_soft_corridors.cpp $<TARGET_OBJECTS:upper_planner_test_core>)
+  target_compile_definitions(test_soft_corridors PRIVATE VIRTUAL_CONTROL_UPPER_PLANNER_NO_MAIN)
+  ament_target_dependencies(test_soft_corridors
+    rclcpp nav_msgs geometry_msgs imac_interfaces std_msgs std_srvs tf2 ament_index_cpp mpclib_vendor)
+  target_include_directories(test_soft_corridors PRIVATE include ${EIGEN3_INCLUDE_DIRS})
+  target_link_libraries(test_soft_corridors Threads::Threads upper_vehicle_rollout)
+  set_tests_properties(test_soft_corridors PROPERTIES
+    ENVIRONMENT "ROS_DOMAIN_ID=176;ROS_LOCALHOST_ONLY=1;ROS_LOG_DIR=/tmp/soft_corridor_test_logs")
+  set_tests_properties(test_upper_steering_rate PROPERTIES
+    ENVIRONMENT "ROS_DOMAIN_ID=173;ROS_LOCALHOST_ONLY=1;ROS_LOG_DIR=/tmp/upper_rate_test_logs")
 
   ament_add_gtest(test_lower_tracking_mpc test/test_lower_tracking_mpc.cpp)
   target_compile_definitions(test_lower_tracking_mpc PRIVATE

@@ -12,6 +12,8 @@
 #include <std_msgs/msg/float64_multi_array.hpp>
 #include <std_msgs/msg/string.hpp>
 #include <std_srvs/srv/trigger.hpp>
+#include "virtual_control/upper_steering_rate_constraints.hpp"
+#include "virtual_control/upper_vehicle_rollout.hpp"
 
 #include <Eigen/Dense>
 
@@ -38,10 +40,16 @@ public:
 private:
   friend struct IntervalCenteringTestAccess;
   friend struct LowerPathGenerationTestAccess;
+  friend struct UpperSteeringRateTestAccess;
+  friend struct SoftCorridorTestAccess;
 
   struct IntervalCenteringSettings
   {
     double relative_length_factor{1.5};
+    // Zero preserves legacy updates; positive caps only upward B change.
+    double max_reference_growth_per_update_m{0.0};
+    // Zero preserves the hard switch; positive blends in L/B below the threshold.
+    double transition_relative_band{0.0};
   };
 
   struct IntervalObservation
@@ -52,6 +60,19 @@ private:
     bool reference_inside{false};
     bool nominal_fallback{false};
   };
+
+  struct IntervalBProbe
+  {
+    int preceding_step{0};
+    double arc_length_m{0.0};
+    Eigen::Vector2d point_body{Eigen::Vector2d::Zero()};
+    double heading_rad{0.0};
+    std::vector<IntervalObservation> observations;
+  };
+
+  static std::vector<IntervalBProbe> buildIntervalBProbes(
+    const std::vector<Eigen::Vector2d> & points, const std::vector<double> & headings,
+    int usable_horizon, double spacing_m);
 
   struct IntervalCenteringState
   {
@@ -84,7 +105,8 @@ private:
   static IntervalTreatment intervalTreatment(
     const IntervalObservation & interval, const IntervalCenteringState & state,
     const IntervalCenteringSettings & settings, double soft_ratio,
-    double boundary_margin, double fallback_max_centering_length);
+    double boundary_margin, double fallback_max_centering_length,
+    int prediction_step = -1, bool k1_disable_extra_centering = false);
 
   enum class IntervalTreatmentMode : int
   {
@@ -105,6 +127,19 @@ private:
     InsufficientBevSamples = 2,
     NoValidDrivableRun = 3,
     GridUnavailable = 4
+  };
+
+  struct ObservedIntervalScan
+  {
+    std::vector<Eigen::Vector2d> starts;
+    std::vector<Eigen::Vector2d> ends;
+    std::vector<std::array<bool, 2>> observed_boundaries;
+    IntervalFallbackReason reason{IntervalFallbackReason::None};
+    std::size_t sampled_free{0};
+    std::size_t sampled_blocked{0};
+    std::size_t sampled_unknown{0};
+    std::size_t sampled_outside{0};
+    std::size_t longest_free_run{0};
   };
 
   struct PoseSnapshot
@@ -155,8 +190,14 @@ private:
 
   struct PreviewConstraintData
   {
+    // B-only observations: never inserted into MIQP lane/candidate arrays.
+    std::vector<IntervalBProbe> b_probes;
+    int b_original_sample_count{0};
     std::vector<std::vector<Eigen::Vector2d>> pmk;
     std::vector<std::vector<Eigen::Vector2d>> pMk;
+    // Uncontracted observed drivable runs, aligned with the preferred strips.
+    std::vector<std::vector<Eigen::Vector2d>> road_pmk;
+    std::vector<std::vector<Eigen::Vector2d>> road_pMk;
     std::vector<std::vector<double>> raw_lengths;
     std::vector<std::vector<double>> processed_lengths;
     std::vector<std::vector<int>> treatment_modes;
@@ -188,6 +229,15 @@ private:
   struct UpperSolveResult
   {
     bool valid{false};
+    bool steering_rate_limited{false};
+    double steering_anchor_rad{std::numeric_limits<double>::quiet_NaN()};
+    double steering_anchor_stamp{std::numeric_limits<double>::quiet_NaN()};
+    double steering_anchor_age_sec{std::numeric_limits<double>::quiet_NaN()};
+    double max_model_steering_rate_radps{std::numeric_limits<double>::quiet_NaN()};
+    double max_geometric_steering_rate_radps{std::numeric_limits<double>::quiet_NaN()};
+    std::vector<double> model_steering_rad;
+    std::vector<double> geometric_steering_rad;
+    upper_vehicle_rollout::Solution vehicle_rollout;
     std::vector<Eigen::Vector2d> predicted_body;
     std::vector<int> selected_corridors;
     std::vector<double> correction_input;
@@ -202,6 +252,10 @@ private:
     double position_cost{0.0};
     double input_cost{0.0};
     double turn_cost{0.0};
+    double preferred_corridor_cost{0.0};
+    double max_preferred_corridor_violation_m{0.0};
+    double max_hard_road_violation_m{0.0};
+    std::vector<double> preferred_corridor_violations_m;
     double terminal_position_error{0.0};
     double objective{0.0};
     double solve_time_ms{0.0};
@@ -219,6 +273,7 @@ private:
   void poseStampedCallback(const geometry_msgs::msg::PoseStamped::SharedPtr msg);
   void globalPathCallback(const nav_msgs::msg::Path::SharedPtr msg);
   void gridMapCallback(const nav_msgs::msg::OccupancyGrid::SharedPtr msg);
+  void steeringStateCallback(const std_msgs::msg::Float64MultiArray::SharedPtr msg);
   void plannerLoop();
 
   bool loadReferencePathCsvIfConfigured();
@@ -244,6 +299,9 @@ private:
     const PreviewReferenceData & reference,
     const GridMapSnapshot * grid,
     const IntervalCenteringState & interval_state) const;
+  ObservedIntervalScan scanObservedIntervals(
+    const Eigen::Vector2d & reference_point, const Eigen::Vector2d & lateral_direction,
+    const GridMapSnapshot * grid) const;
   static std::vector<Eigen::Vector2d> publishablePrediction(
     const PreviewConstraintData & preview, const UpperSolveResult & solve);
   void applyTerminalPositionTargets(
@@ -268,6 +326,8 @@ private:
     int8_t & value) const;
   bool isDrivable(int8_t value) const;
 
+  bool roadCandidateWidthEligible(
+    const PreviewConstraintData & preview, int step, int candidate) const;
   UpperSolveResult solveUpperMiqp(
     const PreviewConstraintData & preview,
     double planning_speed_mps) const;
@@ -328,13 +388,27 @@ private:
   double terminal_position_weight_multiplier_{1000.0};
   double upper_r_dv_{1.0};
   double upper_r_dpsi_{1.0};
+  double upper_r_steering_delta_{0.0};
+  double upper_max_steering_rate_radps_{0.0};
+  bool upper_use_vehicle_rollout_{false};
+  bool upper_soft_corridor_constraints_{false};
+  double upper_corridor_soft_linear_weight_{1.0};
+  double upper_corridor_soft_quadratic_weight_{10.0};
+  double upper_vehicle_integration_dt_sec_{0.01};
+  int upper_vehicle_rollout_max_iterations_{12};
+  double upper_vehicle_rollout_budget_ms_{60.0};
+  double upper_steering_state_timeout_sec_{0.25};
+  std::string upper_steering_state_topic_{"/debug/lower_mpc_trace"};
   bool normalize_upper_input_cost_{false};
   int turn_preview_steps_{2};
-  // 2026-10-06: make the upper prediction consistent with the increment-based steering limit and
-  // relative-turn cost, anchor the turn window at a real arm split, and use an absolute heading target.
+  // Increment-based upper prediction and absolute relative-turn heading targets.
   bool upper_cumulative_increment_model_{false};
-  bool branch_turn_window_at_split_{false};
   bool branch_turn_target_absolute_{false};
+  double branch_min_candidate_width_m_{2.0};
+  double road_candidate_min_width_m_{0.0};
+  bool branch_require_count_increase_{true};
+  bool branch_include_k0_transition_{false};
+  bool branch_use_split_continuity_{false};
   double branch_split_continuity_m_{6.75};
   double turn_weight_growth_{2.0};
   double miqp_diagonal_regularization_{1e-10};
@@ -365,6 +439,10 @@ private:
   double preview_min_target_distance_m_{1e-6};
   double preview_line_sample_m_{0.10};
   int preview_min_segment_samples_{2};
+  double preview_interval_reference_growth_rate_mps_{0.0};
+  // Zero disables extra B-only samples. Positive is longitudinal arc spacing.
+  double preview_interval_b_sample_spacing_m_{0.0};
+  bool preview_interval_k1_disable_extra_centering_{false};
   double preview_interval_soft_ratio_{0.70};
   IntervalCenteringSettings interval_centering_settings_;
   double preview_interval_boundary_margin_m_{2.0};
@@ -398,9 +476,13 @@ private:
   bool pose_invert_y_{false};
   double pose_speed_lpf_alpha_{0.4};
   double pose_max_dt_for_speed_{0.5};
+  bool pose_use_header_stamp_for_speed_{false};
 
   // ROS interfaces.
   std::string global_path_topic_{"/navigation/global_path"};
+  // An explicitly confirmed name for the same coordinates as path_frame_id_.
+  // Empty preserves strict frame checking; this never performs a TF transform.
+  std::string global_path_frame_alias_;
   std::string grid_map_topic_{"/grid_map"};
   std::string sparse_path_topic_{"/planner/upper_path_sparse"};
   std::string dense_path_topic_{"/planner/lower_reference_path"};
@@ -411,9 +493,12 @@ private:
   mutable std::mutex path_mtx_;
   mutable std::mutex grid_mtx_;
   mutable std::mutex previous_solution_mtx_;
+  mutable std::mutex steering_state_mtx_;
+  upper_steering_rate::Feedback steering_state_;
 
   PoseSnapshot pose_;
   bool have_previous_pose_measurement_{false};
+  bool previous_pose_used_header_stamp_{false};
   Eigen::Vector2d previous_pose_measurement_{Eigen::Vector2d::Zero()};
   rclcpp::Time previous_pose_time_{0, 0, RCL_ROS_TIME};
 
@@ -438,6 +523,7 @@ private:
   rclcpp::Subscription<geometry_msgs::msg::PoseStamped>::SharedPtr pose_sub_;
   rclcpp::Subscription<nav_msgs::msg::Path>::SharedPtr global_path_sub_;
   rclcpp::Subscription<nav_msgs::msg::OccupancyGrid>::SharedPtr grid_sub_;
+  rclcpp::Subscription<std_msgs::msg::Float64MultiArray>::SharedPtr steering_state_sub_;
   rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr mission_reset_service_;
 
   rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr sparse_path_pub_;
@@ -448,6 +534,7 @@ private:
   rclcpp::Publisher<std_msgs::msg::Float64MultiArray>::SharedPtr interval_debug_pub_;
   rclcpp::Publisher<std_msgs::msg::Float64MultiArray>::SharedPtr interval_info_pub_;
   rclcpp::Publisher<std_msgs::msg::Float64MultiArray>::SharedPtr interval_state_pub_;
+  rclcpp::Publisher<std_msgs::msg::Float64MultiArray>::SharedPtr interval_b_samples_pub_;
   rclcpp::Publisher<std_msgs::msg::Float64MultiArray>::SharedPtr upper_trace_pub_;
   rclcpp::Publisher<std_msgs::msg::Float64MultiArray>::SharedPtr upper_timing_pub_;
   rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr upper_solver_time_pub_;

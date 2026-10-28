@@ -167,15 +167,31 @@ upper_planner_node:
     # 2026-10-06: 3.0 with the cumulative increment model (was 1.5 with the legacy model).
     # It now penalizes curvature deviation from the reference. Restore 1.5 if the model flag is off.
     upper_r_dpsi: 3.0
+    # Opt-in hard limits, anchored to fresh lower effective-steering estimates.
+    upper_max_steering_rate_radps: 0.0  # 0 disables; trial configs enable separately.
+    upper_steering_state_timeout_sec: 0.25
+    upper_steering_state_topic: /debug/lower_mpc_trace
+    # Experimental physical curve: requires a positive rate and fresh complete
+    # zero-delay lower feedback. See docs/upper_vehicle_rollout.md.
+    upper_use_vehicle_rollout: false
+    # Opt-in road-hard / preference-soft constraints; weights use metres.
+    # The margin and soft-ratio strips remain preferred, not mandatory, here.
+    # See docs/soft_road_corridors.md before enabling on a driving profile.
+    upper_soft_corridor_constraints: false
+    upper_corridor_soft_linear_weight: 1.0
+    upper_corridor_soft_quadratic_weight: 10.0
+    # Opt-in: expand k1 only when centering adds inset beyond the boundary margin.
+    # Existing narrow-section inset and k0/k2..kN are preserved.
+    preview_interval_k1_disable_extra_centering: false
+    upper_vehicle_integration_dt_sec: 0.01
+    upper_vehicle_rollout_max_iterations: 12
+    upper_vehicle_rollout_budget_ms: 60.0
     normalize_upper_input_cost: false
     turn_preview_steps: 2
     turn_weight_growth: 2.0
-    # 2026-10-06 upper branch model package (followup_20261006/verify, rollback/20261006_upper_increment_model).
-    # Verified only as a set together with upper_r_dpsi 3.0; turning one on alone regressed in tests.
+    # Relative-turn window uses the first candidate-count increase from k1->k2 onward.
     upper_cumulative_increment_model: true
-    branch_turn_window_at_split: true
     branch_turn_target_absolute: true
-    branch_split_continuity_m: 6.75
     miqp_diagonal_regularization: 0.0000000001
     # DAQP can report an infeasible mixed-integer solution as successful when
     # the corridor binary block is nearly singular. This term is constant

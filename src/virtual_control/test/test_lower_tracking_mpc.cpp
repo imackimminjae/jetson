@@ -2,6 +2,7 @@
 // solver failure, selection, filtering, and published outputs together.
 #include "../src/lower_tracking_mpc_node.cpp"
 #include <gtest/gtest.h>
+#include <rcl/time.h>
 #include <thread>
 
 namespace imac_ctrl
@@ -336,6 +337,131 @@ TEST_F(LowerMpc, InvalidAndStopInputsNeverUseErrorFeedbackFallback)
   }
 }
 
+TEST_F(LowerMpc, RealGoalImmediatelyZerosKeepaliveAndLatchesUntilStationaryReset)
+{
+  impl->lower_latch_stop_until_reset_ = true;
+  installInputs();
+  impl->rememberMavlinkActuator(0.1, 0.2, true);
+  auto goal = std::make_shared<std_msgs::msg::Bool>();
+  goal->data = true;
+  impl->goalCallback(goal);  // No controller timer needed for the cached zero output.
+  EXPECT_TRUE(impl->stop_latched_);
+  EXPECT_EQ(impl->stop_latch_reason_, "goal_reached");
+  EXPECT_DOUBLE_EQ(impl->mavlink_last_throttle_norm_, 0.0);
+  EXPECT_DOUBLE_EQ(impl->mavlink_last_steering_norm_, 0.0);
+  goal->data = false;
+  impl->goalCallback(goal);
+  installInputs();
+  const auto trace = runAndReadTrace();
+  ASSERT_EQ(trace.size(), 32u);
+  EXPECT_EQ(trace[12], 4);
+  EXPECT_EQ(trace[14], 0);
+  auto reset = std::make_shared<std_msgs::msg::Bool>();
+  reset->data = true;
+  impl->resetCallback(reset);  // Moving Motive cannot release the latch.
+  EXPECT_TRUE(impl->stop_latched_);
+  impl->pose_.speed_mps = 0;
+  impl->pose_.received = node->now() - rclcpp::Duration::from_seconds(10);
+  impl->resetCallback(reset);
+  EXPECT_TRUE(impl->stop_latched_);
+  impl->pose_.received = node->now();
+  impl->resetCallback(reset);
+  EXPECT_FALSE(impl->stop_latched_);
+  EXPECT_TRUE(impl->stop_latch_reason_.empty());
+}
+
+TEST_F(LowerMpc, RealInputLossCannotRestartFromRecoveredPoseAndNewPath)
+{
+  impl->lower_latch_stop_until_reset_ = true;
+  installInputs();
+  const auto moving = runAndReadTrace();
+  ASSERT_EQ(moving.size(), 32u);
+  ASSERT_TRUE(impl->have_driven_);
+  impl->pose_.received = node->now() - rclcpp::Duration::from_seconds(10);
+  const auto lost = runAndReadTrace();
+  ASSERT_EQ(lost.size(), 32u);
+  EXPECT_TRUE(impl->stop_latched_);
+  EXPECT_EQ(impl->stop_latch_reason_, "stale pose");
+  EXPECT_EQ(lost[14], 0);
+  installInputs();  // Valid inputs recover, but no explicit reset occurred.
+  const auto recovered = runAndReadTrace();
+  ASSERT_EQ(recovered.size(), 32u);
+  EXPECT_EQ(recovered[12], 4);
+  EXPECT_EQ(recovered[14], 0);
+  EXPECT_EQ(impl->stop_latch_reason_, "stale pose");
+}
+
+TEST_F(LowerMpc, HeaderStampedPoseIgnoresCallbackBurstAndReorderedSamples)
+{
+  impl->pose_use_header_stamp_for_speed_ = true;
+  impl->pose_speed_lpf_alpha_ = 1.;
+  auto clock = node->get_clock()->get_clock_handle();
+  ASSERT_EQ(rcl_enable_ros_time_override(clock), RCL_RET_OK);
+  ASSERT_EQ(rcl_set_ros_time_override(clock, 100000000000LL), RCL_RET_OK);
+  auto msg = std::make_shared<geometry_msgs::msg::PoseStamped>();
+  msg->header.frame_id = "map";
+  msg->header.stamp.sec = 10;
+  impl->poseStampedCallback(msg);
+  EXPECT_FALSE(impl->pose_.speed_valid);
+  msg->header.stamp.nanosec = 20000000;
+  msg->pose.position.x = .013;
+  impl->poseStampedCallback(msg);  // Receipt clock unchanged; measurement interval=20ms.
+  ASSERT_TRUE(impl->pose_.speed_valid);
+  EXPECT_NEAR(impl->pose_.speed_mps, .65, 1e-12);
+  const auto received = impl->pose_.received;
+  ASSERT_EQ(rcl_set_ros_time_override(clock, 100300000000LL), RCL_RET_OK);
+  msg->pose.position.x = 100.;
+  impl->poseStampedCallback(msg);  // Duplicate stamp must not refresh freshness.
+  EXPECT_EQ(impl->pose_.received, received);
+  EXPECT_DOUBLE_EQ(impl->pose_.position.x(), .013);
+  msg->header.stamp.nanosec = 10000000;
+  impl->poseStampedCallback(msg);  // Reordered stamp also ignored.
+  EXPECT_EQ(impl->pose_.received, received);
+  msg->header.stamp.nanosec = 800000000;
+  msg->pose.position.x = .52;
+  impl->poseStampedCallback(msg);  // Measurement gap still invalidates velocity.
+  EXPECT_FALSE(impl->pose_.speed_valid);
+  msg->header.stamp.nanosec = 820000000;
+  msg->pose.position.x = .533;
+  impl->poseStampedCallback(msg);
+  ASSERT_TRUE(impl->pose_.speed_valid);
+  EXPECT_NEAR(impl->pose_.speed_mps, .65, 1e-12);
+  msg->header.stamp.sec = msg->header.stamp.nanosec = 0;
+  impl->poseStampedCallback(msg);  // Clock-source change reseeds, never mixes time bases.
+  EXPECT_FALSE(impl->pose_.speed_valid);
+  ASSERT_EQ(rcl_set_ros_time_override(clock, 100320000000LL), RCL_RET_OK);
+  msg->pose.position.x = .546;
+  impl->poseStampedCallback(msg);
+  ASSERT_TRUE(impl->pose_.speed_valid);
+  EXPECT_NEAR(impl->pose_.speed_mps, .65, 1e-9);
+}
+
+TEST_F(LowerMpc, LegacyPoseTimingRemainsDefaultAndStopCausesStayDistinct)
+{
+  EXPECT_FALSE(impl->pose_use_header_stamp_for_speed_);
+  auto clock = node->get_clock()->get_clock_handle();
+  ASSERT_EQ(rcl_enable_ros_time_override(clock), RCL_RET_OK);
+  ASSERT_EQ(rcl_set_ros_time_override(clock, 100000000000LL), RCL_RET_OK);
+  auto msg = std::make_shared<geometry_msgs::msg::PoseStamped>();
+  msg->header.stamp.sec = 10;
+  impl->poseStampedCallback(msg);
+  msg->header.stamp.nanosec = 20000000;
+  msg->pose.position.x = .013;
+  impl->poseStampedCallback(msg);
+  EXPECT_FALSE(impl->pose_.speed_valid);  // Legacy callback dt=0 is still rejected.
+  EXPECT_EQ(impl->selectFailureCommand("", false).failure_reason,
+    "waiting for lower reference path");
+  impl->lower_latch_stop_until_reset_ = true;
+  auto stop = std::make_shared<std_msgs::msg::Bool>();
+  stop->data = true;
+  impl->applyStopSignal(stop, "manual_stop");
+  EXPECT_TRUE(impl->stop_latched_);
+  EXPECT_EQ(impl->stop_latch_reason_, "manual_stop");
+  EXPECT_DOUBLE_EQ(impl->mavlink_last_throttle_norm_, 0.);
+  impl->goalCallback(stop);
+  EXPECT_EQ(impl->stop_latch_reason_, "manual_stop");  // Preserve the first cause.
+}
+
 TEST_F(LowerMpc, AtomicPathValidationAndExternalPolylineMode)
 {
   nav_msgs::msg::Path msg;
@@ -358,6 +484,72 @@ TEST_F(LowerMpc, AtomicPathValidationAndExternalPolylineMode)
   msg.poses[1].pose.position.x = NAN;
   impl->acceptPath(msg, nullptr);
   EXPECT_FALSE(impl->path_.valid);
+}
+
+TEST_F(LowerMpc, ValidReplanPreservesSteeringAnchorUntilExplicitReset)
+{
+  impl->reset_on_path_change_ = false;
+  impl->lower_enable_steering_actuator_model_ = true;
+  impl->lower_prediction_dt_sec_ = 0.05;
+  impl->lower_steering_actuator_time_constant_sec_ = 0.74;
+  installInputs();
+  for (auto & point : impl->path_.points) {point.y() += 2.0;}
+  ASSERT_TRUE(impl->pathMateriallyDifferent(impl->path_.points, path.points));
+  for (int i = 0; i < 20; ++i) {impl->advanceSteeringActuatorModel(0.24);}
+  const double effective_before = impl->estimated_effective_steering_angle_rad_;
+  ASSERT_GT(effective_before, 0.1);
+  impl->reset_pending_ = false;
+
+  nav_msgs::msg::Path msg;
+  msg.header.frame_id = "map";
+  for (const auto & point : path.points) {
+    geometry_msgs::msg::PoseStamped pose_msg;
+    pose_msg.pose.position.x = point.x();
+    pose_msg.pose.position.y = point.y();
+    msg.poses.push_back(pose_msg);
+  }
+  impl->acceptPath(msg, &path.s);
+  ASSERT_TRUE(impl->path_.valid);
+  EXPECT_FALSE(impl->reset_pending_);
+  EXPECT_DOUBLE_EQ(impl->last_applied_steering_angle_rad_, 0.24);
+  EXPECT_DOUBLE_EQ(impl->estimated_effective_steering_angle_rad_, effective_before);
+  const auto trace = runAndReadTrace();
+  ASSERT_EQ(trace.size(), 32u);
+  ASSERT_EQ(trace[12], 0);  // Successful QP after a material path change.
+  EXPECT_DOUBLE_EQ(trace[29], 0.24);  // Rate limit uses the real preceding command.
+  EXPECT_DOUBLE_EQ(trace[19], effective_before);
+  EXPECT_LE(std::abs(trace[26] - 0.24),
+    impl->lower_max_steering_rate_radps_ * impl->lower_prediction_dt_sec_ + 1e-6);
+
+  auto reset = std::make_shared<std_msgs::msg::Bool>();
+  reset->data = true;
+  impl->resetCallback(reset);
+  ASSERT_TRUE(impl->reset_pending_);
+  const auto reset_trace = runAndReadTrace();
+  ASSERT_EQ(reset_trace.size(), 32u);
+  EXPECT_DOUBLE_EQ(reset_trace[29], 0.0);
+  EXPECT_DOUBLE_EQ(reset_trace[19], 0.0);
+}
+
+TEST_F(LowerMpc, ReplanResetDisabledStillResetsOnInvalidPathAndPoseJump)
+{
+  impl->reset_on_path_change_ = false;
+  installInputs();
+  impl->reset_pending_ = false;
+  nav_msgs::msg::Path empty;
+  empty.header.frame_id = "map";
+  impl->acceptPath(empty, nullptr);
+  EXPECT_FALSE(impl->path_.valid);
+  EXPECT_TRUE(impl->reset_pending_);
+
+  installInputs();
+  impl->reset_pending_ = false;
+  auto odom = std::make_shared<nav_msgs::msg::Odometry>();
+  odom->header.frame_id = "map";
+  odom->pose.pose.position.x = pose.position.x() + impl->pose_jump_reset_threshold_m_ + 0.1;
+  odom->pose.pose.position.y = pose.position.y();
+  impl->odomCallback(odom);
+  EXPECT_TRUE(impl->reset_pending_);
 }
 
 TEST_F(LowerMpc, CurvaturePreviewUsesMeasuredTravelOnOriginalCoordinates)

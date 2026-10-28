@@ -2,7 +2,11 @@
 #include "virtual_control/lower_path_geometry.hpp"
 #include "virtual_control/planner_stage_timer.hpp"
 #include <gtest/gtest.h>
+#include <rcl/time.h>
 #include <thread>
+#include <cstdlib>
+#include <fstream>
+#include <iomanip>
 
 namespace imac_ctrl
 {
@@ -10,6 +14,25 @@ struct LowerPathGenerationTestAccess
 {
   static void cancel(SdMapUpperPlannerNode & node) {node.planner_timer_->cancel();}
   static void step(SdMapUpperPlannerNode & node) {node.plannerLoop();}
+  static void receivePose(SdMapUpperPlannerNode & node,
+    const geometry_msgs::msg::PoseStamped::SharedPtr & msg) {node.poseStampedCallback(msg);}
+  static auto poseState(const SdMapUpperPlannerNode & node) {return node.pose_;}
+  static void receivePath(SdMapUpperPlannerNode & node, const std::string & frame)
+  {
+    auto message = std::make_shared<nav_msgs::msg::Path>();
+    message->header.frame_id = frame;
+    geometry_msgs::msg::PoseStamped point;
+    point.pose.position.x = 1.25;
+    point.pose.position.y = -2.5;
+    message->poses.push_back(point);
+    point.pose.position.x = 3.75;
+    message->poses.push_back(point);
+    node.globalPathCallback(message);
+  }
+  static auto pathState(const SdMapUpperPlannerNode & node)
+  {
+    return std::make_pair(node.global_path_frame_id_, node.global_path_);
+  }
   static void receiveGrid(
     SdMapUpperPlannerNode & node, const nav_msgs::msg::OccupancyGrid::SharedPtr & msg)
   {
@@ -91,6 +114,56 @@ struct LowerPathGenerationTestAccess
     }
     return node.extractPreviewIntervals(ref, &grid, {});
   }
+  using DenseGrid = SdMapUpperPlannerNode::GridMapSnapshot;
+  using DenseReference = SdMapUpperPlannerNode::PreviewReferenceData;
+  static auto denseExtract(SdMapUpperPlannerNode & node, const DenseGrid & grid,
+    const DenseReference & reference, double previous_b = 0.0)
+  {
+    return node.extractPreviewIntervals(reference, &grid, {previous_b});
+  }
+  static void k1Freedom(SdMapUpperPlannerNode & node, bool enabled)
+  {
+    node.preview_interval_k1_disable_extra_centering_ = enabled;
+  }
+  static auto uniformCenteringRoad(SdMapUpperPlannerNode & node, double half_width)
+  {
+    DenseGrid grid;
+    grid.valid = true; grid.width = 100; grid.height = 200;
+    grid.resolution = .1; grid.origin_body = {0., -10.};
+    grid.data.assign(20000, 100);
+    for (int y = 0; y < 200; ++y) {
+      for (int x = 0; x < 100; ++x) {
+        if (std::abs(-10. + (y + .5) * .1) < half_width) {grid.data[y * 100 + x] = 0;}
+      }
+    }
+    DenseReference ref; ref.valid = true;
+    ref.points_body = {{0,0},{3,0},{6,0}}; ref.heading_rad = {0,0,0};
+    return denseExtract(node, grid, ref, half_width * 2);
+  }
+  static auto denseSynthetic(SdMapUpperPlannerNode & node, bool unknown_edge)
+  {
+    DenseGrid grid;
+    grid.valid = true; grid.width = 100; grid.height = 200;
+    grid.resolution = 0.1; grid.origin_body = {0.0, -10.0};
+    grid.data.resize(20000);
+    for (int gy = 0; gy < 200; ++gy) {
+      for (int gx = 0; gx < 100; ++gx) {
+        const double x = (gx + 0.5) * 0.1;
+        const double y = -10.0 + (gy + 0.5) * 0.1;
+        const bool near = x >= 0.5 && x < 2.8;
+        const double half_width = near ? 2.4 : (x < 4.5 ? 11.0 : 3.5);
+        grid.data[gy * 100 + gx] =
+          (unknown_edge && near && y >= half_width) ? -1 :
+          (std::abs(y) < half_width ? 0 : 100);
+      }
+    }
+    DenseReference reference;
+    reference.valid = true;
+    reference.points_body = {{0,0},{3,0},{6,0}};
+    reference.heading_rad = {0,0,0};
+    return denseExtract(node, grid, reference);
+  }
+
   static auto prefixOnly(const SdMapUpperPlannerNode::PreviewConstraintData & p)
   {
     SdMapUpperPlannerNode::UpperSolveResult r;
@@ -111,6 +184,125 @@ struct LowerPathGenerationTestAccess
   }
 };
 }  // namespace imac_ctrl
+
+TEST(LowerPathGeneration, ExplicitFrameAliasOnlyRenamesConfirmedGlobalPathFrame)
+{
+  rclcpp::init(0, nullptr);
+  {
+    for (bool enable_alias : {false, true}) {
+      rclcpp::NodeOptions options;
+      options.parameter_overrides({
+        rclcpp::Parameter("path_frame_id", "motive_world"),
+        rclcpp::Parameter("global_path_frame_alias", enable_alias ? "map" : "")});
+      imac_ctrl::SdMapUpperPlannerNode node(options);
+      using Access = imac_ctrl::LowerPathGenerationTestAccess;
+      Access::cancel(node);
+      for (const std::string frame : {"map", "/map", "motive_world", "odom"}) {
+        Access::receivePath(node, frame);
+        const auto state = Access::pathState(node);
+        const bool is_alias = frame == "map" || frame == "/map";
+        // Equivalent /map heartbeats preserve the previously stored frame spelling.
+        const std::string expected_frame = enable_alias && is_alias ? "motive_world" :
+          (frame == "/map" ? "map" : frame);
+        EXPECT_EQ(state.first, expected_frame);
+        ASSERT_EQ(state.second.size(), 2u);
+        EXPECT_DOUBLE_EQ(state.second[0].x(), 1.25);
+        EXPECT_DOUBLE_EQ(state.second[0].y(), -2.5);
+        EXPECT_DOUBLE_EQ(state.second[1].x(), 3.75);
+      }
+    }
+  }
+  rclcpp::shutdown();
+}
+
+TEST(LowerPathGeneration, HeaderPoseTimingHandlesBurstsWithoutRefreshingDuplicateFreshness)
+{
+  rclcpp::init(0, nullptr);
+  {
+    rclcpp::NodeOptions options;
+    options.parameter_overrides({
+      rclcpp::Parameter("pose_use_header_stamp_for_speed", true),
+      rclcpp::Parameter("pose_speed_lpf_alpha", 1.)});
+    imac_ctrl::SdMapUpperPlannerNode node(options);
+    using Access = imac_ctrl::LowerPathGenerationTestAccess;
+    Access::cancel(node);
+    auto clock = node.get_clock()->get_clock_handle();
+    ASSERT_EQ(rcl_enable_ros_time_override(clock), RCL_RET_OK);
+    ASSERT_EQ(rcl_set_ros_time_override(clock, 100000000000LL), RCL_RET_OK);
+    auto msg = std::make_shared<geometry_msgs::msg::PoseStamped>();
+    msg->header.stamp.sec = 10;
+    Access::receivePose(node, msg);
+    EXPECT_FALSE(Access::poseState(node).speed_valid);
+    msg->header.stamp.nanosec = 20000000;
+    msg->pose.position.x = .013;
+    Access::receivePose(node, msg);
+    ASSERT_TRUE(Access::poseState(node).speed_valid);
+    EXPECT_NEAR(Access::poseState(node).speed_mps, .65, 1e-12);
+    const auto received = Access::poseState(node).received;
+    ASSERT_EQ(rcl_set_ros_time_override(clock, 100300000000LL), RCL_RET_OK);
+    msg->pose.position.x = 100.;
+    Access::receivePose(node, msg);
+    EXPECT_EQ(Access::poseState(node).received, received);
+    msg->header.stamp.nanosec = 10000000;
+    Access::receivePose(node, msg);
+    EXPECT_EQ(Access::poseState(node).received, received);
+    EXPECT_DOUBLE_EQ(Access::poseState(node).position.x(), .013);
+    msg->header.stamp.nanosec = 800000000;
+    msg->pose.position.x = .52;
+    Access::receivePose(node, msg);
+    EXPECT_FALSE(Access::poseState(node).speed_valid);
+    msg->header.stamp.nanosec = 820000000;
+    msg->pose.position.x = .533;
+    Access::receivePose(node, msg);
+    ASSERT_TRUE(Access::poseState(node).speed_valid);
+    EXPECT_NEAR(Access::poseState(node).speed_mps, .65, 1e-12);
+    msg->header.stamp.sec = msg->header.stamp.nanosec = 0;
+    Access::receivePose(node, msg);
+    EXPECT_FALSE(Access::poseState(node).speed_valid);
+    ASSERT_EQ(rcl_set_ros_time_override(clock, 100320000000LL), RCL_RET_OK);
+    msg->pose.position.x = .546;
+    Access::receivePose(node, msg);
+    EXPECT_NEAR(Access::poseState(node).speed_mps, .65, 1e-9);
+    imac_ctrl::SdMapUpperPlannerNode legacy;
+    Access::cancel(legacy);
+    EXPECT_FALSE(legacy.get_parameter("pose_use_header_stamp_for_speed").as_bool());
+  }
+  rclcpp::shutdown();
+}
+
+TEST(LowerPathGeneration, K1FreedomChangesOnlyFirstProcessedStripAndPreservesB)
+{
+  rclcpp::init(0, nullptr);
+  {
+    rclcpp::NodeOptions options;
+    options.parameter_overrides({rclcpp::Parameter("grid_positive_is_drivable", false),
+      rclcpp::Parameter("grid_value_threshold", 1),
+      rclcpp::Parameter("preview_interval_boundary_margin_m", 2.0),
+      rclcpp::Parameter("preview_interval_soft_ratio", .7)});
+    imac_ctrl::SdMapUpperPlannerNode node(options);
+    imac_ctrl::LowerPathGenerationTestAccess::cancel(node);
+    for (double half_width : {2.45, 5.0}) {
+      imac_ctrl::LowerPathGenerationTestAccess::k1Freedom(node, false);
+      const auto before = imac_ctrl::LowerPathGenerationTestAccess::uniformCenteringRoad(node, half_width);
+      imac_ctrl::LowerPathGenerationTestAccess::k1Freedom(node, true);
+      const auto after = imac_ctrl::LowerPathGenerationTestAccess::uniformCenteringRoad(node, half_width);
+      ASSERT_EQ(before.N_pred, 2); ASSERT_EQ(after.N_pred, 2);
+      EXPECT_DOUBLE_EQ(before.interval_update.state.reference_length, after.interval_update.state.reference_length);
+      for (int k = 0; k <= 2; ++k) {
+        ASSERT_EQ(before.Nck[k], after.Nck[k]); ASSERT_EQ(after.Nck[k], 1);
+        EXPECT_DOUBLE_EQ(before.raw_lengths[k][0], after.raw_lengths[k][0]);
+        if (k != 1 || half_width < 3.) {
+          EXPECT_NEAR((before.pmk[k][0]-after.pmk[k][0]).norm(), 0., 1e-12);
+          EXPECT_NEAR((before.pMk[k][0]-after.pMk[k][0]).norm(), 0., 1e-12);
+        } else {
+          EXPECT_GT(after.processed_lengths[k][0], before.processed_lengths[k][0]);
+          EXPECT_NEAR(after.processed_lengths[k][0], after.raw_lengths[k][0]-4., 1e-12);
+        }
+      }
+    }
+  }
+  rclcpp::shutdown();
+}
 
 TEST(LowerPathGeneration, SideLossRequiresReferenceConnectedMapEdgeAndMissingTail)
 {
@@ -366,6 +558,132 @@ TEST(LowerPathGeneration, RoadCanRequireTurnBeyondRemovedInitialHeadingLimit)
     EXPECT_LE(feasible.predicted_body[1].y(), 1.8 + 1e-6);
     const auto blocked = Access::solveRoad(*node, 100.0);
     EXPECT_FALSE(blocked.valid);  // Original road and vehicle input constraints still apply.
+  }
+  rclcpp::shutdown();
+}
+
+TEST(LowerPathGeneration, DenseBOnlyFindsNearbyWidthWithoutAddingSolverSteps)
+{
+  rclcpp::init(0, nullptr);
+  for (bool unknown_edge : {false, true}) {
+    rclcpp::NodeOptions coarse_options;
+    coarse_options.parameter_overrides({
+      rclcpp::Parameter("grid_positive_is_drivable", false),
+      rclcpp::Parameter("grid_value_threshold", 0)});
+    rclcpp::NodeOptions dense_options;
+    dense_options.parameter_overrides({
+      rclcpp::Parameter("grid_positive_is_drivable", false),
+      rclcpp::Parameter("grid_value_threshold", 0),
+      rclcpp::Parameter("preview_interval_b_sample_spacing_m", 0.6)});
+    auto coarse = std::make_shared<imac_ctrl::SdMapUpperPlannerNode>(coarse_options);
+    auto dense = std::make_shared<imac_ctrl::SdMapUpperPlannerNode>(dense_options);
+    using Access = imac_ctrl::LowerPathGenerationTestAccess;
+    Access::cancel(*coarse); Access::cancel(*dense);
+    const auto a = Access::denseSynthetic(*coarse, unknown_edge);
+    const auto b = Access::denseSynthetic(*dense, unknown_edge);
+    EXPECT_EQ(a.N_pred, 2);
+    EXPECT_EQ(b.N_pred, a.N_pred);
+    EXPECT_EQ(b.Nck, a.Nck);
+    EXPECT_EQ(b.raw_lengths, a.raw_lengths);
+    EXPECT_EQ(b.prk, a.prk);
+    EXPECT_EQ(b.psirk, a.psirk);
+    EXPECT_EQ(b.source_modes, a.source_modes);
+    EXPECT_EQ(b.fallback_reason_codes, a.fallback_reason_codes);
+    EXPECT_TRUE(a.b_probes.empty());
+    ASSERT_EQ(b.b_probes.size(), 8u);
+    EXPECT_NEAR(a.interval_update.candidate_length, 6.9, 0.11);
+    if (unknown_edge) {
+      EXPECT_NEAR(b.interval_update.candidate_length, a.interval_update.candidate_length, 1e-12);
+      EXPECT_EQ(b.interval_update.candidate_step, 2);
+    } else {
+      EXPECT_NEAR(b.interval_update.candidate_length, 4.7, 0.11);
+      EXPECT_GE(b.interval_update.candidate_step, b.b_original_sample_count);
+    }
+  }
+  rclcpp::shutdown();
+}
+
+TEST(LowerPathGeneration, DenseBSpacingRejectsNonfiniteAndOversampling)
+{
+  rclcpp::init(0, nullptr);
+  for (double spacing : {-0.1, 0.01, std::numeric_limits<double>::quiet_NaN()}) {
+    rclcpp::NodeOptions options;
+    options.parameter_overrides({rclcpp::Parameter("preview_interval_b_sample_spacing_m", spacing)});
+    EXPECT_THROW(std::make_shared<imac_ctrl::SdMapUpperPlannerNode>(options), std::invalid_argument);
+  }
+  rclcpp::shutdown();
+}
+
+// Optional saved-input audit: this test publishes nothing and cancels node timers.
+// File has multiple recorded grids/references. Its output is analysis data only.
+TEST(LowerPathGeneration, DenseBRecordedFrozenInputs)
+{
+  const char * fixture = std::getenv("DENSE_B_REPLAY_INPUT");
+  if (!fixture) {GTEST_SKIP() << "No optional recorded-input file";}
+  const char * destination = std::getenv("DENSE_B_REPLAY_OUTPUT");
+  ASSERT_NE(destination, nullptr);
+  std::ifstream input(fixture);
+  ASSERT_TRUE(input.good());
+  std::ofstream output(destination);
+  ASSERT_TRUE(output.good());
+  output << std::setprecision(17);
+  output << "sc,seq,coarse_candidate,coarse_B,dense_candidate,dense_B,dense_source_s,extra_probes,coarse_ms,dense_ms,raw_equal,horizon_equal,coarse_source,dense_source\n";
+  rclcpp::init(0, nullptr);
+  rclcpp::NodeOptions a_options, b_options;
+  const std::vector<rclcpp::Parameter> common{
+    rclcpp::Parameter("scale_mode", "fullscale"),
+    rclcpp::Parameter("grid_positive_is_drivable", false),
+    rclcpp::Parameter("grid_value_threshold", 1),
+    rclcpp::Parameter("preview_interval_transition_relative_band", 0.25),
+    rclcpp::Parameter("guard_side_boundary_terminal_loss", true)};
+  a_options.parameter_overrides(common);
+  auto dense_parameters = common;
+  dense_parameters.emplace_back("preview_interval_b_sample_spacing_m", 0.6);
+  b_options.parameter_overrides(dense_parameters);
+  auto a_node = std::make_shared<imac_ctrl::SdMapUpperPlannerNode>(a_options);
+  auto b_node = std::make_shared<imac_ctrl::SdMapUpperPlannerNode>(b_options);
+  using Access = imac_ctrl::LowerPathGenerationTestAccess;
+  Access::cancel(*a_node); Access::cancel(*b_node);
+  int cases = 0; input >> cases;
+  ASSERT_GT(cases, 0);
+  for (int i = 0; i < cases; ++i) {
+    int sc, seq, n;
+    double previous_b, origin_yaw;
+    Access::DenseGrid grid; Access::DenseReference reference;
+    input >> sc >> seq >> n >> previous_b;
+    input >> grid.width >> grid.height >> grid.resolution >> grid.origin_body.x() >>
+      grid.origin_body.y() >> origin_yaw;
+    grid.origin_yaw_rad = origin_yaw; grid.valid = true;
+    grid.data.resize(static_cast<std::size_t>(grid.width * grid.height));
+    for (auto & v : grid.data) {int value; input >> value; v = static_cast<int8_t>(value);}
+    reference.valid = true; reference.used_previous_solution = true;
+    for (int k = 0; k <= n; ++k) {
+      double x,y,h; input >> x >> y >> h;
+      reference.points_body.emplace_back(x,y); reference.heading_rad.push_back(h);
+    }
+    ASSERT_TRUE(input.good());
+    const auto started = std::chrono::steady_clock::now();
+    const auto a = Access::denseExtract(*a_node, grid, reference, previous_b);
+    const auto middle = std::chrono::steady_clock::now();
+    const auto b = Access::denseExtract(*b_node, grid, reference, previous_b);
+    const auto ended = std::chrono::steady_clock::now();
+    const bool raw_equal = a.raw_lengths == b.raw_lengths && a.Nck == b.Nck &&
+      a.source_modes == b.source_modes && a.fallback_reason_codes == b.fallback_reason_codes;
+    EXPECT_TRUE(raw_equal) << "sc=" << sc << " seq=" << seq;
+    EXPECT_EQ(a.N_pred, b.N_pred) << "sc=" << sc << " seq=" << seq;
+    EXPECT_EQ(a.prk, b.prk); EXPECT_EQ(a.psirk, b.psirk);
+    double source_s = -1.0;
+    if (b.interval_update.candidate_step >= b.b_original_sample_count) {
+      source_s = b.b_probes.at(static_cast<std::size_t>(
+        b.interval_update.candidate_step - b.b_original_sample_count)).arc_length_m;
+    }
+    output << sc << ',' << seq << ',' << a.interval_update.candidate_length << ',' <<
+      a.interval_update.state.reference_length << ',' << b.interval_update.candidate_length << ',' <<
+      b.interval_update.state.reference_length << ',' << source_s << ',' << b.b_probes.size() << ',' <<
+      std::chrono::duration<double,std::milli>(middle - started).count() << ',' <<
+      std::chrono::duration<double,std::milli>(ended - middle).count() << ',' <<
+      raw_equal << ',' << (a.N_pred == b.N_pred) << ',' << a.interval_update.candidate_step << ',' <<
+      b.interval_update.candidate_step << '\n';
   }
   rclcpp::shutdown();
 }
