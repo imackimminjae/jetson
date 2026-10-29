@@ -4,6 +4,7 @@
 import csv
 import json
 import math
+import re
 from pathlib import Path
 
 from ament_index_python.packages import get_package_share_directory
@@ -14,10 +15,10 @@ from rclpy.node import Node
 from rclpy.qos import DurabilityPolicy, QoSProfile, ReliabilityPolicy
 
 
-def load_route(route_name, routes_directory):
-    """Load one unmodified map-frame mission; reject incomplete route files."""
-    if route_name not in tuple(f'scenario{i}' for i in range(1, 22)):
-        raise ValueError('route_name must be scenario1 through scenario21')
+def load_route(route_name, routes_directory, end_waypoint=0):
+    """Load validated map-frame points, optionally ending at an original waypoint."""
+    if not re.fullmatch(r'scenario[1-9][0-9]*', route_name):
+        raise ValueError('route_name must identify a scenario CSV')
     filename = Path(routes_directory) / (route_name + '.csv')
     points = []
     with filename.open(newline='', encoding='utf-8') as stream:
@@ -36,6 +37,11 @@ def load_route(route_name, routes_directory):
             points.append(point)
     if len(points) < 2:
         raise ValueError(f'{filename}: a route needs at least two waypoints')
+    if (type(end_waypoint) is not int or
+            (end_waypoint != 0 and not 2 <= end_waypoint <= len(points))):
+        raise ValueError(f'{filename}: end_waypoint must be 0 or 2..{len(points)}')
+    if end_waypoint:
+        return points[:end_waypoint]
     return points
 
 
@@ -43,7 +49,8 @@ def load_start_positions(routes_directory):
     """Vehicle spawn positions, independent of the unmodified waypoint CSVs."""
     filename = Path(routes_directory) / 'knu_start_poses.json'
     data = json.loads(filename.read_text(encoding='utf-8'))
-    expected = {f'scenario{i}' for i in range(1, 22)}
+    expected = {p.stem for p in Path(routes_directory).glob('scenario*.csv')
+                if re.fullmatch(r'scenario[1-9][0-9]*', p.stem)}
     positions = {}
     for row in data['starts']:
         name = row['scenario']
@@ -53,7 +60,7 @@ def load_start_positions(routes_directory):
             raise ValueError(f'{filename}: invalid or duplicate start position')
         positions[name] = point
     if set(positions) != expected:
-        raise ValueError(f'{filename}: expected exactly scenario1 through scenario21')
+        raise ValueError(f'{filename}: expected one start position for every scenario CSV')
     return positions
 
 
@@ -66,11 +73,15 @@ class KnuGlobalPathPublisher(Node):
         self.declare_parameter('global_path_topic', '/navigation/global_path')
         self.declare_parameter('frame_id', 'map')
         self.declare_parameter('publish_period_sec', 2.0)
+        self.declare_parameter('route_scale', 1.0)
 
         route_name = self.get_parameter('route_name').value
         topic = self.get_parameter('global_path_topic').value
         frame_id = self.get_parameter('frame_id').value
         period = self.get_parameter('publish_period_sec').value
+        route_scale = float(self.get_parameter('route_scale').value)
+        if not math.isfinite(route_scale) or route_scale <= 0.0:
+            raise ValueError('route_scale must be finite and positive')
         if not frame_id or not math.isfinite(period) or period < 0.0:
             raise ValueError('frame_id must be nonempty and publish_period_sec finite >= 0')
 
@@ -80,7 +91,8 @@ class KnuGlobalPathPublisher(Node):
         points = load_route(route_name, route_directory)
         self.path = PathMsg()
         self.path.header.frame_id = frame_id
-        for x, y, z in points:
+        for point in points:
+            x, y, z = (coordinate * route_scale for coordinate in point)
             pose = PoseStamped()
             pose.header.frame_id = frame_id
             pose.pose.position.x = x

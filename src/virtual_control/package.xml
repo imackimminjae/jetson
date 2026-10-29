@@ -27,6 +27,7 @@
   <depend>std_srvs</depend>
   <depend>mavlink</depend>
   <depend>mpclib_vendor</depend>
+  <!-- Includes the bundled DAQP QP solver used by the kinematic MPCC core. -->
   <depend>eigen</depend>
 
   <exec_depend>ament_index_python</exec_depend>
@@ -35,6 +36,7 @@
   <exec_depend>rclpy</exec_depend>
   <exec_depend>rcl_interfaces</exec_depend>
   <exec_depend>python3-yaml</exec_depend>
+  <exec_depend>python3-numpy</exec_depend>
   <exec_depend>python3-pymavlink</exec_depend>
 
   <!-- Eigen (CMake 모듈) -->

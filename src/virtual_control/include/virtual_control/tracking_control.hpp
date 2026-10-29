@@ -262,6 +262,9 @@ private:
     double solver_only_time_ms{std::numeric_limits<double>::quiet_NaN()};
     bool polished{false};
     int direct_corridor_combinations{0};
+    int bnb_solve_calls{0};
+    int enumerated_corridor_combinations{0};
+    int selected_corridor_polish_calls{0};
     std::string status;
   };
 
@@ -380,6 +383,7 @@ private:
 
   // V8 normalized MIQP objective.
   double miqp_big_m_{100.0};
+  bool upper_miqp_force_bnb_{true};
   double position_scale_m_{10.0};
   double relative_turn_scale_rad_{0.3490658504};
   double lambda_position_{1.0};
@@ -391,7 +395,8 @@ private:
   double upper_r_steering_delta_{0.0};
   double upper_max_steering_rate_radps_{0.0};
   bool upper_use_vehicle_rollout_{false};
-  bool upper_soft_corridor_constraints_{false};
+  // Observed road bounds stay hard; contracted preferred strips use soft slack.
+  bool upper_soft_corridor_constraints_{true};
   double upper_corridor_soft_linear_weight_{1.0};
   double upper_corridor_soft_quadratic_weight_{10.0};
   double upper_vehicle_integration_dt_sec_{0.01};
@@ -404,12 +409,7 @@ private:
   // Increment-based upper prediction and absolute relative-turn heading targets.
   bool upper_cumulative_increment_model_{false};
   bool branch_turn_target_absolute_{false};
-  double branch_min_candidate_width_m_{2.0};
   double road_candidate_min_width_m_{0.0};
-  bool branch_require_count_increase_{true};
-  bool branch_include_k0_transition_{false};
-  bool branch_use_split_continuity_{false};
-  double branch_split_continuity_m_{6.75};
   double turn_weight_growth_{2.0};
   double miqp_diagonal_regularization_{1e-10};
   double miqp_binary_diagonal_regularization_{1e-4};
@@ -423,6 +423,10 @@ private:
   double waypoint_x_bias_m_{0.0};
   double waypoint_y_bias_m_{0.0};
   double waypoint_yaw_bias_rad_{0};
+  std::string waypoint_bias_mode_{"global"};
+  int waypoint_bias_start_wp_{1};
+  int waypoint_bias_end_wp_{1};
+  std::array<Eigen::Vector2d, 2> diagnostic_planning_waypoints_{};
 
   // Input availability.
   double input_timeout_sec_{0.6};

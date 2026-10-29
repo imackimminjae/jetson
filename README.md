@@ -1,12 +1,18 @@
 # PX4 / Isaac HILS 제어
 
+2026-10-30 확정 설정은 **3-state MPC (τ=0.74초) + 전 구간 DAQP BnB**다.
+S22 출발점을 도로 중심으로 옮기고 S24를 남→북 방향으로 뒤집은 뒤,
+바이어스 0°에서 S22–S25를 각각 3회, 총 12회 완주했다.
+소스 스냅샷, 원본 기록 복구 방법과 검증 한계는
+[2026-10-30 기록 안내](README_20261030.md)를 참고한다.
+
 ROS 2 Humble 기반 HILS(Hardware-in-the-Loop Simulation) 워크스페이스다.
 PX4 상태를 KNU 맵 좌표로 변환하고, OccupancyGrid 기반 상위 MIQP 경로 계획과
 하위 MPC 추종 제어를 실행한다.
 
 | 경로 | 내용 |
 | --- | --- |
-| `src/virtual_control` | PX4 브리지, 상·하위 제어기, launch·설정, KNU 21개 경로 및 배치 실행·테스트 |
+| `src/virtual_control` | PX4 브리지, 상·하위 제어기, launch·설정, KNU 경로 및 배치 실행·테스트 |
 | `src/imac_interfaces` | `VirtualControlCommand` ROS 메시지 |
 | `src/mpclib_vendor` | 제어기에 필요한 MIQP/QP·DAQP 솔버 소스와 원본 라이선스 |
 | `matlab/knu_batch` | 선택적 MATLAB grid 공급·배치 연동 및 경로 검증 코드 |

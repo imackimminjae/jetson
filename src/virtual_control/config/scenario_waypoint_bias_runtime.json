@@ -1,0 +1,22 @@
+{
+  "created_at": "2026-10-26T16:43:11.461610+09:00",
+  "mode": "waypoint_window",
+  "upper_executable": "upper_planner_waypoint_bias_node",
+  "upper_sha256": "861d62785a124a0fe2b906fbc7eb759ff61c9bbf2f901a8abb3c45f26a297a3b",
+  "numbering": "1-based inclusive wp0 range",
+  "bias_anchor": "measured vehicle position",
+  "progress_and_goal": "original mission waypoints",
+  "legacy_upper_sha256": "51245510bdb86d9d03b9f19a10ffa50b60b30f3203fa41171433dae1224707b3",
+  "baseline_sha256": "75645a1acf3e559cb511bfb84c2abe8e5eb1777664f2e5dc550f155a1c6c5ec5",
+  "solver_policy": "All upper MIQP integer choices use DAQP BnB; selected-corridor continuous polishing only; no enumeration fallback.",
+  "solver_policy_change_record": "diagnostics/c5_bnb_20261030",
+  "confirmed_baseline": {
+    "confirmed_date": "2026-10-30",
+    "scope": "HILS",
+    "lower_state_count": 3,
+    "lower_enable_steering_actuator_model": true,
+    "lower_steering_actuator_time_constant_sec": 0.74,
+    "lower_steering_actuator_delay_sec": 0.0,
+    "upper_miqp_force_bnb": true
+  }
+}

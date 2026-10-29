@@ -12,7 +12,7 @@ TEST(Px4OdomMapTransform, FirstSourcePoseMapsToEveryRouteAnchor)
 {
   const map_transform::RawPose first_source{12.5, -7.25, 3.0, -0.42};
 
-  for (int number = 1; number <= 21; ++number) {
+  for (int number = 1; number <= 25; ++number) {
     const auto route_name = "scenario" + std::to_string(number);
     const auto route = map_transform::routeAnchorForName(route_name);
     ASSERT_TRUE(route.has_value());

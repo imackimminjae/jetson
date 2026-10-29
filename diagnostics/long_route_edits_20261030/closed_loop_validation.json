@@ -1,0 +1,64 @@
+{
+  "state": "complete",
+  "baseline": "3-state MPC, tau=0.74 s, delay=0; all upper integer choices DAQP BnB",
+  "bias_deg": 0,
+  "planned_attempts": 12,
+  "completed": 12,
+  "stationary_stops": 12,
+  "recorded_model_and_tau_verified": true,
+  "recorded_bnb_policy_verified": true,
+  "bnb_calls": 10502,
+  "enumerated_combinations": 0,
+  "bnb_numerical_failures": 41,
+  "lower_qp_failures": 0,
+  "groups": [
+    {
+      "scenario": "scenario22",
+      "runs": 3,
+      "completed": 3,
+      "stationary_stops": 3,
+      "duration_sec": [
+        114.402,
+        112.793,
+        111.692
+      ]
+    },
+    {
+      "scenario": "scenario23",
+      "runs": 3,
+      "completed": 3,
+      "stationary_stops": 3,
+      "duration_sec": [
+        71.418,
+        70.245,
+        68.921
+      ]
+    },
+    {
+      "scenario": "scenario24",
+      "runs": 3,
+      "completed": 3,
+      "stationary_stops": 3,
+      "duration_sec": [
+        69.449,
+        68.217,
+        67.032
+      ]
+    },
+    {
+      "scenario": "scenario25",
+      "runs": 3,
+      "completed": 3,
+      "stationary_stops": 3,
+      "duration_sec": [
+        107.098,
+        107.408,
+        105.423
+      ]
+    }
+  ],
+  "results_directory": "/home/imac/ros2_ws/parameter_sweeps/manual_bias_scenario22_scenario23_scenario24_scenario25_20261030_052032_63228b",
+  "summary_csv": "/home/imac/ros2_ws/parameter_sweeps/manual_bias_scenario22_scenario23_scenario24_scenario25_20261030_052032_63228b/summary.csv",
+  "prior_start_layout_attempts_excluded": true,
+  "route_changes_verified": "/home/imac/ros2_ws/diagnostics/long_route_edits_20261030/verification.json"
+}

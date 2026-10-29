@@ -2,6 +2,7 @@
 import copy
 import csv
 import json
+import itertools
 from pathlib import Path
 import signal
 import sys
@@ -172,3 +173,66 @@ def test_default_cli_prepares_without_ros_or_children(tmp_path, monkeypatch):
     monkeypatch.setattr(sweep.subprocess, 'Popen', lambda *a, **k: pytest.fail('Must not start a child'))
     assert sweep.main(['--output', str(tmp_path/'offline')]) == 0
     assert sweep.read_json(tmp_path/'offline'/'progress.json')['state'] == 'prepared'
+
+
+def test_frequency_catalog_cli_covers_matrix_and_matches_model_periods(tmp_path, monkeypatch):
+    monkeypatch.setattr(sweep.subprocess, 'Popen', lambda *a, **k: pytest.fail('Preparation must not drive'))
+    catalog = PACKAGE/'config/tuning_sweep_scenario1_rates.yaml'
+    directory = tmp_path/'frequency'
+    assert sweep.main(['--catalog', str(catalog), '--prepare', '--output', str(directory)]) == 0
+    plan = sweep.read_json(directory/'plan.json')
+    assert plan['planned_attempts'] == 27 and len(plan['jobs']) == 9
+    assert plan['scenarios'] == ['scenario1'] and plan['runs'] == 3
+    assert {(j['planner_hz'], j['controller_hz']) for j in plan['jobs']} == set(
+        itertools.product([2, 5, 10], [5, 10, 20]))
+    baseline = yaml.safe_load((directory/'base_effective_config.yaml').read_text())
+    expected_changes = {'upper_planner_node': {'upper_planner_rate_hz'},
+                        'lower_tracking_mpc_node': {'lower_controller_rate_hz', 'lower_prediction_dt_sec', 'lower_prediction_steps'},
+                        'knu_batch_runner': {'results_directory'}}
+    for job in plan['jobs']:
+        assert job['controller_preview_sec'] == 3.0
+        assert job['upper_heading_cost'] == .3
+        cfg = yaml.safe_load(Path(job['config_file']).read_text())
+        lower = cfg['lower_tracking_mpc_node']['ros__parameters']
+        assert lower['lower_prediction_dt_sec'] == pytest.approx(1/lower['lower_controller_rate_hz'])
+        assert cfg['upper_planner_node']['ros__parameters']['lower_prediction_dt_sec'] == .1
+        for node, section in cfg.items():
+            changed = {key for key, value in section['ros__parameters'].items()
+                       if value != baseline[node]['ros__parameters'].get(key)}
+            assert changed <= expected_changes.get(node, set())
+    sweep.verify_plan(plan)
+
+
+@pytest.mark.parametrize('value', [0, 1, 'false', None])
+def test_path_refresh_reset_requires_boolean(tmp_path, value):
+    _, plan = prepared(tmp_path)
+    cfg = yaml.safe_load(Path(plan['jobs'][0]['config_file']).read_text())
+    with pytest.raises(ValueError, match='boolean'):
+        sweep.apply_changes(cfg, {'lower_tracking_mpc_node': {'reset_on_path_change': value}})
+
+
+def test_junction_catalog_varies_only_planner_reset_and_steering_cost(tmp_path):
+    plan = sweep.prepare(tmp_path/'junction', ['scenario1'], 3,
+                         catalog_file=PACKAGE/'config/tuning_sweep_scenario1_junction.yaml')
+    assert plan['planned_attempts'] == 24 and len(plan['jobs']) == 8
+    assert {(j['planner_hz'], j['lower_reset_on_path_change'], j['lower_steering_change_cost'])
+            for j in plan['jobs']} == set(itertools.product([5., 10.], [True, False], [150., 600.]))
+    baseline = yaml.safe_load((tmp_path/'junction'/'base_effective_config.yaml').read_text())
+    allowed = {'upper_planner_node': {'upper_planner_rate_hz'},
+               'lower_tracking_mpc_node': {'reset_on_path_change', 'lower_rd_steering_rate'},
+               'knu_batch_runner': {'results_directory'}}
+    for job in plan['jobs']:
+        assert job['controller_hz'] == 20. and job['controller_preview_sec'] == 3.
+        assert job['upper_heading_cost'] == .3
+        cfg = yaml.safe_load(Path(job['config_file']).read_text())
+        for node, section in cfg.items():
+            changed = {key for key, value in section['ros__parameters'].items()
+                       if value != baseline[node]['ros__parameters'].get(key)}
+            assert changed <= allowed.get(node, set())
+        assert cfg['knu_batch_runner']['ros__parameters']['reset_upper_each_attempt'] is True
+        lower = cfg['lower_tracking_mpc_node']['ros__parameters']
+        assert lower['pose_jump_reset_threshold_m'] == baseline['lower_tracking_mpc_node']['ros__parameters']['pose_jump_reset_threshold_m']
+        for protected in ('mavlink_auto_arm', 'batch_supervision', 'lower_enable_steering_actuator_model'):
+            with pytest.raises(ValueError, match='allowed sweep parameter'):
+                sweep.apply_changes(cfg, {'lower_tracking_mpc_node': {protected: False}})
+    sweep.verify_plan(plan)

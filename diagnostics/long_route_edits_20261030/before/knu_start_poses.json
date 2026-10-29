@@ -1,0 +1,1043 @@
+{
+  "version": 5,
+  "coordinate_frame": "map",
+  "policy": "scenario1-3 preserved; scenario4-12 spawn positions independently placed inside stationary recorded BEV road, with conservative body footprint and unchanged headings/waypoints; scenario13-21 retained outside active profile.",
+  "vehicle": {
+    "Length": 4.7,
+    "Width": 1.8,
+    "Height": 1.5,
+    "Wheelbase": 2.8,
+    "RearOverhang": 0.9
+  },
+  "corrected_margin_m": 0.25,
+  "starts": [
+    {
+      "scenario": "scenario1",
+      "position": [
+        150,
+        -140,
+        0
+      ],
+      "path_first": [
+        150,
+        -140,
+        0
+      ],
+      "heading_rad": 2.0663480002807253,
+      "ros_heading_rad": 2.0663480002807253,
+      "original_position": [
+        150,
+        -140,
+        0
+      ],
+      "original_point_on_road": true,
+      "original_body_on_road": true,
+      "shift_m": 0,
+      "corrected": false,
+      "body_on_road": true,
+      "clearance_margin_m": 0,
+      "section_number": 0,
+      "previous_position": [
+        150,
+        -140,
+        0
+      ],
+      "centered_in_active_batch": false,
+      "centerline_road_id": 0,
+      "centerline_station_m": 0,
+      "centerline_distance_m": null
+    },
+    {
+      "scenario": "scenario2",
+      "position": [
+        -252.789,
+        93.548,
+        0
+      ],
+      "path_first": [
+        -250,
+        101,
+        0
+      ],
+      "heading_rad": -0.3507279482482035,
+      "ros_heading_rad": -0.1706946798533749,
+      "original_position": [
+        -252.789,
+        93.548,
+        0
+      ],
+      "original_point_on_road": true,
+      "original_body_on_road": true,
+      "shift_m": 0,
+      "corrected": false,
+      "body_on_road": true,
+      "clearance_margin_m": 0,
+      "section_number": 0,
+      "previous_position": [
+        -252.789,
+        93.548,
+        0
+      ],
+      "centered_in_active_batch": false,
+      "centerline_road_id": 0,
+      "centerline_station_m": 0,
+      "centerline_distance_m": null
+    },
+    {
+      "scenario": "scenario3",
+      "position": [
+        187,
+        220,
+        0
+      ],
+      "path_first": [
+        187,
+        220,
+        0
+      ],
+      "heading_rad": -1.5707963267948966,
+      "ros_heading_rad": -1.5707963267948966,
+      "original_position": [
+        187,
+        220,
+        0
+      ],
+      "original_point_on_road": true,
+      "original_body_on_road": true,
+      "shift_m": 0,
+      "corrected": false,
+      "body_on_road": true,
+      "clearance_margin_m": 0,
+      "section_number": 0,
+      "previous_position": [
+        187,
+        220,
+        0
+      ],
+      "centered_in_active_batch": false,
+      "centerline_road_id": 0,
+      "centerline_station_m": 0,
+      "centerline_distance_m": null
+    },
+    {
+      "scenario": "scenario4",
+      "position": [
+        -257.483161389,
+        98.345136529,
+        0.0
+      ],
+      "path_first": [
+        -261.143,
+        96.574,
+        0.0
+      ],
+      "heading_rad": -0.3790993471379917,
+      "ros_heading_rad": -0.3790993471379917,
+      "original_position": [
+        -261.143,
+        96.574,
+        0.0
+      ],
+      "original_point_on_road": true,
+      "original_body_on_road": true,
+      "shift_m": 4.0658754608232375,
+      "corrected": true,
+      "body_on_road": true,
+      "clearance_margin_m": 0.404,
+      "section_number": 4,
+      "generator": "followup_20261015/body_heading_and_starts; stationary recorded BEV",
+      "previous_position": [
+        -261.143,
+        96.574,
+        0.0
+      ],
+      "centered_in_active_batch": true,
+      "spawn_evidence": {
+        "snapshot": "/home/imac/ros2_ws/parameter_sweeps/remaining_start_review_20261015/baseline_stationary_start_snapshots/scenario4_reference_01.json",
+        "receipt_sec": 1792074534.1090453,
+        "footprint_body_extents_m": [
+          -2.35,
+          3.8,
+          -0.9,
+          0.9
+        ],
+        "isolated_first_plan_valid": true,
+        "actual_drive_recheck_pending": false,
+        "detected_nonroad_margin_m": 2.279029130879204,
+        "observed_free_space_margin_m": 0.4040291308792039,
+        "unknown_and_outside_treated_as_nonroad": true,
+        "actual_first_plan_valid": true,
+        "actual_reference_wait_sec": 0.3945906162261963,
+        "actual_primary_outcome": "completed",
+        "actual_retry_outcome": null,
+        "actual_completed": true,
+        "trial_report": "/home/imac/ros2_ws/followup_20261015/body_heading_and_starts/trial_comparison.json"
+      }
+    },
+    {
+      "scenario": "scenario5",
+      "position": [
+        -198.524572144,
+        150.304929069,
+        0.0
+      ],
+      "path_first": [
+        -197.361,
+        152.847,
+        0.0
+      ],
+      "heading_rad": -1.8204486605724588,
+      "ros_heading_rad": -1.8204486605724588,
+      "original_position": [
+        -197.361,
+        152.847,
+        0.0
+      ],
+      "original_point_on_road": true,
+      "original_body_on_road": true,
+      "shift_m": 2.7957154276728566,
+      "corrected": true,
+      "body_on_road": true,
+      "clearance_margin_m": 0.404,
+      "section_number": 5,
+      "generator": "followup_20261015/body_heading_and_starts; stationary recorded BEV",
+      "previous_position": [
+        -197.361,
+        152.847,
+        0.0
+      ],
+      "centered_in_active_batch": true,
+      "spawn_evidence": {
+        "snapshot": "/home/imac/ros2_ws/parameter_sweeps/remaining_start_review_20261015/baseline_stationary_start_snapshots/scenario5_reference_01.json",
+        "receipt_sec": 1792074566.5181544,
+        "footprint_body_extents_m": [
+          -2.35,
+          3.8,
+          -0.9,
+          0.9
+        ],
+        "isolated_first_plan_valid": true,
+        "actual_drive_recheck_pending": false,
+        "detected_nonroad_margin_m": 2.279029130879204,
+        "observed_free_space_margin_m": 0.4040291308792039,
+        "unknown_and_outside_treated_as_nonroad": true,
+        "actual_first_plan_valid": true,
+        "actual_reference_wait_sec": 0.3898775577545166,
+        "actual_primary_outcome": "completed",
+        "actual_retry_outcome": null,
+        "actual_completed": true,
+        "trial_report": "/home/imac/ros2_ws/followup_20261015/body_heading_and_starts/trial_comparison.json"
+      }
+    },
+    {
+      "scenario": "scenario6",
+      "position": [
+        -190.713264099,
+        67.844785649,
+        0.0
+      ],
+      "path_first": [
+        -193.927,
+        66.008,
+        0.0
+      ],
+      "heading_rad": -0.2211911042694167,
+      "ros_heading_rad": -0.2211911042694167,
+      "original_position": [
+        -193.927,
+        66.008,
+        0.0
+      ],
+      "original_point_on_road": true,
+      "original_body_on_road": true,
+      "shift_m": 3.7016050521021984,
+      "corrected": true,
+      "body_on_road": true,
+      "clearance_margin_m": 0.404,
+      "section_number": 6,
+      "generator": "followup_20261015/body_heading_and_starts; stationary recorded BEV",
+      "previous_position": [
+        -193.927,
+        66.008,
+        0.0
+      ],
+      "centered_in_active_batch": true,
+      "spawn_evidence": {
+        "snapshot": "/home/imac/ros2_ws/parameter_sweeps/remaining_start_review_20261015/baseline_stationary_start_snapshots/scenario6_reference_01.json",
+        "receipt_sec": 1792074618.9225934,
+        "footprint_body_extents_m": [
+          -2.35,
+          3.8,
+          -0.9,
+          0.9
+        ],
+        "isolated_first_plan_valid": true,
+        "actual_drive_recheck_pending": false,
+        "detected_nonroad_margin_m": 2.591529130879204,
+        "observed_free_space_margin_m": 0.4040291308792039,
+        "unknown_and_outside_treated_as_nonroad": true,
+        "actual_first_plan_valid": true,
+        "actual_reference_wait_sec": 0.4005613327026367,
+        "actual_primary_outcome": "completed",
+        "actual_retry_outcome": null,
+        "actual_completed": true,
+        "trial_report": "/home/imac/ros2_ws/followup_20261015/body_heading_and_starts/trial_comparison.json"
+      }
+    },
+    {
+      "scenario": "scenario7",
+      "position": [
+        -61.00907336,
+        12.33687171,
+        0.0
+      ],
+      "path_first": [
+        -58.487,
+        10.267,
+        0.0
+      ],
+      "heading_rad": 3.021671812162957,
+      "ros_heading_rad": 3.021671812162957,
+      "original_position": [
+        -58.487,
+        10.267,
+        0.0
+      ],
+      "original_point_on_road": true,
+      "original_body_on_road": true,
+      "shift_m": 3.262701783657222,
+      "corrected": true,
+      "body_on_road": true,
+      "clearance_margin_m": 0.404,
+      "section_number": 7,
+      "generator": "followup_20261015/body_heading_and_starts; stationary recorded BEV",
+      "previous_position": [
+        -58.487,
+        10.267,
+        0.0
+      ],
+      "centered_in_active_batch": true,
+      "spawn_evidence": {
+        "snapshot": "/home/imac/ros2_ws/parameter_sweeps/remaining_start_review_20261015/baseline_stationary_start_snapshots/scenario7_reference_01.json",
+        "receipt_sec": 1792074651.3019664,
+        "footprint_body_extents_m": [
+          -2.35,
+          3.8,
+          -0.9,
+          0.9
+        ],
+        "isolated_first_plan_valid": true,
+        "actual_drive_recheck_pending": false,
+        "detected_nonroad_margin_m": 3.841529130879204,
+        "observed_free_space_margin_m": 0.4040291308792039,
+        "unknown_and_outside_treated_as_nonroad": true,
+        "actual_first_plan_valid": true,
+        "actual_reference_wait_sec": 0.3979330062866211,
+        "actual_primary_outcome": "completed",
+        "actual_retry_outcome": null,
+        "actual_completed": true,
+        "trial_report": "/home/imac/ros2_ws/followup_20261015/body_heading_and_starts/trial_comparison.json"
+      }
+    },
+    {
+      "scenario": "scenario8",
+      "position": [
+        -156.002159705,
+        -73.16760355,
+        0.0
+      ],
+      "path_first": [
+        -154.91,
+        -76.246,
+        0.0
+      ],
+      "heading_rad": 1.3445020977190796,
+      "ros_heading_rad": 1.3445020977190796,
+      "original_position": [
+        -154.91,
+        -76.246,
+        0.0
+      ],
+      "original_point_on_road": true,
+      "original_body_on_road": true,
+      "shift_m": 3.266395188062566,
+      "corrected": true,
+      "body_on_road": true,
+      "clearance_margin_m": 0.404,
+      "section_number": 8,
+      "generator": "followup_20261015/body_heading_and_starts; stationary recorded BEV",
+      "previous_position": [
+        -154.91,
+        -76.246,
+        0.0
+      ],
+      "centered_in_active_batch": true,
+      "spawn_evidence": {
+        "snapshot": "/home/imac/ros2_ws/parameter_sweeps/remaining_start_review_20261015/baseline_stationary_start_snapshots/scenario8_reference_01.json",
+        "receipt_sec": 1792074697.6297119,
+        "footprint_body_extents_m": [
+          -2.35,
+          3.8,
+          -0.9,
+          0.9
+        ],
+        "isolated_first_plan_valid": true,
+        "actual_drive_recheck_pending": false,
+        "detected_nonroad_margin_m": 4.154029130879204,
+        "observed_free_space_margin_m": 0.4040291308792039,
+        "unknown_and_outside_treated_as_nonroad": true,
+        "actual_first_plan_valid": true,
+        "actual_reference_wait_sec": 0.3899397850036621,
+        "actual_primary_outcome": "completed",
+        "actual_retry_outcome": null,
+        "actual_completed": true,
+        "trial_report": "/home/imac/ros2_ws/followup_20261015/body_heading_and_starts/trial_comparison.json"
+      }
+    },
+    {
+      "scenario": "scenario9",
+      "position": [
+        151.014439778,
+        -151.654980296,
+        0.0
+      ],
+      "path_first": [
+        151.981,
+        -154.271,
+        0.0
+      ],
+      "heading_rad": 1.7498799749427358,
+      "ros_heading_rad": 1.7498799749427358,
+      "original_position": [
+        151.981,
+        -154.271,
+        0.0
+      ],
+      "original_point_on_road": true,
+      "original_body_on_road": true,
+      "shift_m": 2.7888703366181997,
+      "corrected": true,
+      "body_on_road": true,
+      "clearance_margin_m": 0.404,
+      "section_number": 9,
+      "generator": "followup_20261015/body_heading_and_starts; stationary recorded BEV",
+      "previous_position": [
+        151.981,
+        -154.271,
+        0.0
+      ],
+      "centered_in_active_batch": true,
+      "spawn_evidence": {
+        "snapshot": "/home/imac/ros2_ws/parameter_sweeps/remaining_start_review_20261015/baseline_stationary_start_snapshots/scenario9_reference_01.json",
+        "receipt_sec": 1792074783.925891,
+        "footprint_body_extents_m": [
+          -2.35,
+          3.8,
+          -0.9,
+          0.9
+        ],
+        "isolated_first_plan_valid": true,
+        "actual_drive_recheck_pending": false,
+        "detected_nonroad_margin_m": 6.221381670906799,
+        "observed_free_space_margin_m": 0.4040291308792039,
+        "unknown_and_outside_treated_as_nonroad": true,
+        "actual_first_plan_valid": true,
+        "actual_reference_wait_sec": 0.3948972225189209,
+        "actual_primary_outcome": "completed",
+        "actual_retry_outcome": null,
+        "actual_completed": true,
+        "trial_report": "/home/imac/ros2_ws/followup_20261015/body_heading_and_starts/trial_comparison.json"
+      }
+    },
+    {
+      "scenario": "scenario10",
+      "position": [
+        87.759129587,
+        31.202988887,
+        0.0
+      ],
+      "path_first": [
+        89.524,
+        36.781,
+        0.0
+      ],
+      "heading_rad": -2.223853243816635,
+      "ros_heading_rad": -2.223853243816635,
+      "original_position": [
+        89.524,
+        36.781,
+        0.0
+      ],
+      "original_point_on_road": true,
+      "original_body_on_road": true,
+      "shift_m": 5.850553439755444,
+      "corrected": true,
+      "body_on_road": true,
+      "clearance_margin_m": 3.217,
+      "section_number": 10,
+      "generator": "followup_20261015/body_heading_and_starts; stationary recorded BEV",
+      "previous_position": [
+        89.524,
+        36.781,
+        0.0
+      ],
+      "centered_in_active_batch": true,
+      "spawn_evidence": {
+        "snapshot": "/home/imac/ros2_ws/parameter_sweeps/remaining_start_review_20261015/baseline_stationary_start_snapshots/scenario10_reference_01.json",
+        "receipt_sec": 1792074833.9123008,
+        "footprint_body_extents_m": [
+          -2.35,
+          3.8,
+          -0.9,
+          0.9
+        ],
+        "isolated_first_plan_valid": true,
+        "actual_drive_recheck_pending": false,
+        "detected_nonroad_margin_m": 8.529029130879204,
+        "observed_free_space_margin_m": 3.216529130879204,
+        "unknown_and_outside_treated_as_nonroad": true,
+        "actual_first_plan_valid": true,
+        "actual_reference_wait_sec": 0.39608025550842285,
+        "actual_primary_outcome": "completed",
+        "actual_retry_outcome": null,
+        "actual_completed": true,
+        "trial_report": "/home/imac/ros2_ws/followup_20261015/body_heading_and_starts/trial_comparison.json"
+      }
+    },
+    {
+      "scenario": "scenario11",
+      "position": [
+        188.016414172,
+        241.704819198,
+        0.0
+      ],
+      "path_first": [
+        188.113,
+        244.451,
+        0.0
+      ],
+      "heading_rad": -1.6067590269480179,
+      "ros_heading_rad": -1.6067590269480179,
+      "original_position": [
+        188.113,
+        244.451,
+        0.0
+      ],
+      "original_point_on_road": true,
+      "original_body_on_road": true,
+      "shift_m": 2.747878785435012,
+      "corrected": true,
+      "body_on_road": true,
+      "clearance_margin_m": 0.404,
+      "section_number": 11,
+      "generator": "followup_20261015/body_heading_and_starts; stationary recorded BEV",
+      "previous_position": [
+        188.113,
+        244.451,
+        0.0
+      ],
+      "centered_in_active_batch": true,
+      "spawn_evidence": {
+        "snapshot": "/home/imac/ros2_ws/parameter_sweeps/remaining_start_review_20261015/baseline_stationary_start_snapshots/scenario11_reference_01.json",
+        "receipt_sec": 1792074924.022125,
+        "footprint_body_extents_m": [
+          -2.35,
+          3.8,
+          -0.9,
+          0.9
+        ],
+        "isolated_first_plan_valid": true,
+        "actual_drive_recheck_pending": false,
+        "detected_nonroad_margin_m": 1.966529130879204,
+        "observed_free_space_margin_m": 0.4040291308792039,
+        "unknown_and_outside_treated_as_nonroad": true,
+        "actual_first_plan_valid": true,
+        "actual_reference_wait_sec": 0.3932490348815918,
+        "actual_primary_outcome": "completed",
+        "actual_retry_outcome": null,
+        "actual_completed": true,
+        "trial_report": "/home/imac/ros2_ws/followup_20261015/body_heading_and_starts/trial_comparison.json"
+      }
+    },
+    {
+      "scenario": "scenario12",
+      "position": [
+        164.828195243,
+        176.253564481,
+        0.0
+      ],
+      "path_first": [
+        162.231,
+        174.71,
+        0.0
+      ],
+      "heading_rad": 0.10823928945697123,
+      "ros_heading_rad": 0.10823928945697123,
+      "original_position": [
+        162.231,
+        174.71,
+        0.0
+      ],
+      "original_point_on_road": true,
+      "original_body_on_road": true,
+      "shift_m": 3.0212604054047913,
+      "corrected": true,
+      "body_on_road": true,
+      "clearance_margin_m": 0.404,
+      "section_number": 12,
+      "generator": "followup_20261015/body_heading_and_starts; stationary recorded BEV",
+      "previous_position": [
+        162.231,
+        174.71,
+        0.0
+      ],
+      "centered_in_active_batch": true,
+      "spawn_evidence": {
+        "snapshot": "/home/imac/ros2_ws/parameter_sweeps/remaining_start_review_20261015/baseline_stationary_start_snapshots/scenario12_reference_01.json",
+        "receipt_sec": 1792075010.2947984,
+        "footprint_body_extents_m": [
+          -2.35,
+          3.8,
+          -0.9,
+          0.9
+        ],
+        "isolated_first_plan_valid": true,
+        "actual_drive_recheck_pending": false,
+        "detected_nonroad_margin_m": 3.216529130879204,
+        "observed_free_space_margin_m": 0.4040291308792039,
+        "unknown_and_outside_treated_as_nonroad": true,
+        "actual_first_plan_valid": true,
+        "actual_reference_wait_sec": 0.396864652633667,
+        "actual_primary_outcome": "lower_compute_timeout",
+        "actual_retry_outcome": "completed",
+        "actual_completed": true,
+        "trial_report": "/home/imac/ros2_ws/followup_20261015/body_heading_and_starts/trial_comparison.json"
+      }
+    },
+    {
+      "scenario": "scenario13",
+      "position": [
+        197.601270328,
+        -5.629844838,
+        0
+      ],
+      "path_first": [
+        199.659,
+        -9.949,
+        0
+      ],
+      "heading_rad": 2.966837898650097,
+      "ros_heading_rad": 2.966837898650097,
+      "original_position": [
+        199.659,
+        -9.949,
+        0
+      ],
+      "original_point_on_road": false,
+      "original_body_on_road": false,
+      "shift_m": 4.784281839154174,
+      "corrected": true,
+      "body_on_road": true,
+      "clearance_margin_m": 0.25,
+      "section_number": 9,
+      "previous_position": [
+        199.159,
+        -5.699,
+        0
+      ],
+      "centered_in_active_batch": true,
+      "centerline_road_id": 25,
+      "centerline_station_m": 119.16720983797309,
+      "centerline_distance_m": 1.3692330391583944e-10
+    },
+    {
+      "scenario": "scenario14",
+      "position": [
+        53.802,
+        9.079,
+        0
+      ],
+      "path_first": [
+        53.802,
+        9.079,
+        0
+      ],
+      "heading_rad": -0.025216606939205393,
+      "ros_heading_rad": -0.025216606939205393,
+      "original_position": [
+        53.802,
+        9.079,
+        0
+      ],
+      "original_point_on_road": true,
+      "original_body_on_road": true,
+      "shift_m": 0,
+      "corrected": false,
+      "body_on_road": true,
+      "clearance_margin_m": 0,
+      "section_number": 10,
+      "previous_position": [
+        53.802,
+        9.079,
+        0
+      ],
+      "centered_in_active_batch": false,
+      "centerline_road_id": 0,
+      "centerline_station_m": 0,
+      "centerline_distance_m": null
+    },
+    {
+      "scenario": "scenario15",
+      "position": [
+        189.401,
+        249.126,
+        0
+      ],
+      "path_first": [
+        195.901,
+        250.126,
+        0
+      ],
+      "heading_rad": -1.6089758134783507,
+      "ros_heading_rad": -1.6089758134783507,
+      "original_position": [
+        195.901,
+        250.126,
+        0
+      ],
+      "original_point_on_road": false,
+      "original_body_on_road": false,
+      "shift_m": 6.576473218982953,
+      "corrected": true,
+      "body_on_road": true,
+      "clearance_margin_m": 0.25,
+      "section_number": 11,
+      "previous_position": [
+        189.401,
+        249.126,
+        0
+      ],
+      "centered_in_active_batch": false,
+      "centerline_road_id": 0,
+      "centerline_station_m": 0,
+      "centerline_distance_m": null
+    },
+    {
+      "scenario": "scenario16",
+      "position": [
+        279.94945839,
+        174.26234575,
+        0
+      ],
+      "path_first": [
+        287.172,
+        170.661,
+        0
+      ],
+      "heading_rad": -2.1963810923359235,
+      "ros_heading_rad": -2.1963810923359235,
+      "original_position": [
+        287.172,
+        170.661,
+        0
+      ],
+      "original_point_on_road": false,
+      "original_body_on_road": false,
+      "shift_m": 8.070613267851744,
+      "corrected": true,
+      "body_on_road": true,
+      "clearance_margin_m": 0.25,
+      "section_number": 12,
+      "previous_position": [
+        282.172,
+        172.911,
+        0
+      ],
+      "centered_in_active_batch": true,
+      "centerline_road_id": 43,
+      "centerline_station_m": 1.3103489221787985,
+      "centerline_distance_m": 7.480958903216067e-11
+    },
+    {
+      "scenario": "scenario17",
+      "position": [
+        157.55991607,
+        174.283537228,
+        0
+      ],
+      "path_first": [
+        156.293,
+        174.009,
+        0
+      ],
+      "heading_rad": 0.2080430691376086,
+      "ros_heading_rad": 0.2080430691376086,
+      "original_position": [
+        156.293,
+        174.009,
+        0
+      ],
+      "original_point_on_road": true,
+      "original_body_on_road": false,
+      "shift_m": 1.2963205691426007,
+      "corrected": true,
+      "body_on_road": true,
+      "clearance_margin_m": 0.25,
+      "section_number": 13,
+      "previous_position": [
+        157.543,
+        174.509,
+        0
+      ],
+      "centered_in_active_batch": true,
+      "centerline_road_id": 37,
+      "centerline_station_m": 1.308950698506738,
+      "centerline_distance_m": 3.0431135037848323e-10
+    },
+    {
+      "scenario": "scenario18",
+      "position": [
+        187.766898753,
+        249.091077624,
+        0
+      ],
+      "path_first": [
+        195.902,
+        250.126,
+        0
+      ],
+      "heading_rad": -1.6085258122672947,
+      "ros_heading_rad": -1.6085258122672947,
+      "original_position": [
+        195.902,
+        250.126,
+        0
+      ],
+      "original_point_on_road": false,
+      "original_body_on_road": false,
+      "shift_m": 8.20066684015918,
+      "corrected": true,
+      "body_on_road": true,
+      "clearance_margin_m": 0.25,
+      "section_number": 14,
+      "previous_position": [
+        189.402,
+        249.126,
+        0
+      ],
+      "centered_in_active_batch": true,
+      "centerline_road_id": 42,
+      "centerline_station_m": 58.321231564795596,
+      "centerline_distance_m": 8.659223606075797e-11
+    },
+    {
+      "scenario": "scenario19",
+      "position": [
+        144.185650196,
+        -124.673628748,
+        0
+      ],
+      "path_first": [
+        134.549,
+        -162.587,
+        0
+      ],
+      "heading_rad": 1.7000236322030842,
+      "ros_heading_rad": 1.7000236322030842,
+      "original_position": [
+        134.549,
+        -162.587,
+        0
+      ],
+      "original_point_on_road": false,
+      "original_body_on_road": false,
+      "shift_m": 39.11890523381305,
+      "corrected": true,
+      "body_on_road": true,
+      "clearance_margin_m": 0.25,
+      "section_number": 15,
+      "previous_position": [
+        147.049,
+        -159.587,
+        0
+      ],
+      "centered_in_active_batch": true,
+      "centerline_road_id": 24,
+      "centerline_station_m": 83.88447804340137,
+      "centerline_distance_m": 1.1974159027144942e-10
+    },
+    {
+      "scenario": "scenario20",
+      "position": [
+        118.526,
+        -8.623,
+        0
+      ],
+      "path_first": [
+        118.776,
+        -8.873,
+        0
+      ],
+      "heading_rad": 1.1224327609280813,
+      "ros_heading_rad": 1.1224327609280813,
+      "original_position": [
+        118.776,
+        -8.873,
+        0
+      ],
+      "original_point_on_road": true,
+      "original_body_on_road": false,
+      "shift_m": 0.3535533905932738,
+      "corrected": true,
+      "body_on_road": true,
+      "clearance_margin_m": 0.25,
+      "section_number": 16,
+      "previous_position": [
+        118.526,
+        -8.623,
+        0
+      ],
+      "centered_in_active_batch": false,
+      "centerline_road_id": 0,
+      "centerline_station_m": 0,
+      "centerline_distance_m": null
+    },
+    {
+      "scenario": "scenario21",
+      "position": [
+        -98.13504099,
+        147.690709055,
+        0
+      ],
+      "path_first": [
+        -93.461,
+        147.711,
+        0
+      ],
+      "heading_rad": -1.8693548336096242,
+      "ros_heading_rad": -1.8693548336096242,
+      "original_position": [
+        -93.461,
+        147.711,
+        0
+      ],
+      "original_point_on_road": false,
+      "original_body_on_road": false,
+      "shift_m": 4.674085033313913,
+      "corrected": true,
+      "body_on_road": true,
+      "clearance_margin_m": 0.25,
+      "section_number": 17,
+      "previous_position": [
+        -96.211,
+        147.211,
+        0
+      ],
+      "centered_in_active_batch": true,
+      "centerline_road_id": 5,
+      "centerline_station_m": 1.416268386552469,
+      "centerline_distance_m": 3.352614848247114e-10
+    },
+    {
+      "scenario": "scenario22",
+      "position": [
+        -250.407,
+        92.324,
+        0.0
+      ],
+      "path_first": [
+        -250.407,
+        92.324,
+        0.0
+      ],
+      "heading_rad": -0.4170341517387739,
+      "ros_heading_rad": -0.4170341517387739,
+      "original_position": [
+        -250.407,
+        92.324,
+        0.0
+      ],
+      "corrected": false,
+      "reference_mask_body_on_road": true,
+      "reference_mask_clearance_m": 2.285179404544414,
+      "validation": "supplied road mask geometry; actual Isaac drive pending",
+      "profile": "long4"
+    },
+    {
+      "scenario": "scenario23",
+      "position": [
+        -100.604,
+        139.907,
+        0.0
+      ],
+      "path_first": [
+        -100.604,
+        139.907,
+        0.0
+      ],
+      "heading_rad": -1.6655117792826264,
+      "ros_heading_rad": -1.6655117792826264,
+      "original_position": [
+        -100.604,
+        139.907,
+        0.0
+      ],
+      "corrected": false,
+      "reference_mask_body_on_road": true,
+      "reference_mask_clearance_m": 5.296591440965792,
+      "validation": "supplied road mask geometry; actual Isaac drive pending",
+      "profile": "long4"
+    },
+    {
+      "scenario": "scenario24",
+      "position": [
+        187.966,
+        236.679,
+        0.0
+      ],
+      "path_first": [
+        187.966,
+        236.679,
+        0.0
+      ],
+      "heading_rad": -1.5949305216078487,
+      "ros_heading_rad": -1.5949305216078487,
+      "original_position": [
+        187.966,
+        236.679,
+        0.0
+      ],
+      "corrected": false,
+      "reference_mask_body_on_road": true,
+      "reference_mask_clearance_m": 1.8247621498208115,
+      "validation": "observed Isaac BEV geometry; actual drive pending",
+      "profile": "long4"
+    },
+    {
+      "scenario": "scenario25",
+      "position": [
+        -152.03,
+        -63.355,
+        0.0
+      ],
+      "path_first": [
+        -152.03,
+        -63.355,
+        0.0
+      ],
+      "heading_rad": 1.3594247221644118,
+      "ros_heading_rad": 1.3594247221644118,
+      "original_position": [
+        -152.03,
+        -63.355,
+        0.0
+      ],
+      "corrected": false,
+      "reference_mask_body_on_road": true,
+      "reference_mask_clearance_m": 3.9441828593536497,
+      "validation": "supplied road mask geometry; actual Isaac drive pending",
+      "profile": "long4"
+    }
+  ],
+  "additional_profile": "long4: scenarios22-25; original starts1-21 retained"
+}

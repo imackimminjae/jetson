@@ -1857,9 +1857,10 @@ struct LowerTrackingMpcNode::Impl
   double lower_steering_command_scale_rad_{0.0};  // 0 preserves legacy calibration.
   double lower_reference_point_to_rear_axle_m_{0.0};  // 0 is the rear axle.
   double lower_max_steering_rate_radps_{2.09439510239};
-  bool lower_enable_steering_actuator_model_{false};
+  // Confirmed HILS default: [e_y, e_psi, effective steering], tau=0.74 s.
+  bool lower_enable_steering_actuator_model_{true};
   double lower_steering_actuator_delay_sec_{0.0};
-  double lower_steering_actuator_time_constant_sec_{0.85};
+  double lower_steering_actuator_time_constant_sec_{0.74};
   bool lower_reference_follow_measured_speed_{false};
   double lower_min_path_spacing_m_{0.05};
   double lower_min_effective_speed_mps_{0.10};

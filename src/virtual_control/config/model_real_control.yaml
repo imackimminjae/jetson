@@ -1,0 +1,132 @@
+# Overlay on tracking_control_split.yaml. Physical metres throughout the controllers.
+# Initial model geometry; measure the actual chassis and Motive marker offset before tuning.
+# Latest HILS trial: P10/C20/RD600, physical rollout, B-only probes, k1 freedom,
+# upper steering rate 0.75 rad/s. Keep physical model units and 1.4 s preview.
+# Motive state, physical-metre BEV and global path are external inputs.
+# No bridge, coordinate conversion or route publisher. External world points are unchanged.
+upper_planner_node:
+  ros__parameters:
+    scale_mode: model
+    wheelbase: 0.30
+    vehicle_length_m: 0.42
+    # External BEV is 2x2 m. Actual origin/extent also limits the horizon.
+    bev_forward_m: 2.0
+    preview_interval_boundary_margin_m: 0.20
+    # Requested rate; 0.05 m nominal travel per 0.1 s at the reduced 0.5 m/s.
+    upper_planner_rate_hz: 10.0
+    # At 0.5 m/s: 7 * 0.20 s * 0.5 m/s = 0.7 m over 1.4 s.
+    # Fits even a centred 2 m BEV with only 1 m in front and a reserved step.
+    upper_prediction_dt_sec: 0.20
+    upper_preview_steps: 7
+    lower_prediction_dt_sec: 0.05
+    # Physical-metre probe spacing: HILS 0.6 m -> model 0.06 m.
+    preview_interval_b_sample_spacing_m: 0.06
+    preview_interval_k1_disable_extra_centering: true
+    preview_interval_transition_relative_band: 0.0
+    preview_interval_reference_growth_rate_mps: 0.0
+    upper_use_vehicle_rollout: true
+    upper_max_steering_rate_radps: 0.75
+    upper_steering_state_timeout_sec: 0.25
+    upper_steering_state_topic: /debug/lower_mpc_trace
+    upper_vehicle_integration_dt_sec: 0.01
+    upper_vehicle_rollout_max_iterations: 12
+    upper_vehicle_rollout_budget_ms: 60.0
+    target_speed_mps: 0.5
+    a_max_mps2: 0.10
+    lower_min_path_spacing_m: 0.005
+    # Scale dimensional costs by 1/s^2; angular costs keep their units.
+    position_scale_m: 1.0
+    upper_r_dv: 100.0
+    miqp_big_m: 10.0
+    wp_switch_eps: 0.50
+    wp_switch_max_distance_m: 0.75
+    goal_stop_distance_m: 0.08
+    state_input_type: pose_stamped
+    pose_stamped_topic: /motive/vehicle/pose
+    pose_stamped_yaw_is_orientation_z: true
+    # Diagnose the producer's vehicle-axis convention; do not patch yaw per consumer.
+    pose_yaw_offset_rad: 0.0
+    pose_speed_lpf_alpha: 0.4
+    # Use Motive measurement intervals instead of queued callback processing intervals.
+    pose_use_header_stamp_for_speed: true
+    odom_topic: /motive/vehicle/odom_map
+    odom_yaw_is_orientation_z: true
+    # Grid freshness allowance; lower's independent pose timeout remains 0.20 s.
+    input_timeout_sec: 0.60
+    global_path_topic: /navigation/global_path
+    # User confirmed external map coordinates equal Motive's motive_world.
+    # This only changes the frame name; external waypoint coordinates are unchanged.
+    global_path_frame_alias: map
+    # Reset the temporary vehicle-centred rotation and translation completely.
+    # Fix rigid-body -> vehicle orientation at the Motive source, not in world points.
+    enable_waypoint_bias: false
+    waypoint_yaw_bias_rad: 0.0
+    waypoint_x_bias_m: 0.0
+    waypoint_y_bias_m: 0.0
+    use_csv_global_path: false
+    grid_map_topic: /bev/occupancy_grid
+    path_frame_id: motive_world
+    preview_min_target_distance_m: 0.01
+    preview_line_sample_m: 0.01
+    preview_interval_nominal_fallback_width_m: 0.45
+    preview_interval_fallback_max_centering_length_m: 0.90
+lower_tracking_mpc_node:
+  ros__parameters:
+    scale_mode: model
+    wheelbase: 0.30
+    lower_reference_point_to_rear_axle_m: 0.15
+    lower_controller_rate_hz: 20.0
+    lower_prediction_dt_sec: 0.05
+    # Match the upper 1.4 s / 0.7 m nominal preview at 0.5 m/s.
+    lower_prediction_steps: 28
+    lower_q_lateral: 100.0
+    lower_rd_steering_rate: 600.0
+    reset_on_path_change: true
+    # User-confirmed physical ESC: throttle 0 brakes. Stop persists across new inputs.
+    lower_latch_stop_until_reset: true
+    # SIH's fitted 0.74 s response is not a measurement of the physical servo.
+    lower_enable_steering_actuator_model: false
+    lower_steering_actuator_delay_sec: 0.0
+    lower_steering_actuator_time_constant_sec: 0.0
+    # Upper rollout reads this feedback and uses an immediate steering response.
+    # Physical servo delay has not been identified; do not copy SIH's 0.74 s fit.
+    lower_min_path_spacing_m: 0.005
+    lower_min_effective_speed_mps: 0.01
+    path_change_reset_threshold_m: 0.075
+    pose_jump_reset_threshold_m: 0.10
+    state_input_type: pose_stamped
+    pose_stamped_topic: /motive/vehicle/pose
+    pose_stamped_yaw_is_orientation_z: true
+    pose_yaw_offset_rad: 0.0
+    pose_speed_lpf_alpha: 0.4
+    pose_use_header_stamp_for_speed: true
+    odom_topic: /motive/vehicle/odom_map
+    odom_yaw_is_orientation_z: true
+    input_timeout_sec: 0.20
+    target_speed_mps: 0.5
+    # target_accel is an unbounded speed ramp in the current controller; keep it zero.
+    target_accel_mps2: 0.0
+    # User-selected fixed drive duty from Motive trial: 0.091 -> 1546 us,
+    # approximately 0.65 m/s on the tested straight. Disable PI duty corrections.
+    # Stop/invalid/goal commands still override the drive duty with zero.
+    speed_kp: 0.0
+    speed_ki: 0.0
+    throttle_ff: 0.091
+    max_virtual_throttle: 0.091
+    max_virtual_brake: 0.20
+    speed_deadband_mps: 0.02
+    speed_integral_limit: 1.0
+    mavlink_throttle_max_norm: 0.091
+    # CAP2 / PWM_MAIN10: Set 2, [1100,2100] us => normalized steering 0 = 1600 us.
+    # PX4 performs this conversion; do not add a second neutral offset here.
+    # CAP1 / PWM_MAIN9: Set 1, trial-reported throttle 0.091 = 1546 us.
+    # Isolate diagnostic outputs from any existing duty/PWM subscribers.
+    duty_topic: /model/control/duty_cmd
+    pwm_topic: /model/cmd_pwm
+    virtual_cmd_topic: /model/cmd_control
+    publish_pwm: false
+    pixhawk_output_backend: disabled
+    mavlink_enable: false
+    mavlink_auto_manual_mode: false
+    mavlink_auto_arm: false
+    mavlink_force_arm: false

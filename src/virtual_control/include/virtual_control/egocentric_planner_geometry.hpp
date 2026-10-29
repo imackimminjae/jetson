@@ -11,85 +11,16 @@
 namespace imac_ctrl::egocentric_planner_geometry
 {
 
-struct BranchDetection
+// Preserve the driving baseline's k0->k1 exclusion: search from k=2.
+// Count all retained intervals, regardless of width or preceding candidate counts.
+inline int firstBranchStep(const std::vector<int> & candidate_counts)
 {
-  int turn_step{-1};
-  std::vector<int> candidate_counts;
-};
-
-// Count original observed spans before contraction. Only increases from k1->k2
-// onward activate turn costs; k0->k1 is excluded. Road constraints are retained.
-inline BranchDetection detectBranch(
-  const std::vector<std::vector<double>> & raw_lengths, double minimum_width_m,
-  bool require_count_increase = true, bool include_k0_transition = false)
-{
-  BranchDetection result;
-  result.candidate_counts.resize(raw_lengths.size(), 0);
-  for (std::size_t k = 0; k < raw_lengths.size(); ++k) {
-    for (const double length : raw_lengths[k]) {
-      if (std::isfinite(length) && length > 0.0 && length + 1e-9 >= minimum_width_m) {
-        ++result.candidate_counts[k];
-      }
-    }
-    const bool future_step = k >= (include_k0_transition ? 1U : 2U);
-    const bool split = future_step && (require_count_increase ?
-      (result.candidate_counts[k - 1] >= 1 &&
-      result.candidate_counts[k] > result.candidate_counts[k - 1]) :
-      result.candidate_counts[k] >= 2);
-    if (split && result.turn_step < 0)
-    {
-      result.turn_step = static_cast<int>(k);
+  for (std::size_t k = 2; k < candidate_counts.size(); ++k) {
+    if (candidate_counts[k] >= 2) {
+      return static_cast<int>(k);
     }
   }
-  return result;
-}
-
-// Optional historical diagnostic: override the anchor when one eligible
-// section lies within the continuity distance of at least two next sections.
-// This changes only the turn-cost anchor, never the retained road candidates.
-inline BranchDetection detectBranchWithContinuity(
-  const std::vector<std::vector<Eigen::Vector2d>> & starts,
-  const std::vector<std::vector<Eigen::Vector2d>> & ends,
-  const std::vector<std::vector<double>> & raw_lengths, double minimum_width_m,
-  bool require_count_increase, bool include_k0_transition,
-  bool use_continuity, double continuity_m)
-{
-  auto result = detectBranch(
-    raw_lengths, minimum_width_m, require_count_increase, include_k0_transition);
-  if (!use_continuity) {return result;}
-  const auto eligible = [minimum_width_m](double width) {
-      return std::isfinite(width) && width > 0.0 && width + 1e-9 >= minimum_width_m;
-    };
-  const auto point_segment = [](const Eigen::Vector2d & p,
-      const Eigen::Vector2d & a, const Eigen::Vector2d & b) {
-      const Eigen::Vector2d d = b - a;
-      const double u = d.squaredNorm() > 1e-12 ?
-        std::clamp((p - a).dot(d) / d.squaredNorm(), 0.0, 1.0) : 0.0;
-      return (p - a - u * d).norm();
-    };
-  const auto distance = [&point_segment](const Eigen::Vector2d & a,
-      const Eigen::Vector2d & b, const Eigen::Vector2d & c, const Eigen::Vector2d & d) {
-      return std::min({point_segment(a, c, d), point_segment(b, c, d),
-        point_segment(c, a, b), point_segment(d, a, b)});
-    };
-  const std::size_t count = std::min({starts.size(), ends.size(), raw_lengths.size()});
-  for (std::size_t k = include_k0_transition ? 1U : 2U; k < count; ++k) {
-    const std::size_t previous_count = k == 1 ? 1U :
-      std::min({starts[k - 1].size(), ends[k - 1].size(), raw_lengths[k - 1].size()});
-    for (std::size_t i = 0; i < previous_count; ++i) {
-      if (k > 1 && !eligible(raw_lengths[k - 1][i])) {continue;}
-      const Eigen::Vector2d a = k == 1 ? Eigen::Vector2d::Zero().eval() : starts[k - 1][i];
-      const Eigen::Vector2d b = k == 1 ? Eigen::Vector2d::Zero().eval() : ends[k - 1][i];
-      int continuing = 0;
-      const auto candidates = std::min({starts[k].size(), ends[k].size(), raw_lengths[k].size()});
-      for (std::size_t j = 0; j < candidates; ++j) {
-        if (eligible(raw_lengths[k][j]) &&
-          distance(a, b, starts[k][j], ends[k][j]) <= continuity_m) {++continuing;}
-      }
-      if (continuing >= 2) {result.turn_step = static_cast<int>(k); return result;}
-    }
-  }
-  return result;
+  return -1;
 }
 
 inline bool gridValueIsDrivable(
@@ -139,6 +70,23 @@ inline int previewHorizonAfterMissingInterval(
     return current_horizon;
   }
   return std::min(current_horizon, missing_step - 1);
+}
+
+// Windows use operator-facing, inclusive, one-based wp0 numbers.
+inline bool waypointBiasWindowActive(int wp0_index, int start_wp, int end_wp)
+{
+  return start_wp >= 1 && end_wp >= start_wp &&
+         wp0_index >= start_wp - 1 && wp0_index <= end_wp - 1;
+}
+
+inline Eigen::Vector2d biasPlanningWaypointBody(
+  const Eigen::Vector2d & nominal_body, double yaw_bias,
+  const Eigen::Vector2d & translation_body, bool active)
+{
+  if (!active) {return nominal_body;}
+  const double c = std::cos(yaw_bias), s = std::sin(yaw_bias);
+  return Eigen::Vector2d(c * nominal_body.x() - s * nominal_body.y(),
+           s * nominal_body.x() + c * nominal_body.y()) + translation_body;
 }
 
 inline std::array<int, 2> findWaypointPair(

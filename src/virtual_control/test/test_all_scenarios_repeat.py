@@ -13,6 +13,57 @@ sys.path.insert(0, str(PACKAGE/'scripts'))
 from repeat_drive_session import SCENARIOS, effective_config
 
 
+def test_directory_size_tolerates_atomic_summary_replacement(tmp_path):
+    from repeat_drive_session import directory_size
+    kept = tmp_path/'summary.csv'
+    kept.write_bytes(b'12345')
+    directory = tmp_path/'bag'
+    directory.mkdir()
+
+    class ReplacedEntry:
+        def is_file(self):
+            return True
+
+        def stat(self):
+            raise FileNotFoundError('summary.csv.tmp was renamed')
+
+    root = SimpleNamespace(rglob=lambda pattern: iter([kept, ReplacedEntry(), directory]))
+    assert directory_size(root) == 5
+
+    class InaccessibleEntry(ReplacedEntry):
+        def stat(self):
+            raise PermissionError('unexpected access failure')
+
+    root = SimpleNamespace(rglob=lambda pattern: iter([InaccessibleEntry()]))
+    with pytest.raises(PermissionError):
+        directory_size(root)
+
+
+def test_runtime_ros_logs_default_and_separate_experiments(tmp_path):
+    from repeat_drive_session import runtime_ros_log_directory
+    first = tmp_path/'experiment1'/'sessions'/'same_session_name'
+    second = tmp_path/'experiment2'/'sessions'/'same_session_name'
+    assert runtime_ros_log_directory(first, {}) == first/'ros_logs'
+    environment = {'DRIVE_RUNTIME_ROS_LOG_ROOT': str(tmp_path/'runtime')}
+    a = runtime_ros_log_directory(first, environment)
+    b = runtime_ros_log_directory(second, environment)
+    assert a != b
+    assert a == tmp_path/'runtime'/'experiment1'/'same_session_name'
+
+
+def test_recorder_qos_override_preserves_all_recorded_topics(tmp_path, monkeypatch):
+    from drive_debug_profile import TOPICS, recorder_command
+    monkeypatch.delenv('DRIVE_DEBUG_QOS_OVERRIDES', raising=False)
+    ordinary = recorder_command(tmp_path/'bag')
+    assert ordinary[-len(TOPICS):] == list(TOPICS)
+    profile = tmp_path/'recorder_qos.yaml'
+    monkeypatch.setenv('DRIVE_DEBUG_QOS_OVERRIDES', str(profile))
+    changed = recorder_command(tmp_path/'bag')
+    index = changed.index('--qos-profile-overrides-path')
+    assert changed[index+1] == str(profile)
+    assert changed[:index]+changed[index+2:] == ordinary
+
+
 def test_profile_selection_and_count_preserve_controller_parameters(tmp_path):
     assert SCENARIOS == tuple(f'scenario{i}' for i in range(1, 13))
     all_config = effective_config(5, tmp_path, 'all')
@@ -25,6 +76,41 @@ def test_profile_selection_and_count_preserve_controller_parameters(tmp_path):
     assert p['require_compute_heartbeat']
     with pytest.raises(ValueError):
         effective_config(5, tmp_path, 'scenario13')
+
+
+def test_shortened_route_snapshot_and_completion_use_same_endpoint(tmp_path):
+    from repeat_drive_session import snapshot_effective_routes
+    from knu_global_path_publisher import load_route
+    from knu_batch_monitor import RouteMonitor
+    directory = PACKAGE/'data/knu_routes'
+    snapshot_effective_routes(['scenario11'], directory, tmp_path, 6)
+    prefix = load_route('scenario11', tmp_path)
+    original = load_route('scenario11', directory)
+    assert prefix == original[:6]
+    monitor = RouteMonitor(prefix, 0)
+    full_monitor = RouteMonitor(original, 0)
+    elapsed = 0.0
+    for a, b in zip(prefix, prefix[1:]):
+        length = math.dist(a[:2], b[:2])
+        steps = math.ceil(length)
+        for index in range(steps):
+            u = index/steps
+            position = tuple(a[k] + u*(b[k]-a[k]) for k in range(2))
+            monitor.update(elapsed, position)
+            full_monitor.update(elapsed, position)
+            elapsed += length/steps/6
+    assert monitor.update(elapsed, prefix[-1][:2]) == 'completed'
+    assert full_monitor.update(elapsed, prefix[-1][:2]) is None
+
+
+def test_invalid_prefix_is_rejected_before_session_start(tmp_path):
+    import yaml
+    config = effective_config(1, tmp_path, 'scenario11', guarded=True)
+    config['knu_batch_runner']['ros__parameters']['route_end_waypoint'] = 99
+    frozen = tmp_path/'invalid_prefix.yaml'
+    frozen.write_text(yaml.safe_dump(config))
+    with pytest.raises(ValueError, match='end_waypoint'):
+        effective_config(1, tmp_path, 'scenario11', guarded=True, config_file=frozen)
 
 
 @pytest.fixture
@@ -385,12 +471,51 @@ def test_road_evidence_cannot_override_compute_stall(supervisor):
     assert h.r.rows[0]['outcome']=='lower_compute_timeout'
 
 
-def test_effective_evidence_settings_match_planner(tmp_path):
+def test_effective_evidence_grid_settings_match_planner(tmp_path):
     config=effective_config(5,tmp_path,'all')
     r=config['knu_batch_runner']['ros__parameters']
     u=config['upper_planner_node']['ros__parameters']
     assert r['road_grid_positive_is_drivable']==u['grid_positive_is_drivable']
     assert r['road_grid_value_threshold']==u['grid_value_threshold']
     assert r['road_expected_grid_frame']==u['expected_grid_frame_id']
-    assert r['road_enable_waypoint_bias']==u['enable_waypoint_bias']
-    assert r['road_waypoint_yaw_bias_rad']==u['waypoint_yaw_bias_rad']
+    assert r['road_enable_waypoint_bias'] is False
+    assert r['road_waypoint_yaw_bias_rad']==0
+
+
+@pytest.mark.parametrize('angle', [-10, -5, 0, 5, 10])
+def test_bias_changes_planning_input_without_moving_outcome_route(tmp_path, angle):
+    import yaml
+    base=effective_config(1,tmp_path,'scenario4',guarded=True)
+    upper=base['upper_planner_node']['ros__parameters']
+    upper.update(enable_waypoint_bias=True,waypoint_yaw_bias_rad=math.radians(angle),
+                 waypoint_x_bias_m=1.0,waypoint_y_bias_m=-2.0)
+    # A previously frozen configuration must not restore biased road evidence.
+    base['knu_batch_runner']['ros__parameters'].update(
+        road_enable_waypoint_bias=True,road_waypoint_yaw_bias_rad=math.radians(angle),
+        road_waypoint_x_bias_m=1.0,road_waypoint_y_bias_m=-2.0)
+    frozen=tmp_path/'biased.yaml';frozen.write_text(yaml.safe_dump(base))
+    config=effective_config(1,tmp_path,'scenario4',guarded=True,config_file=frozen)
+    assert config['upper_planner_node']['ros__parameters']==upper
+    assert config['lower_tracking_mpc_node']==base['lower_tracking_mpc_node']
+    runner=config['knu_batch_runner']['ros__parameters']
+    assert runner['road_enable_waypoint_bias'] is False
+    assert all(runner[k]==0 for k in ('road_waypoint_yaw_bias_rad','road_waypoint_x_bias_m','road_waypoint_y_bias_m'))
+    for key in ('goal_radius_m','finish_remaining_m','min_progress_ratio'):
+        assert runner[key]==base['knu_batch_runner']['ros__parameters'][key]
+
+
+@pytest.mark.parametrize('supervisor', ['scenario4'], indirect=True)
+@pytest.mark.parametrize('angle', [-10, 10])
+def test_runner_ignores_legacy_bias_for_road_and_completion(supervisor, angle):
+    h=supervisor
+    h.r.settings.update(enable_road_route_check=True,road_enable_waypoint_bias=True,
+                        road_waypoint_yaw_bias_rad=math.radians(angle),
+                        road_waypoint_x_bias_m=1.0,road_waypoint_y_bias_m=-2.0)
+    mission=[tuple(p[:2]) for p in h.r.points[h.r.route]]
+    h.r.set_phase('reference')
+    h.r.reference_at=h.clock[0]+.3
+    h.step(dt=1.1)
+    assert h.r.phase=='running'
+    assert h.r.monitor.points==mission
+    assert h.r.road_check.route.points==mission
+    assert h.r.monitor.points[-1]==mission[-1]

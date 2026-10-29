@@ -1,0 +1,42 @@
+{
+  "binary_count_definition": "Sum of corridor candidate counts over prediction stages, as in binary_offsets.back()",
+  "note": "Each method has its own maximum-time input; count refers to the original MIQP formulation.",
+  "cases": {
+    "hybrid": {
+      "frame": 211,
+      "repeat": 0,
+      "miqp_solver_ms": 14.229009999999999,
+      "horizon": 7,
+      "candidate_counts": [
+        1,
+        3,
+        2,
+        2,
+        2,
+        2,
+        3
+      ],
+      "binary_count": 15,
+      "combinations": 144,
+      "elapsed_sec": 21.114131212234497
+    },
+    "bnb": {
+      "frame": 215,
+      "repeat": 1,
+      "miqp_solver_ms": 3.714082,
+      "horizon": 7,
+      "candidate_counts": [
+        1,
+        3,
+        2,
+        2,
+        3,
+        2,
+        2
+      ],
+      "binary_count": 15,
+      "combinations": 144,
+      "elapsed_sec": 21.514166116714478
+    }
+  }
+}

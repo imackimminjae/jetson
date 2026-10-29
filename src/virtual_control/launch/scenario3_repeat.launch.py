@@ -9,7 +9,10 @@ def generate_launch_description():
     config = LaunchConfiguration('config_file')
     return LaunchDescription([
         DeclareLaunchArgument('config_file', description='Prepared effective session YAML'),
-        *[Node(package='virtual_control', executable=executable, name=name,
+        DeclareLaunchArgument('upper_executable', default_value='upper_planner_node'),
+        *[Node(package='virtual_control',
+               executable=(LaunchConfiguration('upper_executable') if name == 'upper_planner_node'
+                           else executable), name=name,
                parameters=[config], output='screen',
                on_exit=Shutdown(reason=f'Required node exited: {name}'))
           for name, executable in [

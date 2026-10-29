@@ -1,0 +1,42 @@
+version: 1
+default_sets:
+- bias_m10
+- bias_m05
+- bias_000
+- bias_p05
+- bias_p10
+default_scenarios:
+- scenario1
+- scenario2
+- scenario3
+- scenario4
+- scenario5
+- scenario6
+- scenario7
+- scenario8
+- scenario9
+- scenario10
+- scenario11
+- scenario12
+default_runs: 1
+baseline:
+  knu_batch_runner:
+    stationary_confirm_sec: 0.5
+    map_settle_sec: 0.3
+    reference_min_wait_sec: 0.3
+sets:
+  bias_m10:
+    label: 웨이포인트 방향 -10°
+    changes: {}
+  bias_m05:
+    label: 웨이포인트 방향 -5°
+    changes: {}
+  bias_000:
+    label: 웨이포인트 방향 +0°
+    changes: {}
+  bias_p05:
+    label: 웨이포인트 방향 +5°
+    changes: {}
+  bias_p10:
+    label: 웨이포인트 방향 +10°
+    changes: {}

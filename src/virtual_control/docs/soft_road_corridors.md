@@ -1,6 +1,7 @@
 # Hard observed road, soft preferred intervals
 
-`upper_soft_corridor_constraints=true` separates the observed drivable run from
+The planner defaults to `upper_soft_corridor_constraints=true`, matching the HILS
+scenario baseline. This separates the observed drivable run from
 its preferred subinterval. This changes the meaning of the existing margin and
 centering strip: outside that strip is allowed at a finite cost, while the
 uncontracted observed road remains a hard constraint. It does not preserve a
@@ -31,7 +32,8 @@ Soft violations do not independently reject an otherwise feasible physical path.
 
 `upper_corridor_soft_linear_weight` defaults to 1.0 (finite, nonnegative).
 `upper_corridor_soft_quadratic_weight` defaults to 10.0 (finite, positive).
-These are initial, uncalibrated weights, not a validated driving recommendation.
+These retain the existing HILS baseline values; promoting soft mode to the default
+does not retune them or establish their optimality.
 The existing `soft_ratio` is a geometric ratio; it is not a penalty weight.
 
 ## Observation and publication checks
@@ -56,12 +58,18 @@ old path against every subsequent BEV. Such a fallback needs separate validation
 
 ## Configuration and diagnostics
 
-The option defaults to false, preserving existing profiles. The implementation
-work includes a separate `soft_road_p10_c20_rd600.yaml` control overlay based on
-the recorded no-bias profile. It enables soft mode with the two weights above,
-without changing the soft ratio, margin setting or vehicle/lower control limits.
-It contains upper/lower control parameters only and must be combined with the
-appropriate existing bridge, sensor and session configuration.
+The C++ node default and `tracking_control_split.yaml` both enable soft mode.
+Ordinary split launches and batch/repeat launches that inherit this file need no
+extra soft-road override. `scenario_bias_baseline.yaml` already explicitly enables
+the same formulation with linear/quadratic weights 1.0/10.0 and keeps both k1
+exceptions disabled. No other controller settings are copied from that profile.
+The existing parameter remains available for an explicit legacy hard-strip
+comparison (`false`) and replay of older experiments; default operation uses
+the hard-road / soft-preference formulation.
+
+At startup the node logs `road corridor mode: hard-road / soft-preference` and
+the two weights. Historical saved session configurations remain immutable and
+may explicitly select a different mode; the source default does not rewrite them.
 
 `/debug/upper_branch_event` keeps the original field offsets and preferred
 `intervals_world` representation and adds:

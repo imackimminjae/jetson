@@ -69,7 +69,7 @@ public:
     const auto target = px4_odom_map::routeAnchorForName(route_name_);
     if (!target.has_value()) {
       throw std::invalid_argument(
-              "route_name must be scenario1 through scenario21");
+              "route_name must identify a registered KNU route");
     }
     alignment_ = std::make_unique<px4_odom_map::PoseAlignment>(transform_config_, *target);
     if (get_parameter("enable_batch_reanchor").as_bool()) {

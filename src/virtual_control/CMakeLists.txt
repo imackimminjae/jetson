@@ -33,6 +33,25 @@ find_package(Eigen3 REQUIRED)
 #################################
 # Targets
 #################################
+# ROS-independent comparison planners. DAQP is already bundled by mpclib_vendor.
+add_library(comparison_planner_core STATIC
+  src/comparison_geometry.cpp src/nvp_planner.cpp src/mpcc_planner.cpp)
+ament_target_dependencies(comparison_planner_core mpclib_vendor)
+target_include_directories(comparison_planner_core PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include> ${EIGEN3_INCLUDE_DIRS})
+target_link_libraries(comparison_planner_core mpclib_vendor::daqp)
+add_library(comparison_planner_ros STATIC src/comparison_planner_node.cpp)
+ament_target_dependencies(comparison_planner_ros
+  rclcpp nav_msgs geometry_msgs imac_interfaces std_msgs std_srvs)
+target_link_libraries(comparison_planner_ros comparison_planner_core)
+foreach(kind nvp mpcc)
+  add_executable(${kind}_planner_node src/comparison_planner_main.cpp)
+  target_compile_definitions(${kind}_planner_node PRIVATE COMPARISON_PLANNER_KIND="${kind}")
+  ament_target_dependencies(${kind}_planner_node rclcpp)
+  target_link_libraries(${kind}_planner_node comparison_planner_ros)
+endforeach()
+
 add_library(upper_vehicle_rollout STATIC src/upper_vehicle_rollout.cpp)
 ament_target_dependencies(upper_vehicle_rollout mpclib_vendor)
 target_include_directories(upper_vehicle_rollout PUBLIC
@@ -72,32 +91,40 @@ target_include_directories(px4_odom_map_bridge PUBLIC
 )
 target_link_libraries(px4_odom_map_bridge px4_odom_map_transform)
 
-# Egocentric OccupancyGrid + MIQP upper planner.
-add_executable(upper_planner_node
-  src/tracking_control.cpp
-)
-ament_target_dependencies(upper_planner_node
-  imac_interfaces
-  rclcpp
-  nav_msgs
-  geometry_msgs
-  std_msgs
-  std_srvs
-  tf2
-  ament_index_cpp
-  mpclib_vendor
-)
-target_include_directories(upper_planner_node PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>
-  ${EIGEN3_INCLUDE_DIRS}
-)
-if(TARGET mpclib_vendor::MIQPLib)
-  target_link_libraries(upper_planner_node mpclib_vendor::MIQPLib)
-elseif(TARGET MIQPLib)
-  target_link_libraries(upper_planner_node MIQPLib)
-endif()
-target_link_libraries(upper_planner_node Threads::Threads upper_vehicle_rollout)
+# Compile the shared implementation once for both node entrypoints and tests.
+add_library(upper_planner_test_core OBJECT src/tracking_control.cpp)
+target_compile_definitions(upper_planner_test_core PRIVATE VIRTUAL_CONTROL_UPPER_PLANNER_NO_MAIN)
+ament_target_dependencies(upper_planner_test_core
+  rclcpp nav_msgs geometry_msgs imac_interfaces std_msgs std_srvs tf2 ament_index_cpp mpclib_vendor)
+target_include_directories(upper_planner_test_core PRIVATE include ${EIGEN3_INCLUDE_DIRS})
+
+# Keep a separate executable for window-bias experiments so the confirmed
+# installed upper planner can stay frozen while preparing these options.
+foreach(upper_target upper_planner_node upper_planner_waypoint_bias_node)
+  add_executable(${upper_target} src/upper_planner_main.cpp $<TARGET_OBJECTS:upper_planner_test_core>)
+  ament_target_dependencies(${upper_target}
+    imac_interfaces
+    rclcpp
+    nav_msgs
+    geometry_msgs
+    std_msgs
+    std_srvs
+    tf2
+    ament_index_cpp
+    mpclib_vendor
+  )
+  target_include_directories(${upper_target} PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
+    ${EIGEN3_INCLUDE_DIRS}
+  )
+  if(TARGET mpclib_vendor::MIQPLib)
+    target_link_libraries(${upper_target} mpclib_vendor::MIQPLib)
+  elseif(TARGET MIQPLib)
+    target_link_libraries(${upper_target} MIQPLib)
+  endif()
+  target_link_libraries(${upper_target} Threads::Threads upper_vehicle_rollout)
+endforeach()
 
 # High-rate lower lateral QP-MPC + all actuator output backends.
 add_executable(lower_tracking_mpc_node
@@ -130,14 +157,17 @@ target_link_libraries(lower_tracking_mpc_node Threads::Threads)
 #################################
 install(
   TARGETS
+    nvp_planner_node
+    mpcc_planner_node
     px4_odom_map_bridge
     upper_planner_node
+    upper_planner_waypoint_bias_node
     lower_tracking_mpc_node
   DESTINATION lib/${PROJECT_NAME}
 )
 
 install(
-  TARGETS px4_odom_map_transform
+  TARGETS px4_odom_map_transform comparison_planner_core comparison_planner_ros
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
@@ -146,6 +176,8 @@ install(
 install(
   PROGRAMS
     scripts/px4_ekf_bridge.py
+    scripts/model_real_bridge.py
+    scripts/duty_calibration.py
     scripts/knu_global_path_publisher.py
     scripts/knu_batch_runner.py
     scripts/knu_batch_monitor.py
@@ -179,11 +211,39 @@ if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   find_package(ament_cmake_gtest REQUIRED)
   find_package(ament_cmake_pytest REQUIRED)
+  ament_add_pytest_test(test_waypoint_bias_window test/test_waypoint_bias_window.py)
+  ament_add_pytest_test(test_replay_recorded_pose test/test_replay_recorded_pose.py)
+  ament_add_pytest_test(test_long_scenarios test/test_long_scenarios.py)
+  ament_add_pytest_test(test_comparison_launch test/test_comparison_launch.py
+    APPEND_ENV ROS_LOG_DIR=/tmp/comparison_launch_test_logs)
+  ament_add_pytest_test(test_comparison_pipeline test/test_comparison_pipeline.py TIMEOUT 60
+    APPEND_ENV
+      ROS_DOMAIN_ID=178 ROS_LOCALHOST_ONLY=1 ROS_LOG_DIR=/tmp/comparison_pipeline_test_logs
+      COMPARISON_NVP_EXECUTABLE=$<TARGET_FILE:nvp_planner_node>
+      COMPARISON_MPCC_EXECUTABLE=$<TARGET_FILE:mpcc_planner_node>
+      LOWER_TRACKER_EXECUTABLE=$<TARGET_FILE:lower_tracking_mpc_node>)
+  set_tests_properties(test_comparison_pipeline PROPERTIES RUN_SERIAL TRUE)
+  ament_add_gtest(test_comparison_planners test/test_comparison_planners.cpp)
+  target_link_libraries(test_comparison_planners comparison_planner_core)
+  ament_add_gtest(test_comparison_adapter test/test_comparison_adapter.cpp)
+  ament_target_dependencies(test_comparison_adapter
+    rclcpp nav_msgs geometry_msgs imac_interfaces std_msgs std_srvs)
+  target_link_libraries(test_comparison_adapter comparison_planner_core)
+  set_tests_properties(test_comparison_adapter PROPERTIES
+    ENVIRONMENT "ROS_DOMAIN_ID=177;ROS_LOCALHOST_ONLY=1;ROS_LOG_DIR=/tmp/comparison_planner_test_logs")
   ament_add_pytest_test(test_sih_heading_guard
     test/test_sih_heading_guard.py
   )
   ament_add_pytest_test(test_knu_global_path
     test/test_knu_global_path.py
+  )
+  ament_add_pytest_test(test_model_real_control
+    test/test_model_real_control.py
+    TIMEOUT 60
+  )
+  ament_add_pytest_test(test_duty_calibration
+    test/test_duty_calibration.py
+    TIMEOUT 45
   )
   ament_add_pytest_test(test_knu_batch
     test/test_knu_batch.py
@@ -218,13 +278,7 @@ if(BUILD_TESTING)
     ${EIGEN3_INCLUDE_DIRS}
   )
 
-  # The planner implementation is identical across these test executables.
-  # Compile it once without main; tests still link the production solver.
-  add_library(upper_planner_test_core OBJECT src/tracking_control.cpp)
-  target_compile_definitions(upper_planner_test_core PRIVATE VIRTUAL_CONTROL_UPPER_PLANNER_NO_MAIN)
-  ament_target_dependencies(upper_planner_test_core
-    rclcpp nav_msgs geometry_msgs imac_interfaces std_msgs std_srvs tf2 ament_index_cpp mpclib_vendor)
-  target_include_directories(upper_planner_test_core PRIVATE include ${EIGEN3_INCLUDE_DIRS})
+  # Tests link exactly the implementation used by the production entrypoints.
 
   ament_add_gtest(test_interval_centering_state
     test/test_interval_centering_state.cpp
@@ -284,6 +338,13 @@ if(BUILD_TESTING)
   target_link_libraries(test_soft_corridors Threads::Threads upper_vehicle_rollout)
   set_tests_properties(test_soft_corridors PROPERTIES
     ENVIRONMENT "ROS_DOMAIN_ID=176;ROS_LOCALHOST_ONLY=1;ROS_LOG_DIR=/tmp/soft_corridor_test_logs")
+  ament_add_gtest(test_miqp_solver_policy test/test_miqp_solver_policy.cpp $<TARGET_OBJECTS:upper_planner_test_core>)
+  ament_target_dependencies(test_miqp_solver_policy
+    rclcpp nav_msgs geometry_msgs imac_interfaces std_msgs std_srvs tf2 ament_index_cpp mpclib_vendor)
+  target_include_directories(test_miqp_solver_policy PRIVATE include ${EIGEN3_INCLUDE_DIRS})
+  target_link_libraries(test_miqp_solver_policy Threads::Threads upper_vehicle_rollout)
+  set_tests_properties(test_miqp_solver_policy PROPERTIES
+    ENVIRONMENT "ROS_DOMAIN_ID=176;ROS_LOCALHOST_ONLY=1;ROS_LOG_DIR=/tmp/miqp_solver_policy_test_logs")
   set_tests_properties(test_upper_steering_rate PROPERTIES
     ENVIRONMENT "ROS_DOMAIN_ID=173;ROS_LOCALHOST_ONLY=1;ROS_LOG_DIR=/tmp/upper_rate_test_logs")
 

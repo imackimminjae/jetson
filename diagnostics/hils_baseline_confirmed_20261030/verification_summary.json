@@ -1,0 +1,37 @@
+{
+  "status": "confirmed",
+  "scope": "HILS",
+  "build": "lower_tracking_mpc_node and regression targets built successfully",
+  "tests": {
+    "lower_mpc": {
+      "tests": 26,
+      "failures": 0,
+      "errors": 0,
+      "disabled": 0
+    },
+    "actuator_model": {
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "disabled": 0
+    }
+  },
+  "binary_defaults": {
+    "upper_planner_node": {
+      "upper_miqp_force_bnb": true
+    },
+    "lower_tracking_mpc_node": {
+      "lower_enable_steering_actuator_model": true,
+      "lower_steering_actuator_time_constant_sec": 0.74,
+      "lower_steering_actuator_delay_sec": 0.0
+    }
+  },
+  "installed_configs_verified": [
+    "tracking_control_split.yaml",
+    "scenario_bias_baseline.yaml"
+  ],
+  "runner_preparation_verified": "parameter_sweeps/manual_bias_scenario1_scenario3_20261030_051002_2f5079",
+  "runtime_fingerprints_verified": true,
+  "vehicle_driving_started": false,
+  "known_bnb_limits_unchanged": "diagnostics/c5_bnb_20261030/verification_summary.json"
+}

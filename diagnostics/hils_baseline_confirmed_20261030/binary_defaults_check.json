@@ -1,0 +1,10 @@
+{
+  "upper_planner_node": {
+    "upper_miqp_force_bnb": true
+  },
+  "lower_tracking_mpc_node": {
+    "lower_enable_steering_actuator_model": true,
+    "lower_steering_actuator_time_constant_sec": 0.74,
+    "lower_steering_actuator_delay_sec": 0.0
+  }
+}

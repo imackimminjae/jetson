@@ -1,8 +1,10 @@
 #include "virtual_control/tracking_control.hpp"
+#include "virtual_control/egocentric_planner_geometry.hpp"
 #include <gtest/gtest.h>
 #include <cstdlib>
 #include <fstream>
 #include <iomanip>
+#include <optional>
 namespace imac_ctrl {
 struct SoftCorridorTestAccess {
   using Preview=SdMapUpperPlannerNode::PreviewConstraintData;
@@ -46,16 +48,18 @@ class SoftCorridors:public ::testing::Test {
 protected:
  static void SetUpTestSuite(){if(!rclcpp::ok())rclcpp::init(0,nullptr);}
  static void TearDownTestSuite(){rclcpp::shutdown();}
-  static auto node(bool soft=true,bool vehicle=false,double weight=10.0,double steering_change=0.0,
+  static auto node(std::optional<bool> soft=std::nullopt,bool vehicle=false,double weight=10.0,double steering_change=0.0,
                    double minimum_candidate_width=0.0) {
   rclcpp::NodeOptions o;o.parameter_overrides({{"scale_mode","fullscale"},{"upper_prediction_dt_sec",.5},
-    {"upper_cumulative_increment_model",true},{"upper_soft_corridor_constraints",soft},{"target_speed_mps",6.0},
+    {"upper_cumulative_increment_model",true},{"target_speed_mps",6.0},
     {"max_steering_angle_rad",.3},
     {"upper_r_steering_delta",steering_change},
     {"road_candidate_min_width_m",minimum_candidate_width},
     {"upper_corridor_soft_quadratic_weight",weight},{"upper_use_vehicle_rollout",vehicle},
     {"upper_max_steering_rate_radps",vehicle?.75:0.0},{"upper_steering_state_timeout_sec",10.0},
     {"upper_vehicle_rollout_budget_ms",500.0}});
+  // Ordinary cases exercise the node default; false explicitly tests legacy hard strips.
+  if(soft.has_value()) {o.append_parameter_override("upper_soft_corridor_constraints",soft.value());}
   auto n=std::make_shared<imac_ctrl::SdMapUpperPlannerNode>(o);Access::cancel(*n);return n;
  }
 };
@@ -103,6 +107,20 @@ TEST_F(SoftCorridors, SoftViolationIsAcceptedAndCharged) {
  ASSERT_TRUE(r.valid)<<r.status;EXPECT_GT(r.max_preferred_corridor_violation_m,.1);
  EXPECT_GT(r.preferred_corridor_cost,0);EXPECT_LE(r.max_hard_road_violation_m,.001);
  auto legacy=node(false);EXPECT_FALSE(Access::solve(*legacy,p).valid);
+}
+TEST_F(SoftCorridors, TurnGuidanceAnchorsAtK2AndMayIncludeK1InItsWindow) {
+ auto n=node();auto p=Access::road(2,0.0);p.delta_psi_road_rad=.4;
+ for(int k=1;k<=2;++k) {
+  const double x=3.0*k;p.Nck[k]=2;
+  // A narrow retained second interval must count without a 2 m width filter.
+  p.pmk[k].push_back({x,.9});p.pMk[k].push_back({x,1.0});
+  p.road_pmk[k].push_back({x,.9});p.road_pMk[k].push_back({x,1.0});
+ }
+ auto r=Access::solve(*n,p);ASSERT_TRUE(r.valid)<<r.status;
+ EXPECT_EQ(r.branch_step,2);
+ ASSERT_EQ(r.turn_window_steps.size(),2u);
+ EXPECT_EQ(r.turn_window_steps[0],1);EXPECT_EQ(r.turn_window_steps[1],2);
+ EXPECT_LE(r.max_hard_road_violation_m,.001);
 }
 TEST_F(SoftCorridors, PhysicalRefinementAlsoAcceptsPreferredViolation) {
  auto n=node(true,true);Access::feed(*n,0,0,.74,1.4);auto p=Access::road(2,.4);auto r=Access::solve(*n,p);
@@ -237,7 +255,8 @@ TEST_F(SoftCorridors, RecordedSteeringChangeSweep) {
   ASSERT_TRUE(in.good())<<f;Access::targets(*nodes[0],p,a,b);
   for(std::size_t i=0;i<weights.size();++i) {
    Access::feed(*nodes[i],delta,cmd,tau,offset);const auto r=Access::solve(*nodes[i],p);
-   EXPECT_EQ(r.branch_step,branch)<<f;
+   // Recorded anchors may use the removed filters; current counts define the anchor.
+   EXPECT_EQ(r.branch_step,imac_ctrl::egocentric_planner_geometry::firstBranchStep(p.Nck))<<f;
    double energy=0,tv=0,maximum=0,command05=NAN;
    if(r.valid) {
     const auto & v=r.vehicle_rollout;ASSERT_TRUE(v.valid);
@@ -302,8 +321,8 @@ TEST_F(SoftCorridors, RecordedBranchCostSweep) {
   for(std::size_t i=0;i<nodes.size();++i) {
    auto experiment=p;
    if(variants[i].name=="force_goal") {
-    // Diagnostic ablation: retain the original raw-width branch trigger and
-    // turn window, but force the farthest split onto the candidate whose midpoint
+    // Diagnostic ablation: use the same first-multiple detector, but force
+    // the farthest split onto the candidate whose midpoint
     // is closest to the outgoing waypoint. This is a diagnostic alternative,
     // not an automatic route correctness test.
     for(int k=h;k>=1;--k) {
@@ -323,7 +342,8 @@ TEST_F(SoftCorridors, RecordedBranchCostSweep) {
     }
    }
    Access::targets(*nodes[i],experiment,a,b);Access::feed(*nodes[i],delta,cmd,tau,offset);
-   const auto r=Access::solve(*nodes[i],experiment);EXPECT_EQ(r.branch_step,branch)<<seq;
+   const auto r=Access::solve(*nodes[i],experiment);
+   EXPECT_EQ(r.branch_step,imac_ctrl::egocentric_planner_geometry::firstBranchStep(experiment.Nck))<<seq;
    double tv=0;
    if(r.valid) {
     ASSERT_TRUE(r.vehicle_rollout.valid);EXPECT_LE(r.max_hard_road_violation_m,.001001);

@@ -1,0 +1,60 @@
+{
+  "frames": 351,
+  "repeats_per_frame_per_mode": 2,
+  "modes": {
+    "hybrid": {
+      "attempts": 702,
+      "valid": 702,
+      "enumerated": 6198,
+      "bnb_calls": 0,
+      "miqp_solver_ms": {
+        "mean": 0.8242274458689458,
+        "median": 0.09769799999999998,
+        "p95": 4.932209999999983,
+        "max": 14.229009999999999
+      },
+      "solver_ms": {
+        "mean": 1.2176069943019945,
+        "median": 0.4396275,
+        "p95": 5.63704899999999,
+        "max": 14.700318
+      },
+      "wall_ms": {
+        "mean": 9.588996603988605,
+        "median": 7.4176675,
+        "p95": 19.841829899999986,
+        "max": 30.169659
+      },
+      "failure_reasons": {}
+    },
+    "bnb": {
+      "attempts": 702,
+      "valid": 688,
+      "enumerated": 0,
+      "bnb_calls": 702,
+      "miqp_solver_ms": {
+        "mean": 1.0202546566951567,
+        "median": 0.7630445000000001,
+        "p95": 2.4441465499999997,
+        "max": 3.714082
+      },
+      "solver_ms": {
+        "mean": 1.4108435213675214,
+        "median": 1.105213,
+        "p95": 3.127309149999998,
+        "max": 4.863105
+      },
+      "wall_ms": {
+        "mean": 9.531319836182336,
+        "median": 8.107813499999999,
+        "p95": 17.010742249999993,
+        "max": 46.372965
+      },
+      "failure_reasons": {
+        "DAQP branch-and-bound MIQP failed": 10,
+        "vehicle refinement has no feasible path closest=7.739450 qp_ok=12 qp_failed=0": 2,
+        "DAQP MIQP rejected by post-solve feasibility check: ineq=0.747226 row=47 lhs=83.1912 ub=82.444 eq=0 binary=4.75024e-10 direct_qp=1": 2
+      }
+    }
+  }
+}

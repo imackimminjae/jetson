@@ -7,6 +7,40 @@
 
 namespace geometry = imac_ctrl::egocentric_planner_geometry;
 
+TEST(EgocentricPlannerGeometry, WaypointBiasWindowUsesInclusiveOneBasedWp0)
+{
+  EXPECT_FALSE(geometry::waypointBiasWindowActive(1, 3, 4));
+  EXPECT_TRUE(geometry::waypointBiasWindowActive(2, 3, 4));
+  EXPECT_TRUE(geometry::waypointBiasWindowActive(3, 3, 4));
+  EXPECT_FALSE(geometry::waypointBiasWindowActive(4, 3, 4));
+  EXPECT_FALSE(geometry::waypointBiasWindowActive(0, 0, 4));
+}
+
+TEST(EgocentricPlannerGeometry, LocalBiasRotatesAboutEgoOnlyInsideWindow)
+{
+  const Eigen::Vector2d waypoint(20.0, 0.0);
+  const auto perturbed = geometry::biasPlanningWaypointBody(
+    waypoint, std::acos(-1.0) / 2.0, Eigen::Vector2d::Zero(), true);
+  EXPECT_NEAR(perturbed.x(), 0.0, 1e-12);
+  EXPECT_NEAR(perturbed.y(), 20.0, 1e-12);
+  EXPECT_TRUE(geometry::biasPlanningWaypointBody(
+    waypoint, 1.0, Eigen::Vector2d(5.0, 5.0), false).isApprox(waypoint));
+  EXPECT_TRUE(waypoint.isApprox(Eigen::Vector2d(20.0, 0.0)));
+}
+
+TEST(EgocentricPlannerGeometry, LocalBiasDoesNotMoveWaypointProgressGate)
+{
+  const std::vector<Eigen::Vector2d> route{{0.0, 0.0}, {200.0, 0.0},
+    {220.0, 0.0}, {220.0, 50.0}};
+  const Eigen::Vector2d ego(200.0, 0.0);
+  const auto target = geometry::biasPlanningWaypointBody(
+    route[2] - ego, -5.0 * std::acos(-1.0) / 180.0, Eigen::Vector2d::Zero(), true);
+  EXPECT_NEAR(target.norm(), 20.0, 1e-12);
+  const auto pair = geometry::findWaypointPair(route, 1, ego, Eigen::Vector2d(1.0, 0.0), 10.0, 15.0);
+  EXPECT_EQ(pair[0], 2);
+  EXPECT_TRUE(route[1].isApprox(ego));
+}
+
 TEST(EgocentricPlannerGeometry, BinaryOccupancyThresholdZeroAndOneAreEquivalent)
 {
   EXPECT_TRUE(geometry::gridValueIsDrivable(100, true, 0));
@@ -198,105 +232,36 @@ TEST(EgocentricPlannerGeometry, NegativeReserveCannotExtendPreviewBeyondBev)
   EXPECT_EQ(geometry::previewStepsFromForwardExtent(17.5, 3.0, 5, -1), 0);
 }
 
-TEST(EgocentricPlannerGeometry, RecordedPixelSliverDoesNotTriggerBranchTurnCost)
+TEST(EgocentricPlannerGeometry, RecordedPixelSliverStillCountsAsAnInterval)
 {
-  // S1, ratio 0.7, first attempt, elapsed 18.326 s: k5 has a 0.1 m fragment.
-  const std::vector<std::vector<double>> widths{
-    {}, {10.5}, {10.5}, {10.6}, {11.7}, {12.6, 0.1}, {13.8}, {15.4}};
-  const auto unfiltered = geometry::detectBranch(widths, 0.0);
-  EXPECT_EQ(unfiltered.turn_step, 5);
-  EXPECT_EQ(unfiltered.candidate_counts[5], 2);
-  const auto filtered = geometry::detectBranch(widths, 2.0);
-  EXPECT_EQ(filtered.candidate_counts[5], 1);
-  EXPECT_EQ(filtered.turn_step, -1);
+  // S1 at 18.326 s: the 0.1 m fragment at k5 remains a second interval.
+  EXPECT_EQ(geometry::firstBranchStep({0, 1, 1, 1, 1, 2, 1, 1}), 5);
 }
 
-TEST(EgocentricPlannerGeometry, RecordedEntryWithTwoArmsThroughoutHasNoTurnWindow)
+TEST(EgocentricPlannerGeometry, RecordedTwoArmEntryStartsAtSecondPrediction)
 {
-  // S1, ratio 0.7, first attempt, elapsed 21.426 s. All future stages have two arms.
-  // k0->k1 is excluded; all remaining counts stay at two, so no new branch is detected.
-  const std::vector<std::vector<double>> widths{
-    {}, {9.6, 9.3}, {9.9, 9.0}, {10.3, 9.7}, {11.0, 8.4},
-    {11.6, 6.8}, {11.9, 4.9}, {11.8, 15.0}};
-  const auto branch = geometry::detectBranch(widths, 2.0);
-  EXPECT_EQ(branch.candidate_counts[1], 2);
-  EXPECT_EQ(branch.turn_step, -1);
+  // S1 at 21.426 s: all future sections have two arms, including k1.
+  EXPECT_EQ(geometry::firstBranchStep({0, 2, 2, 2, 2, 2, 2, 2}), 2);
 }
 
-TEST(EgocentricPlannerGeometry, BranchMinimumUsesRawWidthBeforeContraction)
+TEST(EgocentricPlannerGeometry, CurrentStateAndK1DoNotAnchorTurnGuidance)
 {
-  // 4 m observed runs have only 1.6 m preferred width at ratio 0.7.
-  const auto branch = geometry::detectBranch({{}, {4.0}, {4.0, 4.0}}, 2.0);
-  EXPECT_EQ(branch.candidate_counts[2], 2);
-  EXPECT_EQ(branch.turn_step, 2);
+  EXPECT_EQ(geometry::firstBranchStep({2, 1, 1}), -1);
+  EXPECT_EQ(geometry::firstBranchStep({3}), -1);
+  EXPECT_EQ(geometry::firstBranchStep({}), -1);
+  EXPECT_EQ(geometry::firstBranchStep({1, 2, 1}), -1);
+  EXPECT_EQ(geometry::firstBranchStep({1, 2}), -1);
 }
 
-TEST(EgocentricPlannerGeometry, BranchMinimumIncludesExactThreshold)
+TEST(EgocentricPlannerGeometry, CountsNeedNotIncreaseToActivateGuidance)
 {
-  EXPECT_EQ(geometry::detectBranch({{}, {2.0}, {2.0, 2.0}}, 2.0).turn_step, 2);
-  const auto filtered = geometry::detectBranch({{}, {2.0}, {2.0, 1.99}}, 2.0);
-  EXPECT_EQ(filtered.candidate_counts[2], 1);
-  EXPECT_EQ(filtered.turn_step, -1);
+  EXPECT_EQ(geometry::firstBranchStep({3, 2, 2}), 2);
+  EXPECT_EQ(geometry::firstBranchStep({1, 2, 3}), 2);
+  EXPECT_EQ(geometry::firstBranchStep({0, 1, 3, 2}), 2);
 }
 
-TEST(EgocentricPlannerGeometry, CurrentStateCandidatesDoNotActivateFutureTurnWindow)
+TEST(EgocentricPlannerGeometry, FirstMultipleSectionWins)
 {
-  const auto branch = geometry::detectBranch({{10.0, 10.0}, {10.0}, {10.0}}, 2.0);
-  EXPECT_EQ(branch.candidate_counts[0], 2);
-  EXPECT_EQ(branch.turn_step, -1);
-}
-
-TEST(EgocentricPlannerGeometry, CurrentStateToFirstPredictionIncreaseIsIgnored)
-{
-  const auto branch = geometry::detectBranch({{10.0}, {10.0, 10.0}, {10.0, 10.0}}, 2.0);
-  EXPECT_EQ(branch.candidate_counts[0], 1);
-  EXPECT_EQ(branch.candidate_counts[1], 2);
-  EXPECT_EQ(branch.turn_step, -1);
-}
-
-TEST(EgocentricPlannerGeometry, FirstFutureIncreaseAnchorsTurnWindow)
-{
-  // A decrease or unchanged two-arm section is not a new split; 1->2 at k4 is.
-  const auto branch = geometry::detectBranch(
-    {{10.0}, {10.0, 10.0}, {10.0, 10.0}, {10.0}, {10.0, 10.0},
-      {10.0, 10.0, 10.0}}, 2.0);
-  EXPECT_EQ(branch.turn_step, 4);
-}
-
-TEST(EgocentricPlannerGeometry, TwoToThreeCandidatesAlsoCountsAsIncrease)
-{
-  EXPECT_EQ(geometry::detectBranch(
-    {{10.0}, {10.0, 10.0}, {10.0, 10.0, 10.0}}, 2.0).turn_step, 2);
-}
-
-TEST(EgocentricPlannerGeometry, MissingEligiblePreviousSectionIsNotASplit)
-{
-  EXPECT_EQ(geometry::detectBranch({{10.0}, {}, {10.0, 10.0}}, 2.0).turn_step, -1);
-}
-
-TEST(EgocentricPlannerGeometry, IndependentBranchAblationsKeepOtherConditions)
-{
-  const std::vector<std::vector<double>> constant{{8.0}, {8.0, 8.0}, {8.0, 8.0}};
-  EXPECT_EQ(geometry::detectBranch(constant, 2.0).turn_step, -1);
-  // Restoring only first-multiple detection keeps k0->k1 excluded.
-  EXPECT_EQ(geometry::detectBranch(constant, 2.0, false, false).turn_step, 2);
-  EXPECT_EQ(geometry::detectBranch(constant, 2.0, true, true).turn_step, 1);
-  // Including k0 does not turn a decrease into a split or invent missing data.
-  EXPECT_EQ(geometry::detectBranch({{8.0, 8.0}, {8.0}}, 2.0, true, true).turn_step, -1);
-  EXPECT_EQ(geometry::detectBranch({{}, {8.0, 8.0}}, 2.0, true, true).turn_step, -1);
-}
-
-TEST(EgocentricPlannerGeometry, OptionalContinuityRespectsWidthAndK0Exclusion)
-{
-  const std::vector<std::vector<double>> widths{{8.0}, {8.0, 8.0}, {8.0, 8.0}};
-  const std::vector<std::vector<Eigen::Vector2d>> a{
-    {{0, -4}}, {{3, -4}, {3, 1}}, {{6, -4}, {6, 1}}};
-  const std::vector<std::vector<Eigen::Vector2d>> b{
-    {{0, 4}}, {{3, -1}, {3, 4}}, {{6, -1}, {6, 4}}};
-  EXPECT_EQ(geometry::detectBranchWithContinuity(a,b,widths,2.0,true,false,false,6.75).turn_step,-1);
-  EXPECT_EQ(geometry::detectBranchWithContinuity(a,b,widths,2.0,true,false,true,6.75).turn_step,2);
-  EXPECT_EQ(geometry::detectBranchWithContinuity(a,b,widths,2.0,true,true,true,6.75).turn_step,1);
-  auto small=widths; small[1][1]=small[2][1]=.1;
-  EXPECT_EQ(geometry::detectBranchWithContinuity(a,b,small,2.0,true,false,true,6.75).turn_step,-1);
-  EXPECT_EQ(geometry::detectBranchWithContinuity(a,b,small,0.0,true,false,true,6.75).turn_step,2);
+  EXPECT_EQ(geometry::firstBranchStep({1, 1, 1, 2, 1, 3}), 3);
+  EXPECT_EQ(geometry::firstBranchStep({1, 1, 1, 1}), -1);
 }

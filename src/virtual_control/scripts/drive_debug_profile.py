@@ -1,5 +1,6 @@
 """Shared essential recording profile. Preserve every received BEV frame."""
 from pathlib import Path
+import os
 
 PACKAGE = Path(__file__).resolve().parents[1]
 TOPICS = (
@@ -13,6 +14,7 @@ TOPICS = (
     '/debug/upper_miqp_trace',
     '/debug/upper_interval_info',
     '/debug/upper_interval_centering_state',
+    '/debug/upper_interval_b_samples',
     '/debug/upper_stage_timing',
     '/debug/bev_source_timing',
     '/controller/reset',
@@ -30,7 +32,11 @@ REQUIRED_TOPICS = (
 
 
 def recorder_command(destination):
-    return ['ros2', 'bag', 'record', '-s', 'mcap', '-o', str(destination),
+    command = ['ros2', 'bag', 'record', '-s', 'mcap', '-o', str(destination),
             '--storage-config-file', str(PACKAGE/'config/drive_debug_mcap.yaml'),
             '--max-cache-size', '8388608', '--max-bag-size', '16777216',
-            '--max-bag-duration', '60', '--polling-interval', '100', *TOPICS]
+            '--max-bag-duration', '60', '--polling-interval', '100']
+    overrides = os.environ.get('DRIVE_DEBUG_QOS_OVERRIDES')
+    if overrides:
+        command += ['--qos-profile-overrides-path', overrides]
+    return [*command, *TOPICS]

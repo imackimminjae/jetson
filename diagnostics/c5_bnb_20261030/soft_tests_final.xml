@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="14" failures="0" disabled="0" errors="0" time="0.498" timestamp="2026-10-30T04:25:07" name="AllTests">
+  <testsuite name="SoftCorridors" tests="14" failures="0" disabled="0" errors="0" time="0.482" timestamp="2026-10-30T04:25:07">
+    <testcase name="NarrowCandidatesCannotBeSelectedAndOriginalIndicesArePreserved" status="run" result="completed" time="0.066" timestamp="2026-10-30T04:25:07" classname="SoftCorridors" />
+    <testcase name="WidthExclusionRejectsAnEmptySectionWithoutRestoringTinyCandidates" status="run" result="completed" time="0.021" timestamp="2026-10-30T04:25:07" classname="SoftCorridors" />
+    <testcase name="WidthExclusionUsesOriginalWidthAndInclusiveThreshold" status="run" result="completed" time="0.03" timestamp="2026-10-30T04:25:07" classname="SoftCorridors" />
+    <testcase name="SteeringChangeWeightIsWiredAndRequiresPhysicalRollout" status="run" result="completed" time="0.05" timestamp="2026-10-30T04:25:07" classname="SoftCorridors" />
+    <testcase name="SoftViolationIsAcceptedAndCharged" status="run" result="completed" time="0.044" timestamp="2026-10-30T04:25:07" classname="SoftCorridors" />
+    <testcase name="TurnGuidanceAnchorsAtK2AndMayIncludeK1InItsWindow" status="run" result="completed" time="0.025" timestamp="2026-10-30T04:25:07" classname="SoftCorridors" />
+    <testcase name="PhysicalRefinementAlsoAcceptsPreferredViolation" status="run" result="completed" time="0.029" timestamp="2026-10-30T04:25:07" classname="SoftCorridors" />
+    <testcase name="HardRoadCannotBeBoughtWithPreferredSlack" status="run" result="completed" time="0.023" timestamp="2026-10-30T04:25:07" classname="SoftCorridors" />
+    <testcase name="SeparateRoadCandidatesNeverBridgeBlockedGap" status="run" result="completed" time="0.025" timestamp="2026-10-30T04:25:07" classname="SoftCorridors" />
+    <testcase name="MissingRoadOrNominalFallbackCannotEstablishHardRoad" status="run" result="completed" time="0.024" timestamp="2026-10-30T04:25:07" classname="SoftCorridors" />
+    <testcase name="PreferenceMustBeNestedAndWeightsValid" status="run" result="completed" time="0.038" timestamp="2026-10-30T04:25:07" classname="SoftCorridors" />
+    <testcase name="DenseReferenceCannotCrossObstacleBetweenStations" status="run" result="completed" time="0.044" timestamp="2026-10-30T04:25:07" classname="SoftCorridors" />
+    <testcase name="MixedIntegerFallbackKeepsSlackContinuous" status="run" result="completed" time="0.032" timestamp="2026-10-30T04:25:07" classname="SoftCorridors" />
+    <testcase name="WidthExclusionAlsoConstrainsMixedIntegerFallback" status="run" result="completed" time="0.031" timestamp="2026-10-30T04:25:07" classname="SoftCorridors" />
+  </testsuite>
+</testsuites>

@@ -59,6 +59,7 @@ protected:
   static auto node(double limit=0.35,bool vehicle=false) {
     rclcpp::NodeOptions o;
     o.parameter_overrides({{"scale_mode","fullscale"},{"upper_prediction_dt_sec",0.5},
+      {"upper_soft_corridor_constraints",false},  // This fixture supplies hard-strip geometry only.
       {"upper_cumulative_increment_model",true},{"upper_max_steering_rate_radps",limit},
       {"upper_steering_state_timeout_sec",10.0},{"upper_r_dpsi",3.0},
       {"upper_use_vehicle_rollout",vehicle},{"upper_vehicle_rollout_budget_ms",200.0},
@@ -194,7 +195,9 @@ TEST_F(UpperSteeringRate, RecordedFrozenReplay) {
   const std::vector<double> limits=vehicle?std::vector<double>{0.0,.5}:std::vector<double>{0.0,.35,.5,.7};
   for(double limit:limits) {
     rclcpp::NodeOptions o;o.arguments({"--ros-args","--params-file",config});
-    o.parameter_overrides({{"upper_max_steering_rate_radps",limit},{"upper_steering_state_timeout_sec",10.0},
+    // Historical replay inputs contain hard-strip bounds, not raw/soft road pairs.
+    o.parameter_overrides({{"upper_soft_corridor_constraints",false},
+      {"upper_max_steering_rate_radps",limit},{"upper_steering_state_timeout_sec",10.0},
       {"upper_use_vehicle_rollout",vehicle && limit>0},
       {"upper_vehicle_rollout_budget_ms",std::getenv("UPPER_VEHICLE_REPLAY_BUDGET_MS")?std::stod(std::getenv("UPPER_VEHICLE_REPLAY_BUDGET_MS")):60.0}});
     auto n=std::make_shared<imac_ctrl::SdMapUpperPlannerNode>(o);Access::cancel(*n);nodes.push_back(n);

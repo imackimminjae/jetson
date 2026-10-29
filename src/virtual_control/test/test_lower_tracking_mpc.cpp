@@ -255,13 +255,20 @@ TEST_F(LowerMpc, DaqpCostScalingMatchesIndependentUnconstrainedSolution)
   impl->lower_prediction_steps_ = 1;
   impl->lower_max_steering_rate_radps_ = 100.0;
   impl->last_applied_steering_angle_rad_ = 0.06;
-  const auto result = impl->solveTrackingMpc(pose, path);
-  ASSERT_TRUE(result.valid);
-  const double b = pose.speed_mps * impl->lower_prediction_dt_sec_ / impl->wheelbase_;
-  const double h = result.heading_error_rad - result.tracking_target[1];
-  const double expected = (impl->lower_rd_steering_rate_ * 0.06 - impl->lower_q_heading_ * b * h) /
-    (impl->lower_q_heading_ * b * b + impl->lower_r_steering_ + impl->lower_rd_steering_rate_);
-  EXPECT_NEAR(result.steering_sequence_rad[0], expected, 1e-7);
+  for (bool actuator_enabled : {false, true}) {
+    SCOPED_TRACE(testing::Message() << "actuator_enabled=" << actuator_enabled);
+    impl->lower_enable_steering_actuator_model_ = actuator_enabled;
+    const auto result = impl->solveTrackingMpc(pose, path);
+    ASSERT_TRUE(result.valid);
+    const double dt = impl->lower_prediction_dt_sec_;
+    const double tau = impl->lower_steering_actuator_time_constant_sec_;
+    const double steering_integral = actuator_enabled ? dt - tau * (1 - std::exp(-dt / tau)) : dt;
+    const double b = pose.speed_mps * steering_integral / impl->wheelbase_;
+    const double h = result.heading_error_rad - result.tracking_target[1];
+    const double expected = (impl->lower_rd_steering_rate_ * 0.06 - impl->lower_q_heading_ * b * h) /
+      (impl->lower_q_heading_ * b * b + impl->lower_r_steering_ + impl->lower_rd_steering_rate_);
+    EXPECT_NEAR(result.steering_sequence_rad[0], expected, 1e-7);
+  }
 }
 
 TEST_F(LowerMpc, StationaryQpRespectsFirstAndAllSteeringLimits)

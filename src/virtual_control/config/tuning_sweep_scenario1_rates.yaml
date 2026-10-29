@@ -1,0 +1,128 @@
+# Scenario 1: planner/controller frequency comparison only, heading cost fixed at 0.3.
+# Model dt matches the controller period; every lower horizon is 3 seconds.
+# Upper lower_prediction_dt_sec is reference sampling, kept at 0.1 s.
+version: 1
+default_scenarios:
+- scenario1
+default_runs: 3
+default_sets:
+- p5_c10
+- p5_c5
+- p5_c20
+- p2_c10
+- p2_c5
+- p2_c20
+- p10_c10
+- p10_c5
+- p10_c20
+baseline:
+  upper_planner_node:
+    upper_planner_rate_hz: 5.0
+    upper_prediction_dt_sec: 0.5
+    upper_preview_steps: 7
+    lower_prediction_dt_sec: 0.1
+    lambda_relative_turn: 0.3
+    upper_r_dpsi: 3.0
+    max_steering_angle_rad: 0.3
+  lower_tracking_mpc_node:
+    lower_controller_rate_hz: 10.0
+    lower_prediction_dt_sec: 0.1
+    lower_prediction_steps: 30
+    lower_q_heading: 0.5
+    lower_rd_steering_rate: 150.0
+    lower_max_steering_rate_radps: 1.0471975512
+  knu_batch_runner:
+    stationary_confirm_sec: 0.5
+    map_settle_sec: 0.3
+    reference_min_wait_sec: 0.3
+sets:
+  p5_c10:
+    label: 플래너5Hz / 제어10Hz / 상위 헤딩0.3 / 예측3초
+    changes:
+      upper_planner_node:
+        lambda_relative_turn: 0.3
+        upper_planner_rate_hz: 5.0
+      lower_tracking_mpc_node:
+        lower_controller_rate_hz: 10.0
+        lower_prediction_dt_sec: 0.1
+        lower_prediction_steps: 30
+  p5_c5:
+    label: 플래너5Hz / 제어5Hz / 상위 헤딩0.3 / 예측3초
+    changes:
+      upper_planner_node:
+        lambda_relative_turn: 0.3
+        upper_planner_rate_hz: 5.0
+      lower_tracking_mpc_node:
+        lower_controller_rate_hz: 5.0
+        lower_prediction_dt_sec: 0.2
+        lower_prediction_steps: 15
+  p5_c20:
+    label: 플래너5Hz / 제어20Hz / 상위 헤딩0.3 / 예측3초
+    changes:
+      upper_planner_node:
+        lambda_relative_turn: 0.3
+        upper_planner_rate_hz: 5.0
+      lower_tracking_mpc_node:
+        lower_controller_rate_hz: 20.0
+        lower_prediction_dt_sec: 0.05
+        lower_prediction_steps: 60
+  p2_c10:
+    label: 플래너2Hz / 제어10Hz / 상위 헤딩0.3 / 예측3초
+    changes:
+      upper_planner_node:
+        lambda_relative_turn: 0.3
+        upper_planner_rate_hz: 2.0
+      lower_tracking_mpc_node:
+        lower_controller_rate_hz: 10.0
+        lower_prediction_dt_sec: 0.1
+        lower_prediction_steps: 30
+  p2_c5:
+    label: 플래너2Hz / 제어5Hz / 상위 헤딩0.3 / 예측3초
+    changes:
+      upper_planner_node:
+        lambda_relative_turn: 0.3
+        upper_planner_rate_hz: 2.0
+      lower_tracking_mpc_node:
+        lower_controller_rate_hz: 5.0
+        lower_prediction_dt_sec: 0.2
+        lower_prediction_steps: 15
+  p2_c20:
+    label: 플래너2Hz / 제어20Hz / 상위 헤딩0.3 / 예측3초
+    changes:
+      upper_planner_node:
+        lambda_relative_turn: 0.3
+        upper_planner_rate_hz: 2.0
+      lower_tracking_mpc_node:
+        lower_controller_rate_hz: 20.0
+        lower_prediction_dt_sec: 0.05
+        lower_prediction_steps: 60
+  p10_c10:
+    label: 플래너10Hz / 제어10Hz / 상위 헤딩0.3 / 예측3초
+    changes:
+      upper_planner_node:
+        lambda_relative_turn: 0.3
+        upper_planner_rate_hz: 10.0
+      lower_tracking_mpc_node:
+        lower_controller_rate_hz: 10.0
+        lower_prediction_dt_sec: 0.1
+        lower_prediction_steps: 30
+  p10_c5:
+    label: 플래너10Hz / 제어5Hz / 상위 헤딩0.3 / 예측3초
+    changes:
+      upper_planner_node:
+        lambda_relative_turn: 0.3
+        upper_planner_rate_hz: 10.0
+      lower_tracking_mpc_node:
+        lower_controller_rate_hz: 5.0
+        lower_prediction_dt_sec: 0.2
+        lower_prediction_steps: 15
+  p10_c20:
+    label: 플래너10Hz / 제어20Hz / 상위 헤딩0.3 / 예측3초
+    changes:
+      upper_planner_node:
+        lambda_relative_turn: 0.3
+        upper_planner_rate_hz: 10.0
+      lower_tracking_mpc_node:
+        lower_controller_rate_hz: 20.0
+        lower_prediction_dt_sec: 0.05
+        lower_prediction_steps: 60

@@ -1,0 +1,95 @@
+/bev/occupancy_grid:
+  history: keep_last
+  depth: 2000
+  reliability: best_effort
+  durability: volatile
+/motive/vehicle/odom_map:
+  history: keep_last
+  depth: 2000
+  reliability: best_effort
+  durability: volatile
+/navigation/global_path:
+  history: keep_last
+  depth: 2000
+  reliability: best_effort
+  durability: volatile
+/planner/lower_reference_path/with_arclength:
+  history: keep_last
+  depth: 2000
+  reliability: best_effort
+  durability: volatile
+/planner/goal_reached:
+  history: keep_last
+  depth: 2000
+  reliability: best_effort
+  durability: volatile
+/debug/lower_mpc_trace:
+  history: keep_last
+  depth: 2000
+  reliability: best_effort
+  durability: volatile
+/debug/upper_branch_event:
+  history: keep_last
+  depth: 2000
+  reliability: best_effort
+  durability: volatile
+/debug/upper_miqp_trace:
+  history: keep_last
+  depth: 2000
+  reliability: best_effort
+  durability: volatile
+/debug/upper_interval_info:
+  history: keep_last
+  depth: 2000
+  reliability: best_effort
+  durability: volatile
+/debug/upper_interval_centering_state:
+  history: keep_last
+  depth: 2000
+  reliability: best_effort
+  durability: volatile
+/debug/upper_interval_b_samples:
+  history: keep_last
+  depth: 2000
+  reliability: best_effort
+  durability: volatile
+/debug/upper_stage_timing:
+  history: keep_last
+  depth: 2000
+  reliability: best_effort
+  durability: volatile
+/debug/bev_source_timing:
+  history: keep_last
+  depth: 2000
+  reliability: best_effort
+  durability: volatile
+/controller/reset:
+  history: keep_last
+  depth: 2000
+  reliability: best_effort
+  durability: volatile
+/knu_batch/status:
+  history: keep_last
+  depth: 2000
+  reliability: best_effort
+  durability: volatile
+/knu_batch/run_permission:
+  history: keep_last
+  depth: 2000
+  reliability: best_effort
+  durability: volatile
+/knu_batch/active_route:
+  history: keep_last
+  depth: 2000
+  reliability: best_effort
+  durability: volatile
+/parameter_events:
+  history: keep_last
+  depth: 2000
+  reliability: best_effort
+  durability: volatile
+/rosout:
+  history: keep_last
+  depth: 2000
+  reliability: best_effort
+  durability: volatile

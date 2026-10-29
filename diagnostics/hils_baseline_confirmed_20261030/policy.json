@@ -1,0 +1,15 @@
+{
+  "policy": {
+    "confirmed_date": "2026-10-30",
+    "scope": "HILS",
+    "lower_state_count": 3,
+    "lower_enable_steering_actuator_model": true,
+    "lower_steering_actuator_time_constant_sec": 0.74,
+    "lower_steering_actuator_delay_sec": 0.0,
+    "upper_miqp_force_bnb": true
+  },
+  "baseline_sha256": "75645a1acf3e559cb511bfb84c2abe8e5eb1777664f2e5dc550f155a1c6c5ec5",
+  "lower_sha256": "99782905f0f84ed9ef8a0b7b9f12629ffb65afc203a837f8aa23bac2251c2652",
+  "upper_sha256": "861d62785a124a0fe2b906fbc7eb759ff61c9bbf2f901a8abb3c45f26a297a3b",
+  "known_bnb_limits": "diagnostics/c5_bnb_20261030/verification_summary.json"
+}

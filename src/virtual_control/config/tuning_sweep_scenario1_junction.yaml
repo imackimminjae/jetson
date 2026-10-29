@@ -1,0 +1,103 @@
+# Scenario 1 junction: planner 5/10 Hz, controller 20 Hz, heading 0.3, horizon 3 s.
+# Factorial trial of ordinary path-refresh resets and steering-difference cost.
+# Explicit mission/pose/invalid-path resets remain active when reset_on_path_change is false.
+# Cost 600 tests dt-based scaling from 10 Hz / 150; it is not a validated optimum.
+version: 1
+default_scenarios:
+- scenario1
+default_runs: 3
+default_sets:
+- p10_baseline
+- p10_keep_state
+- p10_rd600
+- p10_keep_state_rd600
+- p5_baseline
+- p5_keep_state
+- p5_rd600
+- p5_keep_state_rd600
+baseline:
+  upper_planner_node:
+    upper_planner_rate_hz: 10.0
+    upper_prediction_dt_sec: 0.5
+    upper_preview_steps: 7
+    lower_prediction_dt_sec: 0.1
+    lambda_relative_turn: 0.3
+    upper_r_dpsi: 3.0
+    max_steering_angle_rad: 0.3
+  lower_tracking_mpc_node:
+    lower_controller_rate_hz: 20.0
+    lower_prediction_dt_sec: 0.05
+    lower_prediction_steps: 60
+    lower_q_heading: 0.5
+    lower_rd_steering_rate: 150.0
+    lower_max_steering_rate_radps: 1.0471975512
+    reset_on_path_change: true
+  knu_batch_runner:
+    stationary_confirm_sec: 0.5
+    map_settle_sec: 0.3
+    reference_min_wait_sec: 0.3
+sets:
+  p10_baseline:
+    label: 플래너10Hz / 제어20Hz / 경로변경 초기화 / 조향비용150
+    changes:
+      upper_planner_node:
+        upper_planner_rate_hz: 10.0
+      lower_tracking_mpc_node:
+        reset_on_path_change: true
+        lower_rd_steering_rate: 150.0
+  p10_keep_state:
+    label: 플래너10Hz / 제어20Hz / 조향상태 유지 / 조향비용150
+    changes:
+      upper_planner_node:
+        upper_planner_rate_hz: 10.0
+      lower_tracking_mpc_node:
+        reset_on_path_change: false
+        lower_rd_steering_rate: 150.0
+  p10_rd600:
+    label: 플래너10Hz / 제어20Hz / 경로변경 초기화 / 조향비용600
+    changes:
+      upper_planner_node:
+        upper_planner_rate_hz: 10.0
+      lower_tracking_mpc_node:
+        reset_on_path_change: true
+        lower_rd_steering_rate: 600.0
+  p10_keep_state_rd600:
+    label: 플래너10Hz / 제어20Hz / 조향상태 유지 / 조향비용600
+    changes:
+      upper_planner_node:
+        upper_planner_rate_hz: 10.0
+      lower_tracking_mpc_node:
+        reset_on_path_change: false
+        lower_rd_steering_rate: 600.0
+  p5_baseline:
+    label: 플래너5Hz / 제어20Hz / 경로변경 초기화 / 조향비용150
+    changes:
+      upper_planner_node:
+        upper_planner_rate_hz: 5.0
+      lower_tracking_mpc_node:
+        reset_on_path_change: true
+        lower_rd_steering_rate: 150.0
+  p5_keep_state:
+    label: 플래너5Hz / 제어20Hz / 조향상태 유지 / 조향비용150
+    changes:
+      upper_planner_node:
+        upper_planner_rate_hz: 5.0
+      lower_tracking_mpc_node:
+        reset_on_path_change: false
+        lower_rd_steering_rate: 150.0
+  p5_rd600:
+    label: 플래너5Hz / 제어20Hz / 경로변경 초기화 / 조향비용600
+    changes:
+      upper_planner_node:
+        upper_planner_rate_hz: 5.0
+      lower_tracking_mpc_node:
+        reset_on_path_change: true
+        lower_rd_steering_rate: 600.0
+  p5_keep_state_rd600:
+    label: 플래너5Hz / 제어20Hz / 조향상태 유지 / 조향비용600
+    changes:
+      upper_planner_node:
+        upper_planner_rate_hz: 5.0
+      lower_tracking_mpc_node:
+        reset_on_path_change: false
+        lower_rd_steering_rate: 600.0

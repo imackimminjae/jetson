@@ -1,0 +1,311 @@
+{
+  "22": {
+    "scenario": "scenario22",
+    "label": "서쪽 → 중앙 → 대각선 → 동쪽",
+    "color": "#222222",
+    "length_m": 634.721,
+    "reference_length_m": 639.318,
+    "waypoints": 12,
+    "nominal_driving_sec_at_6mps": 106.6,
+    "waypoint_sampling": {
+      "max_spacing_m": 100.0,
+      "automatic_reference_deviation_tolerance_m": 2.5,
+      "purpose": "Sparse SDMap guidance; planner follows local drivable geometry between waypoints."
+    },
+    "dense_min_radius_m": 12.526,
+    "reference_mask_center_margin_m": 1.1592693385645922,
+    "reference_mask_source": "diagnostics/map_coverage_20261025_road_reference/road_reference.npz",
+    "reference_mask_footprint_margin_m": 0.18269945348703012,
+    "spawn_mask_footprint_margin_m": 2.1202992558183897,
+    "start": [
+      -249.435,
+      94.518
+    ],
+    "end": [
+      269.626,
+      128.735
+    ],
+    "heading_rad": -0.4170341517387739,
+    "source_edges": [
+      21,
+      23,
+      28,
+      31,
+      34,
+      39,
+      -38,
+      -35,
+      20,
+      -18,
+      -15,
+      -13,
+      14,
+      19
+    ],
+    "terminal_network_reserve_m": 35.0,
+    "continuous": true,
+    "sections": [
+      {
+        "name": "서측 교차로 접근",
+        "start_wp": 1,
+        "end_wp": 2,
+        "length_m": 74.59711556085797
+      },
+      {
+        "name": "서측 회전교차로 통과",
+        "start_wp": 2,
+        "end_wp": 3,
+        "length_m": 54.86978356983012
+      },
+      {
+        "name": "중앙 연결도로·남동 분기",
+        "start_wp": 3,
+        "end_wp": 8,
+        "length_m": 264.74143905381095
+      },
+      {
+        "name": "대각선 연결도로",
+        "start_wp": 8,
+        "end_wp": 10,
+        "length_m": 167.4765324127124
+      },
+      {
+        "name": "북동 회전교차로·동측 출구",
+        "start_wp": 10,
+        "end_wp": 12,
+        "length_m": 73.03624961879973
+      }
+    ],
+    "actual_drive_validated": false,
+    "start_adjustment": {
+      "previous_start": [
+        -250.407,
+        92.324
+      ],
+      "shift_xy_m": [
+        0.9720000000000084,
+        2.1940000000000026
+      ],
+      "distance_m": 2.3996708107571814,
+      "basis": "observed Isaac road center",
+      "date": "2026-10-30"
+    },
+    "spawn_mask_source": "/home/imac/ros2_ws/diagnostics/isaac_observed_roads_20261025/shared_isaac_road_mosaic.npz"
+  },
+  "23": {
+    "scenario": "scenario23",
+    "label": "북서쪽 지선 → 중앙 → 동남쪽 지선",
+    "color": "#12a04b",
+    "length_m": 392.769,
+    "reference_length_m": 396.044,
+    "waypoints": 8,
+    "nominal_driving_sec_at_6mps": 66.0,
+    "waypoint_sampling": {
+      "max_spacing_m": 100.0,
+      "automatic_reference_deviation_tolerance_m": 2.5,
+      "purpose": "Sparse SDMap guidance; planner follows local drivable geometry between waypoints."
+    },
+    "dense_min_radius_m": 11.791,
+    "reference_mask_center_margin_m": 1.997932768255003,
+    "reference_mask_source": "diagnostics/map_coverage_20261025_road_reference/road_reference.npz",
+    "reference_mask_footprint_margin_m": 1.1014606078492517,
+    "spawn_mask_footprint_margin_m": 5.296591440965792,
+    "start": [
+      -100.604,
+      139.907
+    ],
+    "end": [
+      158.954,
+      -2.732
+    ],
+    "heading_rad": -1.6655117792826264,
+    "source_edges": [
+      10,
+      26,
+      27,
+      31,
+      34,
+      39,
+      -38,
+      -37
+    ],
+    "terminal_network_reserve_m": 35.0,
+    "continuous": true,
+    "sections": [
+      {
+        "name": "북서 지선·서측 회전교차로",
+        "start_wp": 1,
+        "end_wp": 3,
+        "length_m": 104.86912592170376
+      },
+      {
+        "name": "중앙 연결도로",
+        "start_wp": 3,
+        "end_wp": 6,
+        "length_m": 197.97973496730657
+      },
+      {
+        "name": "남동 분기 통과",
+        "start_wp": 6,
+        "end_wp": 7,
+        "length_m": 31.112922026065007
+      },
+      {
+        "name": "동남 지선 출구",
+        "start_wp": 7,
+        "end_wp": 8,
+        "length_m": 58.80748956553066
+      }
+    ],
+    "actual_drive_validated": false
+  },
+  "24": {
+    "scenario": "scenario24",
+    "label": "남쪽 → 회전교차로 서쪽 → 북쪽",
+    "color": "#a51d3b",
+    "length_m": 378.135,
+    "reference_length_m": 380.25,
+    "waypoints": 8,
+    "nominal_driving_sec_at_6mps": 63.4,
+    "waypoint_sampling": {
+      "max_spacing_m": 100.0,
+      "automatic_reference_deviation_tolerance_m": 2.5,
+      "purpose": "Sparse SDMap guidance; planner follows local drivable geometry between waypoints."
+    },
+    "dense_min_radius_m": 10.341,
+    "reference_mask_center_margin_m": 1.02404883351731,
+    "reference_mask_source": "/home/imac/ros2_ws/diagnostics/isaac_observed_roads_20261025/shared_isaac_road_mosaic.npz",
+    "reference_mask_footprint_margin_m": 0.03195751927831146,
+    "spawn_mask_footprint_margin_m": 4.062512722438413,
+    "start": [
+      137.499,
+      -113.874
+    ],
+    "end": [
+      187.966,
+      236.679
+    ],
+    "heading_rad": 2.188702440539584,
+    "source_edges": [
+      -42,
+      41,
+      -38,
+      -35,
+      20,
+      -16,
+      -9,
+      -4,
+      -2,
+      "r0"
+    ],
+    "terminal_network_reserve_m": 50.0,
+    "continuous": true,
+    "sections": [
+      {
+        "name": "남측 진입",
+        "start_wp": 1,
+        "end_wp": 3,
+        "length_m": 76.51531377462076
+      },
+      {
+        "name": "남동 분기·대각선 진입",
+        "start_wp": 3,
+        "end_wp": 4,
+        "length_m": 56.70057436217026
+      },
+      {
+        "name": "대각선 연결도로",
+        "start_wp": 4,
+        "end_wp": 6,
+        "length_m": 153.64370191592496
+      },
+      {
+        "name": "북동 회전교차로·북측 출구",
+        "start_wp": 6,
+        "end_wp": 8,
+        "length_m": 91.27511253735776
+      }
+    ],
+    "actual_drive_validated": false,
+    "spawn_mask_source": "/home/imac/ros2_ws/diagnostics/isaac_observed_roads_20261025/shared_isaac_road_mosaic.npz",
+    "direction_reversed_on": "2026-10-30"
+  },
+  "25": {
+    "scenario": "scenario25",
+    "label": "남서쪽 → 중앙 → 대각선 → 북쪽",
+    "color": "#2276c5",
+    "length_m": 599.097,
+    "reference_length_m": 604.593,
+    "waypoints": 12,
+    "nominal_driving_sec_at_6mps": 100.8,
+    "waypoint_sampling": {
+      "max_spacing_m": 100.0,
+      "automatic_reference_deviation_tolerance_m": 2.5,
+      "purpose": "Sparse SDMap guidance; planner follows local drivable geometry between waypoints."
+    },
+    "dense_min_radius_m": 6.806,
+    "reference_mask_center_margin_m": 1.4442359386348926,
+    "reference_mask_source": "diagnostics/map_coverage_20261025_road_reference/road_reference.npz",
+    "reference_mask_footprint_margin_m": 0.275155614337006,
+    "spawn_mask_footprint_margin_m": 3.9441828593536497,
+    "start": [
+      -152.03,
+      -63.355
+    ],
+    "end": [
+      187.372,
+      211.711
+    ],
+    "heading_rad": 1.3594247221644118,
+    "source_edges": [
+      -30,
+      31,
+      34,
+      39,
+      -38,
+      -35,
+      20,
+      -18,
+      -17,
+      -9,
+      -4,
+      -2,
+      "r0"
+    ],
+    "terminal_network_reserve_m": 35.0,
+    "continuous": true,
+    "sections": [
+      {
+        "name": "남서 지선·서측 회전교차로",
+        "start_wp": 1,
+        "end_wp": 2,
+        "length_m": 99.56157110552243
+      },
+      {
+        "name": "중앙 연결도로",
+        "start_wp": 2,
+        "end_wp": 6,
+        "length_m": 208.85715276455
+      },
+      {
+        "name": "남동 분기·대각선 진입",
+        "start_wp": 6,
+        "end_wp": 8,
+        "length_m": 47.0059679854906
+      },
+      {
+        "name": "대각선 연결도로",
+        "start_wp": 8,
+        "end_wp": 10,
+        "length_m": 171.01578522800702
+      },
+      {
+        "name": "북동 회전교차로·북측 출구",
+        "start_wp": 10,
+        "end_wp": 12,
+        "length_m": 72.65646868030194
+      }
+    ],
+    "actual_drive_validated": false
+  }
+}

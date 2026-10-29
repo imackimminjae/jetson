@@ -117,6 +117,8 @@ upper_planner_node:
     max_steering_angle_rad: 0.3
     a_max_mps2: 1.0
     miqp_big_m: 100.0
+    # Confirmed HILS baseline (2026-10-30): DAQP BnB for all integer choices.
+    upper_miqp_force_bnb: true
     position_scale_m: 10.0
     relative_turn_scale_rad: 0.3490658504
     lambda_position: 0.65
@@ -132,14 +134,9 @@ upper_planner_node:
     turn_weight_growth: 2.0
     upper_cumulative_increment_model: true
     branch_turn_target_absolute: true
-    # Zero disables width filtering when counting branch candidates.
-    branch_min_candidate_width_m: 0.0
+    # Branch search starts at k=2; no branch-width or count-increase filter.
     # Zero permits every observed candidate in the optimizer, regardless of width.
     road_candidate_min_width_m: 0.0
-    # Apply turn guidance to existing splits, starting at k=2.
-    branch_require_count_increase: false
-    branch_include_k0_transition: false
-    branch_use_split_continuity: false
     miqp_diagonal_regularization: 1.0e-10
     miqp_binary_diagonal_regularization: 0.0001
     miqp_feasibility_tolerance: 0.001
@@ -221,6 +218,7 @@ lower_tracking_mpc_node:
     lower_steering_command_scale_rad: 0.35
     lower_reference_point_to_rear_axle_m: 1.4
     lower_max_steering_rate_radps: 1.0471975512
+    # Confirmed 3-state model: [e_y, e_psi, effective steering], first-order tau=0.74 s.
     lower_enable_steering_actuator_model: true
     lower_steering_actuator_delay_sec: 0.0
     lower_steering_actuator_time_constant_sec: 0.74

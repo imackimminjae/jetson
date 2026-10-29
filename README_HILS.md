@@ -46,6 +46,31 @@ ros2 launch virtual_control tracking_control_split.launch.py route_name:=scenari
 Isaac의 `/bev/occupancy_grid` 공급기와 PX4 환경은 별도로 실행되어 있어야 한다.
 `config/isaac_bev_control.yaml`은 외부 BEV 공급기에 적용하는 설정이다.
 
+상위 플래너는 기본적으로 관측된 도로 경계를 hard 제약으로, 마진·중앙 수축으로
+만든 선호 구간을 soft 제약으로 사용한다. `tracking_control_split.yaml`과 코드
+기본값 모두 `upper_soft_corridor_constraints: true`이며, 기존 주행 실험의
+`scenario_bias_baseline.yaml`도 같은 방식이다. 별도 실행 옵션으로 켤 필요가 없다.
+슬랙 단위는 m이고 선형 가중치 1.0, 이차 가중치 10.0을 사용한다. 비용식과
+진단 필드는 [soft-road 설명](src/virtual_control/docs/soft_road_corridors.md)을 따른다.
+시작 로그의 `road corridor mode: hard-road / soft-preference`로 적용 상태를 확인한다.
+
+2026-10-30 확정 HILS 기본값은 하위 **3-state MPC**
+`[e_y, e_psi, effective steering]`와 상위 **DAQP branch-and-bound**다.
+하위는 `lower_enable_steering_actuator_model: true`,
+`lower_steering_actuator_time_constant_sec: 0.74`,
+`lower_steering_actuator_delay_sec: 0.0`을 사용한다. 0.74초는 1차 응답 시정수이며
+순수 지연 시간이 아니다. 상위는 `upper_miqp_force_bnb: true`로 모든 정수 선택을
+BnB로 풀고 선택 고정 후 연속 QP 보정만 수행한다. 조합 전수 탐색으로 돌아가지 않는다.
+코드 기본값, split 설정, 시나리오 baseline에 같은 정책을 적용했다.
+2-state와 기존 혼합 풀이는 명시적인 비교 실험에서만 선택한다.
+이번 확정 범위는 HILS다. 별도 실차 설정은 자체 모델 설정을 사용한다.
+
+비교 기록은 `parameter_sweeps/c6_state2_vs_state3_20261030`과
+`parameter_sweeps/c5_hybrid_vs_bnb_20261030_verified`에 있다.
+BnB에서 확인한 일부 입력의 수치 실패와 합성 분기 문제의 최적해 불일치는
+`diagnostics/c5_bnb_20261030/verification_summary.json`에 남겨 두었다.
+기본값 확정이 모든 입력의 최적해 일치를 보장한다는 뜻은 아니다.
+
 배치 실행은 기존과 같이 다음 명령을 사용한다. 이 launch는 MAVLink 출력을 기본 활성화한다.
 
 ```bash

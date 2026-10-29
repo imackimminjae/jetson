@@ -158,7 +158,7 @@ class RoadRouteCheck:
         self.evidence = {'state': 'unavailable', 'reason': 'no grid evidence'}
 
     def sample(self, grid, position, yaw, progress, positive_is_drivable=False,
-               threshold=0, expected_frame='Vehicle'):
+               threshold=0, expected_frame='Vehicle', reference_points=None):
         """Use the pose at grid reception; grid origin orientation is a quaternion."""
         def unavailable(reason):
             return {'state': 'unavailable', 'reason': reason}
@@ -209,6 +209,79 @@ class RoadRouteCheck:
             nx,ny = -(b[1]-a[1])/length,(b[0]-a[0])/length
             return [cell(x+nx*v,y+ny*v) for v in offsets]
 
+        def corroborate_block(evidence):
+            # A sparse waypoint chord is not necessarily the drivable road.
+            # Suppress only a claim contradicted by an observed-free CURRENT
+            # reference continuing beyond this block. Caller guarantees freshness.
+            if reference_points is None or not 2 <= len(reference_points) <= 2000:
+                return evidence
+            if any(cell(position[0]+cy*x-sy*y, position[1]+sy*x+cy*y) != 'free'
+                   for x,y in ((0,0),(.5,-.5),(.5,.5))):
+                return evidence
+            points = []
+            for point in reference_points:
+                if len(point) < 2 or not all(math.isfinite(v) for v in point[:2]):
+                    return evidence
+                point = tuple(point[:2])
+                if not points or math.dist(points[-1], point) > 1e-9:
+                    points.append(point)
+            if len(points) < 2:
+                return evidence
+            lengths = [math.dist(a, b) for a, b in zip(points, points[1:])]
+            arcs = [0.0]
+            for length in lengths:
+                arcs.append(arcs[-1] + length)
+            nearest = (math.inf, 0.0)
+            for index, (a, b, length) in enumerate(zip(points, points[1:], lengths)):
+                u = max(0.0, min(1.0, ((position[0]-a[0])*(b[0]-a[0]) +
+                                      (position[1]-a[1])*(b[1]-a[1])) / length**2))
+                projected = (a[0]+u*(b[0]-a[0]), a[1]+u*(b[1]-a[1]))
+                nearest = min(nearest, (math.dist(position[:2], projected), arcs[index]+u*length))
+            if nearest[0] > limit.road_corridor_half_width_m:
+                return evidence
+            block_end = evidence['blocked_end_m']
+            index = next((i for i in range(len(self.route.lengths))
+                          if self.route.arc[i+1] >= block_end), len(self.route.lengths)-1)
+            a, b = self.route.points[index:index+2]
+            length = self.route.lengths[index]
+            tangent = ((b[0]-a[0])/length, (b[1]-a[1])/length)
+            u = (block_end-self.route.arc[index])/length
+            end_point = (a[0]+u*(b[0]-a[0]), a[1]+u*(b[1]-a[1]))
+            available = min(arcs[-1], nearest[1]+limit.road_lookahead_m)
+            steps = math.ceil((available-nearest[1])/.5)
+            observed = 0
+            for step in range(steps+1):
+                query = min(available, nearest[1]+.5*step)
+                i = next((j for j in range(len(lengths)) if arcs[j+1] >= query), len(lengths)-1)
+                fraction = (query-arcs[i])/lengths[i]
+                a, b = points[i:i+2]
+                x, y = a[0]+fraction*(b[0]-a[0]), a[1]+fraction*(b[1]-a[1])
+                # Ignore only the tiny rear/unobserved prefix. Existing vehicle
+                # patch covers ego and the two x=0.5 m front points.
+                forward = cy*(x-position[0])+sy*(y-position[1])
+                if forward < .5 and query-nearest[1] <= 1.0:
+                    continue
+                if forward < .5:
+                    return evidence
+                nx, ny = -(b[1]-a[1])/lengths[i], (b[0]-a[0])/lengths[i]
+                # Vehicle half-width 0.9 m plus 0.25 m clearance margin.
+                # Adaptive spacing <=0.25 m avoids treating a thin free line
+                # as sufficient evidence of a usable bypass.
+                strip_half_width = 1.15
+                offset_steps = math.ceil(2*strip_half_width/.25)
+                strip_offsets = [-strip_half_width+2*strip_half_width*j/offset_steps
+                                 for j in range(offset_steps+1)]
+                if any(cell(x+nx*v, y+ny*v) != 'free' for v in strip_offsets):
+                    return evidence
+                observed += 1
+                if ((x-end_point[0])*tangent[0]+(y-end_point[1])*tangent[1] >= 0
+                        and observed >= 2):
+                    return dict(evidence, state='route_map_mismatch',
+                                reason='observed-free fresh reference continues beyond waypoint corridor block',
+                                reference_free_samples=observed,
+                                waypoint_corridor_state='route_unavailable')
+            return evidence
+
         # Continue observing the SAME map-fixed blockage as ego approaches it.
         # Requiring the earlier free stretch to remain ahead of the front-only BEV
         # would erase evidence precisely when the vehicle reaches the road end.
@@ -218,9 +291,9 @@ class RoadRouteCheck:
             samples = [c for k in range(int((end-start)/.5)+1)
                        for c in corridor(start+.5*k)]
             if samples and all(c=='blocked' for c in samples):
-                return dict(state='route_unavailable',reason='same previously supported-to-blocked corridor reobserved',
+                return corroborate_block(dict(state='route_unavailable',reason='same previously supported-to-blocked corridor reobserved',
                             blocked_start_m=start,blocked_end_m=end,blocked=len(samples),
-                            free=0,unknown=0,outside=0)
+                            free=0,unknown=0,outside=0))
 
         # The front-mounted BEV may start at ego x=0. Observe ego and two front corners.
         vehicle = [cell(position[0]+cy*x-sy*y, position[1]+sy*x+cy*y)
@@ -249,8 +322,8 @@ class RoadRouteCheck:
                         else:
                             support_start = None
                     if blocked_start is not None and arc-blocked_start >= limit.road_blocked_span_m:
-                        return dict(state='route_unavailable',reason='observed supported-to-blocked route corridor',
-                                    blocked_start_m=blocked_start,blocked_end_m=arc,**count)
+                        return corroborate_block(dict(state='route_unavailable',reason='observed supported-to-blocked route corridor',
+                                    blocked_start_m=blocked_start,blocked_end_m=arc,**count))
             else:
                 # A gap cannot be stitched into a supported-to-blocked transition.
                 support_start = blocked_start = None

@@ -1,0 +1,34 @@
+/**:
+  ros__parameters:
+    # Shared speed/period/horizon/polarity/QoS topics come from tracking_control_split.yaml.
+    # Fullscale width is an explicit comparison assumption (original upper has no width parameter).
+    vehicle_width_m: 1.8
+    # Half width + extra margin = 2.0 m, matching the current interval boundary allowance.
+    extra_road_margin_m: 1.1
+    allow_initial_unobserved_footprint: true
+    max_grid_pose_skew_sec: 0.1
+    steering_timeout_sec: 0.25
+    min_path_length_m: 1.0
+    # Mission starts at the start of the supplied route. Set -1 only for global initial projection.
+    initial_progress_m: 0.0
+    projection_back_m: 1.0
+    projection_slack_m: 2.0
+    corridor_scan_m: 10.0
+    nvp_ring_step_m: 1.0
+    nvp_angular_step_rad: 0.01
+    nvp_arc_half_angle_rad: 1.50
+    nvp_attraction_weight: 1.0
+    nvp_repulsion_weight: 1.0
+    nvp_attraction_power: 1.0
+    nvp_repulsion_power: 1.0
+    nvp_valley_gradient: 0.12
+    nvp_max_connection_m: 3.0
+    mpcc_sqp_iterations: 6
+    mpcc_q_contour: 10.0
+    mpcc_q_lag: 20.0
+    mpcc_progress_reward: 2.0
+    mpcc_r_steer: 0.3
+    mpcc_r_steer_change: 15.0
+    mpcc_max_virtual_speed_mps: 9.0
+    mpcc_steer_trust_rad: 0.12
+    mpcc_progress_trust_m: 2.0

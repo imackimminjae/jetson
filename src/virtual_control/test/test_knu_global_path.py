@@ -57,3 +57,19 @@ def test_missing_route_is_reported(tmp_path):
     """Missing data must stop the publisher instead of emitting an empty route."""
     with pytest.raises(FileNotFoundError):
         PUBLISHER.load_route('scenario1', tmp_path)
+
+
+def test_route_prefix_keeps_original_start_and_selected_endpoint():
+    directory = PACKAGE_DIR/'data/knu_routes'
+    complete = PUBLISHER.load_route('scenario11', directory)
+    prefix = PUBLISHER.load_route('scenario11', directory, end_waypoint=6)
+    assert prefix == complete[:6]
+    assert prefix[-1] == (192.688, 133.874, 0.0)
+    assert prefix[0] == complete[0]
+    assert PUBLISHER.load_route('scenario11', directory, 0) == complete
+
+
+@pytest.mark.parametrize('end_waypoint', [None, True, -1, 1, 19, 1.5, '6'])
+def test_invalid_route_prefix_is_rejected(end_waypoint):
+    with pytest.raises(ValueError, match='end_waypoint'):
+        PUBLISHER.load_route('scenario11', PACKAGE_DIR/'data/knu_routes', end_waypoint)

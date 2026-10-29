@@ -1,0 +1,28 @@
+{
+  "scope": "Every upper MIQP integer search uses DAQP BnB by default. Legacy hybrid remains selectable only for comparison.",
+  "policy_parameter": "upper_miqp_force_bnb",
+  "road_tests": {
+    "passed": 14,
+    "failed": 0,
+    "evidence": "soft_tests_final.xml"
+  },
+  "policy_tests": {
+    "passed": 1,
+    "failed": 1,
+    "evidence": "policy_tests_final.xml",
+    "failed_property": "Global optimum equality against exact enumeration in three synthetic fork configurations."
+  },
+  "matched_input_test": {
+    "passed": 1,
+    "failed": 0,
+    "frames": 351,
+    "repeats_per_mode": 2,
+    "evidence": "replay_tests.xml"
+  },
+  "no_enumeration_in_bnb_replay": true,
+  "limitation": "DAQP BnB can return numerically different or suboptimal integer choices and fail on some feasible inputs. Do not claim mathematical optimum equality from these measurements.",
+  "binaries": {
+    "upper_planner_node": "861d62785a124a0fe2b906fbc7eb759ff61c9bbf2f901a8abb3c45f26a297a3b",
+    "upper_planner_waypoint_bias_node": "861d62785a124a0fe2b906fbc7eb759ff61c9bbf2f901a8abb3c45f26a297a3b"
+  }
+}

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="2" failures="1" disabled="0" errors="0" time="0.146" timestamp="2026-10-30T04:23:50" name="AllTests">
+  <testsuite name="MiqpSolverPolicy" tests="2" failures="1" disabled="0" errors="0" time="0.13" timestamp="2026-10-30T04:23:50">
+    <testcase name="OneCandidateAndForksUseBnbWithoutEnumeration" status="run" result="completed" time="0.104" timestamp="2026-10-30T04:23:50" classname="MiqpSolverPolicy">
+      <failure message="/home/imac/ros2_ws/src/virtual_control/test/test_miqp_solver_policy.cpp:60&#x0A;The difference between a.objective and b.objective is 0.0020691785389093612, which exceeds 1e-3*(1+std::abs(a.objective)), where&#x0A;a.objective evaluates to 0.004556413593170403,&#x0A;b.objective evaluates to 0.0066255921320797643, and&#x0A;1e-3*(1+std::abs(a.objective)) evaluates to 0.0010045564135931703.&#x0A; actual costs=0.0062532697803927822,0.0083224483192767939 terminal=0.41833750987753449,0.76374032591773167&#x0A;Google Test trace:&#x0A;/home/imac/ros2_ws/src/virtual_control/test/test_miqp_solver_policy.cpp:54: fork=true horizon=2" type=""><![CDATA[/home/imac/ros2_ws/src/virtual_control/test/test_miqp_solver_policy.cpp:60
+The difference between a.objective and b.objective is 0.0020691785389093612, which exceeds 1e-3*(1+std::abs(a.objective)), where
+a.objective evaluates to 0.004556413593170403,
+b.objective evaluates to 0.0066255921320797643, and
+1e-3*(1+std::abs(a.objective)) evaluates to 0.0010045564135931703.
+ actual costs=0.0062532697803927822,0.0083224483192767939 terminal=0.41833750987753449,0.76374032591773167
+Google Test trace:
+/home/imac/ros2_ws/src/virtual_control/test/test_miqp_solver_policy.cpp:54: fork=true horizon=2]]></failure>
+      <failure message="/home/imac/ros2_ws/src/virtual_control/test/test_miqp_solver_policy.cpp:60&#x0A;The difference between a.objective and b.objective is 0.0061505210298943326, which exceeds 1e-3*(1+std::abs(a.objective)), where&#x0A;a.objective evaluates to 0.0013734975087084426,&#x0A;b.objective evaluates to 0.0075240185386027747, and&#x0A;1e-3*(1+std::abs(a.objective)) evaluates to 0.0010013734975087086.&#x0A; actual costs=0.0083510869498813027,0.014501607979813539 terminal=0.61467110379272627,1.3499999999999999&#x0A;Google Test trace:&#x0A;/home/imac/ros2_ws/src/virtual_control/test/test_miqp_solver_policy.cpp:54: fork=true horizon=4" type=""><![CDATA[/home/imac/ros2_ws/src/virtual_control/test/test_miqp_solver_policy.cpp:60
+The difference between a.objective and b.objective is 0.0061505210298943326, which exceeds 1e-3*(1+std::abs(a.objective)), where
+a.objective evaluates to 0.0013734975087084426,
+b.objective evaluates to 0.0075240185386027747, and
+1e-3*(1+std::abs(a.objective)) evaluates to 0.0010013734975087086.
+ actual costs=0.0083510869498813027,0.014501607979813539 terminal=0.61467110379272627,1.3499999999999999
+Google Test trace:
+/home/imac/ros2_ws/src/virtual_control/test/test_miqp_solver_policy.cpp:54: fork=true horizon=4]]></failure>
+      <failure message="/home/imac/ros2_ws/src/virtual_control/test/test_miqp_solver_policy.cpp:60&#x0A;The difference between a.objective and b.objective is 0.0073177235993979982, which exceeds 1e-3*(1+std::abs(a.objective)), where&#x0A;a.objective evaluates to -0.013729436246260003,&#x0A;b.objective evaluates to -0.0064117126468620049, and&#x0A;1e-3*(1+std::abs(a.objective)) evaluates to 0.0010137294362462601.&#x0A; actual costs=0.0078579516853966233,0.015175675284402645 terminal=0.27775220352159979,0.88836642958848766&#x0A;Google Test trace:&#x0A;/home/imac/ros2_ws/src/virtual_control/test/test_miqp_solver_policy.cpp:54: fork=true horizon=7" type=""><![CDATA[/home/imac/ros2_ws/src/virtual_control/test/test_miqp_solver_policy.cpp:60
+The difference between a.objective and b.objective is 0.0073177235993979982, which exceeds 1e-3*(1+std::abs(a.objective)), where
+a.objective evaluates to -0.013729436246260003,
+b.objective evaluates to -0.0064117126468620049, and
+1e-3*(1+std::abs(a.objective)) evaluates to 0.0010137294362462601.
+ actual costs=0.0078579516853966233,0.015175675284402645 terminal=0.27775220352159979,0.88836642958848766
+Google Test trace:
+/home/imac/ros2_ws/src/virtual_control/test/test_miqp_solver_policy.cpp:54: fork=true horizon=7]]></failure>
+    </testcase>
+    <testcase name="InfeasibleBnbDoesNotFallBackToEnumeration" status="run" result="completed" time="0.026" timestamp="2026-10-30T04:23:50" classname="MiqpSolverPolicy" />
+  </testsuite>
+</testsuites>

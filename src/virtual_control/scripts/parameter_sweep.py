@@ -16,7 +16,7 @@ import uuid
 
 import yaml
 from drive_debug_profile import PACKAGE
-from repeat_drive_session import WORKSPACE, SCENARIOS, effective_config
+from repeat_drive_session import WORKSPACE, AVAILABLE_SCENARIOS as SCENARIOS, ROUTE_PROFILE, effective_config
 
 CATALOG = PACKAGE/'config/tuning_sweep.yaml'
 WAIT_KEYS = {'stationary_confirm_sec', 'map_settle_sec', 'reference_min_wait_sec'}
@@ -26,7 +26,8 @@ TUNING_KEYS = {
                           'lambda_relative_turn', 'upper_r_dpsi', 'max_steering_angle_rad'},
     'lower_tracking_mpc_node': {'lower_controller_rate_hz', 'lower_prediction_dt_sec',
                               'lower_prediction_steps', 'lower_q_heading',
-                              'lower_rd_steering_rate', 'lower_max_steering_rate_radps'},
+                              'lower_rd_steering_rate', 'lower_max_steering_rate_radps',
+                              'reset_on_path_change'},
     'knu_batch_runner': WAIT_KEYS,
 }
 SYSTEM_OUTCOMES = {'pose_timeout', 'grid_timeout', 'setup_timeout', 'alignment_failed',
@@ -61,7 +62,13 @@ def apply_changes(config, changes):
                 raise ValueError(f'Unknown tuning parameter: {node}.{key}')
             if node == 'knu_batch_runner' and key not in WAIT_KEYS:
                 raise ValueError('The tuning catalog may change only runner wait durations')
-            # Tuning is numeric; transport, ARM, inputs and coordination stay fixed.
+            # Only ordinary path-refresh reset policy is a boolean tuning option.
+            # Mission/pose resets, transport, ARM and supervision stay fixed.
+            if node == 'lower_tracking_mpc_node' and key == 'reset_on_path_change':
+                if type(value) is not bool or type(parameters[key]) is not bool:
+                    raise ValueError(f'{node}.{key} requires a boolean')
+                parameters[key] = value
+                continue
             if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value):
                 raise ValueError(f'{node}.{key} must be a finite number')
             if key in parameters:
@@ -78,6 +85,8 @@ def validate_config(config):
     upper = config['upper_planner_node']['ros__parameters']
     lower = config['lower_tracking_mpc_node']['ros__parameters']
     runner = config['knu_batch_runner']['ros__parameters']
+    if type(lower['reset_on_path_change']) is not bool:
+        raise ValueError('reset_on_path_change requires a boolean')
     for p, keys in [(upper, ('upper_planner_rate_hz', 'upper_prediction_dt_sec',
                             'upper_preview_steps', 'max_steering_angle_rad', 'lower_prediction_dt_sec')),
                     (lower, ('lower_controller_rate_hz', 'lower_prediction_dt_sec',
@@ -167,13 +176,16 @@ def prepare(destination, scenarios, runs, selected=None, catalog_file=CATALOG):
                              upper_heading_cost=u['lambda_relative_turn'], upper_heading_correction_cost=u['upper_r_dpsi'],
                              upper_steering_limit_rad=u['max_steering_angle_rad'],
                              lower_heading_cost=l['lower_q_heading'], lower_steering_change_cost=l['lower_rd_steering_rate'],
-                             lower_steering_rate_radps=l['lower_max_steering_rate_radps']))
+                             lower_steering_rate_radps=l['lower_max_steering_rate_radps'],
+                             lower_reset_on_path_change=l['reset_on_path_change']))
     dependencies = [Path(__file__), PACKAGE/'scripts/repeat_drive_session.py',
                     PACKAGE/'scripts/knu_batch_runner.py', PACKAGE/'scripts/knu_batch_monitor.py',
                     PACKAGE/'scripts/drive_debug_profile.py', PACKAGE/'scripts/knu_global_path_publisher.py',
                     PACKAGE/'launch/scenario3_repeat.launch.py', PACKAGE/'config/drive_debug_mcap.yaml',
                     PACKAGE/'data/knu_routes/knu_start_poses.json', PACKAGE/'data/knu_routes/knu_batch_profile.json']
     dependencies += [PACKAGE/f'data/knu_routes/{s}.csv' for s in scenarios]
+    if any(s in ROUTE_PROFILE.get('additional_routes', []) for s in scenarios):
+        dependencies.append(PACKAGE/'data/knu_routes/knu_long_profile.json')
     dependencies += [WORKSPACE/'install/virtual_control/lib/virtual_control'/name for name in
                      ('upper_planner_node', 'lower_tracking_mpc_node', 'px4_odom_map_bridge', 'px4_ekf_bridge.py')]
     plan = dict(version=1, scenarios=list(scenarios), runs=runs, sets=names,
@@ -318,13 +330,14 @@ def main(argv=None):
     parser.add_argument('--scenarios', nargs='+', default=['scenario1'], choices=SCENARIOS)
     parser.add_argument('--runs', type=int, default=3)
     parser.add_argument('--sets', nargs='+', help='Select catalog sets; default is the9 core sets')
+    parser.add_argument('--catalog', type=Path, default=CATALOG, help='Tuning catalog YAML (default: core catalog)')
     parser.add_argument('--output', type=Path, help='New sweep directory')
     args = parser.parse_args(argv)
-    if args.resume and (args.output or args.sets or args.scenarios != ['scenario1'] or args.runs != 3):
+    if args.resume and (args.output or args.sets or args.scenarios != ['scenario1'] or args.runs != 3 or args.catalog != CATALOG):
         parser.error('--resume uses the saved scenarios/runs/sets; omit other selection options')
     try:
         if args.list:
-            catalog = yaml.safe_load(CATALOG.read_text())
+            catalog = yaml.safe_load(args.catalog.read_text())
             for name, spec in catalog['sets'].items():
                 print(f"{'기본' if name in catalog['default_sets'] else '추가'} {name}: {spec['label']}")
             return 0
@@ -332,7 +345,7 @@ def main(argv=None):
             return execute(args.resume)
         destination = args.output or WORKSPACE/'parameter_sweeps'/(
             datetime.now().strftime('%Y%m%d_%H%M%S_')+uuid.uuid4().hex[:6])
-        plan = prepare(destination, args.scenarios, args.runs, args.sets)
+        plan = prepare(destination, args.scenarios, args.runs, args.sets, catalog_file=args.catalog)
         print(f"준비 완료: {len(plan['sets'])}세트 × {len(plan['scenarios'])}시나리오 × {plan['runs']}회 "
               f"= {plan['planned_attempts']}회\n설정·결과: {Path(destination).resolve()}", flush=True)
         return execute(destination) if args.run else 0

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="26" failures="0" disabled="0" errors="0" time="2.415" timestamp="2026-10-30T05:12:03" name="AllTests">
+  <testsuite name="LowerPath" tests="4" failures="0" disabled="0" errors="0" time="0" timestamp="2026-10-30T05:12:03">
+    <testcase name="StraightAndDuplicateCoordinates" status="run" result="completed" time="0" timestamp="2026-10-30T05:12:03" classname="LowerPath" />
+    <testcase name="SignedCircularCurvatureAndUnwrap" status="run" result="completed" time="0" timestamp="2026-10-30T05:12:03" classname="LowerPath" />
+    <testcase name="OriginalInterpolationCoordinatesAtCornerAndShortEnd" status="run" result="completed" time="0" timestamp="2026-10-30T05:12:03" classname="LowerPath" />
+    <testcase name="InvalidInputsAreRejected" status="run" result="completed" time="0" timestamp="2026-10-30T05:12:03" classname="LowerPath" />
+  </testsuite>
+  <testsuite name="LowerMpc" tests="22" failures="0" disabled="0" errors="0" time="2.4" timestamp="2026-10-30T05:12:03">
+    <testcase name="NearestDensePointAndEndRepeat" status="run" result="completed" time="0.042" timestamp="2026-10-30T05:12:03" classname="LowerMpc" />
+    <testcase name="CondensedPredictionEqualsIndependentStateIteration" status="run" result="completed" time="0.021" timestamp="2026-10-30T05:12:03" classname="LowerMpc" />
+    <testcase name="DelayedNonlinearVehicleRecoversAtRequestedSpeeds" status="run" result="completed" time="0.429" timestamp="2026-10-30T05:12:03" classname="LowerMpc" />
+    <testcase name="DaqpCostScalingMatchesIndependentUnconstrainedSolution" status="run" result="completed" time="0.019" timestamp="2026-10-30T05:12:03" classname="LowerMpc" />
+    <testcase name="StationaryQpRespectsFirstAndAllSteeringLimits" status="run" result="completed" time="0.02" timestamp="2026-10-30T05:12:03" classname="LowerMpc" />
+    <testcase name="InfeasibleQpFallbackReachesFilteredOutputAndNextCycleHistory" status="run" result="completed" time="0.025" timestamp="2026-10-30T05:12:03" classname="LowerMpc" />
+    <testcase name="InvalidAndStopInputsNeverUseErrorFeedbackFallback" status="run" result="completed" time="0.06" timestamp="2026-10-30T05:12:03" classname="LowerMpc" />
+    <testcase name="RealGoalImmediatelyZerosKeepaliveAndLatchesUntilStationaryReset" status="run" result="completed" time="0.028" timestamp="2026-10-30T05:12:03" classname="LowerMpc" />
+    <testcase name="RealInputLossCannotRestartFromRecoveredPoseAndNewPath" status="run" result="completed" time="0.036" timestamp="2026-10-30T05:12:04" classname="LowerMpc" />
+    <testcase name="HeaderStampedPoseIgnoresCallbackBurstAndReorderedSamples" status="run" result="completed" time="0.022" timestamp="2026-10-30T05:12:04" classname="LowerMpc" />
+    <testcase name="LegacyPoseTimingRemainsDefaultAndStopCausesStayDistinct" status="run" result="completed" time="0.019" timestamp="2026-10-30T05:12:04" classname="LowerMpc" />
+    <testcase name="AtomicPathValidationAndExternalPolylineMode" status="run" result="completed" time="0.017" timestamp="2026-10-30T05:12:04" classname="LowerMpc" />
+    <testcase name="ValidReplanPreservesSteeringAnchorUntilExplicitReset" status="run" result="completed" time="0.029" timestamp="2026-10-30T05:12:04" classname="LowerMpc" />
+    <testcase name="ReplanResetDisabledStillResetsOnInvalidPathAndPoseJump" status="run" result="completed" time="0.019" timestamp="2026-10-30T05:12:04" classname="LowerMpc" />
+    <testcase name="CurvaturePreviewUsesMeasuredTravelOnOriginalCoordinates" status="run" result="completed" time="0.019" timestamp="2026-10-30T05:12:04" classname="LowerMpc" />
+    <testcase name="DelayedCurvedVehicleWithSpeedMismatch" status="run" result="completed" time="0.515" timestamp="2026-10-30T05:12:04" classname="LowerMpc" />
+    <testcase name="CenterPredictionMatchesContinuousMotionIntegration" status="run" result="completed" time="0.021" timestamp="2026-10-30T05:12:04" classname="LowerMpc" />
+    <testcase name="PhysicalSteeringCalibrationIsSeparateFromPlanningLimit" status="run" result="completed" time="0.024" timestamp="2026-10-30T05:12:04" classname="LowerMpc" />
+    <testcase name="FastCenterBicycleTracksBothCurveDirections" status="run" result="completed" time="0.696" timestamp="2026-10-30T05:12:04" classname="LowerMpc" />
+    <testcase name="SteeringDampingRejectsSmallRepeatedReferenceChanges" status="run" result="completed" time="0.299" timestamp="2026-10-30T05:12:05" classname="LowerMpc" />
+    <testcase name="CurvatureCannotAffectStatePredictionOrFallback" status="run" result="completed" time="0.019" timestamp="2026-10-30T05:12:05" classname="LowerMpc" />
+    <testcase name="FutureGeometryRemainsATrackingTargetWithoutCurvatureInput" status="run" result="completed" time="0.019" timestamp="2026-10-30T05:12:05" classname="LowerMpc" />
+  </testsuite>
+</testsuites>

@@ -45,6 +45,7 @@ class KnuBatchRunner(Node):
             'reference_topic': '/planner/lower_reference_path',
             'require_matlab_ack': False,
             'repeat_count': 1,
+            'route_end_waypoint': 0,  # Zero selects the complete original mission.
             'repeat_per_route': False,
             'skip_system_fault_scenarios': False,
             'require_compute_heartbeat': False,
@@ -67,6 +68,8 @@ class KnuBatchRunner(Node):
             'road_expected_grid_frame': 'Vehicle',
             # Existing Isaac BEV messages have zero header stamps; use reception age.
             'road_allow_unstamped_grids': True,
+            # Accepted for old frozen YAML files; outcome geometry always uses
+            # the original mission route, independently of planner bias.
             'road_enable_waypoint_bias': False,
             'road_waypoint_yaw_bias_rad': 0.0,
             'road_waypoint_x_bias_m': 0.0,
@@ -104,7 +107,8 @@ class KnuBatchRunner(Node):
                        if self.settings['repeat_per_route'] else self.routes * count)
         self.system_fault_scenarios = {}
         directory = Path(get_package_share_directory('virtual_control')) / 'data/knu_routes'
-        self.points = {name: load_route(name, directory) for name in self.routes}
+        self.points = {name: load_route(name, directory, self.settings['route_end_waypoint'])
+                       for name in self.routes}
         self.start_positions = load_start_positions(directory)
         self.qos = QoSProfile(depth=1, reliability=ReliabilityPolicy.RELIABLE,
                               durability=DurabilityPolicy.TRANSIENT_LOCAL)
@@ -144,6 +148,7 @@ class KnuBatchRunner(Node):
         self.pose_yaw = None
         self.pose_stamp_sec = None
         self.road_check = None
+        self.road_reference_points = None
         self.road_sample_at = -math.inf
         self.road_grid_sequence = 0
         self.road_grid_stamp = None
@@ -274,7 +279,11 @@ class KnuBatchRunner(Node):
                 msg,self.pose[:2],self.pose_yaw,self.monitor.progress,
                 self.settings['road_grid_positive_is_drivable'],
                 self.settings['road_grid_value_threshold'],
-                self.settings['road_expected_grid_frame'])
+                self.settings['road_expected_grid_frame'],
+                reference_points=(self.road_reference_points
+                                  if self.reference_at >= self.entered and
+                                  now-self.reference_at <= self.road_limits.road_evidence_fresh_sec
+                                  else None))
         evidence.update(clock_source='header' if stamp > 0 else 'receive_monotonic',
                         acquisition_stamp_available=stamp > 0)
         self.road_check.observe(now,self.road_grid_sequence,evidence)
@@ -284,6 +293,13 @@ class KnuBatchRunner(Node):
         if (len(msg.poses) >= 2 and msg.header.frame_id.lstrip('/') == 'map'
                 and stamp >= self.reference_not_before_ns):
             self.reference_at = time.monotonic()
+            points = [(p.pose.position.x, p.pose.position.y) for p in msg.poses]
+            valid = (all(math.isfinite(v) for point in points for v in point) and
+                     all(math.isfinite(p.pose.position.z) and
+                         p.header.frame_id.lstrip('/') in ('', 'map') for p in msg.poses))
+            self.road_reference_points = points if valid else None
+        else:
+            self.road_reference_points = None
 
     def on_ack(self, msg):
         try:
@@ -345,6 +361,7 @@ class KnuBatchRunner(Node):
         self.logger_required = bool(self.settings['require_matlab_ack'])
         self.monitor = None
         self.road_check = None
+        self.road_reference_points = None
         self.ack = None
         self.future = None
         self.upper_reset_future = None
@@ -563,16 +580,10 @@ class KnuBatchRunner(Node):
                 self.reset_pub.publish(Bool(data=True))
                 self.monitor = RouteMonitor(self.points[self.route], now, self.limits)
                 if self.settings['enable_road_route_check']:
-                    points = self.points[self.route]
-                    if self.settings['road_enable_waypoint_bias']:
-                        # Match the planner's first-waypoint-centred transform for evidence only.
-                        angle = self.settings['road_waypoint_yaw_bias_rad']
-                        c,s = math.cos(angle),math.sin(angle)
-                        x0,y0 = points[0][:2]
-                        points = [(x0+c*(x-x0)-s*(y-y0)+self.settings['road_waypoint_x_bias_m'],
-                                   y0+s*(x-x0)+c*(y-y0)+self.settings['road_waypoint_y_bias_m'])
-                                  for x,y,*_ in points]
-                    self.road_check = RoadRouteCheck(points,self.road_limits)
+                    # Keep physical-road evidence and completion on the same
+                    # mission route. A biased preference can rotate far outside
+                    # the road while the accepted physical reference stays free.
+                    self.road_check = RoadRouteCheck(self.monitor.points,self.road_limits)
                     self.road_sample_at = -math.inf
                     self.road_grid_sequence = 0
                     self.road_grid_stamp = None
@@ -599,7 +610,8 @@ class KnuBatchRunner(Node):
                         and result not in ('completed','pose_jump','invalid_pose','wrong_direction')):
                     result = self.monitor.outcome = 'route_unavailable'
                 if result:
-                    detail = (json.dumps({'outcome_policy':'road_route_v1',
+                    detail = (json.dumps({'outcome_policy':'road_route_v2',
+                                          'road_route_basis':'mission_waypoints',
                                           'waypoint_guard_result':waypoint_result,
                                           'road_evidence':self.road_check.detail(now)},sort_keys=True)
                               if self.road_check is not None else '')

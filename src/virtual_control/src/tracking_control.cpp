@@ -335,6 +335,10 @@ SdMapUpperPlannerNode::SdMapUpperPlannerNode(const rclcpp::NodeOptions & options
   createInterfaces();
   csv_path_loaded_ = loadReferencePathCsvIfConfigured();
   RCLCPP_INFO(
+    get_logger(), "road corridor mode: %s, slack_linear=%.6f slack_quadratic=%.6f",
+    upper_soft_corridor_constraints_ ? "hard-road / soft-preference" : "legacy hard-strip",
+    upper_corridor_soft_linear_weight_, upper_corridor_soft_quadratic_weight_);
+  RCLCPP_INFO(
     get_logger(), "k1 lane constraint trial: skip_front_clipped_k1_lane_constraints=%s",
     skip_front_clipped_k1_lane_constraints_ ? "true" : "false");
 
@@ -367,9 +371,9 @@ SdMapUpperPlannerNode::SdMapUpperPlannerNode(const rclcpp::NodeOptions & options
   RCLCPP_INFO(
     get_logger(),
     "upper branch model: cumulative_increment=%d turn_target_absolute=%d "
-    "min_candidate_width=%.2fm r_dpsi=%.3f lambda_turn=%.3f",
+    "detector=first_multiple_from_k2 r_dpsi=%.3f lambda_turn=%.3f",
     upper_cumulative_increment_model_ ? 1 : 0, branch_turn_target_absolute_ ? 1 : 0,
-    branch_min_candidate_width_m_, upper_r_dpsi_, lambda_relative_turn_);
+    upper_r_dpsi_, lambda_relative_turn_);
   RCLCPP_INFO(get_logger(), "optimizer road candidate minimum original width=%.3fm",
     road_candidate_min_width_m_);
 }
@@ -411,6 +415,7 @@ void SdMapUpperPlannerNode::declareAndLoadParameters()
   declare_parameter<double>("a_max_mps2", a_max_mps2_);
 
   declare_parameter<double>("miqp_big_m", miqp_big_m_);
+  declare_parameter<bool>("upper_miqp_force_bnb", upper_miqp_force_bnb_);
   declare_parameter<double>("position_scale_m", position_scale_m_);
   declare_parameter<double>("relative_turn_scale_rad", relative_turn_scale_rad_);
   declare_parameter<double>("lambda_position", lambda_position_);
@@ -436,12 +441,7 @@ void SdMapUpperPlannerNode::declareAndLoadParameters()
   declare_parameter<int>("turn_preview_steps", turn_preview_steps_);
   declare_parameter<bool>("upper_cumulative_increment_model", upper_cumulative_increment_model_);
   declare_parameter<bool>("branch_turn_target_absolute", branch_turn_target_absolute_);
-  declare_parameter<double>("branch_min_candidate_width_m", branch_min_candidate_width_m_);
   declare_parameter<double>("road_candidate_min_width_m", road_candidate_min_width_m_);
-  declare_parameter<bool>("branch_require_count_increase", branch_require_count_increase_);
-  declare_parameter<bool>("branch_include_k0_transition", branch_include_k0_transition_);
-  declare_parameter<bool>("branch_use_split_continuity", branch_use_split_continuity_);
-  declare_parameter<double>("branch_split_continuity_m", branch_split_continuity_m_);
   declare_parameter<double>("turn_weight_growth", turn_weight_growth_);
   declare_parameter<double>("miqp_diagonal_regularization", miqp_diagonal_regularization_);
   declare_parameter<double>(
@@ -455,6 +455,9 @@ void SdMapUpperPlannerNode::declareAndLoadParameters()
   declare_parameter<double>("waypoint_x_bias_m", waypoint_x_bias_m_);
   declare_parameter<double>("waypoint_y_bias_m", waypoint_y_bias_m_);
   declare_parameter<double>("waypoint_yaw_bias_rad", waypoint_yaw_bias_rad_);
+  declare_parameter<std::string>("waypoint_bias_mode", waypoint_bias_mode_);
+  declare_parameter<int>("waypoint_bias_start_wp", waypoint_bias_start_wp_);
+  declare_parameter<int>("waypoint_bias_end_wp", waypoint_bias_end_wp_);
   declare_parameter<double>("input_timeout_sec", input_timeout_sec_);
   declare_parameter<bool>("require_grid_map", require_grid_map_);
   declare_parameter<bool>(
@@ -543,6 +546,7 @@ void SdMapUpperPlannerNode::declareAndLoadParameters()
   get_parameter("a_max_mps2", a_max_mps2_);
 
   get_parameter("miqp_big_m", miqp_big_m_);
+  get_parameter("upper_miqp_force_bnb", upper_miqp_force_bnb_);
   get_parameter("position_scale_m", position_scale_m_);
   get_parameter("relative_turn_scale_rad", relative_turn_scale_rad_);
   get_parameter("lambda_position", lambda_position_);
@@ -567,12 +571,7 @@ void SdMapUpperPlannerNode::declareAndLoadParameters()
   get_parameter("turn_preview_steps", turn_preview_steps_);
   get_parameter("upper_cumulative_increment_model", upper_cumulative_increment_model_);
   get_parameter("branch_turn_target_absolute", branch_turn_target_absolute_);
-  get_parameter("branch_min_candidate_width_m", branch_min_candidate_width_m_);
   get_parameter("road_candidate_min_width_m", road_candidate_min_width_m_);
-  get_parameter("branch_require_count_increase", branch_require_count_increase_);
-  get_parameter("branch_include_k0_transition", branch_include_k0_transition_);
-  get_parameter("branch_use_split_continuity", branch_use_split_continuity_);
-  get_parameter("branch_split_continuity_m", branch_split_continuity_m_);
   get_parameter("turn_weight_growth", turn_weight_growth_);
   get_parameter("miqp_diagonal_regularization", miqp_diagonal_regularization_);
   get_parameter(
@@ -586,6 +585,9 @@ void SdMapUpperPlannerNode::declareAndLoadParameters()
   get_parameter("waypoint_x_bias_m", waypoint_x_bias_m_);
   get_parameter("waypoint_y_bias_m", waypoint_y_bias_m_);
   get_parameter("waypoint_yaw_bias_rad", waypoint_yaw_bias_rad_);
+  get_parameter("waypoint_bias_mode", waypoint_bias_mode_);
+  get_parameter("waypoint_bias_start_wp", waypoint_bias_start_wp_);
+  get_parameter("waypoint_bias_end_wp", waypoint_bias_end_wp_);
   get_parameter("input_timeout_sec", input_timeout_sec_);
   get_parameter("require_grid_map", require_grid_map_);
   get_parameter(
@@ -727,14 +729,8 @@ void SdMapUpperPlannerNode::validateParameters() const
     fail("upper_r_steering_delta must be finite, >= 0, and requires vehicle rollout when positive");
   }
   if (turn_preview_steps_ < 0) {fail("turn_preview_steps must be >= 0");}
-  if (!std::isfinite(branch_min_candidate_width_m_) || branch_min_candidate_width_m_ < 0.0) {
-    fail("branch_min_candidate_width_m must be finite and >= 0");
-  }
   if (!std::isfinite(road_candidate_min_width_m_) || road_candidate_min_width_m_ < 0.0) {
     fail("road_candidate_min_width_m must be finite and >= 0");
-  }
-  if (!std::isfinite(branch_split_continuity_m_) || branch_split_continuity_m_ <= 0.0) {
-    fail("branch_split_continuity_m must be finite and > 0");
   }
   if (turn_weight_growth_ <= 0.0) {fail("turn_weight_growth must be > 0");}
   if (miqp_diagonal_regularization_ < 0.0) {
@@ -758,6 +754,12 @@ void SdMapUpperPlannerNode::validateParameters() const
     !std::isfinite(waypoint_yaw_bias_rad_))
   {
     fail("waypoint bias parameters must be finite");
+  }
+  if (waypoint_bias_mode_ != "global" && waypoint_bias_mode_ != "waypoint_window") {
+    fail("waypoint_bias_mode must be global or waypoint_window");
+  }
+  if (waypoint_bias_start_wp_ < 1 || waypoint_bias_end_wp_ < waypoint_bias_start_wp_) {
+    fail("waypoint bias window requires 1 <= start_wp <= end_wp");
   }
   if (input_timeout_sec_ < 0.0) {fail("input_timeout_sec must be >= 0");}
   if (preview_min_target_distance_m_ <= 0.0) {
@@ -1060,7 +1062,7 @@ void SdMapUpperPlannerNode::globalPathCallback(const nav_msgs::msg::Path::Shared
 std::vector<Eigen::Vector2d> SdMapUpperPlannerNode::applyConfiguredWaypointBias(
   const std::vector<Eigen::Vector2d> & path) const
 {
-  if (!enable_waypoint_bias_ || path.empty()) {
+  if (!enable_waypoint_bias_ || waypoint_bias_mode_ == "waypoint_window" || path.empty()) {
     return path;
   }
 
@@ -1089,6 +1091,12 @@ void SdMapUpperPlannerNode::applyReferencePath(
     return;
   }
 
+  if (waypoint_bias_mode_ == "waypoint_window" &&
+    waypoint_bias_end_wp_ >= static_cast<int>(path.size()))
+  {
+    RCLCPP_ERROR(get_logger(), "bias window wp0 range exceeds the route's final pair");
+    return;
+  }
   const auto configured_path = applyConfiguredWaypointBias(path);
   const std::string resolved_frame = frame_id.empty() ? path_frame_id_ : frame_id;
   {
@@ -2304,11 +2312,7 @@ SdMapUpperPlannerNode::UpperSolveResult SdMapUpperPlannerNode::solveUpperMiqp(
     }
   }
 
-  const auto branch = egocentric_planner_geometry::detectBranchWithContinuity(
-    preview.pmk, preview.pMk, preview.raw_lengths, branch_min_candidate_width_m_,
-    branch_require_count_increase_, branch_include_k0_transition_,
-    branch_use_split_continuity_, branch_split_continuity_m_);
-  result.branch_step = branch.turn_step;
+  result.branch_step = egocentric_planner_geometry::firstBranchStep(preview.Nck);
 
   if (result.branch_step >= 1 && lambda_relative_turn_ > 0.0) {
     const int turn_start = std::max(1, result.branch_step - turn_preview_steps_);
@@ -2513,7 +2517,7 @@ SdMapUpperPlannerNode::UpperSolveResult SdMapUpperPlannerNode::solveUpperMiqp(
 
   constexpr std::size_t kMaxDirectCorridorCombinations = 256U;
   std::size_t combination_count = 1U;
-  bool combination_count_supported = true;
+  bool combination_count_supported = !upper_miqp_force_bnb_;
   for (int k = 1; k <= horizon; ++k) {
     const std::size_t candidates = eligible_candidates[k].size();
     if (candidates == 0U ||
@@ -2525,7 +2529,7 @@ SdMapUpperPlannerNode::UpperSolveResult SdMapUpperPlannerNode::solveUpperMiqp(
     combination_count *= candidates;
   }
 
-  // The usual short-horizon problem has only a handful of corridor
+  // Explicit legacy comparison mode only: the usual short-horizon problem has a few
   // combinations (exactly one when every stage has one road candidate). Solve those
   // combinations as ordinary continuous QPs. This avoids sending forced
   // selector variables through DAQP branch-and-bound and also makes an
@@ -2570,13 +2574,14 @@ SdMapUpperPlannerNode::UpperSolveResult SdMapUpperPlannerNode::solveUpperMiqp(
       }
     }
 
+    ++result.bnb_solve_calls;
     objective = timed_solve(solver, argument);
     if (!std::isfinite(objective) ||
       argument.size() < static_cast<unsigned int>(variable_count))
     {
       result.solve_time_ms = std::chrono::duration<double, std::milli>(
         std::chrono::steady_clock::now() - started).count();
-      result.status = "DAQP MIQP infeasible (direct corridor limit exceeded)";
+      result.status = "DAQP branch-and-bound MIQP failed";
       return result;
     }
     for (int index = 0; index < variable_count; ++index) {
@@ -2595,7 +2600,7 @@ SdMapUpperPlannerNode::UpperSolveResult SdMapUpperPlannerNode::solveUpperMiqp(
   // from branch-and-bound belongs to a stale relaxation.  Re-solving one QP
   // with those selectors fixed recovers the continuous solution for the
   // chosen corridor combination and provides an independently checked result.
-  if (!combination_count_supported && !feasibility.valid && feasibility.finite &&
+  if (!soft && !combination_count_supported && !feasibility.valid && feasibility.finite &&
     feasibility.max_binary_violation <= miqp_feasibility_tolerance_)
   {
     QuadraticProblem polishing_solver(false);
@@ -2621,6 +2626,7 @@ SdMapUpperPlannerNode::UpperSolveResult SdMapUpperPlannerNode::solveUpperMiqp(
         }
 
         Vector<double> polished_argument;
+        ++result.selected_corridor_polish_calls;
         const double polished_objective =
           timed_solve(polishing_solver, polished_argument);
         if (std::isfinite(polished_objective) &&
@@ -2643,8 +2649,11 @@ SdMapUpperPlannerNode::UpperSolveResult SdMapUpperPlannerNode::solveUpperMiqp(
   // Enumerating the supported Cartesian product removes both the selector
   // variables and Big-M=100 from every subproblem. Each returned solution is
   // independently checked before it is reconstructed in the full model.
+  // For soft corridors, always solve the continuous QP for the BnB-selected
+  // integers. A stale relaxation can be feasible yet have a nonoptimal cost.
+  // This is one incumbent polish, never a search over other corridor choices.
   const bool recover_soft_selectors = soft && !combination_count_supported &&
-    !feasibility.valid && feasibility.finite &&
+    feasibility.finite &&
     feasibility.max_binary_violation <= miqp_feasibility_tolerance_;
   if (combination_count_supported || recover_soft_selectors) {
       Matrix<double> direct_hessian(0.0, continuous_count, continuous_count);
@@ -2758,6 +2767,8 @@ SdMapUpperPlannerNode::UpperSolveResult SdMapUpperPlannerNode::solveUpperMiqp(
         Vector<double> direct_argument;
         const double direct_objective = timed_solve(direct_solver, direct_argument);
         ++result.direct_corridor_combinations;
+        if (combination_count_supported) {++result.enumerated_corridor_combinations;}
+        else {++result.selected_corridor_polish_calls;}
         if (!std::isfinite(direct_objective) ||
           direct_argument.size() < static_cast<unsigned int>(continuous_count))
         {
@@ -3273,24 +3284,20 @@ void SdMapUpperPlannerNode::publishBranchEvent(
       }
       out << ']';
     };
-  int branch_step = -1, max_candidates = 0;
+  const int branch_step = preview ?
+    egocentric_planner_geometry::firstBranchStep(preview->Nck) : -1;
+  int max_candidates = 0;
   if (preview) {
     for (std::size_t k = 1; k < preview->Nck.size(); ++k) {
       max_candidates = std::max(max_candidates, preview->Nck[k]);
-      if (branch_step < 0 && preview->Nck[k] >= 2) {branch_step = static_cast<int>(k);}
     }
   }
-  const auto filtered_branch = preview ? egocentric_planner_geometry::detectBranchWithContinuity(
-    preview->pmk, preview->pMk, preview->raw_lengths, branch_min_candidate_width_m_,
-    branch_require_count_increase_, branch_include_k0_transition_,
-    branch_use_split_continuity_, branch_split_continuity_m_) :
-    egocentric_planner_geometry::BranchDetection{};
   const bool solver_called = solve && std::isfinite(solve->solver_only_time_ms);
   const bool branch_failure = branch_step >= 1 && solve && !solve->valid &&
     (reason == "solver_rejected" || reason == "solver_setup_failed");
   const bool retained = !published && diagnostic_last_revision_ == revision &&
     !diagnostic_last_path_.empty();
-  out << "{\"schema_version\":1,\"t_start\":" << branchJsonNumber(started)
+  out << "{\"schema_version\":2,\"t_start\":" << branchJsonNumber(started)
       << ",\"t_emit\":" << branchJsonNumber(emitted)
       << ",\"plan_seq\":" << sequence << ",\"path_revision\":" << revision
       << ",\"frame_id\":" << branchJsonString(pose.frame_id)
@@ -3300,19 +3307,28 @@ void SdMapUpperPlannerNode::publishBranchEvent(
       << ",\"wp0\":" << wp0 << ",\"wp1\":" << wp1
       << ",\"horizon\":" << (preview ? preview->N_pred : 0)
       << ",\"branch_step\":" << branch_step << ",\"max_candidates\":" << max_candidates
-      << ",\"branch_min_candidate_width_m\":" << branchJsonNumber(branch_min_candidate_width_m_)
       << ",\"road_candidate_min_width_m\":" << branchJsonNumber(road_candidate_min_width_m_)
-      << ",\"branch_require_count_increase\":" << (branch_require_count_increase_ ? "true" : "false")
-      << ",\"branch_include_k0_transition\":" << (branch_include_k0_transition_ ? "true" : "false")
-      << ",\"branch_use_split_continuity\":" << (branch_use_split_continuity_ ? "true" : "false")
-      << ",\"branch_split_continuity_m\":" << branchJsonNumber(branch_split_continuity_m_)
-      << ",\"filtered_branch_step\":" << filtered_branch.turn_step
+      << ",\"waypoint_bias_mode\":" << branchJsonString(waypoint_bias_mode_)
+      << ",\"waypoint_bias_start_wp\":" << waypoint_bias_start_wp_
+      << ",\"waypoint_bias_end_wp\":" << waypoint_bias_end_wp_
+      << ",\"waypoint_bias_active\":" << ((enable_waypoint_bias_ &&
+        (waypoint_bias_mode_ == "global" || egocentric_planner_geometry::waypointBiasWindowActive(
+          wp0, waypoint_bias_start_wp_, waypoint_bias_end_wp_))) ? "true" : "false")
+      << ",\"waypoint_bias_requested_rad\":" << branchJsonNumber(waypoint_yaw_bias_rad_)
+      << ",\"planning_wp0_world\":[" << branchJsonNumber(diagnostic_planning_waypoints_[0].x())
+      << ',' << branchJsonNumber(diagnostic_planning_waypoints_[0].y()) << ']'
+      << ",\"planning_wp1_world\":[" << branchJsonNumber(diagnostic_planning_waypoints_[1].x())
+      << ',' << branchJsonNumber(diagnostic_planning_waypoints_[1].y()) << ']'
       << ",\"turn_branch_step\":" << (solve ? solve->branch_step : -1)
       << ",\"branch_failure\":" << (branch_failure ? "true" : "false")
       << ",\"valid_plan\":" << (published ? "true" : "false")
       << ",\"solver_valid\":" << (solve && solve->valid ? "true" : "false")
       << ",\"solver_called\":" << (solver_called ? "true" : "false")
       << ",\"solver_time_ms\":" << branchJsonNumber(solve ? solve->solver_only_time_ms : NAN)
+      << ",\"miqp_force_bnb\":" << (upper_miqp_force_bnb_ ? "true" : "false")
+      << ",\"bnb_solve_calls\":" << (solve ? solve->bnb_solve_calls : 0)
+      << ",\"enumerated_corridor_combinations\":" << (solve ? solve->enumerated_corridor_combinations : 0)
+      << ",\"selected_corridor_polish_calls\":" << (solve ? solve->selected_corridor_polish_calls : 0)
       << ",\"reason\":" << branchJsonString(reason)
       << ",\"status\":" << branchJsonString(status)
       << ",\"retained_previous_path\":" << (retained ? "true" : "false")
@@ -3372,10 +3388,6 @@ void SdMapUpperPlannerNode::publishBranchEvent(
     for (std::size_t k = 0; k < solve->selected_corridors.size(); ++k) {
       if (k) {out << ',';} out << solve->selected_corridors[k];
     }
-  }
-  out << "],\"branch_candidate_counts\":[";
-  for (std::size_t k = 0; k < filtered_branch.candidate_counts.size(); ++k) {
-    if (k) {out << ',';} out << filtered_branch.candidate_counts[k];
   }
   out << "],\"candidate_counts\":[";
   if (preview) {
@@ -3740,10 +3752,27 @@ void SdMapUpperPlannerNode::plannerLoop()
   Eigen::Matrix2d rotation_world_body;
   rotation_world_body << cosine, -sine, sine, cosine;
 
-  const Eigen::Vector2d wp0_body = rotation_body_world * (wp0_world - pose.position);
-  const Eigen::Vector2d wp1_body = rotation_body_world * (wp1_world - pose.position);
-  const Eigen::Vector2d wp_prev_body =
+  Eigen::Vector2d wp0_body = rotation_body_world * (wp0_world - pose.position);
+  Eigen::Vector2d wp1_body = rotation_body_world * (wp1_world - pose.position);
+  Eigen::Vector2d wp_prev_body =
     rotation_body_world * (wp_prev_world - pose.position);
+  // Selection and goal checks above always see the original mission in window
+  // mode. Perturb only the current planner inputs around the measured ego pose.
+  const bool window_bias = enable_waypoint_bias_ && waypoint_bias_mode_ == "waypoint_window" &&
+    egocentric_planner_geometry::waypointBiasWindowActive(
+      wp0_idx, waypoint_bias_start_wp_, waypoint_bias_end_wp_);
+  if (window_bias) {
+    const Eigen::Vector2d translation_body = rotation_body_world *
+      Eigen::Vector2d(waypoint_x_bias_m_, waypoint_y_bias_m_);
+    wp0_body = egocentric_planner_geometry::biasPlanningWaypointBody(
+      wp0_body, waypoint_yaw_bias_rad_, translation_body, true);
+    wp1_body = egocentric_planner_geometry::biasPlanningWaypointBody(
+      wp1_body, waypoint_yaw_bias_rad_, translation_body, true);
+    wp_prev_body = egocentric_planner_geometry::biasPlanningWaypointBody(
+      wp_prev_body, waypoint_yaw_bias_rad_, translation_body, true);
+  }
+  diagnostic_planning_waypoints_[0] = pose.position + rotation_world_body * wp0_body;
+  diagnostic_planning_waypoints_[1] = pose.position + rotation_world_body * wp1_body;
 
   int requested_horizon = computeRequestedPreviewSteps(
     grid_available ? &grid : nullptr, planning_speed_mps);

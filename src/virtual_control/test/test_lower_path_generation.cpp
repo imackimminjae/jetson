@@ -56,6 +56,9 @@ struct LowerPathGenerationTestAccess
     preview.Nck = {1, 1, 1};
     preview.pmk = {{{0, -5}}, {{1, minimum_y}}, {{2, k2_minimum_y}}};
     preview.pMk = {{{0, 5}}, {{1, minimum_y + 1.0}}, {{2, k2_minimum_y + 10.0}}};
+    // This fixture's observed road and preferred strip coincide.
+    preview.road_pmk = preview.pmk;
+    preview.road_pMk = preview.pMk;
     preview.k1_lane_constraint_excluded = {skip_k1};
     preview.side_boundary_tail_start = skip_tail ? 2 : -1;
     return node.solveUpperMiqp(preview, 1.0);
@@ -343,7 +346,9 @@ TEST(LowerPathGeneration, SideTailOmissionKeepsEarlierRoadAndAllVehicleLimits)
   rclcpp::init(0, nullptr);
   for (bool enabled : {false, true}) {
     rclcpp::NodeOptions options;
-    options.parameter_overrides({rclcpp::Parameter("guard_side_boundary_terminal_loss", enabled)});
+    options.parameter_overrides({
+      rclcpp::Parameter("upper_soft_corridor_constraints", false),
+      rclcpp::Parameter("guard_side_boundary_terminal_loss", enabled)});
     auto node = std::make_shared<imac_ctrl::SdMapUpperPlannerNode>(options);
     using Access = imac_ctrl::LowerPathGenerationTestAccess;
     Access::cancel(*node);
@@ -399,6 +404,7 @@ TEST(LowerPathGeneration, K1TrialRetainsLaterRoadAndVehicleInputConstraints)
   for (bool enabled : {false, true}) {
     rclcpp::NodeOptions options;
     options.parameter_overrides({
+      rclcpp::Parameter("upper_soft_corridor_constraints", false),
       rclcpp::Parameter("skip_front_clipped_k1_lane_constraints", enabled)});
     auto node = std::make_shared<imac_ctrl::SdMapUpperPlannerNode>(options);
     using Access = imac_ctrl::LowerPathGenerationTestAccess;
