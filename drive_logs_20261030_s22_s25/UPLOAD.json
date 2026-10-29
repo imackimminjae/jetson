@@ -1,0 +1,89 @@
+{
+  "date": "2026-10-30",
+  "timezone": "Asia/Seoul",
+  "repository": "https://github.com/imackimminjae/jetson",
+  "branch": "codex/hils-bnb-s22-s25-20261030",
+  "base_planner_commit": "805451775dcc4f763431363127a23f7563d90086",
+  "format": "POSIX tar, lossless Zstandard, concatenable 32 MiB parts",
+  "source_file_count": 493,
+  "source_bytes": 381317409,
+  "archive_bytes": 283600425,
+  "archive_sha256": "69953193ddf0e75a5dd67d44738a247e196d3ac8b0c38c0c628ebcd4f52fc709",
+  "verified_original_files": 493,
+  "attempt_count": 12,
+  "selection": "Only the final revised-route batch: S22/S23/S24/S25, three completed stationary attempts each.",
+  "baseline": {
+    "lower_state_count": 3,
+    "tau_sec": 0.74,
+    "pure_delay_sec": 0.0,
+    "upper_solver": "DAQP BnB",
+    "waypoint_bias_deg": 0
+  },
+  "route_changes": {
+    "scenario22": "Start moved 2.4 m toward observed road center; other waypoints unchanged.",
+    "scenario24": "Exact reversal of all eight waypoints; spawn and heading updated for south-to-north."
+  },
+  "recorded_solver_audit": {
+    "bnb_calls": 10502,
+    "enumerated_combinations": 0,
+    "bnb_numerical_failures": 41,
+    "lower_qp_failures": 0
+  },
+  "known_limitations": [
+    "Separate synthetic optimum-equality regression remains failing.",
+    "The matched-input comparison had seven invalid BnB inputs out of 351; all failures are preserved."
+  ],
+  "excluded": [
+    "The pre-edit interrupted batch, including its one completed S22 attempt.",
+    "Previous comparison raw bags, continuous MAVLink telemetry, binaries, caches, and build/install outputs."
+  ],
+  "source_data_preserved": true,
+  "previous_remote_archive_preserved": true,
+  "parts": [
+    {
+      "path": "scenario_logs.tar.zst.part-000",
+      "bytes": 33554432,
+      "sha256": "cb3e75e8d4fcf3b7c396a4611b50a0a10e22cd0242f4a69e6751219d0f80b058"
+    },
+    {
+      "path": "scenario_logs.tar.zst.part-001",
+      "bytes": 33554432,
+      "sha256": "b4b091c8322ef9b7e1309fe4e1d9cbb33b0d0c955dd1c0889794fd5e7f1f3f45"
+    },
+    {
+      "path": "scenario_logs.tar.zst.part-002",
+      "bytes": 33554432,
+      "sha256": "bd25d25306b817202105e7a2d72e4846274c9138fe6c676dafb94b6e97776481"
+    },
+    {
+      "path": "scenario_logs.tar.zst.part-003",
+      "bytes": 33554432,
+      "sha256": "78ea829672226b2b8a08353448eb44fc806bb3b402d0d33c016e8450f59697ff"
+    },
+    {
+      "path": "scenario_logs.tar.zst.part-004",
+      "bytes": 33554432,
+      "sha256": "fd9229afe1de292f9916e5ec2de61bf699cb93f21bd1c6d24c6e43bd02fd33f6"
+    },
+    {
+      "path": "scenario_logs.tar.zst.part-005",
+      "bytes": 33554432,
+      "sha256": "ede4be787516ce7c5a756e207c5df3eeb4ce9506f42b02f16f27a2c31431d97f"
+    },
+    {
+      "path": "scenario_logs.tar.zst.part-006",
+      "bytes": 33554432,
+      "sha256": "2b21f624e0cbaf68b868f8ade2afb7e1146a02e17b3def2124563abff2f9f342"
+    },
+    {
+      "path": "scenario_logs.tar.zst.part-007",
+      "bytes": 33554432,
+      "sha256": "458f0c612a782eac1882c6e77b82e6b1161fbdf8b9e16956e6b348e4a2c14354"
+    },
+    {
+      "path": "scenario_logs.tar.zst.part-008",
+      "bytes": 15164969,
+      "sha256": "124ce43d9fbc9cc127d08ddc4201b15721ed91795c5e30de4ed73cefb1f7f599"
+    }
+  ]
+}
