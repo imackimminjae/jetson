@@ -1,0 +1,41 @@
+{
+  "attempt_count": 54,
+  "outcomes": {
+    "completed": 51,
+    "off_route": 3
+  },
+  "biases_deg": [
+    -10,
+    -5,
+    0
+  ],
+  "scenarios": [
+    "scenario26",
+    "scenario27",
+    "scenario28",
+    "scenario29",
+    "scenario30",
+    "scenario31"
+  ],
+  "repetitions_per_condition": 3,
+  "selected_sessions": 19,
+  "all_stops_stationary": true,
+  "bnb_calls": 13653,
+  "enumeration_calls": 0,
+  "upper_failed_calls": 158,
+  "excluded_setup_aborts": [
+    {
+      "session": "parameter_sweeps/manual_bias_scenario26_scenario27_scenario28_scenario29_scenario30_scenario31_20261030_063150_161470/sessions/02_bias_m05_scenario30",
+      "token": "a6515ddfcd:1:scenario30",
+      "duration_sec": "0.017"
+    }
+  ],
+  "setup_abort_policy": "The original bag and summary are preserved without edits; one 0.017-second pre-driving abort is not a measured drive.",
+  "source_batch": "/home/imac/ros2_ws/parameter_sweeps/manual_bias_scenario26_scenario27_scenario28_scenario29_scenario30_scenario31_20261030_063150_161470",
+  "scenario_profile_note": "Pre-driving frozen metadata is preserved, including its original actual_drive_validated=false. This export result records actual driving.",
+  "excluded_biases_deg": [
+    5,
+    10
+  ],
+  "numerical_failure_policy": "Off-route attempts and solver failures remain in the data; a failed solve can retain a previous reference. No claim that every solve was valid."
+}

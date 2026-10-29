@@ -1,5 +1,6 @@
 #include "virtual_control/px4_odom_map_transform.hpp"
 #include "virtual_control/knu_long_route_anchors.hpp"
+#include "virtual_control/knu_junction_route_anchors.hpp"
 
 #include <algorithm>
 #include <cmath>
@@ -97,7 +98,11 @@ std::optional<RouteAnchor> routeAnchorForName(const std::string & route_name)
   if (route_name == "scenario21") {
     return RouteAnchor{{-98.135040990, 147.690709055, 0.000000000}, {-99.587040990, 142.972709055, 0.000000000}};
   }
-  return longRouteAnchorForName(route_name);
+  const auto long_route = longRouteAnchorForName(route_name);
+  if (long_route) {
+    return long_route;
+  }
+  return junctionRouteAnchorForName(route_name);
 }
 
 double wrapToPi(double angle)

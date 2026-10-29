@@ -16,7 +16,8 @@ import uuid
 
 import yaml
 from drive_debug_profile import PACKAGE
-from repeat_drive_session import WORKSPACE, AVAILABLE_SCENARIOS as SCENARIOS, ROUTE_PROFILE, effective_config
+from repeat_drive_session import (WORKSPACE, AVAILABLE_SCENARIOS as SCENARIOS,
+                                  effective_config, selected_route_profiles)
 
 CATALOG = PACKAGE/'config/tuning_sweep.yaml'
 WAIT_KEYS = {'stationary_confirm_sec', 'map_settle_sec', 'reference_min_wait_sec'}
@@ -184,8 +185,7 @@ def prepare(destination, scenarios, runs, selected=None, catalog_file=CATALOG):
                     PACKAGE/'launch/scenario3_repeat.launch.py', PACKAGE/'config/drive_debug_mcap.yaml',
                     PACKAGE/'data/knu_routes/knu_start_poses.json', PACKAGE/'data/knu_routes/knu_batch_profile.json']
     dependencies += [PACKAGE/f'data/knu_routes/{s}.csv' for s in scenarios]
-    if any(s in ROUTE_PROFILE.get('additional_routes', []) for s in scenarios):
-        dependencies.append(PACKAGE/'data/knu_routes/knu_long_profile.json')
+    dependencies += selected_route_profiles(scenarios)
     dependencies += [WORKSPACE/'install/virtual_control/lib/virtual_control'/name for name in
                      ('upper_planner_node', 'lower_tracking_mpc_node', 'px4_odom_map_bridge', 'px4_ekf_bridge.py')]
     plan = dict(version=1, scenarios=list(scenarios), runs=runs, sets=names,

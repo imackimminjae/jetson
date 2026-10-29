@@ -243,12 +243,14 @@ def write_routes(result):
         header.extend([f'  if (route_name == "{name}") {{',f'    return RouteAnchor{{{{{a}}}, {{{b}}}}};','  }'])
     header.extend(['  return std::nullopt;','}','} }  // namespace virtual_control::px4_odom_map',''])
     (PACKAGE/'include/virtual_control/knu_long_route_anchors.hpp').write_text('\n'.join(header))
-    starts['version']=5
+    starts['version']=max(5,starts['version'])
     starts['additional_profile']='long4: scenarios22-25; original starts1-21 retained'
+    if any(row.get('profile')=='local_bias6' for row in starts['starts']):
+        starts['additional_profile']='long4: scenarios22-25; local_bias6: scenarios26-31; original starts1-21 retained'
     starts_path.write_text(json.dumps(starts,ensure_ascii=False,indent=2)+'\n')
     p=directory/'knu_batch_profile.json';profile=json.loads(p.read_text())
     profile['additional_routes']=list(dict.fromkeys(profile.get('additional_routes',[])+[f'scenario{n}' for n in DESIGNS]))
-    profile['additional_profiles']={'long4':'knu_long_profile.json'}
+    profile.setdefault('additional_profiles',{})['long4']='knu_long_profile.json'
     p.write_text(json.dumps(profile,ensure_ascii=False,indent=2)+'\n')
     long=dict(version=1,profile='long4',coordinate_frame='map',routes=[f'scenario{n}' for n in DESIGNS],
         route_count=4,default_batch_unchanged=True,sections_are_analysis_only=True,

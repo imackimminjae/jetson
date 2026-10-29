@@ -16,7 +16,7 @@ from repeat_drive_session import SCENARIOS,AVAILABLE_SCENARIOS,effective_config
 
 def test_default_batch_stays_twelve_routes(tmp_path):
     assert SCENARIOS==tuple(f'scenario{i}' for i in range(1,13))
-    assert set(AVAILABLE_SCENARIOS)-set(SCENARIOS)=={f'scenario{i}' for i in range(22,26)}
+    assert set(AVAILABLE_SCENARIOS)-set(SCENARIOS)=={f'scenario{i}' for i in range(22,32)}
     assert effective_config(1,tmp_path,'all')['knu_batch_runner']['ros__parameters']['routes']==list(SCENARIOS)
     with pytest.raises(ValueError):effective_config(1,tmp_path,'scenario13')
 

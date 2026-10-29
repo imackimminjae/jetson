@@ -1,0 +1,695 @@
+{
+  "version": 1,
+  "profile": "local_bias6",
+  "coordinate_frame": "map",
+  "routes": [
+    "scenario26",
+    "scenario27",
+    "scenario28",
+    "scenario29",
+    "scenario30",
+    "scenario31"
+  ],
+  "route_count": 6,
+  "default_batch_unchanged": true,
+  "actual_drive_validated": false,
+  "confirmed_controller": {
+    "lower_state_count": 3,
+    "steering_tau_sec": 0.74,
+    "force_bnb": true
+  },
+  "policy": "Sparse guidance from completed zero-bias parents. Window gates advance using nominal mission progress, not elapsed time. Separate off gate, recovery waypoint and goal ensure deactivation before the final pair. No short-mission driving results are claimed.",
+  "definitions": [
+    {
+      "scenario": "scenario26",
+      "label": "서측 원형 교차로 · 서쪽 → 동쪽",
+      "area": "west_roundabout",
+      "parent_scenario": "scenario22",
+      "parent_run": 1,
+      "coordinate_frame": "map",
+      "source_recording": "parameter_sweeps/manual_bias_scenario22_scenario23_scenario24_scenario25_20261030_052032_63228b/plots/data/scenario22_run1.npz",
+      "source_recording_sha256": "c620ed02ed64885ae2c4f7710326580a3fa827985a19d2afe495ab6a4225fae4",
+      "source_station_bounds_m": [
+        67.52291381553258,
+        217.52291381553258
+      ],
+      "center_hint_xy_m": [
+        -120.0,
+        40.0
+      ],
+      "start": [
+        -187.978185,
+        67.111154
+      ],
+      "end": [
+        -52.914056,
+        12.915234
+      ],
+      "heading_rad": -0.33284211058668817,
+      "length_m": 148.66623222087213,
+      "reference_length_m": 150.0,
+      "nominal_seconds_at_6mps": 25.0,
+      "waypoint_count": 6,
+      "waypoint_kinds": [
+        "start",
+        "bias_on_gate",
+        "parent_wp_3",
+        "bias_off_gate",
+        "recovery",
+        "goal"
+      ],
+      "preserved_parent_waypoint_numbers": [
+        3
+      ],
+      "bias_mode": "waypoint_window",
+      "bias_waypoints": [
+        3,
+        4
+      ],
+      "requested_bias_station_bounds_m": [
+        40.0,
+        100.0
+      ],
+      "default_bias_degrees": [
+        0,
+        -5,
+        5
+      ],
+      "spawn_observed_road_body_margin_m": 1.9482619045963596,
+      "observed_road_source": "diagnostics/isaac_observed_roads_20261025/shared_isaac_road_mosaic.npz",
+      "observed_road_source_sha256": "56e913f85a5e6fcb71b59b3073556562b6925d339b80c9bbe884e30d1e81b25c",
+      "route_progress_and_goal": "original short mission, independent of bias",
+      "bias_anchor": "measured vehicle position; planning waypoints only",
+      "actual_drive_validated": false,
+      "validation": "parent completed at zero bias; short mission not yet driven",
+      "reference_replay": {
+        "method": "production C++ findWaypointPair and waypointBiasWindowActive, recorded parent poses sampled at <=10 Hz",
+        "short_mission_driven": false,
+        "mission_waypoints_xy": [
+          [
+            -187.978185,
+            67.111154
+          ],
+          [
+            -139.349769,
+            55.565561
+          ],
+          [
+            -129.07,
+            47.85
+          ],
+          [
+            -91.830477,
+            20.975956
+          ],
+          [
+            -72.781703,
+            15.170466
+          ],
+          [
+            -52.914056,
+            12.915234
+          ]
+        ],
+        "reference_bias_station_bounds_m": [
+          40.1683675002388,
+          99.8648790785343
+        ],
+        "reference_bias_on_xy": [
+          -148.971695236917,
+          57.4830714001478
+        ],
+        "reference_bias_off_xy": [
+          -100.221873013927,
+          26.5924545901413
+        ],
+        "normal_approach_m": 40.1683675002388,
+        "bias_span_m": 59.6965115782955,
+        "recovery_m": 50.1351209214657,
+        "transitions": "off -> on -> off",
+        "first_wp0": 1,
+        "last_wp0": 4
+      }
+    },
+    {
+      "scenario": "scenario27",
+      "label": "서측 원형 교차로 · 남쪽 → 동쪽",
+      "area": "west_roundabout",
+      "parent_scenario": "scenario25",
+      "parent_run": 1,
+      "coordinate_frame": "map",
+      "source_recording": "parameter_sweeps/manual_bias_scenario22_scenario23_scenario24_scenario25_20261030_052032_63228b/plots/data/scenario25_run1.npz",
+      "source_recording_sha256": "c5622e1d01686de24f868cf159f11940b176932d97721919acfd0542df470882",
+      "source_station_bounds_m": [
+        33.829605054071806,
+        183.8296050540718
+      ],
+      "center_hint_xy_m": [
+        -120.0,
+        40.0
+      ],
+      "start": [
+        -144.773092,
+        -30.418107
+      ],
+      "end": [
+        -51.316313,
+        11.957793
+      ],
+      "heading_rad": 1.2774528988433411,
+      "length_m": 144.6828382900145,
+      "reference_length_m": 150.0,
+      "nominal_seconds_at_6mps": 25.0,
+      "waypoint_count": 7,
+      "waypoint_kinds": [
+        "start",
+        "bias_on_gate",
+        "parent_wp_2",
+        "parent_wp_3",
+        "bias_off_gate",
+        "recovery",
+        "goal"
+      ],
+      "preserved_parent_waypoint_numbers": [
+        2,
+        3
+      ],
+      "bias_mode": "waypoint_window",
+      "bias_waypoints": [
+        3,
+        5
+      ],
+      "requested_bias_station_bounds_m": [
+        40.0,
+        100.0
+      ],
+      "default_bias_degrees": [
+        0,
+        -5,
+        5
+      ],
+      "spawn_observed_road_body_margin_m": 3.2800665416224097,
+      "observed_road_source": "diagnostics/isaac_observed_roads_20261025/shared_isaac_road_mosaic.npz",
+      "observed_road_source_sha256": "56e913f85a5e6fcb71b59b3073556562b6925d339b80c9bbe884e30d1e81b25c",
+      "route_progress_and_goal": "original short mission, independent of bias",
+      "bias_anchor": "measured vehicle position; planning waypoints only",
+      "actual_drive_validated": false,
+      "validation": "parent completed at zero bias; short mission not yet driven",
+      "reference_replay": {
+        "method": "production C++ findWaypointPair and waypointBiasWindowActive, recorded parent poses sampled at <=10 Hz",
+        "short_mission_driven": false,
+        "mission_waypoints_xy": [
+          [
+            -144.773092,
+            -30.418107
+          ],
+          [
+            -130.292681,
+            17.350199
+          ],
+          [
+            -124.851,
+            32.425
+          ],
+          [
+            -113.091,
+            34.611
+          ],
+          [
+            -89.88166,
+            21.002689
+          ],
+          [
+            -71.171193,
+            14.265539
+          ],
+          [
+            -51.316313,
+            11.957793
+          ]
+        ],
+        "reference_bias_station_bounds_m": [
+          40.5696359361096,
+          99.7534967547287
+        ],
+        "reference_bias_on_xy": [
+          -132.122868659189,
+          8.27104307351104
+        ],
+        "reference_bias_off_xy": [
+          -97.991032187382,
+          26.9928810060716
+        ],
+        "normal_approach_m": 40.5696359361096,
+        "bias_span_m": 59.1838608186191,
+        "recovery_m": 50.2465032452713,
+        "transitions": "off -> on -> off",
+        "first_wp0": 1,
+        "last_wp0": 5
+      }
+    },
+    {
+      "scenario": "scenario28",
+      "label": "남동 분기 · 서쪽 → 동쪽",
+      "area": "southeast_forks",
+      "parent_scenario": "scenario23",
+      "parent_run": 1,
+      "coordinate_frame": "map",
+      "source_recording": "parameter_sweeps/manual_bias_scenario22_scenario23_scenario24_scenario25_20261030_052032_63228b/plots/data/scenario23_run1.npz",
+      "source_recording_sha256": "06c220aa40fdb83f875c865b2473fb1360af5353cc84ec5d0e2e91525b842f02",
+      "source_station_bounds_m": [
+        262.93717449086097,
+        386.21820728445346
+      ],
+      "center_hint_xy_m": [
+        105.0,
+        -15.0
+      ],
+      "start": [
+        38.47175,
+        6.866342
+      ],
+      "end": [
+        151.477763,
+        -2.815006
+      ],
+      "heading_rad": -0.011305096353049729,
+      "length_m": 121.88568693509355,
+      "reference_length_m": 123.28103279359249,
+      "nominal_seconds_at_6mps": 20.546838798932082,
+      "waypoint_count": 7,
+      "waypoint_kinds": [
+        "start",
+        "parent_wp_6",
+        "bias_on_gate",
+        "parent_wp_7",
+        "bias_off_gate",
+        "recovery",
+        "goal"
+      ],
+      "preserved_parent_waypoint_numbers": [
+        6,
+        7
+      ],
+      "bias_mode": "waypoint_window",
+      "bias_waypoints": [
+        4,
+        5
+      ],
+      "requested_bias_station_bounds_m": [
+        40.0,
+        90.0
+      ],
+      "default_bias_degrees": [
+        0,
+        -5,
+        5
+      ],
+      "spawn_observed_road_body_margin_m": 3.0484410606534027,
+      "observed_road_source": "diagnostics/isaac_observed_roads_20261025/shared_isaac_road_mosaic.npz",
+      "observed_road_source_sha256": "56e913f85a5e6fcb71b59b3073556562b6925d339b80c9bbe884e30d1e81b25c",
+      "route_progress_and_goal": "original short mission, independent of bias",
+      "bias_anchor": "measured vehicle position; planning waypoints only",
+      "actual_drive_validated": false,
+      "validation": "parent completed at zero bias; short mission not yet driven",
+      "reference_replay": {
+        "method": "production C++ findWaypointPair and waypointBiasWindowActive, recorded parent poses sampled at <=10 Hz",
+        "short_mission_driven": false,
+        "mission_waypoints_xy": [
+          [
+            38.47175,
+            6.866342
+          ],
+          [
+            77.573,
+            4.131
+          ],
+          [
+            85.305457,
+            -1.513659
+          ],
+          [
+            101.584,
+            -15.655
+          ],
+          [
+            128.924181,
+            -8.369894
+          ],
+          [
+            140.068797,
+            -5.012228
+          ],
+          [
+            151.477763,
+            -2.815006
+          ]
+        ],
+        "reference_bias_station_bounds_m": [
+          39.0742379773353,
+          90.7147205609075
+        ],
+        "reference_bias_on_xy": [
+          77.354874674896,
+          5.76471739087028
+        ],
+        "reference_bias_off_xy": [
+          120.259172711495,
+          -11.5760365465483
+        ],
+        "normal_approach_m": 39.0742379773353,
+        "bias_span_m": 51.640482583572194,
+        "recovery_m": 32.56631223268499,
+        "transitions": "off -> on -> off",
+        "first_wp0": 1,
+        "last_wp0": 5
+      }
+    },
+    {
+      "scenario": "scenario29",
+      "label": "남동 분기 · 남쪽 → 북동쪽",
+      "area": "southeast_forks",
+      "parent_scenario": "scenario24",
+      "parent_run": 1,
+      "coordinate_frame": "map",
+      "source_recording": "parameter_sweeps/manual_bias_scenario22_scenario23_scenario24_scenario25_20261030_052032_63228b/plots/data/scenario24_run1.npz",
+      "source_recording_sha256": "e749c3801ae7688d95f6a895bff426edb0d955c1b625d913a781a558b3e57325",
+      "source_station_bounds_m": [
+        28.160447562266853,
+        178.16044756226685
+      ],
+      "center_hint_xy_m": [
+        105.0,
+        -15.0
+      ],
+      "start": [
+        122.80192,
+        -89.90641
+      ],
+      "end": [
+        147.222462,
+        47.930015
+      ],
+      "heading_rad": 2.051095723651454,
+      "length_m": 149.40094272004637,
+      "reference_length_m": 150.0,
+      "nominal_seconds_at_6mps": 25.0,
+      "waypoint_count": 5,
+      "waypoint_kinds": [
+        "start",
+        "bias_on_gate",
+        "bias_off_gate",
+        "recovery",
+        "goal"
+      ],
+      "preserved_parent_waypoint_numbers": [],
+      "bias_mode": "waypoint_window",
+      "bias_waypoints": [
+        3,
+        3
+      ],
+      "requested_bias_station_bounds_m": [
+        40.0,
+        100.0
+      ],
+      "default_bias_degrees": [
+        0,
+        -5,
+        5
+      ],
+      "spawn_observed_road_body_margin_m": 2.9399661865881255,
+      "observed_road_source": "diagnostics/isaac_observed_roads_20261025/shared_isaac_road_mosaic.npz",
+      "observed_road_source_sha256": "56e913f85a5e6fcb71b59b3073556562b6925d339b80c9bbe884e30d1e81b25c",
+      "route_progress_and_goal": "original short mission, independent of bias",
+      "bias_anchor": "measured vehicle position; planning waypoints only",
+      "actual_drive_validated": false,
+      "validation": "parent completed at zero bias; short mission not yet driven",
+      "reference_replay": {
+        "method": "production C++ findWaypointPair and waypointBiasWindowActive, recorded parent poses sampled at <=10 Hz",
+        "short_mission_driven": false,
+        "mission_waypoints_xy": [
+          [
+            122.80192,
+            -89.90641
+          ],
+          [
+            106.660017,
+            -42.955179
+          ],
+          [
+            127.973471,
+            12.8673
+          ],
+          [
+            137.684499,
+            30.351101
+          ],
+          [
+            147.222462,
+            47.930015
+          ]
+        ],
+        "reference_bias_station_bounds_m": [
+          39.7455615150819,
+          100.409705898946
+        ],
+        "reference_bias_on_xy": [
+          108.023536479947,
+          -52.9514548662876
+        ],
+        "reference_bias_off_xy": [
+          123.504707497432,
+          4.45237492623621
+        ],
+        "normal_approach_m": 39.7455615150819,
+        "bias_span_m": 60.6641443838641,
+        "recovery_m": 49.590294101054,
+        "transitions": "off -> on -> off",
+        "first_wp0": 1,
+        "last_wp0": 3
+      }
+    },
+    {
+      "scenario": "scenario30",
+      "label": "북동 교차로 · 남서쪽 → 동쪽",
+      "area": "northeast_junction",
+      "parent_scenario": "scenario22",
+      "parent_run": 1,
+      "coordinate_frame": "map",
+      "source_recording": "parameter_sweeps/manual_bias_scenario22_scenario23_scenario24_scenario25_20261030_052032_63228b/plots/data/scenario22_run1.npz",
+      "source_recording_sha256": "c620ed02ed64885ae2c4f7710326580a3fa827985a19d2afe495ab6a4225fae4",
+      "source_station_bounds_m": [
+        490.3121783132475,
+        630.3121783132475
+      ],
+      "center_hint_xy_m": [
+        195.0,
+        140.0
+      ],
+      "start": [
+        160.648738,
+        71.444188
+      ],
+      "end": [
+        260.724119,
+        133.323858
+      ],
+      "heading_rad": 1.0531263731791276,
+      "length_m": 138.50590326127403,
+      "reference_length_m": 140.0,
+      "nominal_seconds_at_6mps": 23.333333333333332,
+      "waypoint_count": 6,
+      "waypoint_kinds": [
+        "start",
+        "bias_on_gate",
+        "parent_wp_10",
+        "bias_off_gate",
+        "recovery",
+        "goal"
+      ],
+      "preserved_parent_waypoint_numbers": [
+        10
+      ],
+      "bias_mode": "waypoint_window",
+      "bias_waypoints": [
+        3,
+        4
+      ],
+      "requested_bias_station_bounds_m": [
+        40.0,
+        95.0
+      ],
+      "default_bias_degrees": [
+        0,
+        -5,
+        5
+      ],
+      "spawn_observed_road_body_margin_m": 1.3897111653985919,
+      "observed_road_source": "diagnostics/isaac_observed_roads_20261025/shared_isaac_road_mosaic.npz",
+      "observed_road_source_sha256": "56e913f85a5e6fcb71b59b3073556562b6925d339b80c9bbe884e30d1e81b25c",
+      "route_progress_and_goal": "original short mission, independent of bias",
+      "bias_anchor": "measured vehicle position; planning waypoints only",
+      "actual_drive_validated": false,
+      "validation": "parent completed at zero bias; short mission not yet driven",
+      "reference_replay": {
+        "method": "production C++ findWaypointPair and waypointBiasWindowActive, recorded parent poses sampled at <=10 Hz",
+        "short_mission_driven": false,
+        "mission_waypoints_xy": [
+          [
+            160.648738,
+            71.444188
+          ],
+          [
+            184.945121,
+            115.135709
+          ],
+          [
+            199.519,
+            135.249
+          ],
+          [
+            227.161147,
+            143.029391
+          ],
+          [
+            243.786062,
+            137.597266
+          ],
+          [
+            260.724119,
+            133.323858
+          ]
+        ],
+        "reference_bias_station_bounds_m": [
+          39.9411770050897,
+          94.4189234238569
+        ],
+        "reference_bias_on_xy": [
+          180.213042446446,
+          106.448538503359
+        ],
+        "reference_bias_off_xy": [
+          216.921897125152,
+          142.575750140907
+        ],
+        "normal_approach_m": 39.9411770050897,
+        "bias_span_m": 54.4777464187672,
+        "recovery_m": 45.581076576143104,
+        "transitions": "off -> on -> off",
+        "first_wp0": 1,
+        "last_wp0": 4
+      }
+    },
+    {
+      "scenario": "scenario31",
+      "label": "북동 교차로 · 남서쪽 → 북쪽",
+      "area": "northeast_junction",
+      "parent_scenario": "scenario25",
+      "parent_run": 1,
+      "coordinate_frame": "map",
+      "source_recording": "parameter_sweeps/manual_bias_scenario22_scenario23_scenario24_scenario25_20261030_052032_63228b/plots/data/scenario25_run1.npz",
+      "source_recording_sha256": "c5622e1d01686de24f868cf159f11940b176932d97721919acfd0542df470882",
+      "source_station_bounds_m": [
+        455.66433599563015,
+        590.6643359956302
+      ],
+      "center_hint_xy_m": [
+        195.0,
+        140.0
+      ],
+      "start": [
+        161.400745,
+        73.264209
+      ],
+      "end": [
+        187.191651,
+        198.446787
+      ],
+      "heading_rad": 1.057610160854889,
+      "length_m": 135.87765013712942,
+      "reference_length_m": 135.0,
+      "nominal_seconds_at_6mps": 22.5,
+      "waypoint_count": 6,
+      "waypoint_kinds": [
+        "start",
+        "bias_on_gate",
+        "parent_wp_10",
+        "bias_off_gate",
+        "recovery",
+        "goal"
+      ],
+      "preserved_parent_waypoint_numbers": [
+        10
+      ],
+      "bias_mode": "waypoint_window",
+      "bias_waypoints": [
+        3,
+        4
+      ],
+      "requested_bias_station_bounds_m": [
+        40.0,
+        95.0
+      ],
+      "default_bias_degrees": [
+        0,
+        -5,
+        5
+      ],
+      "spawn_observed_road_body_margin_m": 1.6220990164822386,
+      "observed_road_source": "diagnostics/isaac_observed_roads_20261025/shared_isaac_road_mosaic.npz",
+      "observed_road_source_sha256": "56e913f85a5e6fcb71b59b3073556562b6925d339b80c9bbe884e30d1e81b25c",
+      "route_progress_and_goal": "original short mission, independent of bias",
+      "bias_anchor": "measured vehicle position; planning waypoints only",
+      "actual_drive_validated": false,
+      "validation": "parent completed at zero bias; short mission not yet driven",
+      "reference_replay": {
+        "method": "production C++ findWaypointPair and waypointBiasWindowActive, recorded parent poses sampled at <=10 Hz",
+        "short_mission_driven": false,
+        "mission_waypoints_xy": [
+          [
+            161.400745,
+            73.264209
+          ],
+          [
+            185.397025,
+            117.128073
+          ],
+          [
+            197.956,
+            140.088
+          ],
+          [
+            191.642248,
+            169.278561
+          ],
+          [
+            187.216451,
+            183.452563
+          ],
+          [
+            187.191651,
+            198.446787
+          ]
+        ],
+        "reference_bias_station_bounds_m": [
+          40.2222511183011,
+          94.1585533305321
+        ],
+        "reference_bias_on_xy": [
+          180.80034455943,
+          108.695126123807
+        ],
+        "reference_bias_off_xy": [
+          194.89750331156,
+          159.258530868152
+        ],
+        "normal_approach_m": 40.2222511183011,
+        "bias_span_m": 53.936302212231,
+        "recovery_m": 40.8414466694679,
+        "transitions": "off -> on -> off",
+        "first_wp0": 1,
+        "last_wp0": 4
+      }
+    }
+  ]
+}

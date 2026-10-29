@@ -1,5 +1,5 @@
 {
-  "version": 5,
+  "version": 6,
   "coordinate_frame": "map",
   "policy": "scenario1-3 preserved; scenario4-12 spawn positions independently placed inside stationary recorded BEV road, with conservative body footprint and unchanged headings/waypoints; scenario13-21 retained outside active profile.",
   "vehicle": {
@@ -1037,7 +1037,121 @@
       "reference_mask_clearance_m": 3.9441828593536497,
       "validation": "supplied road mask geometry; actual Isaac drive pending",
       "profile": "long4"
+    },
+    {
+      "scenario": "scenario26",
+      "position": [
+        -187.978185,
+        67.111154,
+        0.0
+      ],
+      "path_first": [
+        -187.978185,
+        67.111154,
+        0.0
+      ],
+      "heading_rad": -0.33284211058668817,
+      "ros_heading_rad": -0.33284211058668817,
+      "profile": "local_bias6",
+      "reference_mask_body_on_road": true,
+      "reference_mask_clearance_m": 1.9482619045963596,
+      "validation": "parent completed at zero bias; short mission not yet driven"
+    },
+    {
+      "scenario": "scenario27",
+      "position": [
+        -144.773092,
+        -30.418107,
+        0.0
+      ],
+      "path_first": [
+        -144.773092,
+        -30.418107,
+        0.0
+      ],
+      "heading_rad": 1.2774528988433411,
+      "ros_heading_rad": 1.2774528988433411,
+      "profile": "local_bias6",
+      "reference_mask_body_on_road": true,
+      "reference_mask_clearance_m": 3.2800665416224097,
+      "validation": "parent completed at zero bias; short mission not yet driven"
+    },
+    {
+      "scenario": "scenario28",
+      "position": [
+        38.47175,
+        6.866342,
+        0.0
+      ],
+      "path_first": [
+        38.47175,
+        6.866342,
+        0.0
+      ],
+      "heading_rad": -0.011305096353049729,
+      "ros_heading_rad": -0.011305096353049729,
+      "profile": "local_bias6",
+      "reference_mask_body_on_road": true,
+      "reference_mask_clearance_m": 3.0484410606534027,
+      "validation": "parent completed at zero bias; short mission not yet driven"
+    },
+    {
+      "scenario": "scenario29",
+      "position": [
+        122.80192,
+        -89.90641,
+        0.0
+      ],
+      "path_first": [
+        122.80192,
+        -89.90641,
+        0.0
+      ],
+      "heading_rad": 2.051095723651454,
+      "ros_heading_rad": 2.051095723651454,
+      "profile": "local_bias6",
+      "reference_mask_body_on_road": true,
+      "reference_mask_clearance_m": 2.9399661865881255,
+      "validation": "parent completed at zero bias; short mission not yet driven"
+    },
+    {
+      "scenario": "scenario30",
+      "position": [
+        160.648738,
+        71.444188,
+        0.0
+      ],
+      "path_first": [
+        160.648738,
+        71.444188,
+        0.0
+      ],
+      "heading_rad": 1.0531263731791276,
+      "ros_heading_rad": 1.0531263731791276,
+      "profile": "local_bias6",
+      "reference_mask_body_on_road": true,
+      "reference_mask_clearance_m": 1.3897111653985919,
+      "validation": "parent completed at zero bias; short mission not yet driven"
+    },
+    {
+      "scenario": "scenario31",
+      "position": [
+        161.400745,
+        73.264209,
+        0.0
+      ],
+      "path_first": [
+        161.400745,
+        73.264209,
+        0.0
+      ],
+      "heading_rad": 1.057610160854889,
+      "ros_heading_rad": 1.057610160854889,
+      "profile": "local_bias6",
+      "reference_mask_body_on_road": true,
+      "reference_mask_clearance_m": 1.6220990164822386,
+      "validation": "parent completed at zero bias; short mission not yet driven"
     }
   ],
-  "additional_profile": "long4: scenarios22-25; original starts1-21 retained"
+  "additional_profile": "long4: scenarios22-25; local_bias6: scenarios26-31; original starts1-21 retained"
 }

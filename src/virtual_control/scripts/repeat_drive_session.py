@@ -38,6 +38,15 @@ PHASE_LABELS = {'startup': '입력·기록 준비', 'stopping': '출발 전 정�
                 'aborted': '중단됨', 'done': '전체 완료'}
 
 
+def selected_route_profiles(routes):
+    """Freeze the metadata belonging to the selected additional routes."""
+    directory = PACKAGE/'data/knu_routes'
+    selected = set(routes)
+    return [directory/filename
+            for filename in ROUTE_PROFILE.get('additional_profiles', {}).values()
+            if selected.intersection(json.loads((directory/filename).read_text())['routes'])]
+
+
 def effective_config(count, results, scenario='scenario3', guarded=False, config_file=None):
     if scenario not in (*AVAILABLE_SCENARIOS, 'all'):
         raise ValueError(f'Unsupported repeat scenario: {scenario}')
@@ -261,8 +270,7 @@ def main():
                    PACKAGE/'data/knu_routes/knu_batch_profile.json',
                    PACKAGE/'data/knu_routes/knu_start_poses.json']
         sources += [PACKAGE/f'data/knu_routes/{route}.csv' for route in routes]
-        if any(route in ROUTE_PROFILE.get('additional_routes', []) for route in routes):
-            sources.append(PACKAGE/'data/knu_routes/knu_long_profile.json')
+        sources += selected_route_profiles(routes)
         if args.config_file is not None:
             sources.append(args.config_file.resolve())
         # Snapshot the actual route definitions; later edits must not obscure old runs.
