@@ -1,0 +1,112 @@
+{
+  "created_at": "2026-11-05T11:56:19.259227+09:00",
+  "scope": "S26 positive waypoint-bias runs: +5/+10/+20, 100 accepted each; one excluded original session retained separately",
+  "accepted": 300,
+  "excluded": 1,
+  "all_selected_accepted_outcomes": "completed",
+  "source_files": 7280,
+  "archive_members": 7296,
+  "original_source_bytes": 4559990631,
+  "original_manifest_sha256": "b7186a702e1bad773183ca3e547dbcf96557f0c74e3f13600262ed794186d58c",
+  "s26_checkpoint": 700,
+  "s26_checkpoint_sha256": "c4bc2e75008a3c3269f0eacd9ab6c7582325eee8b5b4d1c2a200cd8f3ad0ee2c",
+  "inventories": [
+    {
+      "file": "inventories/s26-positive-p05-valid-001-050.csv.gz",
+      "planned_asset": "s26-positive-p05-valid-001-050.tar.gz",
+      "bias": 5,
+      "accepted_count": 50,
+      "excluded_count": 0,
+      "members": 1203,
+      "source_bytes": 769816820,
+      "inventory_sha256": "fe0424ee7e5e50208f292cb0db386a3a55cb623b8d767aae6cb473c3e65c56d4"
+    },
+    {
+      "file": "inventories/s26-positive-p05-valid-051-100.csv.gz",
+      "planned_asset": "s26-positive-p05-valid-051-100.tar.gz",
+      "bias": 5,
+      "accepted_count": 50,
+      "excluded_count": 0,
+      "members": 1203,
+      "source_bytes": 778232780,
+      "inventory_sha256": "2ad0caaeaa36c218f05c148077482e5b53b9033e4dac3b97e7c6f638baa897f7"
+    },
+    {
+      "file": "inventories/s26-positive-p05-excluded.csv.gz",
+      "planned_asset": "s26-positive-p05-excluded.tar.gz",
+      "bias": 5,
+      "accepted_count": 0,
+      "excluded_count": 1,
+      "members": 28,
+      "source_bytes": 14630421,
+      "inventory_sha256": "7cf74a880e8e84415bc8fd007606ff6f4570fe514106c2d6341d07436cb3d896"
+    },
+    {
+      "file": "inventories/s26-positive-p10-valid-001-050.csv.gz",
+      "planned_asset": "s26-positive-p10-valid-001-050.tar.gz",
+      "bias": 10,
+      "accepted_count": 50,
+      "excluded_count": 0,
+      "members": 1202,
+      "source_bytes": 740642102,
+      "inventory_sha256": "c238c01949cedfa4bec3c91e391dfd34a80e5a5828c479dbe0e95ca2c73d4446"
+    },
+    {
+      "file": "inventories/s26-positive-p10-valid-051-100.csv.gz",
+      "planned_asset": "s26-positive-p10-valid-051-100.tar.gz",
+      "bias": 10,
+      "accepted_count": 50,
+      "excluded_count": 0,
+      "members": 1204,
+      "source_bytes": 745857346,
+      "inventory_sha256": "7fd4d06dcc461a60a3011fefc739656af88d7301633c00079e5114db17f333b3"
+    },
+    {
+      "file": "inventories/s26-positive-p20-valid-001-050.csv.gz",
+      "planned_asset": "s26-positive-p20-valid-001-050.tar.gz",
+      "bias": 20,
+      "accepted_count": 50,
+      "excluded_count": 0,
+      "members": 1203,
+      "source_bytes": 742332471,
+      "inventory_sha256": "e350932c6e594a75eca3fd65cfa53f9c776fdb47d63a1827e4ab900e9364f68c"
+    },
+    {
+      "file": "inventories/s26-positive-p20-valid-051-100.csv.gz",
+      "planned_asset": "s26-positive-p20-valid-051-100.tar.gz",
+      "bias": 20,
+      "accepted_count": 50,
+      "excluded_count": 0,
+      "members": 1203,
+      "source_bytes": 761577749,
+      "inventory_sha256": "7f0b4c9ef09658bfac2ac2db7727003326cbff426cebeb994176e8d6f940c6c9"
+    },
+    {
+      "file": "inventories/s26-positive-metadata.csv.gz",
+      "planned_asset": "s26-positive-metadata.tar.gz",
+      "bias": null,
+      "accepted_count": 0,
+      "excluded_count": 0,
+      "members": 50,
+      "source_bytes": 10710088,
+      "inventory_sha256": "7b0dafed10ce2d031dbe7a831d198bda5bb335e792f2700acfe7d9e2b070d09a"
+    }
+  ],
+  "raw_logs_stored_in_git": false,
+  "raw_release_uploaded": false,
+  "release_tag_planned": "s26-positive300-20261105",
+  "release_url": null,
+  "storage_method": "Branch stores compressed CSV checksum inventories, exact configs and route. Raw sessions will be separate Release assets.",
+  "controller": "Frozen 3-state MPC, steering actuator time constant 0.74 s, zero pure delay, force DAQP branch-and-bound",
+  "s29_checkpoint": {
+    "accepted": 163,
+    "bias_counts": {
+      "-20": 100,
+      "-10": 63
+    },
+    "phase": "interrupted",
+    "raw_s29_logs_included": false
+  },
+  "deletion_authorized": false,
+  "resumed": false
+}
